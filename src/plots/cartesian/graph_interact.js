@@ -1540,6 +1540,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             axi,
             axRange;
 
+        var zoomInfo = [];
+
         for(i = 0; i < axList.length; i++) {
             axi = axList[i];
             if(axi.fixedrange) continue;
@@ -1549,7 +1551,16 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 axRange[0] + (axRange[1] - axRange[0]) * r0Fraction,
                 axRange[0] + (axRange[1] - axRange[0]) * r1Fraction
             ];
+
+            zoomInfo.push({
+                oldRange: axRange.slice(0),
+                newRange: axi.range.slice(0),
+                name: axi._name,
+                fractionalRange: [r0Fraction, r1Fraction]
+            });
         }
+
+        return zoomInfo;
     }
 
     function zoomDone(dragged, numClicks) {
@@ -1560,8 +1571,16 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             return removeZoombox(gd);
         }
 
-        if(zoomMode === 'xy' || zoomMode === 'x') zoomAxRanges(xa, box.l / pw, box.r / pw);
-        if(zoomMode === 'xy' || zoomMode === 'y') zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph);
+        var axesZoomInfo = [];
+
+        if (zoomMode === 'xy' || zoomMode === 'x') {
+            var xZoomInfo = zoomAxRanges(xa, box.l / pw, box.r / pw);
+            axesZoomInfo = axesZoomInfo.concat(xZoomInfo);
+        }
+        if (zoomMode === 'xy' || zoomMode === 'y') {
+            var yZoomInfo = zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph);
+            axesZoomInfo = axesZoomInfo.concat(yZoomInfo);
+        }
 
         removeZoombox(gd);
         dragTail(zoomMode);
@@ -1570,6 +1589,9 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             Plotly.Lib.notifier('Double-click to<br>zoom back out','long');
             SHOWZOOMOUTTIP = false;
         }
+
+
+        gd.emit('plotly_zoom_after', { zoomMode: zoomMode, box: box, axes: axesZoomInfo });
     }
 
     function dragDone(dragged, numClicks) {
