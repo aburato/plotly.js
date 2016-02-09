@@ -1585,7 +1585,7 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         removeZoombox(gd);
         
         // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
-        var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, userHandled: false };
+        var args = { zoomMode: zoomMode, box: box, width: pw, height: ph, axes: axesZoomInfo, userHandled: false };
         gd.emit('plotly_zoom_before', args);
 
         if (!args.userHandled) {
