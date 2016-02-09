@@ -41,18 +41,18 @@ fx.layoutAttributes = {
     }
 };
 
-fx.supplyLayoutDefaults = function(layoutIn, layoutOut, fullData) {
+fx.supplyLayoutDefaults = function (layoutIn, layoutOut, fullData) {
     var isHoriz, hovermodeDflt;
 
     function coerce(attr, dflt) {
         return Plotly.Lib.coerce(layoutIn, layoutOut,
-                                 fx.layoutAttributes,
-                                 attr, dflt);
+            fx.layoutAttributes,
+            attr, dflt);
     }
 
     coerce('dragmode', layoutOut._hasGL3D ? 'turntable' : 'zoom');
 
-    if(layoutOut._hasCartesian) {
+    if (layoutOut._hasCartesian) {
         // flag for 'horizontal' plots:
         // determines the state of the mode bar 'compare' hovermode button
         isHoriz = layoutOut._isHoriz = fx.isHoriz(fullData);
@@ -63,7 +63,7 @@ fx.supplyLayoutDefaults = function(layoutIn, layoutOut, fullData) {
     coerce('hovermode', hovermodeDflt);
 };
 
-fx.isHoriz = function(fullData) {
+fx.isHoriz = function (fullData) {
     var isHoriz = true;
     var i, trace;
     for (i = 0; i < fullData.length; i++) {
@@ -76,51 +76,51 @@ fx.isHoriz = function(fullData) {
     return isHoriz;
 };
 
-fx.init = function(gd) {
+fx.init = function (gd) {
     var fullLayout = gd._fullLayout;
 
-    if(fullLayout._hasGL3D || fullLayout._hasGeo || gd._context.staticPlot) return;
+    if (fullLayout._hasGL3D || fullLayout._hasGeo || gd._context.staticPlot) return;
 
-    var subplots = Object.keys(fullLayout._plots || {}).sort(function(a,b) {
+    var subplots = Object.keys(fullLayout._plots || {}).sort(function (a, b) {
         // sort overlays last, then by x axis number, then y axis number
-        if((fullLayout._plots[a].mainplot && true) ===
+        if ((fullLayout._plots[a].mainplot && true) ===
             (fullLayout._plots[b].mainplot && true)) {
             var aParts = a.split('y'),
                 bParts = b.split('y');
-            return (aParts[0]===bParts[0]) ?
-                (Number(aParts[1]||1) - Number(bParts[1]||1)) :
-                (Number(aParts[0]||1) - Number(bParts[0]||1));
+            return (aParts[0] === bParts[0]) ?
+                (Number(aParts[1] || 1) - Number(bParts[1] || 1)) :
+                (Number(aParts[0] || 1) - Number(bParts[0] || 1));
         }
         return fullLayout._plots[a].mainplot ? 1 : -1;
     });
 
-    subplots.forEach(function(subplot) {
+    subplots.forEach(function (subplot) {
         var plotinfo = fullLayout._plots[subplot];
 
-        if(!fullLayout._hasCartesian) return;
+        if (!fullLayout._hasCartesian) return;
 
         var xa = plotinfo.x(),
             ya = plotinfo.y(),
 
             // the y position of the main x axis line
-            y0 = (xa._linepositions[subplot]||[])[3],
+            y0 = (xa._linepositions[subplot] || [])[3],
 
             // the x position of the main y axis line
-            x0 = (ya._linepositions[subplot]||[])[3];
+            x0 = (ya._linepositions[subplot] || [])[3];
 
         var DRAGGERSIZE = constants.DRAGGERSIZE;
-        if(isNumeric(y0) && xa.side==='top') y0 -= DRAGGERSIZE;
-        if(isNumeric(x0) && ya.side!=='right') x0 -= DRAGGERSIZE;
+        if (isNumeric(y0) && xa.side === 'top') y0 -= DRAGGERSIZE;
+        if (isNumeric(x0) && ya.side !== 'right') x0 -= DRAGGERSIZE;
 
         // main and corner draggers need not be repeated for
         // overlaid subplots - these draggers drag them all
-        if(!plotinfo.mainplot) {
+        if (!plotinfo.mainplot) {
             // main dragger goes over the grids and data, so we use its
             // mousemove events for all data hover effects
             var maindrag = dragBox(gd, plotinfo, 0, 0,
-                xa._length, ya._length,'ns','ew');
+                xa._length, ya._length, 'ns', 'ew');
 
-            maindrag.onmousemove = function(evt) {
+            maindrag.onmousemove = function (evt) {
                 fx.hover(gd, evt, subplot);
                 fullLayout._lasthover = maindrag;
                 fullLayout._hoversubplot = subplot;
@@ -133,13 +133,13 @@ fx.init = function(gd) {
              * maindrag before each 'click' event, which has the effect
              * of clearing the hoverdata; thus, cancelling the click event.
              */
-            maindrag.onmouseout = function(evt) {
-                if(gd._dragging) return;
+            maindrag.onmouseout = function (evt) {
+                if (gd._dragging) return;
 
                 fx.unhover(gd, evt);
             };
 
-            maindrag.onclick = function(evt) {
+            maindrag.onclick = function (evt) {
                 fx.click(gd, evt);
             };
 
@@ -156,24 +156,24 @@ fx.init = function(gd) {
 
         // x axis draggers - if you have overlaid plots,
         // these drag each axis separately
-        if(isNumeric(y0)) {
-            if(xa.anchor==='free') y0 -= fullLayout._size.h*(1-ya.domain[1]);
-            dragBox(gd, plotinfo, xa._length*0.1, y0,
-                xa._length*0.8, DRAGGERSIZE, '', 'ew');
+        if (isNumeric(y0)) {
+            if (xa.anchor === 'free') y0 -= fullLayout._size.h * (1 - ya.domain[1]);
+            dragBox(gd, plotinfo, xa._length * 0.1, y0,
+                xa._length * 0.8, DRAGGERSIZE, '', 'ew');
             dragBox(gd, plotinfo, 0, y0,
-                xa._length*0.1, DRAGGERSIZE, '', 'w');
-            dragBox(gd, plotinfo, xa._length*0.9, y0,
-                xa._length*0.1, DRAGGERSIZE, '', 'e');
+                xa._length * 0.1, DRAGGERSIZE, '', 'w');
+            dragBox(gd, plotinfo, xa._length * 0.9, y0,
+                xa._length * 0.1, DRAGGERSIZE, '', 'e');
         }
         // y axis draggers
-        if(isNumeric(x0)) {
-            if(ya.anchor==='free') x0 -= fullLayout._size.w*xa.domain[0];
-            dragBox(gd, plotinfo, x0, ya._length*0.1,
-                DRAGGERSIZE, ya._length*0.8, 'ns', '');
-            dragBox(gd, plotinfo, x0, ya._length*0.9,
-                DRAGGERSIZE, ya._length*0.1, 's', '');
+        if (isNumeric(x0)) {
+            if (ya.anchor === 'free') x0 -= fullLayout._size.w * xa.domain[0];
+            dragBox(gd, plotinfo, x0, ya._length * 0.1,
+                DRAGGERSIZE, ya._length * 0.8, 'ns', '');
+            dragBox(gd, plotinfo, x0, ya._length * 0.9,
+                DRAGGERSIZE, ya._length * 0.1, 's', '');
             dragBox(gd, plotinfo, x0, 0,
-                DRAGGERSIZE, ya._length*0.1, 'n', '');
+                DRAGGERSIZE, ya._length * 0.1, 'n', '');
         }
     });
 
@@ -182,18 +182,18 @@ fx.init = function(gd) {
     // but still be able to interact with everything as if it isn't there
     var hoverLayer = fullLayout._hoverlayer.node();
 
-    hoverLayer.onmousemove = function(evt) {
+    hoverLayer.onmousemove = function (evt) {
         evt.target = fullLayout._lasthover;
         fx.hover(gd, evt, fullLayout._hoversubplot);
     };
 
-    hoverLayer.onclick = function(evt) {
+    hoverLayer.onclick = function (evt) {
         evt.target = fullLayout._lasthover;
         fx.click(gd, evt);
     };
 
     // also delegate mousedowns... TODO: does this actually work?
-    hoverLayer.onmousedown = function(evt) {
+    hoverLayer.onmousedown = function (evt) {
         fullLayout._lasthover.onmousedown(evt);
     };
 };
@@ -201,10 +201,10 @@ fx.init = function(gd) {
 // hover labels for multiple horizontal bars get tilted by some angle,
 // then need to be offset differently if they overlap
 var YANGLE = constants.YANGLE,
-    YA_RADIANS = Math.PI*YANGLE/180,
+    YA_RADIANS = Math.PI * YANGLE / 180,
 
     // expansion of projected height
-    YFACTOR = 1/Math.sin(YA_RADIANS),
+    YFACTOR = 1 / Math.sin(YA_RADIANS),
 
     // to make the appropriate post-rotation x offset,
     // you need both x and y offsets
@@ -214,21 +214,21 @@ var YANGLE = constants.YANGLE,
 // convenience functions for mapping all relevant axes
 function flat(subplots, v) {
     var out = [];
-    for(var i=subplots.length; i>0; i--) out.push(v);
+    for (var i = subplots.length; i > 0; i--) out.push(v);
     return out;
 }
 
 function p2c(axArray, v) {
     var out = [];
-    for(var i=0; i<axArray.length; i++) out.push(axArray[i].p2c(v));
+    for (var i = 0; i < axArray.length; i++) out.push(axArray[i].p2c(v));
     return out;
 }
 
 function quadrature(dx, dy) {
-    return function(di){
+    return function (di) {
         var x = dx(di),
             y = dy(di);
-        return Math.sqrt(x*x + y*y);
+        return Math.sqrt(x * x + y * y);
     };
 }
 
@@ -264,9 +264,9 @@ var HOVERARROWSIZE = constants.HOVERARROWSIZE,
 // The actual rendering is done by private functions
 // hover() and unhover().
 
-fx.hover = function(gd, evt, subplot) {
-    if(typeof gd === 'string') gd = document.getElementById(gd);
-    if(gd._lastHoverTime === undefined) gd._lastHoverTime = 0;
+fx.hover = function (gd, evt, subplot) {
+    if (typeof gd === 'string') gd = document.getElementById(gd);
+    if (gd._lastHoverTime === undefined) gd._lastHoverTime = 0;
 
     // If we have an update queued, discard it now
     if (gd._hoverTimer !== undefined) {
@@ -276,59 +276,59 @@ fx.hover = function(gd, evt, subplot) {
     // Is it more than 100ms since the last update?  If so, force
     // an update now (synchronously) and exit
     if (Date.now() > gd._lastHoverTime + constants.HOVERMINTIME) {
-        hover(gd,evt,subplot);
+        hover(gd, evt, subplot);
         gd._lastHoverTime = Date.now();
         return;
     }
     // Queue up the next hover for 100ms from now (if no further events)
-    gd._hoverTimer = setTimeout(function() {
-        hover(gd,evt,subplot);
+    gd._hoverTimer = setTimeout(function () {
+        hover(gd, evt, subplot);
         gd._lastHoverTime = Date.now();
         gd._hoverTimer = undefined;
     }, constants.HOVERMINTIME);
 };
 
-fx.unhover = function(gd, evt, subplot) {
-    if(typeof gd === 'string') gd = document.getElementById(gd);
+fx.unhover = function (gd, evt, subplot) {
+    if (typeof gd === 'string') gd = document.getElementById(gd);
     // Important, clear any queued hovers
     if (gd._hoverTimer) {
         clearTimeout(gd._hoverTimer);
         gd._hoverTimer = undefined;
     }
-    unhover(gd,evt,subplot);
+    unhover(gd, evt, subplot);
 };
 
 // The actual implementation is here:
 
-function hover(gd, evt, subplot){
-    if(subplot === 'pie'){
+function hover(gd, evt, subplot) {
+    if (subplot === 'pie') {
         gd.emit('plotly_hover', {
             points: [evt]
         });
         return;
     }
 
-    if(!subplot) subplot = 'xy';
+    if (!subplot) subplot = 'xy';
 
     var fullLayout = gd._fullLayout,
         plotinfo = fullLayout._plots[subplot],
         // list of all overlaid subplots to look at
         subplots = [subplot].concat(plotinfo.overlays
-            .map(function(pi){ return pi.id; })),
-        xaArray = subplots.map(function(spId) {
+            .map(function (pi) { return pi.id; })),
+        xaArray = subplots.map(function (spId) {
             return Plotly.Axes.getFromId(gd, spId, 'x');
         }),
-        yaArray = subplots.map(function(spId) {
+        yaArray = subplots.map(function (spId) {
             return Plotly.Axes.getFromId(gd, spId, 'y');
         }),
         hovermode = evt.hovermode || fullLayout.hovermode;
 
-    if(['x','y','closest'].indexOf(hovermode)===-1 || !gd.calcdata ||
-            gd.querySelector('.zoombox') || gd._dragging) {
+    if (['x', 'y', 'closest'].indexOf(hovermode) === -1 || !gd.calcdata ||
+        gd.querySelector('.zoombox') || gd._dragging) {
         return unhover(gd, evt);
     }
 
-        // hoverData: the set of candidate points we've found to highlight
+    // hoverData: the set of candidate points we've found to highlight
     var hoverData = [],
 
         // searchData: the data to search in. Mostly this is just a copy of
@@ -357,19 +357,19 @@ function hover(gd, evt, subplot){
     // Figure out what we're hovering on:
     // mouse location or user-supplied data
 
-    if(Array.isArray(evt)){
+    if (Array.isArray(evt)) {
         // user specified an array of points to highlight
         hovermode = 'array';
-        for(itemnum = 0; itemnum<evt.length; itemnum++) {
-            cd = gd.calcdata[evt[itemnum].curveNumber||0];
-            if(cd[0].trace.hoverinfo!=='none') searchData.push(cd);
+        for (itemnum = 0; itemnum < evt.length; itemnum++) {
+            cd = gd.calcdata[evt[itemnum].curveNumber || 0];
+            if (cd[0].trace.hoverinfo !== 'none') searchData.push(cd);
         }
     }
     else {
-        for(curvenum = 0; curvenum<gd.calcdata.length; curvenum++) {
+        for (curvenum = 0; curvenum < gd.calcdata.length; curvenum++) {
             cd = gd.calcdata[curvenum];
             trace = cd[0].trace;
-            if(trace.hoverinfo!=='none' && subplots.indexOf(trace.xaxis + trace.yaxis)!==-1) {
+            if (trace.hoverinfo !== 'none' && subplots.indexOf(trace.xaxis + trace.yaxis) !== -1) {
                 searchData.push(cd);
             }
         }
@@ -380,12 +380,12 @@ function hover(gd, evt, subplot){
 
         // mouse event? ie is there a target element with
         // clientX and clientY values?
-        if(evt.target && ('clientX' in evt) && ('clientY' in evt)) {
+        if (evt.target && ('clientX' in evt) && ('clientY' in evt)) {
 
             // fire the beforehover event and quit if it returns false
             // note that we're only calling this on real mouse events, so
             // manual calls to fx.hover will always run.
-            if(Events.triggerHandler(gd, 'plotly_beforehover', evt)===false) {
+            if (Events.triggerHandler(gd, 'plotly_beforehover', evt) === false) {
                 return;
             }
 
@@ -396,25 +396,25 @@ function hover(gd, evt, subplot){
 
             // in case hover was called from mouseout into hovertext,
             // it's possible you're not actually over the plot anymore
-            if(xpx<0 || xpx>dbb.width || ypx<0 || ypx>dbb.height) {
-                return unhover(gd,evt);
+            if (xpx < 0 || xpx > dbb.width || ypx < 0 || ypx > dbb.height) {
+                return unhover(gd, evt);
             }
         }
         else {
-            if('xpx' in evt) xpx = evt.xpx;
-            else xpx = xaArray[0]._length/2;
+            if ('xpx' in evt) xpx = evt.xpx;
+            else xpx = xaArray[0]._length / 2;
 
-            if('ypx' in evt) ypx = evt.ypx;
-            else ypx = yaArray[0]._length/2;
+            if ('ypx' in evt) ypx = evt.ypx;
+            else ypx = yaArray[0]._length / 2;
         }
 
-        if('xval' in evt) xvalArray = flat(subplots, evt.xval);
+        if ('xval' in evt) xvalArray = flat(subplots, evt.xval);
         else xvalArray = p2c(xaArray, xpx);
 
-        if('yval' in evt) yvalArray = flat(subplots, evt.yval);
+        if ('yval' in evt) yvalArray = flat(subplots, evt.yval);
         else yvalArray = p2c(yaArray, ypx);
 
-        if(!isNumeric(xvalArray[0]) || !isNumeric(yvalArray[0])) {
+        if (!isNumeric(xvalArray[0]) || !isNumeric(yvalArray[0])) {
             console.log('Plotly.Fx.hover failed', evt, gd);
             return unhover(gd, evt);
         }
@@ -427,11 +427,11 @@ function hover(gd, evt, subplot){
     // find the closest point in each trace
     // this is minimum dx and/or dy, depending on mode
     // and the pixel position for the label (labelXpx, labelYpx)
-    for(curvenum = 0; curvenum<searchData.length; curvenum++) {
+    for (curvenum = 0; curvenum < searchData.length; curvenum++) {
         cd = searchData[curvenum];
 
         // filter out invisible or broken data
-        if(!cd || !cd[0] || !cd[0].trace || cd[0].trace.visible !== true) continue;
+        if (!cd || !cd[0] || !cd[0].trace || cd[0].trace.visible !== true) continue;
 
         trace = cd[0].trace;
         subploti = subplots.indexOf(trace.xaxis + trace.yaxis);
@@ -446,7 +446,7 @@ function hover(gd, evt, subplot){
             trace: trace,
             xa: xaArray[subploti],
             ya: yaArray[subploti],
-            name: (gd.data.length>1 || trace.hoverinfo.indexOf('name')!==-1) ? trace.name : undefined,
+            name: (gd.data.length > 1 || trace.hoverinfo.indexOf('name') !== -1) ? trace.name : undefined,
             // point properties - override all of these
             index: false, // point index in trace - only used by plotly.js hoverdata consumers
             distance: Math.min(distance, constants.MAXDIST), // pixel distance or pseudo-distance
@@ -465,19 +465,19 @@ function hover(gd, evt, subplot){
 
         // for a highlighting array, figure out what
         // we're searching for with this element
-        if(mode==='array') {
+        if (mode === 'array') {
             var selection = evt[curvenum];
-            if('pointNumber' in selection) {
+            if ('pointNumber' in selection) {
                 pointData.index = selection.pointNumber;
                 mode = 'closest';
             }
             else {
                 mode = '';
-                if('xval' in selection) {
+                if ('xval' in selection) {
                     xval = selection.xval;
                     mode = 'x';
                 }
-                if('yval' in selection) {
+                if ('yval' in selection) {
                     yval = selection.yval;
                     mode = mode ? 'closest' : 'y';
                 }
@@ -489,13 +489,13 @@ function hover(gd, evt, subplot){
         }
 
         // Now find the points.
-        if(trace._module && trace._module.hoverPoints) {
+        if (trace._module && trace._module.hoverPoints) {
             var newPoints = trace._module.hoverPoints(pointData, xval, yval, mode);
-            if(newPoints) {
+            if (newPoints) {
                 var newPoint;
-                for(var newPointNum=0; newPointNum<newPoints.length; newPointNum++) {
+                for (var newPointNum = 0; newPointNum < newPoints.length; newPointNum++) {
                     newPoint = newPoints[newPointNum];
-                    if(isNumeric(newPoint.x0) && isNumeric(newPoint.y0)) {
+                    if (isNumeric(newPoint.x0) && isNumeric(newPoint.y0)) {
                         hoverData.push(cleanPoint(newPoint, hovermode));
                     }
                 }
@@ -507,7 +507,7 @@ function hover(gd, evt, subplot){
 
         // in closest mode, remove any existing (farther) points
         // and don't look any farther than this latest point (or points, if boxes)
-        if(hovermode==='closest' && hoverData.length > closedataPreviousLength) {
+        if (hovermode === 'closest' && hoverData.length > closedataPreviousLength) {
             hoverData.splice(0, closedataPreviousLength);
             distance = hoverData[0].distance;
         }
@@ -515,13 +515,13 @@ function hover(gd, evt, subplot){
     }
 
     // nothing left: remove all labels and quit
-    if(hoverData.length===0) return unhover(gd,evt);
+    if (hoverData.length === 0) return unhover(gd, evt);
 
     // if there's more than one horz bar trace,
     // rotate the labels so they don't overlap
-    var rotateLabels = hovermode==='y' && searchData.length>1;
+    var rotateLabels = hovermode === 'y' && searchData.length > 1;
 
-    hoverData.sort(function(d1, d2) { return d1.distance - d2.distance; });
+    hoverData.sort(function (d1, d2) { return d1.distance - d2.distance; });
 
     var labelOpts = {
         hovermode: hovermode,
@@ -542,7 +542,7 @@ function hover(gd, evt, subplot){
 
     // pull out just the data that's useful to
     // other people and send it to the event
-    for(itemnum = 0; itemnum<hoverData.length; itemnum++) {
+    for (itemnum = 0; itemnum < hoverData.length; itemnum++) {
         var pt = hoverData[itemnum];
         var out = {
             data: pt.trace._input,
@@ -554,19 +554,19 @@ function hover(gd, evt, subplot){
             xaxis: pt.xa,
             yaxis: pt.ya
         };
-        if(pt.zLabelVal!==undefined) out.z = pt.zLabelVal;
+        if (pt.zLabelVal !== undefined) out.z = pt.zLabelVal;
         newhoverdata.push(out);
     }
     gd._hoverdata = newhoverdata;
 
-    if(!hoverChanged(gd, evt, oldhoverdata)) return;
+    if (!hoverChanged(gd, evt, oldhoverdata)) return;
 
     /* Emit the custom hover handler. Bind this like:
      *  gd.on('hover.plotly', function(extras) {
      *      // do something with extras.data
      *  });
      */
-    if(oldhoverdata) {
+    if (oldhoverdata) {
         gd.emit('plotly_unhover', { points: oldhoverdata });
     }
     gd.emit('plotly_hover', {
@@ -578,15 +578,15 @@ function hover(gd, evt, subplot){
     });
 }
 
-fx.getDistanceFunction = function(mode, dx, dy, dxy) {
-    if(mode==='closest') return dxy || quadrature(dx, dy);
-    return mode==='x' ? dx : dy;
+fx.getDistanceFunction = function (mode, dx, dy, dxy) {
+    if (mode === 'closest') return dxy || quadrature(dx, dy);
+    return mode === 'x' ? dx : dy;
 };
 
-fx.getClosest = function(cd, distfn, pointData) {
+fx.getClosest = function (cd, distfn, pointData) {
     // do we already have a point number? (array mode only)
-    if(pointData.index!==false) {
-        if(pointData.index>=0 && pointData.index<cd.length) {
+    if (pointData.index !== false) {
+        if (pointData.index >= 0 && pointData.index < cd.length) {
             pointData.distance = 0;
         }
         else pointData.index = false;
@@ -596,9 +596,9 @@ fx.getClosest = function(cd, distfn, pointData) {
         // this is the longest loop... if this bogs down, we may need
         // to create pre-sorted data (by x or y), not sure how to
         // do this for 'closest'
-        for(var i=0; i<cd.length; i++) {
+        for (var i = 0; i < cd.length; i++) {
             var newDistance = distfn(cd[i]);
-            if(newDistance < pointData.distance) {
+            if (newDistance < pointData.distance) {
                 pointData.index = i;
                 pointData.distance = newDistance;
             }
@@ -608,7 +608,7 @@ fx.getClosest = function(cd, distfn, pointData) {
 };
 
 function cleanPoint(d, hovermode) {
-    d.posref = hovermode==='y' ? (d.x0+d.x1)/2 : (d.y0+d.y1)/2;
+    d.posref = hovermode === 'y' ? (d.x0 + d.x1) / 2 : (d.y0 + d.y1) / 2;
 
     // then constrain all the positions to be on the plot
     d.x0 = Plotly.Lib.constrain(d.x0, 0, d.xa._length);
@@ -619,70 +619,70 @@ function cleanPoint(d, hovermode) {
     // and convert the x and y label values into objects
     // formatted as text, with font info
     var logOffScale;
-    if(d.xLabelVal!==undefined) {
-        logOffScale = (d.xa.type==='log' && d.xLabelVal<=0);
+    if (d.xLabelVal !== undefined) {
+        logOffScale = (d.xa.type === 'log' && d.xLabelVal <= 0);
         var xLabelObj = Plotly.Axes.tickText(d.xa,
-                d.xa.c2l(logOffScale ? -d.xLabelVal : d.xLabelVal), 'hover');
-        if(logOffScale) {
-            if(d.xLabelVal===0) d.xLabel = '0';
+            d.xa.c2l(logOffScale ? -d.xLabelVal : d.xLabelVal), 'hover');
+        if (logOffScale) {
+            if (d.xLabelVal === 0) d.xLabel = '0';
             else d.xLabel = '-' + xLabelObj.text;
         }
         else d.xLabel = xLabelObj.text;
         d.xVal = d.xa.c2d(d.xLabelVal);
     }
 
-    if(d.yLabelVal!==undefined) {
-        logOffScale = (d.ya.type==='log' && d.yLabelVal<=0);
+    if (d.yLabelVal !== undefined) {
+        logOffScale = (d.ya.type === 'log' && d.yLabelVal <= 0);
         var yLabelObj = Plotly.Axes.tickText(d.ya,
-                d.ya.c2l(logOffScale ? -d.yLabelVal : d.yLabelVal), 'hover');
-        if(logOffScale) {
-            if(d.yLabelVal===0) d.yLabel = '0';
+            d.ya.c2l(logOffScale ? -d.yLabelVal : d.yLabelVal), 'hover');
+        if (logOffScale) {
+            if (d.yLabelVal === 0) d.yLabel = '0';
             else d.yLabel = '-' + yLabelObj.text;
         }
         else d.yLabel = yLabelObj.text;
         d.yVal = d.ya.c2d(d.yLabelVal);
     }
 
-    if(d.zLabelVal!==undefined) d.zLabel = String(d.zLabelVal);
+    if (d.zLabelVal !== undefined) d.zLabel = String(d.zLabelVal);
 
     // for box means and error bars, add the range to the label
-    if(d.xerr!==undefined) {
+    if (d.xerr !== undefined) {
         var xeText = Plotly.Axes.tickText(d.xa, d.xa.c2l(d.xerr), 'hover').text;
-        if(d.xerrneg!==undefined) {
+        if (d.xerrneg !== undefined) {
             d.xLabel += ' +' + xeText + ' / -' +
-                Plotly.Axes.tickText(d.xa, d.xa.c2l(d.xerrneg), 'hover').text;
+            Plotly.Axes.tickText(d.xa, d.xa.c2l(d.xerrneg), 'hover').text;
         }
         else d.xLabel += ' &plusmn; ' + xeText;
 
         // small distance penalty for error bars, so that if there are
         // traces with errors and some without, the error bar label will
         // hoist up to the point
-        if(hovermode==='x') d.distance += 1;
+        if (hovermode === 'x') d.distance += 1;
     }
-    if(d.yerr!==undefined) {
+    if (d.yerr !== undefined) {
         var yeText = Plotly.Axes.tickText(d.ya, d.ya.c2l(d.yerr), 'hover').text;
-        if(d.yerrneg!==undefined) {
+        if (d.yerrneg !== undefined) {
             d.yLabel += ' +' + yeText + ' / -' +
-                Plotly.Axes.tickText(d.ya, d.ya.c2l(d.yerrneg), 'hover').text;
+            Plotly.Axes.tickText(d.ya, d.ya.c2l(d.yerrneg), 'hover').text;
         }
         else d.yLabel += ' &plusmn; ' + yeText;
 
-        if(hovermode==='y') d.distance += 1;
+        if (hovermode === 'y') d.distance += 1;
     }
 
     var infomode = d.trace.hoverinfo;
-    if(infomode!=='all') {
+    if (infomode !== 'all') {
         infomode = infomode.split('+');
-        if(infomode.indexOf('x')===-1) d.xLabel = undefined;
-        if(infomode.indexOf('y')===-1) d.yLabel = undefined;
-        if(infomode.indexOf('z')===-1) d.zLabel = undefined;
-        if(infomode.indexOf('text')===-1) d.text = undefined;
-        if(infomode.indexOf('name')===-1) d.name = undefined;
+        if (infomode.indexOf('x') === -1) d.xLabel = undefined;
+        if (infomode.indexOf('y') === -1) d.yLabel = undefined;
+        if (infomode.indexOf('z') === -1) d.zLabel = undefined;
+        if (infomode.indexOf('text') === -1) d.text = undefined;
+        if (infomode.indexOf('name') === -1) d.name = undefined;
     }
     return d;
 }
 
-fx.loneHover = function(hoverItem, opts) {
+fx.loneHover = function (hoverItem, opts) {
     // draw a single hover item in a pre-existing svg container somewhere
     // hoverItem should have keys:
     //    - x and y (or x0, x1, y0, and y1):
@@ -717,8 +717,8 @@ fx.loneHover = function(hoverItem, opts) {
             index: 0,
             hoverinfo: ''
         },
-        xa: {_offset:0},
-        ya: {_offset:0},
+        xa: { _offset: 0 },
+        ya: { _offset: 0 },
         index: 0
     };
 
@@ -740,10 +740,10 @@ fx.loneHover = function(hoverItem, opts) {
     return hoverLabel.node();
 };
 
-fx.loneUnhover = function(containerOrSelection) {
+fx.loneUnhover = function (containerOrSelection) {
     var selection = containerOrSelection instanceof d3.selection ?
-            containerOrSelection :
-            d3.select(containerOrSelection);
+        containerOrSelection :
+        d3.select(containerOrSelection);
 
     selection.selectAll('g.hovertext').remove();
 };
@@ -758,9 +758,9 @@ function createHoverText(hoverData, opts) {
         c0 = hoverData[0],
         xa = c0.xa,
         ya = c0.ya,
-        commonAttr = hovermode==='y' ? 'yLabel' : 'xLabel',
+        commonAttr = hovermode === 'y' ? 'yLabel' : 'xLabel',
         t0 = c0[commonAttr],
-        t00 = (String(t0)||'').split(' ')[0],
+        t00 = (String(t0) || '').split(' ')[0],
         outerContainerBB = outerContainer.node().getBoundingClientRect(),
         outerTop = outerContainerBB.top,
         outerWidth = outerContainerBB.width,
@@ -769,8 +769,8 @@ function createHoverText(hoverData, opts) {
     // show the common label, if any, on the axis
     // never show a common label in array mode,
     // even if sometimes there could be one
-    var showCommonLabel = c0.distance<=constants.MAXDIST &&
-                          (hovermode==='x' || hovermode==='y');
+    var showCommonLabel = c0.distance <= constants.MAXDIST &&
+        (hovermode === 'x' || hovermode === 'y');
 
     // all hover traces hoverinfo must contain the hovermode
     // to have common labels
@@ -791,72 +791,72 @@ function createHoverText(hoverData, opts) {
         .classed('axistext', true);
     commonLabel.exit().remove();
 
-    commonLabel.each(function() {
+    commonLabel.each(function () {
         var label = d3.select(this),
             lpath = label.selectAll('path').data([0]),
             ltext = label.selectAll('text').data([0]);
 
         lpath.enter().append('path')
-            .style({fill: Plotly.Color.defaultLine, 'stroke-width': '1px', stroke: Plotly.Color.background});
+            .style({ fill: Plotly.Color.defaultLine, 'stroke-width': '1px', stroke: Plotly.Color.background });
         ltext.enter().append('text')
             .call(Plotly.Drawing.font, HOVERFONT, HOVERFONTSIZE, Plotly.Color.background)
-            // prohibit tex interpretation until we can handle
-            // tex and regular text together
-            .attr('data-notex',1);
+        // prohibit tex interpretation until we can handle
+        // tex and regular text together
+            .attr('data-notex', 1);
 
         ltext.text(t0)
             .call(Plotly.util.convertToTspans)
             .call(Plotly.Drawing.setPosition, 0, 0)
-          .selectAll('tspan.line')
+            .selectAll('tspan.line')
             .call(Plotly.Drawing.setPosition, 0, 0);
-        label.attr('transform','');
+        label.attr('transform', '');
 
         var tbb = ltext.node().getBoundingClientRect();
-        if(hovermode==='x'){
-            ltext.attr('text-anchor','middle')
-                .call(Plotly.Drawing.setPosition,0,(xa.side==='top' ?
-                    (outerTop-tbb.bottom-HOVERARROWSIZE-HOVERTEXTPAD) :
-                    (outerTop-tbb.top+HOVERARROWSIZE+HOVERTEXTPAD)))
+        if (hovermode === 'x') {
+            ltext.attr('text-anchor', 'middle')
+                .call(Plotly.Drawing.setPosition, 0, (xa.side === 'top' ?
+                    (outerTop - tbb.bottom - HOVERARROWSIZE - HOVERTEXTPAD) :
+                    (outerTop - tbb.top + HOVERARROWSIZE + HOVERTEXTPAD)))
                 .selectAll('tspan.line')
-                    .attr({x:ltext.attr('x'), y:ltext.attr('y')});
+                .attr({ x: ltext.attr('x'), y: ltext.attr('y') });
 
-            var topsign = xa.side==='top' ? '-' : '';
-            lpath.attr('d','M0,0'+
-                'L'+HOVERARROWSIZE+','+topsign+HOVERARROWSIZE+
-                'H'+(HOVERTEXTPAD+tbb.width/2)+
-                'v'+topsign+(HOVERTEXTPAD*2+tbb.height)+
-                'H-'+(HOVERTEXTPAD+tbb.width/2)+
-                'V'+topsign+HOVERARROWSIZE+'H-'+HOVERARROWSIZE+'Z');
+            var topsign = xa.side === 'top' ? '-' : '';
+            lpath.attr('d', 'M0,0' +
+                'L' + HOVERARROWSIZE + ',' + topsign + HOVERARROWSIZE +
+                'H' + (HOVERTEXTPAD + tbb.width / 2) +
+                'v' + topsign + (HOVERTEXTPAD * 2 + tbb.height) +
+                'H-' + (HOVERTEXTPAD + tbb.width / 2) +
+                'V' + topsign + HOVERARROWSIZE + 'H-' + HOVERARROWSIZE + 'Z');
 
-            label.attr('transform','translate(' +
-                (xa._offset+(c0.x0+c0.x1)/2)+',' +
-                (ya._offset + (xa.side==='top' ? 0 : ya._length))+')');
+            label.attr('transform', 'translate(' +
+                (xa._offset + (c0.x0 + c0.x1) / 2) + ',' +
+                (ya._offset + (xa.side === 'top' ? 0 : ya._length)) + ')');
         }
         else {
-            ltext.attr('text-anchor',ya.side==='right' ? 'start' : 'end')
+            ltext.attr('text-anchor', ya.side === 'right' ? 'start' : 'end')
                 .call(Plotly.Drawing.setPosition,
-                    (ya.side==='right' ? 1 : -1)*(HOVERTEXTPAD+HOVERARROWSIZE),
-                    outerTop-tbb.top-tbb.height/2)
+                    (ya.side === 'right' ? 1 : -1) * (HOVERTEXTPAD + HOVERARROWSIZE),
+                    outerTop - tbb.top - tbb.height / 2)
                 .selectAll('tspan.line')
-                    .attr({x:ltext.attr('x'), y:ltext.attr('y')});
+                .attr({ x: ltext.attr('x'), y: ltext.attr('y') });
 
-            var leftsign = ya.side==='right' ? '' : '-';
-            lpath.attr('d','M0,0'+
-                'L'+leftsign+HOVERARROWSIZE+','+HOVERARROWSIZE+
-                'V'+(HOVERTEXTPAD+tbb.height/2)+
-                'h'+leftsign+(HOVERTEXTPAD*2+tbb.width)+
-                'V-'+(HOVERTEXTPAD+tbb.height/2)+
-                'H'+leftsign+HOVERARROWSIZE+'V-'+HOVERARROWSIZE+'Z');
+            var leftsign = ya.side === 'right' ? '' : '-';
+            lpath.attr('d', 'M0,0' +
+                'L' + leftsign + HOVERARROWSIZE + ',' + HOVERARROWSIZE +
+                'V' + (HOVERTEXTPAD + tbb.height / 2) +
+                'h' + leftsign + (HOVERTEXTPAD * 2 + tbb.width) +
+                'V-' + (HOVERTEXTPAD + tbb.height / 2) +
+                'H' + leftsign + HOVERARROWSIZE + 'V-' + HOVERARROWSIZE + 'Z');
 
-            label.attr('transform','translate(' +
-                (xa._offset+(ya.side==='right' ? xa._length : 0))+',' +
-                (ya._offset+(c0.y0+c0.y1)/2)+')');
+            label.attr('transform', 'translate(' +
+                (xa._offset + (ya.side === 'right' ? xa._length : 0)) + ',' +
+                (ya._offset + (c0.y0 + c0.y1) / 2) + ')');
         }
         // remove the "close but not quite" points
         // because of error bars, only take up to a space
-        hoverData = hoverData.filter(function(d){
-            return (d.zLabelVal!==undefined) ||
-                (d[commonAttr]||'').split(' ')[0]===t00;
+        hoverData = hoverData.filter(function (d) {
+            return (d.zLabelVal !== undefined) ||
+                (d[commonAttr] || '').split(' ')[0] === t00;
         });
     });
 
@@ -864,30 +864,30 @@ function createHoverText(hoverData, opts) {
 
     // first create the objects
     var hoverLabels = container.selectAll('g.hovertext')
-        .data(hoverData,function(d){
-            return [d.trace.index,d.index,d.x0,d.y0,d.name,d.attr||''].join(',');
+        .data(hoverData, function (d) {
+            return [d.trace.index, d.index, d.x0, d.y0, d.name, d.attr || ''].join(',');
         });
     hoverLabels.enter().append('g')
-        .classed('hovertext',true)
-        .each(function() {
+        .classed('hovertext', true)
+        .each(function () {
             var g = d3.select(this);
             // trace name label (rect and text.name)
             g.append('rect')
                 .call(Plotly.Color.fill,
                     Plotly.Color.addOpacity(bgColor, 0.8));
-            g.append('text').classed('name',true)
-                .call(Plotly.Drawing.font,HOVERFONT,HOVERFONTSIZE);
+            g.append('text').classed('name', true)
+                .call(Plotly.Drawing.font, HOVERFONT, HOVERFONTSIZE);
             // trace data label (path and text.nums)
             g.append('path')
-                .style('stroke-width','1px');
-            g.append('text').classed('nums',true)
-                .call(Plotly.Drawing.font,HOVERFONT,HOVERFONTSIZE);
+                .style('stroke-width', '1px');
+            g.append('text').classed('nums', true)
+                .call(Plotly.Drawing.font, HOVERFONT, HOVERFONTSIZE);
         });
     hoverLabels.exit().remove();
 
     // then put the text in, position the pointer to the data,
     // and figure out sizes
-    hoverLabels.each(function(d){
+    hoverLabels.each(function (d) {
         var g = d3.select(this).attr('transform', ''),
             name = '',
             text = '',
@@ -897,36 +897,36 @@ function createHoverText(hoverData, opts) {
             traceColor = Plotly.Color.combine(baseColor, bgColor),
 
             // find a contrasting color for border and text
-            contrastColor = tinycolor(traceColor).getBrightness()>128 ?
+            contrastColor = tinycolor(traceColor).getBrightness() > 128 ?
                 '#000' : Plotly.Color.background;
 
 
-        if(d.name && d.zLabelVal===undefined) {
+        if (d.name && d.zLabelVal === undefined) {
             // strip out any html elements from d.name (if it exists at all)
             // Note that this isn't an XSS vector, only because it never gets
             // attached to the DOM
             var tmp = document.createElement('p');
             tmp.innerHTML = d.name;
-            name = tmp.textContent||'';
+            name = tmp.textContent || '';
 
-            if(name.length>15) name = name.substr(0,12)+'...';
+            if (name.length > 15) name = name.substr(0, 12) + '...';
         }
 
-        if(d.zLabel!==undefined) {
-            if(d.xLabel!==undefined) text += 'x: ' + d.xLabel + '<br>';
-            if(d.yLabel!==undefined) text += 'y: ' + d.yLabel + '<br>';
+        if (d.zLabel !== undefined) {
+            if (d.xLabel !== undefined) text += 'x: ' + d.xLabel + '<br>';
+            if (d.yLabel !== undefined) text += 'y: ' + d.yLabel + '<br>';
             text += (text ? 'z: ' : '') + d.zLabel;
         }
-        else if(showCommonLabel && d[hovermode+'Label']===t0) {
-            text = d[(hovermode==='x' ? 'y' : 'x') + 'Label'] || '';
+        else if (showCommonLabel && d[hovermode + 'Label'] === t0) {
+            text = d[(hovermode === 'x' ? 'y' : 'x') + 'Label'] || '';
         }
-        else if(d.xLabel===undefined) {
-            if(d.yLabel!==undefined) text = d.yLabel;
+        else if (d.xLabel === undefined) {
+            if (d.yLabel !== undefined) text = d.yLabel;
         }
-        else if(d.yLabel===undefined) text = d.xLabel;
-        else text = '('+d.xLabel+', '+d.yLabel+')';
+        else if (d.yLabel === undefined) text = d.xLabel;
+        else text = '(' + d.xLabel + ', ' + d.yLabel + ')';
 
-        if(d.text) text += (text ? '<br>' : '') + d.text;
+        if (d.text) text += (text ? '<br>' : '') + d.text;
 
         // if 'text' is empty at this point,
         // put 'name' in main label and don't show secondary label
@@ -938,27 +938,27 @@ function createHoverText(hoverData, opts) {
 
         // main label
         var tx = g.select('text.nums')
-            .style('fill',contrastColor)
-            .call(Plotly.Drawing.setPosition,0,0)
+            .style('fill', contrastColor)
+            .call(Plotly.Drawing.setPosition, 0, 0)
             .text(text)
-            .attr('data-notex',1)
+            .attr('data-notex', 1)
             .call(Plotly.util.convertToTspans);
         tx.selectAll('tspan.line')
-            .call(Plotly.Drawing.setPosition,0,0);
+            .call(Plotly.Drawing.setPosition, 0, 0);
 
         var tx2 = g.select('text.name'),
             tx2width = 0;
 
         // secondary label for non-empty 'name'
-        if (name && name!==text) {
-            tx2.style('fill',traceColor)
+        if (name && name !== text) {
+            tx2.style('fill', traceColor)
                 .text(name)
-                .call(Plotly.Drawing.setPosition,0,0)
-                .attr('data-notex',1)
+                .call(Plotly.Drawing.setPosition, 0, 0)
+                .attr('data-notex', 1)
                 .call(Plotly.util.convertToTspans);
             tx2.selectAll('tspan.line')
-                .call(Plotly.Drawing.setPosition,0,0);
-            tx2width = tx2.node().getBoundingClientRect().width+2*HOVERTEXTPAD;
+                .call(Plotly.Drawing.setPosition, 0, 0);
+            tx2width = tx2.node().getBoundingClientRect().width + 2 * HOVERTEXTPAD;
         }
         else {
             tx2.remove();
@@ -966,32 +966,32 @@ function createHoverText(hoverData, opts) {
         }
 
         g.select('path')
-            .style({fill:traceColor, stroke:contrastColor});
+            .style({ fill: traceColor, stroke: contrastColor });
         var tbb = tx.node().getBoundingClientRect(),
-            htx = xa._offset+(d.x0+d.x1)/2,
-            hty = ya._offset+(d.y0+d.y1)/2,
-            dx = Math.abs(d.x1-d.x0),
-            dy = Math.abs(d.y1-d.y0),
-            txTotalWidth = tbb.width+HOVERARROWSIZE+HOVERTEXTPAD+tx2width,
+            htx = xa._offset + (d.x0 + d.x1) / 2,
+            hty = ya._offset + (d.y0 + d.y1) / 2,
+            dx = Math.abs(d.x1 - d.x0),
+            dy = Math.abs(d.y1 - d.y0),
+            txTotalWidth = tbb.width + HOVERARROWSIZE + HOVERTEXTPAD + tx2width,
             anchorStartOK,
             anchorEndOK;
 
-        d.ty0 = outerTop-tbb.top;
-        d.bx = tbb.width+2*HOVERTEXTPAD;
-        d.by = tbb.height+2*HOVERTEXTPAD;
+        d.ty0 = outerTop - tbb.top;
+        d.bx = tbb.width + 2 * HOVERTEXTPAD;
+        d.by = tbb.height + 2 * HOVERTEXTPAD;
         d.anchor = 'start';
         d.txwidth = tbb.width;
         d.tx2width = tx2width;
         d.offset = 0;
 
-        if(rotateLabels) {
+        if (rotateLabels) {
             d.pos = htx;
             anchorStartOK = hty + dy / 2 + txTotalWidth <= outerHeight;
             anchorEndOK = hty - dy / 2 - txTotalWidth >= 0;
-            if((d.idealAlign === 'top' || !anchorStartOK) && anchorEndOK) {
+            if ((d.idealAlign === 'top' || !anchorStartOK) && anchorEndOK) {
                 hty -= dy / 2;
                 d.anchor = 'end';
-            } else if(anchorStartOK) {
+            } else if (anchorStartOK) {
                 hty += dy / 2;
                 d.anchor = 'start';
             } else d.anchor = 'middle';
@@ -1000,19 +1000,19 @@ function createHoverText(hoverData, opts) {
             d.pos = hty;
             anchorStartOK = htx + dx / 2 + txTotalWidth <= outerWidth;
             anchorEndOK = htx - dx / 2 - txTotalWidth >= 0;
-            if((d.idealAlign === 'left' || !anchorStartOK) && anchorEndOK) {
+            if ((d.idealAlign === 'left' || !anchorStartOK) && anchorEndOK) {
                 htx -= dx / 2;
                 d.anchor = 'end';
-            } else if(anchorStartOK) {
+            } else if (anchorStartOK) {
                 htx += dx / 2;
                 d.anchor = 'start';
             } else d.anchor = 'middle';
         }
 
-        tx.attr('text-anchor',d.anchor);
-        if(tx2width) tx2.attr('text-anchor',d.anchor);
-        g.attr('transform','translate('+htx+','+hty+')'+
-            (rotateLabels ? 'rotate('+YANGLE+')' : ''));
+        tx.attr('text-anchor', d.anchor);
+        if (tx2width) tx2.attr('text-anchor', d.anchor);
+        g.attr('transform', 'translate(' + htx + ',' + hty + ')' +
+            (rotateLabels ? 'rotate(' + YANGLE + ')' : ''));
     });
 
     return hoverLabels;
@@ -1033,20 +1033,20 @@ function createHoverText(hoverData, opts) {
 function hoverAvoidOverlaps(hoverData, ax) {
     var nummoves = 0,
         pmin = ax._offset,
-        pmax = ax._offset+ax._length,
+        pmax = ax._offset + ax._length,
 
         // make groups of touching points
         pointgroups = hoverData
-            .map(function(d,i){
+            .map(function (d, i) {
                 return [{
                     i: i,
                     dp: 0,
                     pos: d.pos,
                     posref: d.posref,
-                    size: d.by*(ax._id.charAt(0)==='x' ? YFACTOR : 1)/2
+                    size: d.by * (ax._id.charAt(0) === 'x' ? YFACTOR : 1) / 2
                 }];
             })
-            .sort(function(a,b){ return a[0].posref-b[0].posref; }),
+            .sort(function (a, b) { return a[0].posref - b[0].posref; }),
         donepositioning,
         topOverlap,
         bottomOverlap,
@@ -1054,73 +1054,73 @@ function hoverAvoidOverlaps(hoverData, ax) {
         pti,
         sumdp;
 
-    function constrainGroup(grp){
+    function constrainGroup(grp) {
         var minPt = grp[0],
-            maxPt = grp[grp.length-1];
+            maxPt = grp[grp.length - 1];
 
         // overlap with the top - positive vals are overlaps
-        topOverlap = pmin-minPt.pos-minPt.dp+minPt.size;
+        topOverlap = pmin - minPt.pos - minPt.dp + minPt.size;
 
         // overlap with the bottom - positive vals are overlaps
-        bottomOverlap = maxPt.pos+maxPt.dp+maxPt.size-pmax;
+        bottomOverlap = maxPt.pos + maxPt.dp + maxPt.size - pmax;
 
         // check for min overlap first, so that we always
         // see the largest labels
         // allow for .01px overlap, so we don't get an
         // infinite loop from rounding errors
-        if(topOverlap>0.01) {
-            for(j=grp.length-1; j>=0; j--) grp[j].dp += topOverlap;
+        if (topOverlap > 0.01) {
+            for (j = grp.length - 1; j >= 0; j--) grp[j].dp += topOverlap;
             donepositioning = false;
         }
-        if(bottomOverlap<0.01) return;
-        if(topOverlap<-0.01) {
+        if (bottomOverlap < 0.01) return;
+        if (topOverlap < -0.01) {
             // make sure we're not pushing back and forth
-            for(j=grp.length-1; j>=0; j--) grp[j].dp -= bottomOverlap;
+            for (j = grp.length - 1; j >= 0; j--) grp[j].dp -= bottomOverlap;
             donepositioning = false;
         }
-        if(!donepositioning) return;
+        if (!donepositioning) return;
 
         // no room to fix positioning, delete off-screen points
 
         // first see how many points we need to delete
         var deleteCount = 0;
-        for(i=0; i<grp.length; i++) {
+        for (i = 0; i < grp.length; i++) {
             pti = grp[i];
-            if(pti.pos+pti.dp+pti.size>pmax) deleteCount++;
+            if (pti.pos + pti.dp + pti.size > pmax) deleteCount++;
         }
 
         // start by deleting points whose data is off screen
-        for(i=grp.length-1; i>=0; i--) {
-            if(deleteCount<=0) break;
+        for (i = grp.length - 1; i >= 0; i--) {
+            if (deleteCount <= 0) break;
             pti = grp[i];
 
             // pos has already been constrained to [pmin,pmax]
             // so look for points close to that to delete
-            if(pti.pos>pmax-1) {
+            if (pti.pos > pmax - 1) {
                 pti.del = true;
                 deleteCount--;
             }
         }
-        for(i=0; i<grp.length; i++) {
-            if(deleteCount<=0) break;
+        for (i = 0; i < grp.length; i++) {
+            if (deleteCount <= 0) break;
             pti = grp[i];
 
             // pos has already been constrained to [pmin,pmax]
             // so look for points close to that to delete
-            if(pti.pos<pmin+1) {
+            if (pti.pos < pmin + 1) {
                 pti.del = true;
                 deleteCount--;
 
                 // shift the whole group minus into this new space
-                bottomOverlap = pti.size*2;
-                for(j=grp.length-1; j>=0; j--) grp[j].dp -= bottomOverlap;
+                bottomOverlap = pti.size * 2;
+                for (j = grp.length - 1; j >= 0; j--) grp[j].dp -= bottomOverlap;
             }
         }
         // then delete points that go off the bottom
-        for(i=grp.length-1; i>=0; i--) {
-            if(deleteCount<=0) break;
+        for (i = grp.length - 1; i >= 0; i--) {
+            if (deleteCount <= 0) break;
             pti = grp[i];
-            if(pti.pos+pti.dp+pti.size>pmax) {
+            if (pti.pos + pti.dp + pti.size > pmax) {
                 pti.del = true;
                 deleteCount--;
             }
@@ -1129,7 +1129,7 @@ function hoverAvoidOverlaps(hoverData, ax) {
 
     // loop through groups, combining them if they overlap,
     // until nothing moves
-    while(!donepositioning && nummoves<=hoverData.length) {
+    while (!donepositioning && nummoves <= hoverData.length) {
         // to avoid infinite loops, don't move more times
         // than there are traces
         nummoves++;
@@ -1138,29 +1138,29 @@ function hoverAvoidOverlaps(hoverData, ax) {
         // reverse this if it does
         donepositioning = true;
         i = 0;
-        while(i<pointgroups.length-1) {
-                // the higher (g0) and lower (g1) point group
+        while (i < pointgroups.length - 1) {
+            // the higher (g0) and lower (g1) point group
             var g0 = pointgroups[i],
-                g1 = pointgroups[i+1],
+                g1 = pointgroups[i + 1],
 
                 // the lowest point in the higher group (p0)
                 // the highest point in the lower group (p1)
-                p0 = g0[g0.length-1],
+                p0 = g0[g0.length - 1],
                 p1 = g1[0];
-            topOverlap = p0.pos+p0.dp+p0.size-p1.pos-p1.dp+p1.size;
-            if(topOverlap>0.01) {
+            topOverlap = p0.pos + p0.dp + p0.size - p1.pos - p1.dp + p1.size;
+            if (topOverlap > 0.01) {
                 // push the new point(s) added to this group out of the way
-                for(j=g1.length-1; j>=0; j--) g1[j].dp += topOverlap;
+                for (j = g1.length - 1; j >= 0; j--) g1[j].dp += topOverlap;
 
                 // add them to the group
-                g0.push.apply(g0,g1);
-                pointgroups.splice(i+1,1);
+                g0.push.apply(g0, g1);
+                pointgroups.splice(i + 1, 1);
 
                 // adjust for minimum average movement
                 sumdp = 0;
-                for(j=g0.length-1; j>=0; j--) sumdp += g0[j].dp;
-                bottomOverlap = sumdp/g0.length;
-                for(j=g0.length-1; j>=0; j--) g0[j].dp -= bottomOverlap;
+                for (j = g0.length - 1; j >= 0; j--) sumdp += g0[j].dp;
+                bottomOverlap = sumdp / g0.length;
+                for (j = g0.length - 1; j >= 0; j--) g0[j].dp -= bottomOverlap;
                 donepositioning = false;
             }
             else i++;
@@ -1171,9 +1171,9 @@ function hoverAvoidOverlaps(hoverData, ax) {
     }
 
     // now put these offsets into hoverData
-    for(i=pointgroups.length-1; i>=0; i--) {
+    for (i = pointgroups.length - 1; i >= 0; i--) {
         var grp = pointgroups[i];
-        for(j=grp.length-1; j>=0; j--) {
+        for (j = grp.length - 1; j >= 0; j--) {
             var pt = grp[j],
                 hoverPt = hoverData[pt.i];
             hoverPt.offset = pt.dp;
@@ -1185,55 +1185,55 @@ function hoverAvoidOverlaps(hoverData, ax) {
 function alignHoverText(hoverLabels, rotateLabels) {
     // finally set the text positioning relative to the data and draw the
     // box around it
-    hoverLabels.each(function(d){
+    hoverLabels.each(function (d) {
         var g = d3.select(this);
-        if(d.del) {
+        if (d.del) {
             g.remove();
             return;
         }
-        var horzSign = d.anchor==='end' ? -1 : 1,
+        var horzSign = d.anchor === 'end' ? -1 : 1,
             tx = g.select('text.nums'),
-            alignShift = {start:1,end:-1,middle:0}[d.anchor],
-            txx = alignShift*(HOVERARROWSIZE+HOVERTEXTPAD),
-            tx2x = txx+alignShift*(d.txwidth+HOVERTEXTPAD),
+            alignShift = { start: 1, end: -1, middle: 0 }[d.anchor],
+            txx = alignShift * (HOVERARROWSIZE + HOVERTEXTPAD),
+            tx2x = txx + alignShift * (d.txwidth + HOVERTEXTPAD),
             offsetX = 0,
             offsetY = d.offset;
-        if(d.anchor==='middle') {
-            txx-=d.tx2width/2;
-            tx2x-=d.tx2width/2;
+        if (d.anchor === 'middle') {
+            txx -= d.tx2width / 2;
+            tx2x -= d.tx2width / 2;
         }
-        if(rotateLabels) {
+        if (rotateLabels) {
             offsetY *= -YSHIFTY;
-            offsetX = d.offset*YSHIFTX;
+            offsetX = d.offset * YSHIFTX;
         }
 
-        g.select('path').attr('d',d.anchor==='middle' ?
+        g.select('path').attr('d', d.anchor === 'middle' ?
             // middle aligned: rect centered on data
-            ('M-'+(d.bx/2)+',-'+(d.by/2)+'h'+d.bx+'v'+d.by+'h-'+d.bx+'Z') :
+            ('M-' + (d.bx / 2) + ',-' + (d.by / 2) + 'h' + d.bx + 'v' + d.by + 'h-' + d.bx + 'Z') :
             // left or right aligned: side rect with arrow to data
-            ('M0,0L'+(horzSign*HOVERARROWSIZE+offsetX)+','+(HOVERARROWSIZE+offsetY)+
-                'v'+(d.by/2-HOVERARROWSIZE)+
-                'h'+(horzSign*d.bx)+
-                'v-'+d.by+
-                'H'+(horzSign*HOVERARROWSIZE+offsetX)+
-                'V'+(offsetY-HOVERARROWSIZE)+
+            ('M0,0L' + (horzSign * HOVERARROWSIZE + offsetX) + ',' + (HOVERARROWSIZE + offsetY) +
+                'v' + (d.by / 2 - HOVERARROWSIZE) +
+                'h' + (horzSign * d.bx) +
+                'v-' + d.by +
+                'H' + (horzSign * HOVERARROWSIZE + offsetX) +
+                'V' + (offsetY - HOVERARROWSIZE) +
                 'Z'));
 
         tx.call(Plotly.Drawing.setPosition,
-                txx+offsetX, offsetY+d.ty0-d.by/2+HOVERTEXTPAD)
+            txx + offsetX, offsetY + d.ty0 - d.by / 2 + HOVERTEXTPAD)
             .selectAll('tspan.line')
-                .attr({x:tx.attr('x'), y:tx.attr('y')});
+            .attr({ x: tx.attr('x'), y: tx.attr('y') });
 
-        if(d.tx2width) {
+        if (d.tx2width) {
             g.select('text.name, text.name tspan.line')
                 .call(Plotly.Drawing.setPosition,
-                    tx2x+alignShift*HOVERTEXTPAD+offsetX,
-                    offsetY+d.ty0-d.by/2+HOVERTEXTPAD);
+                    tx2x + alignShift * HOVERTEXTPAD + offsetX,
+                    offsetY + d.ty0 - d.by / 2 + HOVERTEXTPAD);
             g.select('rect')
                 .call(Plotly.Drawing.setRect,
-                    tx2x+(alignShift-1)*d.tx2width/2+offsetX,
-                    offsetY-d.by/2-1,
-                    d.tx2width, d.by+2);
+                    tx2x + (alignShift - 1) * d.tx2width / 2 + offsetX,
+                    offsetY - d.by / 2 - 1,
+                    d.tx2width, d.by + 2);
         }
     });
 }
@@ -1241,14 +1241,14 @@ function alignHoverText(hoverLabels, rotateLabels) {
 function hoverChanged(gd, evt, oldhoverdata) {
     // don't emit any events if nothing changed or
     // if fx.hover was called manually
-    if(!evt.target) return false;
-    if(!oldhoverdata || oldhoverdata.length!==gd._hoverdata.length) return true;
+    if (!evt.target) return false;
+    if (!oldhoverdata || oldhoverdata.length !== gd._hoverdata.length) return true;
 
-    for(var i = oldhoverdata.length-1; i>=0; i--) {
+    for (var i = oldhoverdata.length - 1; i >= 0; i--) {
         var oldPt = oldhoverdata[i],
             newPt = gd._hoverdata[i];
-        if(oldPt.curveNumber!==newPt.curveNumber ||
-                String(oldPt.pointNumber)!==String(newPt.pointNumber)) {
+        if (oldPt.curveNumber !== newPt.curveNumber ||
+            String(oldPt.pointNumber) !== String(newPt.pointNumber)) {
             return true;
         }
     }
@@ -1256,26 +1256,26 @@ function hoverChanged(gd, evt, oldhoverdata) {
 }
 
 // remove hover effects on mouse out, and emit unhover event
-function unhover(gd, evt){
+function unhover(gd, evt) {
     var fullLayout = gd._fullLayout;
-    if(!evt) evt = {};
-    if(evt.target &&
-       Events.triggerHandler(gd, 'plotly_beforehover', evt) === false) {
+    if (!evt) evt = {};
+    if (evt.target &&
+        Events.triggerHandler(gd, 'plotly_beforehover', evt) === false) {
         return;
     }
     fullLayout._hoverlayer.selectAll('g').remove();
-    if(evt.target && gd._hoverdata) {
-        gd.emit('plotly_unhover', {points: gd._hoverdata});
+    if (evt.target && gd._hoverdata) {
+        gd.emit('plotly_unhover', { points: gd._hoverdata });
     }
     gd._hoverdata = undefined;
 }
 
 // on click
-fx.click = function(gd,evt){
-    if(gd._hoverdata && evt && evt.target) {
-        gd.emit('plotly_click', {button: evt.button, points: gd._hoverdata});
+fx.click = function (gd, evt) {
+    if (gd._hoverdata && evt && evt.target) {
+        gd.emit('plotly_click', { button: evt.button, points: gd._hoverdata });
         // why do we get a double event without this???
-        if(evt.stopImmediatePropagation) evt.stopImmediatePropagation();
+        if (evt.stopImmediatePropagation) evt.stopImmediatePropagation();
     }
 };
 
@@ -1285,9 +1285,9 @@ fx.click = function(gd,evt){
 // ----------------------------------------------------
 
 function getDragCursor(nsew, dragmode) {
-    if(!nsew) return 'pointer';
-    if(nsew === 'nsew') {
-        if(dragmode === 'pan') return 'move';
+    if (!nsew) return 'pointer';
+    if (nsew === 'nsew') {
+        if (dragmode === 'pan') return 'move';
         return 'crosshair';
     }
     return nsew.toLowerCase() + '-resize';
@@ -1325,16 +1325,16 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         subplotXa,
         subplotYa;
 
-    for(i = 1; i < subplots.length; i++) {
+    for (i = 1; i < subplots.length; i++) {
         subplotXa = subplots[i].x();
         subplotYa = subplots[i].y();
-        if(xa.indexOf(subplotXa) === -1) xa.push(subplotXa);
-        if(ya.indexOf(subplotYa) === -1) ya.push(subplotYa);
+        if (xa.indexOf(subplotXa) === -1) xa.push(subplotXa);
+        if (ya.indexOf(subplotYa) === -1) ya.push(subplotYa);
     }
 
     function isDirectionActive(axList, activeVal) {
-        for(i = 0; i < axList.length; i++) {
-            if(!axList[i].fixedrange) return activeVal;
+        for (i = 0; i < axList.length; i++) {
+            if (!axList[i].fixedrange) return activeVal;
         }
         return '';
     }
@@ -1349,16 +1349,16 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     dragger3.enter().append('rect')
         .classed('drag', true)
         .classed(dragClass, true)
-        .style({fill: 'transparent', 'stroke-width': 0})
+        .style({ fill: 'transparent', 'stroke-width': 0 })
         .attr('data-subplot', plotinfo.id);
     dragger3.call(Plotly.Drawing.setRect, x, y, w, h)
-        .call(fx.setCursor,cursor);
+        .call(fx.setCursor, cursor);
     var dragger = dragger3.node();
 
     // still need to make the element if the axes are disabled
     // but nuke its events (except for maindrag which needs them for hover)
     // and stop there
-    if(!yActive && !xActive) {
+    if (!yActive && !xActive) {
         dragger.onmousedown = null;
         dragger.style.pointerEvents = (ns + ew === 'nsew') ? 'all' : 'none';
         return dragger;
@@ -1376,33 +1376,33 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         xaxes: xa,
         yaxes: ya,
         doubleclick: doubleClick,
-        prepFn: function(e, startX, startY) {
+        prepFn: function (e, startX, startY) {
             var dragModeNow = gd._fullLayout.dragmode;
-            if(ns + ew === 'nsew') {
+            if (ns + ew === 'nsew') {
                 // main dragger handles all drag modes, and changes
                 // to pan (or to zoom if it already is pan) on shift
-                if(e.shiftKey) {
-                    if(dragModeNow === 'pan') dragModeNow = 'zoom';
+                if (e.shiftKey) {
+                    if (dragModeNow === 'pan') dragModeNow = 'zoom';
                     else dragModeNow = 'pan';
                 }
             }
             // all other draggers just pan
             else dragModeNow = 'pan';
 
-            if(dragModeNow === 'lasso') dragOptions.minDrag = 1;
+            if (dragModeNow === 'lasso') dragOptions.minDrag = 1;
             else dragOptions.minDrag = undefined;
 
-            if(dragModeNow === 'zoom') {
+            if (dragModeNow === 'zoom') {
                 dragOptions.moveFn = zoomMove;
                 dragOptions.doneFn = zoomDone;
                 zoomPrep(e, startX, startY);
             }
-            else if(dragModeNow === 'pan') {
+            else if (dragModeNow === 'pan') {
                 dragOptions.moveFn = plotDrag;
                 dragOptions.doneFn = dragDone;
                 clearSelect();
             }
-            else if(dragModeNow === 'select' || dragModeNow === 'lasso') {
+            else if (dragModeNow === 'select' || dragModeNow === 'lasso') {
                 prepSelect(e, startX, startY, dragOptions, dragModeNow);
             }
         }
@@ -1424,18 +1424,18 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         var dragBBox = dragger.getBoundingClientRect();
         x0 = startX - dragBBox.left;
         y0 = startY - dragBBox.top;
-        box = {l: x0, r: x0, w: 0, t: y0, b: y0, h: 0};
+        box = { l: x0, r: x0, w: 0, t: y0, b: y0, h: 0 };
         lum = gd._hmpixcount ?
             (gd._hmlumcount / gd._hmpixcount) :
             tinycolor(gd._fullLayout.plot_bgcolor).getLuminance();
-        path0 = path0 = 'M0,0H'+pw+'V'+ph+'H0V0';
+        path0 = path0 = 'M0,0H' + pw + 'V' + ph + 'H0V0';
         dimmed = false;
         zoomMode = 'xy';
 
         zb = plotinfo.plot.append('path')
             .attr('class', 'zoombox')
             .style({
-                'fill': lum>0.2 ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,0)',
+                'fill': lum > 0.2 ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,0)',
                 'stroke-width': 0
             })
             .attr('d', path0 + 'Z');
@@ -1448,10 +1448,10 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 'stroke-width': 1,
                 opacity: 0
             })
-            .attr('d','M0,0Z');
+            .attr('d', 'M0,0Z');
 
         clearSelect();
-        for(i = 0; i < allaxes.length; i++) forceNumbers(allaxes[i].range);
+        for (i = 0; i < allaxes.length; i++) forceNumbers(allaxes[i].range);
     }
 
     function clearSelect() {
@@ -1475,8 +1475,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         // look for small drags in one direction or the other,
         // and only drag the other axis
-        if(!yActive || dy < Math.min(Math.max(dx * 0.6, MINDRAG), MINZOOM)) {
-            if(dx < MINDRAG) {
+        if (!yActive || dy < Math.min(Math.max(dx * 0.6, MINDRAG), MINZOOM)) {
+            if (dx < MINDRAG) {
                 zoomMode = '';
                 box.r = box.l;
                 box.t = box.b;
@@ -1493,7 +1493,7 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                     'h3v' + (2 * MINZOOM + 1) + 'h-3Z');
             }
         }
-        else if(!xActive || dx < Math.min(dy * 0.6, MINZOOM)) {
+        else if (!xActive || dx < Math.min(dy * 0.6, MINZOOM)) {
             box.l = 0;
             box.r = pw;
             zoomMode = 'y';
@@ -1506,14 +1506,14 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         else {
             zoomMode = 'xy';
             corners.attr('d',
-                'M'+(box.l-3.5)+','+(box.t-0.5+clen)+'h3v'+(-clen)+
-                        'h'+clen+'v-3h-'+(clen+3)+'ZM'+
-                    (box.r+3.5)+','+(box.t-0.5+clen)+'h-3v'+(-clen)+
-                        'h'+(-clen)+'v-3h'+(clen+3)+'ZM'+
-                    (box.r+3.5)+','+(box.b+0.5-clen)+'h-3v'+clen+
-                        'h'+(-clen)+'v3h'+(clen+3)+'ZM'+
-                    (box.l-3.5)+','+(box.b+0.5-clen)+'h3v'+clen+
-                        'h'+clen+'v3h-'+(clen+3)+'Z');
+                'M' + (box.l - 3.5) + ',' + (box.t - 0.5 + clen) + 'h3v' + (-clen) +
+                'h' + clen + 'v-3h-' + (clen + 3) + 'ZM' +
+                (box.r + 3.5) + ',' + (box.t - 0.5 + clen) + 'h-3v' + (-clen) +
+                'h' + (-clen) + 'v-3h' + (clen + 3) + 'ZM' +
+                (box.r + 3.5) + ',' + (box.b + 0.5 - clen) + 'h-3v' + clen +
+                'h' + (-clen) + 'v3h' + (clen + 3) + 'ZM' +
+                (box.l - 3.5) + ',' + (box.b + 0.5 - clen) + 'h3v' + clen +
+                'h' + clen + 'v3h-' + (clen + 3) + 'Z');
         }
         box.w = box.r - box.l;
         box.h = box.b - box.t;
@@ -1521,15 +1521,15 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         // Not sure about the addition of window.scrollX/Y...
         // seems to work but doesn't seem robust.
         zb.attr('d',
-            path0+'M'+(box.l)+','+(box.t)+'v'+(box.h)+
-            'h'+(box.w)+'v-'+(box.h)+'h-'+(box.w)+'Z');
-        if(!dimmed) {
+            path0 + 'M' + (box.l) + ',' + (box.t) + 'v' + (box.h) +
+            'h' + (box.w) + 'v-' + (box.h) + 'h-' + (box.w) + 'Z');
+        if (!dimmed) {
             zb.transition()
-                .style('fill', lum>0.2 ? 'rgba(0,0,0,0.4)' :
+                .style('fill', lum > 0.2 ? 'rgba(0,0,0,0.4)' :
                     'rgba(255,255,255,0.3)')
                 .duration(200);
             corners.transition()
-                .style('opacity',1)
+                .style('opacity', 1)
                 .duration(200);
             dimmed = true;
         }
@@ -1542,9 +1542,9 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         var zoomInfo = [];
 
-        for(i = 0; i < axList.length; i++) {
+        for (i = 0; i < axList.length; i++) {
             axi = axList[i];
-            if(axi.fixedrange) continue;
+            if (axi.fixedrange) continue;
 
             axRange = axi.range;
             axi.range = [
@@ -1564,8 +1564,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     }
 
     function zoomDone(dragged, numClicks) {
-        if(Math.min(box.h, box.w) < MINDRAG * 2) {
-            if(numClicks === 2) doubleClick();
+        if (Math.min(box.h, box.w) < MINDRAG * 2) {
+            if (numClicks === 2) doubleClick();
             else pauseForDrag(gd);
 
             return removeZoombox(gd);
@@ -1583,36 +1583,42 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         }
 
         removeZoombox(gd);
-        dragTail(zoomMode);
+        
+        // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
+        var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, userHandled: false };
+        gd.emit('plotly_zoom_before', args);
 
-        if(SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
-            Plotly.Lib.notifier('Double-click to<br>zoom back out','long');
-            SHOWZOOMOUTTIP = false;
+        if (!args.userHandled) {
+            dragTail(zoomMode);
+
+            if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+                Plotly.Lib.notifier('Double-click to<br>zoom back out', 'long');
+                SHOWZOOMOUTTIP = false;
+            }
+
+            gd.emit('plotly_zoom_after', args);
         }
-
-
-        gd.emit('plotly_zoom_after', { zoomMode: zoomMode, box: box, axes: axesZoomInfo });
     }
 
     function dragDone(dragged, numClicks) {
         var singleEnd = (ns + ew).length === 1;
-        if(dragged) dragTail();
-        else if(numClicks === 2 && !singleEnd) doubleClick();
-        else if(numClicks === 1 && singleEnd) {
+        if (dragged) dragTail();
+        else if (numClicks === 2 && !singleEnd) doubleClick();
+        else if (numClicks === 1 && singleEnd) {
             var ax = ns ? ya[0] : xa[0],
-                end = (ns==='s' || ew==='w') ? 0 : 1,
+                end = (ns === 's' || ew === 'w') ? 0 : 1,
                 attrStr = ax._name + '.range[' + end + ']',
                 initialText = getEndText(ax, end),
                 hAlign = 'left',
                 vAlign = 'middle';
 
-            if(ax.fixedrange) return;
+            if (ax.fixedrange) return;
 
-            if(ns) {
+            if (ns) {
                 vAlign = (ns === 'n') ? 'top' : 'bottom';
-                if(ax.side === 'right') hAlign = 'right';
+                if (ax.side === 'right') hAlign = 'right';
             }
-            else if(ew === 'e') hAlign = 'right';
+            else if (ew === 'e') hAlign = 'right';
 
             dragger3
                 .call(Plotly.util.makeEditable, null, {
@@ -1623,9 +1629,9 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                     horizontalAlign: hAlign,
                     verticalAlign: vAlign
                 })
-                .on('edit', function(text) {
-                    var v = ax.type==='category' ? ax.c2l(text) : ax.d2l(text);
-                    if(v !== undefined) {
+                .on('edit', function (text) {
+                    var v = ax.type === 'category' ? ax.c2l(text) : ax.d2l(text);
+                    if (v !== undefined) {
                         Plotly.relayout(gd, attrStr, v);
                     }
                 });
@@ -1634,7 +1640,7 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     }
 
     // scroll zoom, on all draggers except corners
-    var scrollViewBox = [0,0,pw,ph],
+    var scrollViewBox = [0, 0, pw, ph],
         // wait a little after scrolling before redrawing
         redrawTimer = null,
         REDRAWDELAY = 300,
@@ -1645,23 +1651,23 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         // deactivate mousewheel scrolling on embedded graphs
         // devs can override this with layout._enablescrollzoom,
         // but _ ensures this setting won't leave their page
-        if(!gd._context.scrollZoom && !fullLayout._enablescrollzoom) {
+        if (!gd._context.scrollZoom && !fullLayout._enablescrollzoom) {
             return;
         }
         var pc = gd.querySelector('.plotly');
 
         // if the plot has scrollbars (more than a tiny excess)
         // disable scrollzoom too.
-        if(pc.scrollHeight-pc.clientHeight>10 ||
-                pc.scrollWidth-pc.clientWidth>10) {
+        if (pc.scrollHeight - pc.clientHeight > 10 ||
+            pc.scrollWidth - pc.clientWidth > 10) {
             return;
         }
 
         clearTimeout(redrawTimer);
 
         var wheelDelta = -e.deltaY;
-        if(!isFinite(wheelDelta)) wheelDelta = e.wheelDelta / 10;
-        if(!isFinite(wheelDelta)) {
+        if (!isFinite(wheelDelta)) wheelDelta = e.wheelDelta / 10;
+        if (!isFinite(wheelDelta)) {
             console.log('did not find wheel motion attributes', e);
             return;
         }
@@ -1670,38 +1676,38 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             gbb = mainplot.draglayer.select('.nsewdrag')
                 .node().getBoundingClientRect(),
             xfrac = (e.clientX - gbb.left) / gbb.width,
-            vbx0 = scrollViewBox[0] + scrollViewBox[2]*xfrac,
-            yfrac = (gbb.bottom - e.clientY)/gbb.height,
-            vby0 = scrollViewBox[1]+scrollViewBox[3]*(1-yfrac),
+            vbx0 = scrollViewBox[0] + scrollViewBox[2] * xfrac,
+            yfrac = (gbb.bottom - e.clientY) / gbb.height,
+            vby0 = scrollViewBox[1] + scrollViewBox[3] * (1 - yfrac),
             i;
 
         function zoomWheelOneAxis(ax, centerFraction, zoom) {
-            if(ax.fixedrange) return;
+            if (ax.fixedrange) return;
             forceNumbers(ax.range);
             var axRange = ax.range,
                 v0 = axRange[0] + (axRange[1] - axRange[0]) * centerFraction;
             ax.range = [v0 + (axRange[0] - v0) * zoom, v0 + (axRange[1] - v0) * zoom];
         }
 
-        if(ew) {
-            for(i = 0; i < xa.length; i++) zoomWheelOneAxis(xa[i], xfrac, zoom);
+        if (ew) {
+            for (i = 0; i < xa.length; i++) zoomWheelOneAxis(xa[i], xfrac, zoom);
             scrollViewBox[2] *= zoom;
             scrollViewBox[0] = vbx0 - scrollViewBox[2] * xfrac;
         }
-        if(ns) {
-            for(i = 0; i < ya.length; i++) zoomWheelOneAxis(ya[i], yfrac, zoom);
+        if (ns) {
+            for (i = 0; i < ya.length; i++) zoomWheelOneAxis(ya[i], yfrac, zoom);
             scrollViewBox[3] *= zoom;
             scrollViewBox[1] = vby0 - scrollViewBox[3] * (1 - yfrac);
         }
 
         // viewbox redraw at first
         updateViewBoxes(scrollViewBox);
-        ticksAndAnnotations(ns,ew);
+        ticksAndAnnotations(ns, ew);
 
         // then replot after a delay to make sure
         // no more scrolling is coming
-        redrawTimer = setTimeout(function(){
-            scrollViewBox = [0,0,pw,ph];
+        redrawTimer = setTimeout(function () {
+            scrollViewBox = [0, 0, pw, ph];
             dragTail();
         }, REDRAWDELAY);
 
@@ -1709,26 +1715,26 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     }
 
     // everything but the corners gets wheel zoom
-    if(ns.length*ew.length!==1) {
+    if (ns.length * ew.length !== 1) {
         // still seems to be some confusion about onwheel vs onmousewheel...
-        if(dragger.onwheel!==undefined) dragger.onwheel = zoomWheel;
-        else if(dragger.onmousewheel!==undefined) dragger.onmousewheel = zoomWheel;
+        if (dragger.onwheel !== undefined) dragger.onwheel = zoomWheel;
+        else if (dragger.onmousewheel !== undefined) dragger.onmousewheel = zoomWheel;
     }
 
     // plotDrag: move the plot in response to a drag
-    function plotDrag(dx,dy) {
+    function plotDrag(dx, dy) {
         function dragAxList(axList, pix) {
-            for(var i = 0; i < axList.length; i++) {
+            for (var i = 0; i < axList.length; i++) {
                 var axi = axList[i];
-                if(!axi.fixedrange) {
+                if (!axi.fixedrange) {
                     axi.range = [axi._r[0] - pix / axi._m, axi._r[1] - pix / axi._m];
                 }
             }
         }
 
-        if(xActive === 'ew' || yActive === 'ns') {
-            if(xActive) dragAxList(xa, dx);
-            if(yActive) dragAxList(ya, dy);
+        if (xActive === 'ew' || yActive === 'ns') {
+            if (xActive) dragAxList(xa, dx);
+            if (yActive) dragAxList(ya, dy);
             updateViewBoxes([xActive ? -dx : 0, yActive ? -dy : 0, pw, ph]);
             ticksAndAnnotations(yActive, xActive);
             return;
@@ -1740,8 +1746,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         // d<0 is expanding (cursor is off the plot, axis end moves
         //  nonlinearly so you can expand far)
         function dZoom(d) {
-            return 1-((d>=0) ? Math.min(d,0.9) :
-                1/(1/Math.max(d,-0.3)+3.222));
+            return 1 - ((d >= 0) ? Math.min(d, 0.9) :
+                1 / (1 / Math.max(d, -0.3) + 3.222));
         }
 
         // dz: set a new value for one end (0 or 1) of an axis array ax,
@@ -1752,24 +1758,24 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         function dz(ax, end, d) {
             var otherEnd = 1 - end,
                 movedi = 0;
-            for(var i = 0; i < ax.length; i++) {
+            for (var i = 0; i < ax.length; i++) {
                 var axi = ax[i];
-                if(axi.fixedrange) continue;
+                if (axi.fixedrange) continue;
                 movedi = i;
                 axi.range[end] = axi._r[otherEnd] +
-                    (axi._r[end] - axi._r[otherEnd]) / dZoom(d / axi._length);
+                (axi._r[end] - axi._r[otherEnd]) / dZoom(d / axi._length);
             }
             return ax[movedi]._length * (ax[movedi]._r[end] - ax[movedi].range[end]) /
                 (ax[movedi]._r[end] - ax[movedi]._r[otherEnd]);
         }
 
-        if(xActive === 'w') dx = dz(xa, 0, dx);
-        else if(xActive === 'e') dx = dz(xa, 1, -dx);
-        else if(!xActive) dx = 0;
+        if (xActive === 'w') dx = dz(xa, 0, dx);
+        else if (xActive === 'e') dx = dz(xa, 1, -dx);
+        else if (!xActive) dx = 0;
 
-        if(yActive === 'n') dy = dz(ya, 1, dy);
-        else if(yActive === 's') dy = dz(ya, 0, -dy);
-        else if(!yActive) dy = 0;
+        if (yActive === 'n') dy = dz(ya, 1, dy);
+        else if (yActive === 's') dy = dz(ya, 0, -dy);
+        else if (!yActive) dy = 0;
 
         updateViewBoxes([
             (xActive === 'w') ? dx : 0,
@@ -1780,28 +1786,28 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         ticksAndAnnotations(yActive, xActive);
     }
 
-    function ticksAndAnnotations(ns, ew){
+    function ticksAndAnnotations(ns, ew) {
         var activeAxIds = [],
             i;
 
         function pushActiveAxIds(axList) {
-            for(i = 0; i < axList.length; i++) {
-                if(!axList[i].fixedrange) activeAxIds.push(axList[i]._id);
+            for (i = 0; i < axList.length; i++) {
+                if (!axList[i].fixedrange) activeAxIds.push(axList[i]._id);
             }
         }
 
-        if(ew) pushActiveAxIds(xa);
-        if(ns) pushActiveAxIds(ya);
+        if (ew) pushActiveAxIds(xa);
+        if (ns) pushActiveAxIds(ya);
 
-        for(i = 0; i < activeAxIds.length; i++) {
+        for (i = 0; i < activeAxIds.length; i++) {
             Plotly.Axes.doTicks(gd, activeAxIds[i], true);
         }
 
         function redrawObjs(objArray, module) {
             var obji;
-            for(i = 0; i < objArray.length; i++) {
+            for (i = 0; i < objArray.length; i++) {
                 obji = objArray[i];
-                if((ew && activeAxIds.indexOf(obji.xref) !== -1) ||
+                if ((ew && activeAxIds.indexOf(obji.xref) !== -1) ||
                     (ns && activeAxIds.indexOf(obji.yref) !== -1)) {
                     module.draw(gd, i);
                 }
@@ -1819,24 +1825,24 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         var ax, i;
 
-        if(doubleClickConfig === 'autosize') {
-            for(i = 0; i < axList.length; i++) {
+        if (doubleClickConfig === 'autosize') {
+            for (i = 0; i < axList.length; i++) {
                 ax = axList[i];
-                if(!ax.fixedrange) attrs[ax._name + '.autorange'] = true;
+                if (!ax.fixedrange) attrs[ax._name + '.autorange'] = true;
             }
         }
-        else if(doubleClickConfig === 'reset') {
-            for(i = 0; i < axList.length; i++) {
+        else if (doubleClickConfig === 'reset') {
+            for (i = 0; i < axList.length; i++) {
                 ax = axList[i];
                 attrs[ax._name + '.range'] = ax._rangeInitial.slice();
             }
         }
-        else if(doubleClickConfig === 'reset+autosize') {
-            for(i = 0; i < axList.length; i++) {
+        else if (doubleClickConfig === 'reset+autosize') {
+            for (i = 0; i < axList.length; i++) {
                 ax = axList[i];
-                if(ax.fixedrange) continue;
-                if(ax._rangeInitial === undefined ||
-                    ax.range[0]===ax._rangeInitial[0] && ax.range[1]===ax._rangeInitial[1]) {
+                if (ax.fixedrange) continue;
+                if (ax._rangeInitial === undefined ||
+                    ax.range[0] === ax._rangeInitial[0] && ax.range[1] === ax._rangeInitial[1]) {
                     attrs[ax._name + '.autorange'] = true;
                 }
                 else attrs[ax._name + '.range'] = ax._rangeInitial.slice();
@@ -1851,19 +1857,19 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         var attrs = {};
         // revert to the previous axis settings, then apply the new ones
         // through relayout - this lets relayout manage undo/redo
-        for(var i = 0; i < allaxes.length; i++) {
+        for (var i = 0; i < allaxes.length; i++) {
             var axi = allaxes[i];
-            if(zoommode && zoommode.indexOf(axi._id.charAt(0))===-1) {
+            if (zoommode && zoommode.indexOf(axi._id.charAt(0)) === -1) {
                 continue;
             }
-            if(axi._r[0] !== axi.range[0]) attrs[axi._name+'.range[0]'] = axi.range[0];
-            if(axi._r[1] !== axi.range[1]) attrs[axi._name+'.range[1]'] = axi.range[1];
+            if (axi._r[0] !== axi.range[0]) attrs[axi._name + '.range[0]'] = axi.range[0];
+            if (axi._r[1] !== axi.range[1]) attrs[axi._name + '.range[1]'] = axi.range[1];
 
-            axi.range=axi._r.slice();
+            axi.range = axi._r.slice();
         }
 
-        updateViewBoxes([0,0,pw,ph]);
-        Plotly.relayout(gd,attrs);
+        updateViewBoxes([0, 0, pw, ph]);
+        Plotly.relayout(gd, attrs);
     }
 
     // updateViewBoxes - find all plot viewboxes that should be
@@ -1879,24 +1885,24 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             editX,
             editY;
 
-        for(i = 0; i < subplots.length; i++) {
+        for (i = 0; i < subplots.length; i++) {
             plotinfo2 = plotinfos[subplots[i]];
             xa2 = plotinfo2.x();
             ya2 = plotinfo2.y();
-            editX = ew && xa.indexOf(xa2)!==-1 && !xa2.fixedrange;
-            editY = ns && ya.indexOf(ya2)!==-1 && !ya2.fixedrange;
+            editX = ew && xa.indexOf(xa2) !== -1 && !xa2.fixedrange;
+            editY = ns && ya.indexOf(ya2) !== -1 && !ya2.fixedrange;
 
-            if(editX || editY) {
-                var newVB = [0,0,xa2._length,ya2._length];
-                if(editX) {
+            if (editX || editY) {
+                var newVB = [0, 0, xa2._length, ya2._length];
+                if (editX) {
                     newVB[0] = viewBox[0];
                     newVB[2] = viewBox[2];
                 }
-                if(editY) {
+                if (editY) {
                     newVB[1] = viewBox[1];
                     newVB[3] = viewBox[3];
                 }
-                plotinfo2.plot.attr('viewBox',newVB.join(' '));
+                plotinfo2.plot.attr('viewBox', newVB.join(' '));
             }
         }
     }
@@ -1909,17 +1915,17 @@ function getEndText(ax, end) {
         diff = Math.abs(initialVal - ax.range[1 - end]),
         dig;
 
-    if(ax.type === 'date'){
+    if (ax.type === 'date') {
         return Plotly.Lib.ms2DateTime(initialVal, diff);
     }
-    else if(ax.type==='log') {
+    else if (ax.type === 'log') {
         dig = Math.ceil(Math.max(0, -Math.log(diff) / Math.LN10)) + 3;
         return d3.format('.' + dig + 'g')(Math.pow(10, initialVal));
     }
     else { // linear numeric (or category... but just show numbers here)
         dig = Math.floor(Math.log(Math.abs(initialVal)) / Math.LN10) -
-            Math.floor(Math.log(diff) / Math.LN10) + 4;
-        return d3.format('.'+String(dig)+'g')(initialVal);
+        Math.floor(Math.log(diff) / Math.LN10) + 4;
+        return d3.format('.' + String(dig) + 'g')(initialVal);
     }
 }
 
@@ -1930,17 +1936,17 @@ function pauseForDrag(gd) {
     var deferredReplot = gd._replotPending;
     gd._replotPending = false;
 
-    setTimeout(function() {
+    setTimeout(function () {
         gd._replotPending = deferredReplot;
         finishDrag(gd);
     },
         constants.DBLCLICKDELAY
-    );
+        );
 }
 
 function finishDrag(gd) {
     gd._dragging = false;
-    if(gd._replotPending) Plotly.plot(gd);
+    if (gd._replotPending) Plotly.plot(gd);
 }
 
 function removeZoombox(gd) {
@@ -1953,19 +1959,19 @@ function removeZoombox(gd) {
 // >2/3 means right, and between is center. Pick the right fraction
 // based on where you are, and return the fraction corresponding to
 // that position on the object
-fx.dragAlign = function(v, dv, v0, v1, anchor) {
-    var vmin = (v-v0)/(v1-v0),
-        vmax = vmin+dv/(v1-v0),
-        vc = (vmin+vmax)/2;
+fx.dragAlign = function (v, dv, v0, v1, anchor) {
+    var vmin = (v - v0) / (v1 - v0),
+        vmax = vmin + dv / (v1 - v0),
+        vc = (vmin + vmax) / 2;
 
     // explicitly specified anchor
-    if(anchor==='left' || anchor==='bottom') return vmin;
-    if(anchor==='center' || anchor==='middle') return vc;
-    if(anchor==='right' || anchor==='top') return vmax;
+    if (anchor === 'left' || anchor === 'bottom') return vmin;
+    if (anchor === 'center' || anchor === 'middle') return vc;
+    if (anchor === 'right' || anchor === 'top') return vmax;
 
     // automatic based on position
-    if(vmin<(2/3)-vc) return vmin;
-    if(vmax>(4/3)-vc) return vmax;
+    if (vmin < (2 / 3) - vc) return vmin;
+    if (vmax > (4 / 3) - vc) return vmax;
     return vc;
 };
 
@@ -1973,19 +1979,19 @@ fx.dragAlign = function(v, dv, v0, v1, anchor) {
 // set cursors pointing toward the closest corner/side,
 // to indicate alignment
 // x and y are 0-1, fractions of the plot area
-var cursorset = [['sw-resize','s-resize','se-resize'],
-            ['w-resize','move','e-resize'],
-            ['nw-resize','n-resize','ne-resize']];
-fx.dragCursors = function(x,y,xanchor,yanchor){
-    if(xanchor==='left') x=0;
-    else if(xanchor==='center') x=1;
-    else if(xanchor==='right') x=2;
-    else x = Plotly.Lib.constrain(Math.floor(x*3),0,2);
+var cursorset = [['sw-resize', 's-resize', 'se-resize'],
+    ['w-resize', 'move', 'e-resize'],
+    ['nw-resize', 'n-resize', 'ne-resize']];
+fx.dragCursors = function (x, y, xanchor, yanchor) {
+    if (xanchor === 'left') x = 0;
+    else if (xanchor === 'center') x = 1;
+    else if (xanchor === 'right') x = 2;
+    else x = Plotly.Lib.constrain(Math.floor(x * 3), 0, 2);
 
-    if(yanchor==='bottom') y=0;
-    else if(yanchor==='middle') y=1;
-    else if(yanchor==='top') y=2;
-    else y = Plotly.Lib.constrain(Math.floor(y*3),0,2);
+    if (yanchor === 'bottom') y = 0;
+    else if (yanchor === 'middle') y = 1;
+    else if (yanchor === 'top') y = 2;
+    else y = Plotly.Lib.constrain(Math.floor(y * 3), 0, 2);
 
     return cursorset[y][x];
 };
@@ -2010,7 +2016,7 @@ fx.dragCursors = function(x,y,xanchor,yanchor){
  *          numClicks is how many clicks we've registered within
  *          a doubleclick time
  */
-fx.dragElement = function(options) {
+fx.dragElement = function (options) {
     var gd = Plotly.Lib.getPlotDiv(options.element) || {},
         numClicks = 1,
         DBLCLICKDELAY = constants.DBLCLICKDELAY,
@@ -2020,13 +2026,13 @@ fx.dragElement = function(options) {
         dragCover,
         initialTarget;
 
-    if(!gd._mouseDownTime) gd._mouseDownTime = 0;
+    if (!gd._mouseDownTime) gd._mouseDownTime = 0;
 
     function onStart(e) {
         // because we cancel event bubbling,
         // explicitly trigger input blur event.
         var inputBox = document.querySelector('.plugin-editable');
-        if(inputBox) d3.select(inputBox).on('blur').call(inputBox);
+        if (inputBox) d3.select(inputBox).on('blur').call(inputBox);
 
         // make dragging and dragged into properties of gd
         // so that others can look at and modify them
@@ -2037,7 +2043,7 @@ fx.dragElement = function(options) {
         initialTarget = e.target;
 
         newMouseDownTime = (new Date()).getTime();
-        if(newMouseDownTime - gd._mouseDownTime < DBLCLICKDELAY) {
+        if (newMouseDownTime - gd._mouseDownTime < DBLCLICKDELAY) {
             // in a click train
             numClicks += 1;
         }
@@ -2047,7 +2053,7 @@ fx.dragElement = function(options) {
             gd._mouseDownTime = newMouseDownTime;
         }
 
-        if(options.prepFn) options.prepFn(e, startX, startY);
+        if (options.prepFn) options.prepFn(e, startX, startY);
 
         dragCover = coverSlip();
 
@@ -2065,14 +2071,14 @@ fx.dragElement = function(options) {
             dy = e.clientY - startY,
             minDrag = options.minDrag || constants.MINDRAG;
 
-        if(Math.abs(dx) < minDrag) dx = 0;
-        if(Math.abs(dy) < minDrag) dy = 0;
-        if(dx||dy) {
+        if (Math.abs(dx) < minDrag) dx = 0;
+        if (Math.abs(dy) < minDrag) dy = 0;
+        if (dx || dy) {
             gd._dragged = true;
             fx.unhover(gd);
         }
 
-        if(options.moveFn) options.moveFn(dx, dy, gd._dragged);
+        if (options.moveFn) options.moveFn(dx, dy, gd._dragged);
 
         return Plotly.Lib.pauseEvent(e);
     }
@@ -2083,7 +2089,7 @@ fx.dragElement = function(options) {
         dragCover.onmouseout = null;
         Plotly.Lib.removeElement(dragCover);
 
-        if(!gd._dragging) {
+        if (!gd._dragging) {
             gd._dragged = false;
             return;
         }
@@ -2091,14 +2097,14 @@ fx.dragElement = function(options) {
 
         // don't count as a dblClick unless the mouseUp is also within
         // the dblclick delay
-        if((new Date()).getTime() - gd._mouseDownTime > DBLCLICKDELAY) {
+        if ((new Date()).getTime() - gd._mouseDownTime > DBLCLICKDELAY) {
             numClicks = Math.max(numClicks - 1, 1);
         }
 
-        if(options.doneFn) options.doneFn(gd._dragged, numClicks);
+        if (options.doneFn) options.doneFn(gd._dragged, numClicks);
 
-        if(!gd._dragged) {
-            var e2 = new MouseEvent('click', {'button':e.button});
+        if (!gd._dragged) {
+            var e2 = new MouseEvent('click', { 'button': e.button });
             initialTarget.dispatchEvent(e2);
         }
 
@@ -2131,11 +2137,11 @@ function coverSlip() {
     return cover;
 }
 
-fx.setCursor = function(el3,csr) {
-    (el3.attr('class')||'').split(' ').forEach(function(cls){
-        if(cls.indexOf('cursor-')===0) { el3.classed(cls,false); }
+fx.setCursor = function (el3, csr) {
+    (el3.attr('class') || '').split(' ').forEach(function (cls) {
+        if (cls.indexOf('cursor-') === 0) { el3.classed(cls, false); }
     });
-    if(csr) { el3.classed('cursor-'+csr, true); }
+    if (csr) { el3.classed('cursor-' + csr, true); }
 };
 
 // for bar charts and others with finite-size objects: you must be inside
@@ -2146,9 +2152,9 @@ fx.setCursor = function(el3,csr) {
 // note that for closest mode, two inbox's will get added in quadrature
 // args are (signed) difference from the two opposite edges
 // count one edge as in, so that over continuous ranges you never get a gap
-fx.inbox = function(v0,v1){
-    if(v0*v1<0 || v0===0) {
-        return constants.MAXDIST*(0.6-0.3/Math.max(3,Math.abs(v0-v1)));
+fx.inbox = function (v0, v1) {
+    if (v0 * v1 < 0 || v0 === 0) {
+        return constants.MAXDIST * (0.6 - 0.3 / Math.max(3, Math.abs(v0 - v1)));
     }
     return Infinity;
 };
