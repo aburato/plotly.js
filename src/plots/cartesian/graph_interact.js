@@ -1585,8 +1585,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         removeZoombox(gd);
         
         // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
-        var args = { zoomMode: zoomMode, box: box, width: pw, height: ph, axes: axesZoomInfo, userHandled: false };
-        gd.emit('plotly_zoom_before', args);
+        var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
+        gd.emit('plotly_zoom', args);
 
         if (!args.userHandled) {
             dragTail(zoomMode);
@@ -1595,8 +1595,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 Plotly.Lib.notifier('Double-click to<br>zoom back out', 'long');
                 SHOWZOOMOUTTIP = false;
             }
-
-            gd.emit('plotly_zoom_after', args);
+            args.pre = false;
+            gd.emit('plotly_zoom', args);
         }
     }
 
@@ -1819,37 +1819,47 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     }
 
     function doubleClick() {
-        var doubleClickConfig = gd._context.doubleClick,
-            axList = (xActive ? xa : []).concat(yActive ? ya : []),
-            attrs = {};
+        var doubleClickConfig = gd._context.doubleClick;
+        
+        // Emit pre-zoom reset
+        var args = { zoomMode: "reset", pre: true, userHandled: false };
+        gd.emit('plotly_zoom', args);
 
-        var ax, i;
+        if (!args.userHandled) {
+            var axList = (xActive ? xa : []).concat(yActive ? ya : []),
+                attrs = {};
 
-        if (doubleClickConfig === 'autosize') {
-            for (i = 0; i < axList.length; i++) {
-                ax = axList[i];
-                if (!ax.fixedrange) attrs[ax._name + '.autorange'] = true;
-            }
-        }
-        else if (doubleClickConfig === 'reset') {
-            for (i = 0; i < axList.length; i++) {
-                ax = axList[i];
-                attrs[ax._name + '.range'] = ax._rangeInitial.slice();
-            }
-        }
-        else if (doubleClickConfig === 'reset+autosize') {
-            for (i = 0; i < axList.length; i++) {
-                ax = axList[i];
-                if (ax.fixedrange) continue;
-                if (ax._rangeInitial === undefined ||
-                    ax.range[0] === ax._rangeInitial[0] && ax.range[1] === ax._rangeInitial[1]) {
-                    attrs[ax._name + '.autorange'] = true;
+            var ax, i;
+
+            if (doubleClickConfig === 'autosize') {
+                for (i = 0; i < axList.length; i++) {
+                    ax = axList[i];
+                    if (!ax.fixedrange) attrs[ax._name + '.autorange'] = true;
                 }
-                else attrs[ax._name + '.range'] = ax._rangeInitial.slice();
             }
+            else if (doubleClickConfig === 'reset') {
+                for (i = 0; i < axList.length; i++) {
+                    ax = axList[i];
+                    attrs[ax._name + '.range'] = ax._rangeInitial.slice();
+                }
+            }
+            else if (doubleClickConfig === 'reset+autosize') {
+                for (i = 0; i < axList.length; i++) {
+                    ax = axList[i];
+                    if (ax.fixedrange) continue;
+                    if (ax._rangeInitial === undefined ||
+                        ax.range[0] === ax._rangeInitial[0] && ax.range[1] === ax._rangeInitial[1]) {
+                        attrs[ax._name + '.autorange'] = true;
+                    }
+                    else attrs[ax._name + '.range'] = ax._rangeInitial.slice();
+                }
+            }
+            
+            Plotly.relayout(gd, attrs);
+            
+            args.pre = false;
+            gd.emit('plotly_zoom', args);
         }
-
-        Plotly.relayout(gd, attrs);
     }
 
     // dragTail - finish a drag event with a redraw
