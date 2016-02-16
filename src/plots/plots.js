@@ -6,6 +6,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+/*global Promise*/
 
 'use strict';
 
@@ -232,7 +233,7 @@ plots.redrawText = function(gd) {
 };
 
 // resize plot about the container size
-plots.resize = function (gd) {
+plots.resize = function(gd) {
     if (!gd || d3.select(gd).style('display') === 'none') return;
 
     return new Promise(function(resolve) {
