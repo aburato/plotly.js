@@ -17913,7 +17913,7 @@ function handleCartesian(gd, ev) {
 modeBarButtons.zoom3d = {
     name: 'zoom3d',
     title: 'Zoom',
-    attr: 'dragmode',
+    attr: 'scene.dragmode',
     val: 'zoom',
     icon: Icons.zoombox,
     click: handleDrag3d
@@ -17922,7 +17922,7 @@ modeBarButtons.zoom3d = {
 modeBarButtons.pan3d = {
     name: 'pan3d',
     title: 'Pan',
-    attr: 'dragmode',
+    attr: 'scene.dragmode',
     val: 'pan',
     icon: Icons.pan,
     click: handleDrag3d
@@ -17931,7 +17931,7 @@ modeBarButtons.pan3d = {
 modeBarButtons.orbitRotation = {
     name: 'orbitRotation',
     title: 'orbital rotation',
-    attr: 'dragmode',
+    attr: 'scene.dragmode',
     val: 'orbit',
     icon: Icons['3d_rotate'],
     click: handleDrag3d
@@ -17940,7 +17940,7 @@ modeBarButtons.orbitRotation = {
 modeBarButtons.tableRotation = {
     name: 'tableRotation',
     title: 'turntable rotation',
-    attr: 'dragmode',
+    attr: 'scene.dragmode',
     val: 'turntable',
     icon: Icons['z-axis'],
     click: handleDrag3d
@@ -17950,14 +17950,16 @@ function handleDrag3d(gd, ev) {
     var button = ev.currentTarget,
         attr = button.getAttribute('data-attr'),
         val = button.getAttribute('data-val') || true,
+        fullLayout = gd._fullLayout,
+        sceneIds = Plotly.Plots.getSubplotIds(fullLayout, 'gl3d'),
         layoutUpdate = {};
 
-    layoutUpdate[attr] = val;
+    var parts = attr.split('.');
 
-    /*
-     * Dragmode will go through the relayout -> doplot -> scene.plot()
-     * routine where the dragmode will be set in scene.plot()
-     */
+    for(var i = 0; i < sceneIds.length; i++) {
+        layoutUpdate[sceneIds[i] + '.' + parts[1]] = val;
+    }
+
     Plotly.relayout(gd, layoutUpdate);
 }
 
@@ -17980,29 +17982,19 @@ modeBarButtons.resetCameraLastSave3d = {
 function handleCamera3d(gd, ev) {
     var button = ev.currentTarget,
         attr = button.getAttribute('data-attr'),
-        layout = gd.layout,
         fullLayout = gd._fullLayout,
         sceneIds = Plotly.Plots.getSubplotIds(fullLayout, 'gl3d');
 
     for(var i = 0; i < sceneIds.length; i++) {
         var sceneId = sceneIds[i],
-            sceneLayout = layout[sceneId],
             fullSceneLayout = fullLayout[sceneId],
             scene = fullSceneLayout._scene;
 
-        if(!sceneLayout || attr==='resetDefault') scene.setCameraToDefault();
+        if(attr === 'resetDefault') scene.setCameraToDefault();
         else if(attr === 'resetLastSave') {
-
-            var cameraPos = sceneLayout.camera;
-            if(cameraPos) scene.setCamera(cameraPos);
-            else scene.setCameraToDefault();
+            scene.setCamera(fullSceneLayout.camera);
         }
     }
-
-    /*
-     * TODO have a sceneLastTouched in _fullLayout to only
-     * update the camera of the scene last touched by the user
-     */
 }
 
 modeBarButtons.hoverClosest3d = {
@@ -18013,50 +18005,58 @@ modeBarButtons.hoverClosest3d = {
     toggle: true,
     icon: Icons.tooltip_basic,
     gravity: 'ne',
-    click: function(gd, ev) {
-        var button = ev.currentTarget,
-            val = JSON.parse(button.getAttribute('data-val')) || false,
-            fullLayout = gd._fullLayout,
-            sceneIds = Plotly.Plots.getSubplotIds(fullLayout, 'gl3d');
+    click: handleHover3d
+};
 
-        var axes = ['xaxis', 'yaxis', 'zaxis'],
-            spikeAttrs = ['showspikes', 'spikesides', 'spikethickness', 'spikecolor'];
+function handleHover3d(gd, ev) {
+    var button = ev.currentTarget,
+        val = button._previousVal || false,
+        layout = gd.layout,
+        fullLayout = gd._fullLayout,
+        sceneIds = Plotly.Plots.getSubplotIds(fullLayout, 'gl3d');
 
-        // initialize 'current spike' object to be stored in the DOM
-        var currentSpikes = {},
-            axisSpikes = {},
-            layoutUpdate = {};
+    var axes = ['xaxis', 'yaxis', 'zaxis'],
+        spikeAttrs = ['showspikes', 'spikesides', 'spikethickness', 'spikecolor'];
 
-        if(val) {
-            layoutUpdate = val;
-            button.setAttribute('data-val', JSON.stringify(null));
-        }
-        else {
-            layoutUpdate = {'allaxes.showspikes': false};
+    // initialize 'current spike' object to be stored in the DOM
+    var currentSpikes = {},
+        axisSpikes = {},
+        layoutUpdate = {};
 
-            for(var i = 0; i < sceneIds.length; i++) {
-                var sceneId = sceneIds[i],
-                    sceneLayout = fullLayout[sceneId],
-                    sceneSpikes = currentSpikes[sceneId] = {};
+    if(val) {
+        layoutUpdate = Lib.extendDeep(layout, val);
+        button._previousVal = null;
+    }
+    else {
+        layoutUpdate = {
+            'allaxes.showspikes': false
+        };
 
-                // copy all the current spike attrs
-                for(var j = 0; j < 3; j++) {
-                    var axis = axes[j];
-                    axisSpikes = sceneSpikes[axis] = {};
+        for(var i = 0; i < sceneIds.length; i++) {
+            var sceneId = sceneIds[i],
+                sceneLayout = fullLayout[sceneId],
+                sceneSpikes = currentSpikes[sceneId] = {};
 
-                    for(var k = 0; k < spikeAttrs.length; k++) {
-                        var spikeAttr = spikeAttrs[k];
-                        axisSpikes[spikeAttr] = sceneLayout[axis][spikeAttr];
-                    }
+            sceneSpikes.hovermode = sceneLayout.hovermode;
+            layoutUpdate[sceneId + '.hovermode'] = false;
+
+            // copy all the current spike attrs
+            for(var j = 0; j < 3; j++) {
+                var axis = axes[j];
+                axisSpikes = sceneSpikes[axis] = {};
+
+                for(var k = 0; k < spikeAttrs.length; k++) {
+                    var spikeAttr = spikeAttrs[k];
+                    axisSpikes[spikeAttr] = sceneLayout[axis][spikeAttr];
                 }
             }
-
-            button.setAttribute('data-val', JSON.stringify(currentSpikes));
         }
 
-        Plotly.relayout(gd, layoutUpdate);
+        button._previousVal = Lib.extendDeep({}, currentSpikes);
     }
-};
+
+    Plotly.relayout(gd, layoutUpdate);
+}
 
 modeBarButtons.zoomInGeo = {
     name: 'zoomInGeo',
@@ -18093,7 +18093,7 @@ modeBarButtons.hoverClosestGeo = {
     toggle: true,
     icon: Icons.tooltip_basic,
     gravity: 'ne',
-    click: handleGeo
+    click: toggleHover
 };
 
 function handleGeo(gd, ev) {
@@ -18114,7 +18114,6 @@ function handleGeo(gd, ev) {
             geo.render();
         }
         else if(attr === 'reset') geo.zoomReset();
-        else if(attr === 'hovermode') geo.showHover = !geo.showHover;
     }
 }
 
@@ -18140,10 +18139,57 @@ modeBarButtons.hoverClosestPie = {
 };
 
 function toggleHover(gd) {
-    var newHover = gd._fullLayout.hovermode ? false : 'closest';
+    var fullLayout = gd._fullLayout;
+
+    var onHoverVal;
+    if(fullLayout._hasCartesian) {
+        onHoverVal = fullLayout._isHoriz ? 'y' : 'x';
+    }
+    else onHoverVal = 'closest';
+
+    var newHover = gd._fullLayout.hovermode ? false : onHoverVal;
 
     Plotly.relayout(gd, 'hovermode', newHover);
 }
+
+// buttons when more then one plot types are present
+
+modeBarButtons.toggleHover = {
+    name: 'toggleHover',
+    title: 'Toggle show closest data on hover',
+    attr: 'hovermode',
+    val: null,
+    toggle: true,
+    icon: Icons.tooltip_basic,
+    gravity: 'ne',
+    click: function(gd, ev) {
+        toggleHover(gd);
+
+        // the 3d hovermode update must come
+        // last so that layout.hovermode update does not
+        // override scene?.hovermode?.layout.
+        handleHover3d(gd, ev);
+    }
+};
+
+modeBarButtons.resetViews = {
+    name: 'resetViews',
+    title: 'Reset views',
+    icon: Icons.home,
+    click: function(gd, ev) {
+        var button = ev.currentTarget;
+
+        button.setAttribute('data-attr', 'zoom');
+        button.setAttribute('data-val', 'reset');
+        handleCartesian(gd, ev);
+
+        button.setAttribute('data-attr', 'resetLastSave');
+        handleCamera3d(gd, ev);
+
+        // N.B handleCamera3d also triggers a replot for
+        // geo subplots.
+    }
+};
 
 },{"../../../build/ploticon":2,"../../lib":58,"../../plotly":72,"../../snapshot":98}],46:[function(require,module,exports){
 /**
@@ -18157,9 +18203,9 @@ function toggleHover(gd) {
 
 'use strict';
 
-var Plotly = require('../../plotly');
 var d3 = require('d3');
 
+var Lib = require('../../lib');
 var Icons = require('../../../build/ploticon');
 
 
@@ -18352,7 +18398,11 @@ proto.updateActiveButton = function(buttonClicked) {
             }
         }
         else {
-            button3.classed('active', fullLayout[dataAttr]===thisval);
+            var val = (dataAttr === null) ?
+                dataAttr :
+                Lib.nestedProperty(fullLayout, dataAttr).get();
+
+            button3.classed('active', val === thisval);
         }
 
     });
@@ -18408,7 +18458,7 @@ proto.removeAllButtons = function() {
 };
 
 proto.destroy = function() {
-    Plotly.Lib.removeElement(this.container.querySelector('.modebar'));
+    Lib.removeElement(this.container.querySelector('.modebar'));
 };
 
 function createModeBar(gd, buttons) {
@@ -18431,7 +18481,7 @@ function createModeBar(gd, buttons) {
 
 module.exports = createModeBar;
 
-},{"../../../build/ploticon":2,"../../plotly":72,"d3":9}],47:[function(require,module,exports){
+},{"../../../build/ploticon":2,"../../lib":58,"d3":9}],47:[function(require,module,exports){
 /**
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
@@ -18505,10 +18555,15 @@ module.exports = function manageModeBar(gd) {
 // logic behind which buttons are displayed by default
 function getButtonGroups(gd, buttonsToRemove, buttonsToAdd) {
     var fullLayout = gd._fullLayout,
-        fullData = gd._fullData,
-        groups = [],
-        i,
-        trace;
+        fullData = gd._fullData;
+
+    var hasCartesian = fullLayout._hasCartesian,
+        hasGL3D = fullLayout._hasGL3D,
+        hasGeo = fullLayout._hasGeo,
+        hasPie = fullLayout._hasPie,
+        hasGL2D = fullLayout._hasGL2D;
+
+    var groups = [];
 
     function addGroup(newGroup) {
         var out = [];
@@ -18525,49 +18580,33 @@ function getButtonGroups(gd, buttonsToRemove, buttonsToAdd) {
     // buttons common to all plot types
     addGroup(['toImage', 'sendDataToCloud']);
 
-    if(fullLayout._hasGL3D) {
+    // graphs with more than one plot types get 'union buttons'
+    // which reset the view or toggle hover labels across all subplots.
+    if((hasCartesian || hasGL2D || hasPie) + hasGeo + hasGL3D > 1) {
+        addGroup(['resetViews', 'toggleHover']);
+        return appendButtonsToGroups(groups, buttonsToAdd);
+    }
+
+    if(hasGL3D) {
         addGroup(['zoom3d', 'pan3d', 'orbitRotation', 'tableRotation']);
         addGroup(['resetCameraDefault3d', 'resetCameraLastSave3d']);
         addGroup(['hoverClosest3d']);
     }
 
-    if(fullLayout._hasGeo) {
+    if(hasGeo) {
         addGroup(['zoomInGeo', 'zoomOutGeo', 'resetGeo']);
         addGroup(['hoverClosestGeo']);
     }
 
-    var hasCartesian = fullLayout._hasCartesian,
-        hasGL2D = fullLayout._hasGL2D,
-        allAxesFixed = areAllAxesFixed(fullLayout),
+    var allAxesFixed = areAllAxesFixed(fullLayout),
         dragModeGroup = [];
 
     if((hasCartesian || hasGL2D) && !allAxesFixed) {
         dragModeGroup = ['zoom2d', 'pan2d'];
     }
-    if(hasCartesian) {
-        // look for traces that support selection
-        // to be updated as we add more selectPoints handlers
-        var selectable = false;
-        for(i = 0; i < fullData.length; i++) {
-            if(selectable) break;
-            trace = fullData[i];
-            if(!trace._module || !trace._module.selectPoints) continue;
-
-            if(trace.type === 'scatter') {
-                if(scatterSubTypes.hasMarkers(trace) || scatterSubTypes.hasText(trace)) {
-                    selectable = true;
-                }
-            }
-            // assume that in general if the trace module has selectPoints,
-            // then it's selectable. Scatter is an exception to this because it must
-            // have markers or text, not just be a scatter type.
-            else selectable = true;
-        }
-
-        if(selectable) {
-            dragModeGroup.push('select2d');
-            dragModeGroup.push('lasso2d');
-        }
+    if(hasCartesian && isSelectable(fullData)) {
+        dragModeGroup.push('select2d');
+        dragModeGroup.push('lasso2d');
     }
     if(dragModeGroup.length) addGroup(dragModeGroup);
 
@@ -18575,27 +18614,20 @@ function getButtonGroups(gd, buttonsToRemove, buttonsToAdd) {
         addGroup(['zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d']);
     }
 
-    if(hasCartesian) {
-        addGroup(['hoverClosestCartesian', 'hoverCompareCartesian']);
+    if(hasCartesian && hasPie) {
+        addGroup(['toggleHover']);
     }
-    if(hasGL2D) {
+    else if(hasGL2D) {
         addGroup(['hoverClosestGl2d']);
     }
-    if(fullLayout._hasPie) {
+    else if(hasCartesian) {
+        addGroup(['hoverClosestCartesian', 'hoverCompareCartesian']);
+    }
+    else if(hasPie) {
         addGroup(['hoverClosestPie']);
     }
 
-    // append buttonsToAdd to the groups
-    if(buttonsToAdd.length) {
-        if(Array.isArray(buttonsToAdd[0])) {
-            for(i = 0; i < buttonsToAdd.length; i++) {
-                groups.push(buttonsToAdd[i]);
-            }
-        }
-        else groups.push(buttonsToAdd);
-    }
-
-    return groups;
+    return appendButtonsToGroups(groups, buttonsToAdd);
 }
 
 function areAllAxesFixed(fullLayout) {
@@ -18610,6 +18642,45 @@ function areAllAxesFixed(fullLayout) {
     }
 
     return allFixed;
+}
+
+// look for traces that support selection
+// to be updated as we add more selectPoints handlers
+function isSelectable(fullData) {
+    var selectable = false;
+
+    for(var i = 0; i < fullData.length; i++) {
+        if(selectable) break;
+
+        var trace = fullData[i];
+
+        if(!trace._module || !trace._module.selectPoints) continue;
+
+        if(trace.type === 'scatter') {
+            if(scatterSubTypes.hasMarkers(trace) || scatterSubTypes.hasText(trace)) {
+                selectable = true;
+            }
+        }
+        // assume that in general if the trace module has selectPoints,
+        // then it's selectable. Scatter is an exception to this because it must
+        // have markers or text, not just be a scatter type.
+        else selectable = true;
+    }
+
+    return selectable;
+}
+
+function appendButtonsToGroups(groups, buttons) {
+    if(buttons.length) {
+        if(Array.isArray(buttons[0])) {
+            for(var i = 0; i < buttons.length; i++) {
+                groups.push(buttons[i]);
+            }
+        }
+        else groups.push(buttons);
+    }
+
+    return groups;
 }
 
 // fill in custom buttons referring to default mode bar buttons
@@ -23199,29 +23270,28 @@ function cleanLayout(layout) {
      * Clean up Scene layouts
      */
     var sceneIds = Plots.getSubplotIds(layout, 'gl3d');
-    var scene, cameraposition, rotation,
-        radius, center, mat, eye;
-    for (i = 0; i < sceneIds.length; i++) {
-        scene = layout[sceneIds[i]];
+    for(i = 0; i < sceneIds.length; i++) {
+        var scene = layout[sceneIds[i]];
 
-        /*
-         * Clean old Camera coords
-         */
-        cameraposition = scene.cameraposition;
-        if (Array.isArray(cameraposition) && cameraposition[0].length === 4) {
-            rotation = cameraposition[0];
-            center = cameraposition[1];
-            radius = cameraposition[2];
-            mat = m4FromQuat([], rotation);
-            eye = [];
-            for (j = 0; j < 3; ++j) {
+        // clean old Camera coords
+        var cameraposition = scene.cameraposition;
+        if(Array.isArray(cameraposition) && cameraposition[0].length === 4) {
+            var rotation = cameraposition[0],
+                center = cameraposition[1],
+                radius = cameraposition[2],
+                mat = m4FromQuat([], rotation),
+                eye = [];
+
+            for(j = 0; j < 3; ++j) {
                 eye[j] = center[i] + radius * mat[2 + 4 * j];
             }
+
             scene.camera = {
                 eye: {x: eye[0], y: eye[1], z: eye[2]},
                 center: {x: center[0], y: center[1], z: center[2]},
                 up: {x: mat[1], y: mat[5], z: mat[9]}
             };
+
             delete scene.cameraposition;
         }
     }
@@ -24876,7 +24946,7 @@ Plotly.relayout = function relayout(gd, astr, val) {
              * hovermode and dragmode don't need any redrawing, since they just
              * affect reaction to user input. everything else, assume full replot.
              * height, width, autosize get dealt with below. Except for the case of
-             * of subplots - scenes - which require scene.handleDragmode to be called.
+             * of subplots - scenes - which require scene.updateFx to be called.
              */
             else if(['hovermode', 'dragmode'].indexOf(ai) !== -1) domodebar = true;
             else if(['hovermode','dragmode','height',
@@ -24938,19 +25008,25 @@ Plotly.relayout = function relayout(gd, astr, val) {
 
         // this is decoupled enough it doesn't need async regardless
         if(domodebar) {
+            var subplotIds;
             manageModeBar(gd);
 
-            var subplotIds;
             subplotIds = Plots.getSubplotIds(fullLayout, 'gl3d');
             for(i = 0; i < subplotIds.length; i++) {
                 scene = fullLayout[subplotIds[i]]._scene;
-                scene.handleDragmode(fullLayout.dragmode);
+                scene.updateFx(fullLayout.dragmode, fullLayout.hovermode);
             }
 
             subplotIds = Plots.getSubplotIds(fullLayout, 'gl2d');
             for(i = 0; i < subplotIds.length; i++) {
                 scene = fullLayout._plots[subplotIds[i]]._scene2d;
                 scene.updateFx(fullLayout);
+            }
+
+            subplotIds = Plots.getSubplotIds(fullLayout, 'geo');
+            for(i = 0; i < subplotIds.length; i++) {
+                var geo = fullLayout[subplotIds[i]]._geo;
+                geo.updateFx(fullLayout.hovermode);
             }
         }
     }
@@ -28531,6 +28607,7 @@ var tinycolor = require('tinycolor2');
 var isNumeric = require('fast-isnumeric');
 
 var Plotly = require('../../plotly');
+var Lib = require('../../lib');
 var Events = require('../../lib/events');
 
 var prepSelect = require('./select');
@@ -28543,6 +28620,7 @@ fx.layoutAttributes = {
         valType: 'enumerated',
         role: 'info',
         values: ['zoom', 'pan', 'select', 'lasso', 'orbit', 'turntable'],
+        dflt: 'zoom',
         description: [
             'Determines the mode of drag interactions.',
             '*select* and *lasso* apply only to scatter traces with',
@@ -28559,20 +28637,17 @@ fx.layoutAttributes = {
 };
 
 fx.supplyLayoutDefaults = function (layoutIn, layoutOut, fullData) {
-    var isHoriz, hovermodeDflt;
-
     function coerce(attr, dflt) {
-        return Plotly.Lib.coerce(layoutIn, layoutOut,
-            fx.layoutAttributes,
-            attr, dflt);
+        return Lib.coerce(layoutIn, layoutOut, fx.layoutAttributes, attr, dflt);
     }
 
-    coerce('dragmode', layoutOut._hasGL3D ? 'turntable' : 'zoom');
+    coerce('dragmode');
 
+    var hovermodeDflt;
     if (layoutOut._hasCartesian) {
         // flag for 'horizontal' plots:
         // determines the state of the mode bar 'compare' hovermode button
-        isHoriz = layoutOut._isHoriz = fx.isHoriz(fullData);
+        var isHoriz = layoutOut._isHoriz = fx.isHoriz(fullData);
         hovermodeDflt = isHoriz ? 'y' : 'x';
     }
     else hovermodeDflt = 'closest';
@@ -28582,14 +28657,16 @@ fx.supplyLayoutDefaults = function (layoutIn, layoutOut, fullData) {
 
 fx.isHoriz = function (fullData) {
     var isHoriz = true;
-    var i, trace;
-    for (i = 0; i < fullData.length; i++) {
-        trace = fullData[i];
+
+    for(var i = 0; i < fullData.length; i++) {
+        var trace = fullData[i];
+
         if (trace.orientation !== 'h') {
             isHoriz = false;
             break;
         }
     }
+
     return isHoriz;
 };
 
@@ -30686,7 +30763,7 @@ fx.inbox = function (v0, v1) {
     return Infinity;
 };
 
-},{"../../lib/events":56,"../../plotly":72,"./constants":79,"./select":85,"d3":9,"fast-isnumeric":11,"tinycolor2":13}],81:[function(require,module,exports){
+},{"../../lib":58,"../../lib/events":56,"../../plotly":72,"./constants":79,"./select":85,"d3":9,"fast-isnumeric":11,"tinycolor2":13}],81:[function(require,module,exports){
 /**
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
@@ -32255,6 +32332,7 @@ module.exports = {
 * LICENSE file in the root directory of this source tree.
 */
 
+/*global Promise*/
 
 'use strict';
 
@@ -32481,10 +32559,12 @@ plots.redrawText = function(gd) {
 };
 
 // resize plot about the container size
-plots.resize = function (gd) {
-    if (!gd || d3.select(gd).style('display') === 'none') return;
+plots.resize = function(gd) {
+    return new Promise(function(resolve, reject) {
 
-    return new Promise(function(resolve) {
+        if (!gd || d3.select(gd).style('display') === 'none'){
+            reject(new Error('Resize must be passed a plot div element.'));
+        }
 
         if (gd._redrawTimer) clearTimeout(gd._redrawTimer);
 
@@ -32498,7 +32578,7 @@ plots.resize = function (gd) {
 
                 Plotly.relayout(gd, { autosize: true });
                 gd.changed = oldchanged;
-                resolve();
+                resolve(gd);
             }
         }, 100);
     });
