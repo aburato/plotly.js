@@ -7,6 +7,9 @@ var Color = require('@src/components/color');
 var handleTickValueDefaults = require('@src/plots/cartesian/tick_value_defaults');
 var Axes = PlotlyInternal.Axes;
 
+var createGraph = require('../assets/create_graph_div');
+var destroyGraph = require('../assets/destroy_graph_div');
+
 
 describe('Test axes', function() {
     'use strict';
@@ -164,9 +167,12 @@ describe('Test axes', function() {
     });
 
     describe('supplyLayoutDefaults', function() {
-        var layoutIn = {},
-            layoutOut = {},
+        var layoutIn, layoutOut, fullData;
+
+        beforeEach(function() {
+            layoutOut = {};
             fullData = [];
+        });
 
         var supplyLayoutDefaults = Axes.supplyLayoutDefaults;
 
@@ -193,7 +199,7 @@ describe('Test axes', function() {
 
         it('should set linewidth to default if linecolor is supplied and valid', function() {
             layoutIn = {
-                xaxis: {linecolor:'black'}
+                xaxis: { linecolor: 'black' }
             };
             supplyLayoutDefaults(layoutIn, layoutOut, fullData);
             expect(layoutOut.xaxis.linecolor).toBe('black');
@@ -202,7 +208,7 @@ describe('Test axes', function() {
 
         it('should set linecolor to default if linewidth is supplied and valid', function() {
             layoutIn = {
-                yaxis: {linewidth:2}
+                yaxis: { linewidth: 2 }
             };
             supplyLayoutDefaults(layoutIn, layoutOut, fullData);
             expect(layoutOut.yaxis.linewidth).toBe(2);
@@ -249,6 +255,142 @@ describe('Test axes', function() {
             supplyLayoutDefaults(layoutIn, layoutOut, fullData);
             expect(layoutOut.xaxis.zerolinewidth).toBe(undefined);
             expect(layoutOut.xaxis.zerolinecolor).toBe(undefined);
+        });
+
+        it('should detect orphan axes (lone axes case)', function() {
+            layoutIn = {
+                xaxis: {},
+                yaxis: {}
+            };
+            fullData = [];
+
+            supplyLayoutDefaults(layoutIn, layoutOut, fullData);
+            expect(layoutOut._hasCartesian).toBe(true);
+        });
+
+        it('should detect orphan axes (gl2d trace conflict case)', function() {
+            layoutIn = {
+                xaxis: {},
+                yaxis: {}
+            };
+            fullData = [{
+                type: 'scattergl',
+                xaxis: 'x',
+                yaxis: 'y'
+            }];
+
+            supplyLayoutDefaults(layoutIn, layoutOut, fullData);
+            expect(layoutOut._hasCartesian).toBe(undefined);
+        });
+
+        it('should detect orphan axes (gl2d + cartesian case)', function() {
+            layoutIn = {
+                xaxis2: {},
+                yaxis2: {}
+            };
+            fullData = [{
+                type: 'scattergl',
+                xaxis: 'x',
+                yaxis: 'y'
+            }];
+
+            supplyLayoutDefaults(layoutIn, layoutOut, fullData);
+            expect(layoutOut._hasCartesian).toBe(true);
+        });
+
+        it('should detect orphan axes (gl3d present case)', function() {
+            layoutIn = {
+                xaxis: {},
+                yaxis: {}
+            };
+            layoutOut._hasGL3D = true;
+
+            supplyLayoutDefaults(layoutIn, layoutOut, fullData);
+            expect(layoutOut._hasCartesian).toBe(undefined);
+        });
+
+        it('should detect orphan axes (gl3d present case)', function() {
+            layoutIn = {
+                xaxis: {},
+                yaxis: {}
+            };
+            layoutOut._hasGeo = true;
+
+            supplyLayoutDefaults(layoutIn, layoutOut, fullData);
+            expect(layoutOut._hasCartesian).toBe(undefined);
+        });
+    });
+
+    describe('handleTickDefaults', function() {
+        var data = [{ x: [1,2,3], y: [3,4,5] }],
+            gd;
+
+        beforeEach(function() {
+            gd = createGraph();
+        });
+
+        afterEach(destroyGraph);
+
+        it('should set defaults on bad inputs', function() {
+            var layout = {
+                yaxis: {
+                    ticklen: 'invalid',
+                    tickwidth: 'invalid',
+                    tickcolor: 'invalid',
+                    showticklabels: 'invalid',
+                    tickfont: 'invalid',
+                    tickangle: 'invalid'
+                }
+            };
+
+            PlotlyInternal.plot(gd, data, layout);
+
+            var yaxis = gd._fullLayout.yaxis;
+            expect(yaxis.ticklen).toBe(5);
+            expect(yaxis.tickwidth).toBe(1);
+            expect(yaxis.tickcolor).toBe('#444');
+            expect(yaxis.ticks).toBe('outside');
+            expect(yaxis.showticklabels).toBe(true);
+            expect(yaxis.tickfont).toEqual({ family: '"Open Sans", verdana, arial, sans-serif', size: 12, color: '#444' });
+            expect(yaxis.tickangle).toBe('auto');
+        });
+
+        it('should use valid inputs', function() {
+            var layout = {
+                yaxis: {
+                    ticklen: 10,
+                    tickwidth: 5,
+                    tickcolor: '#F00',
+                    showticklabels: true,
+                    tickfont: { family: 'Garamond', size: 72, color: '#0FF' },
+                    tickangle: -20
+                }
+            };
+
+            PlotlyInternal.plot(gd, data, layout);
+
+            var yaxis = gd._fullLayout.yaxis;
+            expect(yaxis.ticklen).toBe(10);
+            expect(yaxis.tickwidth).toBe(5);
+            expect(yaxis.tickcolor).toBe('#F00');
+            expect(yaxis.ticks).toBe('outside');
+            expect(yaxis.showticklabels).toBe(true);
+            expect(yaxis.tickfont).toEqual({ family: 'Garamond', size: 72, color: '#0FF' });
+            expect(yaxis.tickangle).toBe(-20);
+        });
+
+        it('should conditionally coerce based on showticklabels', function() {
+            var layout = {
+                yaxis: {
+                    showticklabels: false,
+                    tickangle: -90
+                }
+            };
+
+            PlotlyInternal.plot(gd, data, layout);
+
+            var yaxis = gd._fullLayout.yaxis;
+            expect(yaxis.tickangle).toBeUndefined();
         });
     });
 

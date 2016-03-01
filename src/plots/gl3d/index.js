@@ -51,8 +51,9 @@ exports.plot = function plotGl3d(gd) {
         // If Scene is not instantiated, create one!
         if(scene === undefined) {
             scene = new Scene({
-                container: gd.querySelector('.gl-container'),
                 id: sceneId,
+                graphDiv: gd,
+                container: gd.querySelector('.gl-container'),
                 staticPlot: gd._context.staticPlot,
                 plotGlPixelRatio: gd._context.plotGlPixelRatio
             },
@@ -63,6 +64,18 @@ exports.plot = function plotGl3d(gd) {
         }
 
         scene.plot(fullSceneData, fullLayout, gd.layout);  // takes care of business
+    }
+};
+
+exports.clean = function(newFullData, newFullLayout, oldFullData, oldFullLayout) {
+    var oldSceneKeys = Plots.getSubplotIds(oldFullLayout, 'gl3d');
+
+    for(var i = 0; i < oldSceneKeys.length; i++) {
+        var oldSceneKey = oldSceneKeys[i];
+
+        if(!newFullLayout[oldSceneKey] && !!oldFullLayout[oldSceneKey]._scene) {
+            oldFullLayout[oldSceneKey]._scene.destroy();
+        }
     }
 };
 
