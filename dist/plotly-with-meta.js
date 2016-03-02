@@ -30102,7 +30102,7 @@ function unhover(gd, evt) {
 // on click
 fx.click = function(gd,evt) {
     if(gd._hoverdata && evt && evt.target) {
-        gd.emit('plotly_click', {points: gd._hoverdata});
+        gd.emit('plotly_click', {button: evt.button, points: gd._hoverdata});
         // why do we get a double event without this???
         if(evt.stopImmediatePropagation) evt.stopImmediatePropagation();
     }
