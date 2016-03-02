@@ -12867,7 +12867,7 @@ annotations.draw = function(gd, index, opt, value) {
                     Plotly.Lib.extendFlat({}, value) :
                     {text: 'New text'};
 
-            if (layout.annotations) {
+            if(layout.annotations) {
                 layout.annotations.splice(index, 0, rule);
             } else {
                 layout.annotations = [rule];
@@ -13044,7 +13044,7 @@ annotations.draw = function(gd, index, opt, value) {
         .attr('data-unformatted', options.text)
         .text(options.text);
 
-    function textLayout(s){
+    function textLayout(s) {
         s.call(Plotly.Drawing.font, font)
         .attr({
             'text-anchor': {
@@ -13056,7 +13056,7 @@ annotations.draw = function(gd, index, opt, value) {
         return s;
     }
 
-    function drawGraphicalElements(){
+    function drawGraphicalElements() {
 
         // make sure lines are aligned the way they will be
         // at the end, even if their position changes
@@ -13076,8 +13076,8 @@ annotations.draw = function(gd, index, opt, value) {
         options._w = annwidth;
         options._h = annheight;
 
-        function shiftFraction(v, anchor){
-            if(anchor==='auto'){
+        function shiftFraction(v, anchor) {
+            if(anchor==='auto') {
                 if(v < 1/3) anchor = 'left';
                 else if(v > 2/3) anchor = 'right';
                 else anchor = 'center';
@@ -13150,7 +13150,7 @@ annotations.draw = function(gd, index, opt, value) {
 
         // make sure the arrowhead (if there is one)
         // and the annotation center are visible
-        if(options.showarrow){
+        if(options.showarrow) {
             arrowX = Plotly.Lib.constrain(annPosPx.x - options.ax, 1, fullLayout.width - 1);
             arrowY = Plotly.Lib.constrain(annPosPx.y - options.ay, 1, fullLayout.height - 1);
         }
@@ -13179,7 +13179,7 @@ annotations.draw = function(gd, index, opt, value) {
 
         // add the arrow
         // uses options[arrowwidth,arrowcolor,arrowhead] for styling
-        var drawArrow = function(dx, dy){
+        var drawArrow = function(dx, dy) {
             d3.select(gd)
                 .selectAll('.annotation-arrow-g[data-index="' + index + '"]')
                 .remove();
@@ -13222,7 +13222,7 @@ annotations.draw = function(gd, index, opt, value) {
                 return;
             }
 
-            edges.forEach(function(x){
+            edges.forEach(function(x) {
                 var p = lineIntersect(arrowX0, arrowY0, arrowX, arrowY,
                             x[0], x[1], x[2], x[3]);
                 if(p) {
@@ -13253,7 +13253,7 @@ annotations.draw = function(gd, index, opt, value) {
                 .attr({
                     'data-index': String(index),
                     d: 'M3,3H-3V-3H3ZM0,0L' + (arrowX0-arrowX) + ',' + (arrowY0-arrowY),
-                    transform:'translate('+arrowX+','+arrowY+')'
+                    transform: 'translate('+arrowX+','+arrowY+')'
                 })
                 .style('stroke-width', (strokewidth+6)+'px')
                 .call(Plotly.Color.stroke, 'rgba(0,0,0,0)')
@@ -13392,7 +13392,7 @@ annotations.draw = function(gd, index, opt, value) {
     if(gd._context.editable) {
         anntext.call(Plotly.util.makeEditable, ann)
             .call(textLayout)
-            .on('edit', function(_text){
+            .on('edit', function(_text) {
                 options.text = _text;
                 this.attr({'data-unformatted': options.text});
                 this.call(textLayout);
@@ -13520,7 +13520,7 @@ annotations.calcAutorange = function(gd) {
     if(!annotationList.length || !gd._fullData.length) return;
 
     var annotationAxes = {};
-    annotationList.forEach(function(ann){
+    annotationList.forEach(function(ann) {
         annotationAxes[ann.xref] = true;
         annotationAxes[ann.yref] = true;
     });
@@ -13544,7 +13544,7 @@ function annAutorange(gd) {
     // relative to their anchor points
     // use the arrow and the text bg rectangle,
     // as the whole anno may include hidden text in its bbox
-    fullLayout.annotations.forEach(function(ann){
+    fullLayout.annotations.forEach(function(ann) {
         var xa = Plotly.Axes.getFromId(gd, ann.xref),
             ya = Plotly.Axes.getFromId(gd, ann.yref);
         if(!(xa || ya)) return;
@@ -13674,20 +13674,20 @@ color.addOpacity = function(cstr, op) {
 // combine two colors into one apparent color
 // if back has transparency or is missing,
 // color.background is assumed behind it
-color.combine = function(front, back){
+color.combine = function(front, back) {
     var fc = tinycolor(front).toRgb();
     if(fc.a===1) return tinycolor(front).toRgbString();
 
     var bc = tinycolor(back||color.background).toRgb(),
         bcflat = bc.a===1 ? bc : {
-            r:255*(1-bc.a) + bc.r*bc.a,
-            g:255*(1-bc.a) + bc.g*bc.a,
-            b:255*(1-bc.a) + bc.b*bc.a
+            r: 255 * (1-bc.a) + bc.r*bc.a,
+            g: 255 * (1-bc.a) + bc.g*bc.a,
+            b: 255 * (1-bc.a) + bc.b*bc.a
         },
         fcflat = {
-            r:bcflat.r*(1-fc.a) + fc.r*fc.a,
-            g:bcflat.g*(1-fc.a) + fc.g*fc.a,
-            b:bcflat.b*(1-fc.a) + fc.b*fc.a
+            r: bcflat.r*(1-fc.a) + fc.r*fc.a,
+            g: bcflat.g*(1-fc.a) + fc.g*fc.a,
+            b: bcflat.b*(1-fc.a) + fc.b*fc.a
         };
     return tinycolor(fcflat).toRgbString();
 };
@@ -14047,7 +14047,7 @@ module.exports = function draw(gd, id) {
     // evaluated halfway between levels
     opts.filllevels = null;
 
-    function component(){
+    function component() {
         var fullLayout = gd._fullLayout;
         if((typeof opts.fillcolor !== 'function') &&
                 (typeof opts.line.color !== 'function')) {
@@ -14060,9 +14060,9 @@ module.exports = function draw(gd, id) {
             filllevels = [],
             l,
             linecolormap = typeof opts.line.color === 'function' ?
-                opts.line.color : function(){ return opts.line.color; },
+                opts.line.color : function() { return opts.line.color; },
             fillcolormap = typeof opts.fillcolor === 'function' ?
-                opts.fillcolor : function(){ return opts.fillcolor; };
+                opts.fillcolor : function() { return opts.fillcolor; };
 
         var l0 = opts.levels.end + opts.levels.size/100,
             ls = opts.levels.size,
@@ -14081,7 +14081,7 @@ module.exports = function draw(gd, id) {
                 }
             }
             else {
-                filllevels = linelevels.map(function(v){
+                filllevels = linelevels.map(function(v) {
                     return v-opts.levels.size / 2;
                 });
                 filllevels.push(filllevels[filllevels.length - 1] +
@@ -14129,7 +14129,7 @@ module.exports = function draw(gd, id) {
 
             // y positioning we can do correctly from the start
             yBottomFrac = opts.y + lenFrac *
-                (({top:-0.5, bottom:0.5}[opts.yanchor]||0)-0.5),
+                (({top: -0.5, bottom: 0.5}[opts.yanchor] || 0) - 0.5),
             yBottomPx = Math.round(fullLayout._size.h * (1-yBottomFrac)),
             yTopPx = yBottomPx-lenPx,
             titleEl,
@@ -14230,7 +14230,7 @@ module.exports = function draw(gd, id) {
         // now draw the elements
         var container = fullLayout._infolayer.selectAll('g.'+id).data([0]);
         container.enter().append('g').classed(id,true)
-            .each(function(){
+            .each(function() {
                 var s = d3.select(this);
                 s.append('rect').classed('cbbg',true);
                 s.append('g').classed('cbfills',true);
@@ -14257,7 +14257,7 @@ module.exports = function draw(gd, id) {
             Titles.draw(gd, cbAxisOut._id + 'title');
         }
 
-        function drawAxis(){
+        function drawAxis() {
             if(['top','bottom'].indexOf(opts.titleside)!==-1) {
                 // squish the axis top to make room for the title
                 var titleGroup = container.select('.cbtitle'),
@@ -14370,7 +14370,7 @@ module.exports = function draw(gd, id) {
             return Axes.doTicks(gd, cbAxisOut);
         }
 
-        function positionCB(){
+        function positionCB() {
             // wait for the axis & title to finish rendering before
             // continuing positioning
             // TODO: why are we redrawing multiple times now with this?
@@ -14428,7 +14428,7 @@ module.exports = function draw(gd, id) {
             });
 
             // fix positioning for xanchor!='left'
-            var xoffset = ({center:0.5, right:1}[opts.xanchor]||0) *
+            var xoffset = ({center: 0.5, right: 1}[opts.xanchor] || 0) *
                 outerwidth;
             container.attr('transform',
                 'translate('+(fullLayout._size.l-xoffset)+','+fullLayout._size.t+')');
@@ -14437,10 +14437,10 @@ module.exports = function draw(gd, id) {
             Plots.autoMargin(gd, id,{
                 x: opts.x,
                 y: opts.y,
-                l: outerwidth*({right:1, center:0.5}[opts.xanchor]||0),
-                r: outerwidth*({left:1, center:0.5}[opts.xanchor]||0),
-                t: outerheight*({bottom:1, middle:0.5}[opts.yanchor]||0),
-                b: outerheight*({top:1, middle:0.5}[opts.yanchor]||0)
+                l: outerwidth * ({right: 1, center: 0.5}[opts.xanchor] || 0),
+                r: outerwidth * ({left: 1, center: 0.5}[opts.xanchor] || 0),
+                t: outerheight * ({bottom: 1, middle: 0.5}[opts.yanchor] || 0),
+                b: outerheight * ({top: 1, middle: 0.5}[opts.yanchor] || 0)
             });
         }
 
@@ -14978,7 +14978,7 @@ module.exports = function isValidScaleArray(scl) {
     if(!Array.isArray(scl)) return false;
     else {
         if(+scl[0][0]!==0 || +scl[scl.length-1][0]!==1) return false;
-        for (var i = 0; i < scl.length; i++) {
+        for(var i = 0; i < scl.length; i++) {
             si = scl[i];
             if(si.length!==2 || +si[0]<highestVal || !tinycolor(si[1]).isValid()) {
                 isValid = false;
@@ -15046,86 +15046,122 @@ module.exports = function makeScaleFunction(scl, cmin, cmax) {
 
 
 module.exports = {
-    'Greys':[[0,'rgb(0,0,0)'],[1,'rgb(255,255,255)']],
+    'Greys': [
+        [0, 'rgb(0,0,0)'], [1, 'rgb(255,255,255)']
+    ],
 
-    'YIGnBu':[[0,'rgb(8, 29, 88)'],[0.125,'rgb(37, 52, 148)'],
-        [0.25,'rgb(34, 94, 168)'],[0.375,'rgb(29, 145, 192)'],
-        [0.5,'rgb(65, 182, 196)'],[0.625,'rgb(127, 205, 187)'],
-        [0.75,'rgb(199, 233, 180)'],[0.875,'rgb(237, 248, 217)'],
-        [1,'rgb(255, 255, 217)']],
+    'YlGnBu': [
+        [0, 'rgb(8,29,88)'], [0.125, 'rgb(37,52,148)'],
+        [0.25, 'rgb(34,94,168)'], [0.375, 'rgb(29,145,192)'],
+        [0.5, 'rgb(65,182,196)'], [0.625, 'rgb(127,205,187)'],
+        [0.75, 'rgb(199,233,180)'], [0.875, 'rgb(237,248,217)'],
+        [1, 'rgb(255,255,217)']
+    ],
 
-    'Greens':[[0,'rgb(0, 68, 27)'],[0.125,'rgb(0, 109, 44)'],
-        [0.25,'rgb(35, 139, 69)'],[0.375,'rgb(65, 171, 93)'],
-        [0.5,'rgb(116, 196, 118)'],[0.625,'rgb(161, 217, 155)'],
-        [0.75,'rgb(199, 233, 192)'],[0.875,'rgb(229, 245, 224)'],
-        [1,'rgb(247, 252, 245)']],
+    'Greens': [
+        [0, 'rgb(0,68,27)'], [0.125, 'rgb(0,109,44)'],
+        [0.25, 'rgb(35,139,69)'], [0.375, 'rgb(65,171,93)'],
+        [0.5, 'rgb(116,196,118)'], [0.625, 'rgb(161,217,155)'],
+        [0.75, 'rgb(199,233,192)'], [0.875, 'rgb(229,245,224)'],
+        [1, 'rgb(247,252,245)']
+    ],
 
-    'YIOrRd':[[0,'rgb(128, 0, 38)'],[0.125,'rgb(189, 0, 38)'],
-        [0.25,'rgb(227, 26, 28)'],[0.375,'rgb(252, 78, 42)'],
-        [0.5,'rgb(253, 141, 60)'],[0.625,'rgb(254, 178, 76)'],
-        [0.75,'rgb(254, 217, 118)'],[0.875,'rgb(255, 237, 160)'],
-        [1,'rgb(255, 255, 204)']],
+    'YlOrRd': [
+        [0, 'rgb(128,0,38)'], [0.125, 'rgb(189,0,38)'],
+        [0.25, 'rgb(227,26,28)'], [0.375, 'rgb(252,78,42)'],
+        [0.5, 'rgb(253,141,60)'], [0.625, 'rgb(254,178,76)'],
+        [0.75, 'rgb(254,217,118)'], [0.875, 'rgb(255,237,160)'],
+        [1, 'rgb(255,255,204)']
+    ],
 
-    'Bluered':[[0,'rgb(0,0,255)'],[1,'rgb(255,0,0)']],
+    'Bluered': [
+        [0, 'rgb(0,0,255)'], [1, 'rgb(255,0,0)']
+    ],
 
     // modified RdBu based on
     // www.sandia.gov/~kmorel/documents/ColorMaps/ColorMapsExpanded.pdf
-    'RdBu':[[0,'rgb(5, 10, 172)'],[0.35,'rgb(106, 137, 247)'],
-        [0.5,'rgb(190,190,190)'],[0.6,'rgb(220, 170, 132)'],
-        [0.7,'rgb(230, 145, 90)'],[1,'rgb(178, 10, 28)']],
+    'RdBu': [
+        [0, 'rgb(5,10,172)'], [0.35, 'rgb(106,137,247)'],
+        [0.5, 'rgb(190,190,190)'], [0.6, 'rgb(220,170,132)'],
+        [0.7, 'rgb(230,145,90)'], [1, 'rgb(178,10,28)']
+    ],
+
     // Scale for non-negative numeric values
-    'Reds': [[0, 'rgb(220, 220, 220)'], [0.2,'rgb(245, 195, 157)'],
-        [0.4,'rgb(245, 160, 105)'], [1, 'rgb(178, 10, 28)']],
+    'Reds': [
+        [0, 'rgb(220,220,220)'], [0.2, 'rgb(245,195,157)'],
+        [0.4, 'rgb(245,160,105)'], [1, 'rgb(178,10,28)']
+    ],
+
     // Scale for non-positive numeric values
-    'Blues': [[0, 'rgb(5, 10, 172)'], [0.35, 'rgb(40, 60, 190)'],
-        [0.5, 'rgb(70, 100, 245)'], [0.6, 'rgb(90, 120, 245)'],
-        [0.7, 'rgb(106, 137, 247)'], [1, 'rgb(220, 220, 220)']],
+    'Blues': [
+        [0, 'rgb(5,10,172)'], [0.35, 'rgb(40,60,190)'],
+        [0.5, 'rgb(70,100,245)'], [0.6, 'rgb(90,120,245)'],
+        [0.7, 'rgb(106,137,247)'], [1, 'rgb(220,220,220)']
+    ],
 
-    'Picnic':[[0,'rgb(0,0,255)'],[0.1,'rgb(51,153,255)'],
-        [0.2,'rgb(102,204,255)'],[0.3,'rgb(153,204,255)'],
-        [0.4,'rgb(204,204,255)'],[0.5,'rgb(255,255,255)'],
-        [0.6,'rgb(255,204,255)'],[0.7,'rgb(255,153,255)'],
-        [0.8,'rgb(255,102,204)'],[0.9,'rgb(255,102,102)'],
-        [1,'rgb(255,0,0)']],
+    'Picnic': [
+        [0, 'rgb(0,0,255)'], [0.1, 'rgb(51,153,255)'],
+        [0.2, 'rgb(102,204,255)'], [0.3, 'rgb(153,204,255)'],
+        [0.4, 'rgb(204,204,255)'], [0.5, 'rgb(255,255,255)'],
+        [0.6, 'rgb(255,204,255)'], [0.7, 'rgb(255,153,255)'],
+        [0.8, 'rgb(255,102,204)'], [0.9, 'rgb(255,102,102)'],
+        [1, 'rgb(255,0,0)']
+    ],
 
-    'Rainbow':[[0,'rgb(150,0,90)'],[0.125,'rgb(0, 0, 200)'],
-        [0.25,'rgb(0, 25, 255)'],[0.375,'rgb(0, 152, 255)'],
-        [0.5,'rgb(44, 255, 150)'],[0.625,'rgb(151, 255, 0)'],
-        [0.75,'rgb(255, 234, 0)'],[0.875,'rgb(255, 111, 0)'],
-        [1,'rgb(255, 0, 0)']],
+    'Rainbow': [
+        [0, 'rgb(150,0,90)'], [0.125, 'rgb(0,0,200)'],
+        [0.25, 'rgb(0,25,255)'], [0.375, 'rgb(0,152,255)'],
+        [0.5, 'rgb(44,255,150)'], [0.625, 'rgb(151,255,0)'],
+        [0.75, 'rgb(255,234,0)'], [0.875, 'rgb(255,111,0)'],
+        [1, 'rgb(255,0,0)']
+    ],
 
-    'Portland':[[0,'rgb(12,51,131)'],[0.25,'rgb(10,136,186)'],
-        [0.5,'rgb(242,211,56)'],[0.75,'rgb(242,143,56)'],
-        [1,'rgb(217,30,30)']],
+    'Portland': [
+        [0, 'rgb(12,51,131)'], [0.25, 'rgb(10,136,186)'],
+        [0.5, 'rgb(242,211,56)'], [0.75, 'rgb(242,143,56)'],
+        [1, 'rgb(217,30,30)']
+    ],
 
-    'Jet':[[0,'rgb(0,0,131)'],[0.125,'rgb(0,60,170)'],
-        [0.375,'rgb(5,255,255)'],[0.625,'rgb(255,255,0)'],
-        [0.875,'rgb(250,0,0)'],[1,'rgb(128,0,0)']],
+    'Jet': [
+        [0, 'rgb(0,0,131)'], [0.125, 'rgb(0,60,170)'],
+        [0.375, 'rgb(5,255,255)'], [0.625, 'rgb(255,255,0)'],
+        [0.875, 'rgb(250,0,0)'], [1, 'rgb(128,0,0)']
+    ],
 
-    'Hot':[[0,'rgb(0,0,0)'],[0.3,'rgb(230,0,0)'],
-        [0.6,'rgb(255,210,0)'],[1,'rgb(255,255,255)']],
+    'Hot': [
+        [0, 'rgb(0,0,0)'], [0.3, 'rgb(230,0,0)'],
+        [0.6, 'rgb(255,210,0)'], [1, 'rgb(255,255,255)']
+    ],
 
-    'Blackbody':[[0,'rgb(0,0,0)'],[0.2,'rgb(230,0,0)'],
-        [0.4,'rgb(230,210,0)'],[0.7,'rgb(255,255,255)'],
-        [1,'rgb(160,200,255)']],
+    'Blackbody': [
+        [0, 'rgb(0,0,0)'], [0.2, 'rgb(230,0,0)'],
+        [0.4, 'rgb(230,210,0)'], [0.7, 'rgb(255,255,255)'],
+        [1, 'rgb(160,200,255)']
+    ],
 
-    'Earth':[[0,'rgb(0,0,130)'],[0.1,'rgb(0,180,180)'],
-        [0.2,'rgb(40,210,40)'],[0.4,'rgb(230,230,50)'],
-        [0.6,'rgb(120,70,20)'],[1,'rgb(255,255,255)']],
+    'Earth': [
+        [0, 'rgb(0,0,130)'], [0.1, 'rgb(0,180,180)'],
+        [0.2, 'rgb(40,210,40)'], [0.4, 'rgb(230,230,50)'],
+        [0.6, 'rgb(120,70,20)'], [1, 'rgb(255,255,255)']
+    ],
 
-    'Electric':[[0,'rgb(0,0,0)'],[0.15,'rgb(30,0,100)'],
-        [0.4,'rgb(120,0,100)'],[0.6,'rgb(160,90,0)'],
-        [0.8,'rgb(230,200,0)'],[1,'rgb(255,250,220)']],
+    'Electric': [
+        [0, 'rgb(0,0,0)'], [0.15, 'rgb(30,0,100)'],
+        [0.4, 'rgb(120,0,100)'], [0.6, 'rgb(160,90,0)'],
+        [0.8, 'rgb(230,200,0)'], [1, 'rgb(255,250,220)']
+    ],
 
-    'Viridis': [[0,'#440154'],[0.06274509803921569,'#48186a'],
-        [0.12549019607843137,'#472d7b'],[0.18823529411764706,'#424086'],
-        [0.25098039215686274,'#3b528b'],[0.3137254901960784,'#33638d'],
-        [0.3764705882352941,'#2c728e'],[0.4392156862745098,'#26828e'],
-        [0.5019607843137255,'#21918c'],[0.5647058823529412,'#1fa088'],
-        [0.6274509803921569,'#28ae80'],[0.6901960784313725,'#3fbc73'],
-        [0.7529411764705882,'#5ec962'],[0.8156862745098039,'#84d44b'],
-        [0.8784313725490196,'#addc30'],[0.9411764705882353,'#d8e219'],
-        [1,'#fde725']]
+    'Viridis': [
+        [0, '#440154'], [0.06274509803921569, '#48186a'],
+        [0.12549019607843137, '#472d7b'], [0.18823529411764706, '#424086'],
+        [0.25098039215686274, '#3b528b'], [0.3137254901960784, '#33638d'],
+        [0.3764705882352941, '#2c728e'], [0.4392156862745098, '#26828e'],
+        [0.5019607843137255, '#21918c'], [0.5647058823529412, '#1fa088'],
+        [0.6274509803921569, '#28ae80'], [0.6901960784313725, '#3fbc73'],
+        [0.7529411764705882, '#5ec962'], [0.8156862745098039, '#84d44b'],
+        [0.8784313725490196, '#addc30'], [0.9411764705882353, '#d8e219'],
+        [1, '#fde725']
+    ]
 };
 
 },{}],36:[function(require,module,exports){
@@ -15172,8 +15208,8 @@ drawing.setRect = function(s, x, y, w, h) {
     s.call(drawing.setPosition, x, y).call(drawing.setSize, w, h);
 };
 
-drawing.translatePoints = function(s, xa, ya){
-    s.each(function(d){
+drawing.translatePoints = function(s, xa, ya) {
+    s.each(function(d) {
         // put xp and yp into d if pixel scaling is already done
         var x = d.xp || xa.c2p(d.x),
             y = d.yp || ya.c2p(d.y),
@@ -15208,7 +15244,7 @@ drawing.crispRound = function(td, lineWidth, dflt) {
 
 drawing.lineGroupStyle = function(s, lw, lc, ld) {
     s.style('fill','none')
-    .each(function(d){
+    .each(function(d) {
         var line = (((d||[])[0]||{}).trace||{}).line||{},
             lw1 = lw||line.width||0,
             dash = ld||line.dash||'';
@@ -15242,7 +15278,7 @@ drawing.dashLine = function(s, dash, lineWidth) {
 
 drawing.fillGroupStyle = function(s) {
     s.style('stroke-width',0)
-    .each(function(d){
+    .each(function(d) {
         var shape = d3.select(this);
         try {
             shape.call(Plotly.Color.fill, d[0].trace.fillcolor);
@@ -15334,7 +15370,7 @@ drawing.pointStyle = function(s, trace) {
             return drawing.symbolFuncs[xBase](r) +
                 (x >= 200 ? DOTPATH : '');
         })
-        .style('opacity',function(d){
+        .style('opacity',function(d) {
             return (d.mo+1 || marker.opacity+1) - 1;
         });
     }
@@ -15344,7 +15380,7 @@ drawing.pointStyle = function(s, trace) {
         markerScale = drawing.tryColorscale(marker, markerIn, ''),
         lineScale = drawing.tryColorscale(marker, markerIn, 'line.');
 
-    s.each(function(d){
+    s.each(function(d) {
         // 'so' is suspected outliers, for box plots
         var fillColor,
             lineColor,
@@ -15427,10 +15463,10 @@ drawing.tryColorscale = function(cont, contIn, prefix) {
 };
 
 // draw text at points
-var TEXTOFFSETSIGN = {start:1, end:-1, middle:0, bottom:1, top:-1},
+var TEXTOFFSETSIGN = {start: 1, end: -1, middle: 0, bottom: 1, top: -1},
     LINEEXPAND = 1.3;
 drawing.textPointStyle = function(s, trace) {
-    s.each(function(d){
+    s.each(function(d) {
         var p = d3.select(this),
             text = d.tx || trace.text;
         if(!text || Array.isArray(text)) {
@@ -15598,7 +15634,10 @@ drawing.makeTester = function(gd) {
     testref.enter().append('path')
         .classed('js-reference-point', true)
         .attr('d','M0,0H1V1H0Z')
-        .style({'stroke-width':0, fill:'black'});
+        .style({
+            'stroke-width': 0,
+            fill: 'black'
+        });
 
     if(!tester.node()._cache) {
         tester.node()._cache = {};
@@ -15629,7 +15668,11 @@ drawing.bBox = function(node) {
     var testNode = node.cloneNode(true);
     tester.appendChild(testNode);
     // standardize its position... do we really want to do this?
-    d3.select(testNode).attr({x:0, y:0, transform:''});
+    d3.select(testNode).attr({
+        x: 0,
+        y: 0,
+        transform: ''
+    });
 
     var testRect = testNode.getBoundingClientRect(),
         refRect = test3.select('.js-reference-point')
@@ -16563,7 +16606,7 @@ errorBars.plot = function(gd, plotinfo, cd) {
         .data(cd)
       .enter().append('g')
         .attr('class','errorbars')
-        .each(function(d){
+        .each(function(d) {
             var trace = d[0].trace,
                 xObj = trace.error_x,
                 yObj = trace.error_y,
@@ -16575,7 +16618,7 @@ errorBars.plot = function(gd, plotinfo, cd) {
             d3.select(this).selectAll('g')
                 .data(Lib.identity)
               .enter().append('g')
-                .each(function(d){
+                .each(function(d) {
                     coords = errorcoords(d, xa, ya);
                     var eb = d3.select(this),
                         path;
@@ -16583,7 +16626,7 @@ errorBars.plot = function(gd, plotinfo, cd) {
 
                     if(yObj.visible && isNumeric(coords.x) &&
                             isNumeric(coords.yh) &&
-                            isNumeric(coords.ys)){
+                            isNumeric(coords.ys)) {
                         var yw = yObj.width;
                         path = 'M'+(coords.x-yw)+','+coords.yh+'h'+(2*yw) + // hat
                             'm-'+yw+',0V'+coords.ys; // bar
@@ -16595,7 +16638,7 @@ errorBars.plot = function(gd, plotinfo, cd) {
                     }
                     if(xObj.visible && isNumeric(coords.y) &&
                             isNumeric(coords.xh) &&
-                            isNumeric(coords.xs)){
+                            isNumeric(coords.xs)) {
                         var xw = (xObj.copy_ystyle ? yObj : xObj).width;
                         path = 'M'+coords.xh+','+(coords.y-xw)+'v'+(2*xw) + // hat
                             'm0,-'+xw+'H'+coords.xs; // bar
@@ -16609,8 +16652,8 @@ errorBars.plot = function(gd, plotinfo, cd) {
         });
 };
 
-errorBars.style = function(gd){
-    d3.select(gd).selectAll('g.errorbars').each(function(d){
+errorBars.style = function(gd) {
+    d3.select(gd).selectAll('g.errorbars').each(function(d) {
         var eb = d3.select(this),
             trace = d[0].trace,
             yObj = trace.error_y||{},
@@ -16863,7 +16906,7 @@ legend.supplyLayoutDefaults = function(layoutIn, layoutOut, fullData) {
 // same functions for styling traces in the popovers
 // -----------------------------------------------------
 
-legend.lines = function(d){
+legend.lines = function(d) {
     var trace = d[0].trace,
         showFill = trace.visible && trace.fill && trace.fill!=='none',
         showLine = subTypes.hasLines(trace);
@@ -16883,7 +16926,7 @@ legend.lines = function(d){
     line.call(Drawing.lineGroupStyle);
 };
 
-legend.points = function(d){
+legend.points = function(d) {
     var d0 = d[0],
         trace = d0.trace,
         showMarkers = subTypes.hasMarkers(trace),
@@ -16968,7 +17011,7 @@ legend.points = function(d){
 
 };
 
-legend.bars = function(d){
+legend.bars = function(d) {
     var trace = d[0].trace,
         marker = trace.marker||{},
         markerLine = marker.line||{},
@@ -16979,7 +17022,7 @@ legend.bars = function(d){
         .attr('d','M6,6H-6V-6H6Z')
         .attr('transform','translate(20,0)');
     barpath.exit().remove();
-    barpath.each(function(d){
+    barpath.each(function(d) {
         var w = (d.mlw+1 || markerLine.width+1) - 1,
             p = d3.select(this);
         p.style('stroke-width',w+'px')
@@ -16990,7 +17033,7 @@ legend.bars = function(d){
     });
 };
 
-legend.boxes = function(d){
+legend.boxes = function(d) {
     var trace = d[0].trace,
         pts = d3.select(this).select('g.legendpoints')
             .selectAll('path.legendbox')
@@ -17000,7 +17043,7 @@ legend.boxes = function(d){
         .attr('d', 'M6,6H-6V-6H6Z')
         .attr('transform', 'translate(20,0)');
     pts.exit().remove();
-    pts.each(function(d){
+    pts.each(function(d) {
         var w = (d.lw+1 || trace.line.width+1) - 1,
             p = d3.select(this);
         p.style('stroke-width', w+'px')
@@ -17025,7 +17068,7 @@ legend.pie = function(d) {
 };
 
 legend.style = function(s) {
-    s.each(function(d){
+    s.each(function(d) {
         var traceGroup = d3.select(this);
 
         var fill = traceGroup
@@ -17059,7 +17102,7 @@ legend.style = function(s) {
     .each(legend.points);
 };
 
-legend.texts = function(context, td, d, i, traces){
+legend.texts = function(context, td, d, i, traces) {
     var fullLayout = td._fullLayout,
         trace = d[0].trace,
         isPie = Plots.traceIs(trace, 'pie'),
@@ -17084,17 +17127,17 @@ legend.texts = function(context, td, d, i, traces){
     .call(Drawing.font, fullLayout.legend.font)
     .text(name);
 
-    function textLayout(s){
-        Plotly.util.convertToTspans(s, function(){
+    function textLayout(s) {
+        Plotly.util.convertToTspans(s, function() {
             if(td.firstRender) legend.repositionLegend(td, traces);
         });
         s.selectAll('tspan.line').attr({x: s.attr('x')});
     }
 
-    if(td._context.editable && !isPie){
+    if(td._context.editable && !isPie) {
         text.call(Plotly.util.makeEditable)
             .call(textLayout)
-            .on('edit', function(text){
+            .on('edit', function(text) {
                 this.attr({'data-unformatted': text});
                 this.text(text)
                     .call(textLayout);
@@ -17255,7 +17298,9 @@ legend.draw = function(td) {
         .attr({
             'class': 'scrollbar',
             'rx': 20,
-            'ry': 2
+            'ry': 2,
+            'width': 0,
+            'height': 0
         })
         .call(Color.fill, '#808BA4');
 
@@ -17373,11 +17418,11 @@ legend.draw = function(td) {
     legendsvg.call(Drawing.setRect, lx, ly, opts.width, scrollheight);
 
     // If scrollbar should be shown.
-    if(td.firstRender && opts.height - scrollheight > 0 && !td._context.staticPlot){
+    if(td.firstRender && opts.height - scrollheight > 0 && !td._context.staticPlot) {
 
         bg.attr({ width: opts.width - 2 * opts.borderwidth + constants.scrollBarWidth });
 
-        legendsvg.node().addEventListener('wheel', function(e){
+        legendsvg.node().addEventListener('wheel', function(e) {
             e.preventDefault();
             scrollHandler(e.deltaY / 20);
         });
@@ -17386,7 +17431,7 @@ legend.draw = function(td) {
             e.preventDefault();
 
             function mMove(e) {
-                if(e.buttons === 1){
+                if(e.buttons === 1) {
                     scrollHandler(e.movementY);
                 }
             }
@@ -17400,7 +17445,7 @@ legend.draw = function(td) {
             window.addEventListener('mouseup', mUp);
         });
 
-            // Move scrollbar to starting position on the first render
+        // Move scrollbar to starting position on the first render
         scrollBar.call(
             Drawing.setRect,
             opts.width - (constants.scrollBarWidth + constants.scrollBarMargin),
@@ -17410,7 +17455,7 @@ legend.draw = function(td) {
         );
     }
 
-    function scrollHandler(delta){
+    function scrollHandler(delta) {
 
         var scrollBarTrack = scrollheight - constants.scrollBarHeight - 2 * constants.scrollBarMargin,
             translateY = scrollBox.attr('data-scroll'),
@@ -17469,7 +17514,7 @@ legend.draw = function(td) {
     }
 };
 
-legend.repositionLegend = function(td, traces){
+legend.repositionLegend = function(td, traces) {
     var fullLayout = td._fullLayout,
         gs = fullLayout._size,
         opts = fullLayout.legend,
@@ -17478,7 +17523,7 @@ legend.repositionLegend = function(td, traces){
     opts.width = 0,
     opts.height = 0,
 
-    traces.each(function(d){
+    traces.each(function(d) {
         var trace = d[0].trace,
             g = d3.select(this),
             bg = g.selectAll('.legendtoggle'),
@@ -17571,10 +17616,10 @@ legend.repositionLegend = function(td, traces){
     Plots.autoMargin(td,'legend',{
         x: opts.x,
         y: opts.y,
-        l: opts.width * ({right:1, center:0.5}[xanchor] || 0),
-        r: opts.width * ({left:1, center:0.5}[xanchor] || 0),
-        b: opts.height * ({top:1, middle:0.5}[yanchor] || 0),
-        t: opts.height * ({bottom:1, middle:0.5}[yanchor] || 0)
+        l: opts.width * ({right: 1, center: 0.5}[xanchor] || 0),
+        r: opts.width * ({left: 1, center: 0.5}[xanchor] || 0),
+        b: opts.height * ({top: 1, middle: 0.5}[yanchor] || 0),
+        t: opts.height * ({bottom: 1, middle: 0.5}[yanchor] || 0)
     });
 };
 
@@ -17631,13 +17676,13 @@ modeBarButtons.toImage = {
     click: function(gd) {
         var format = 'png';
 
-        if (Lib.isIE()) {
+        if(Lib.isIE()) {
             Lib.notifier('Snapshotting is unavailable in Internet Explorer. ' +
                          'Consider exporting your images using the Plotly Cloud', 'long');
             return;
         }
 
-        if (gd._snapshotInProgress) {
+        if(gd._snapshotInProgress) {
             Lib.notifier('Snapshotting is still in progress - please hold', 'long');
             return;
         }
@@ -17823,7 +17868,7 @@ function handleCartesian(gd, ev) {
     }
     else {
         // if ALL traces have orientation 'h', 'hovermode': 'x' otherwise: 'y'
-        if (astr==='hovermode' && (val==='x' || val==='y')) {
+        if(astr==='hovermode' && (val==='x' || val==='y')) {
             val = fullLayout._isHoriz ? 'y' : 'x';
             button.setAttribute('data-val', val);
         }
@@ -18354,12 +18399,12 @@ proto.hasButtons = function(buttons) {
 
     if(!currentButtons) return false;
 
-    if (buttons.length !== currentButtons.length) return false;
+    if(buttons.length !== currentButtons.length) return false;
 
-    for (var i = 0; i < buttons.length; ++i) {
-        if (buttons[i].length !== currentButtons[i].length) return false;
-        for (var j = 0; j < buttons[i].length; j++) {
-            if (buttons[i][j].name !== currentButtons[i][j].name) return false;
+    for(var i = 0; i < buttons.length; ++i) {
+        if(buttons[i].length !== currentButtons[i].length) return false;
+        for(var j = 0; j < buttons[i].length; j++) {
+            if(buttons[i][j].name !== currentButtons[i][j].name) return false;
         }
     }
 
@@ -18904,7 +18949,7 @@ shapes.draw = function(gd, index, opt, value) {
                     Plotly.Lib.extendFlat({}, value) :
                     {text: 'New text'};
 
-            if (layout.shapes) {
+            if(layout.shapes) {
                 layout.shapes.splice(index, 0, rule);
             } else {
                 layout.shapes = [rule];
@@ -19263,8 +19308,8 @@ Titles.draw = function(gd, title) {
         xa,
         ya,
         avoid = {
-            selection:d3.select(gd).selectAll('g.'+cont._id+'tick'),
-            side:cont.side
+            selection: d3.select(gd).selectAll('g.'+cont._id+'tick'),
+            side: cont.side
         },
         // multiples of fontsize to offset label from axis
         offsetBase = colorbar ? 0 : 1.5,
@@ -19299,7 +19344,7 @@ Titles.draw = function(gd, title) {
         // TODO: need a better solution than this hack
         title = 'h' + title;
     }
-    else if(axletter === 'x'){
+    else if(axletter === 'x') {
         xa = cont;
         ya = (xa.anchor === 'free') ?
             {_offset: gs.t + (1 - (xa.position || 0)) * gs.h, _length: 0} :
@@ -19314,7 +19359,7 @@ Titles.draw = function(gd, title) {
         options = {x: x, y: y, 'text-anchor': 'middle'};
         if(!avoid.side) avoid.side = 'bottom';
     }
-    else if(axletter === 'y'){
+    else if(axletter === 'y') {
         ya = cont;
         xa = (ya.anchor === 'free') ?
             {_offset: gs.l + (ya.position || 0) * gs.w, _length: 0} :
@@ -19379,7 +19424,7 @@ Titles.draw = function(gd, title) {
         // for now) - ie don't use .classed
         .attr('class', title);
 
-    function titleLayout(titleEl){
+    function titleLayout(titleEl) {
         Lib.syncOrAsync([drawTitle,scootTitle], titleEl);
     }
 
@@ -19408,7 +19453,7 @@ Titles.draw = function(gd, title) {
     function scootTitle(titleElIn) {
         var titleGroup = d3.select(titleElIn.node().parentNode);
 
-        if(avoid && avoid.selection && avoid.side && txt){
+        if(avoid && avoid.selection && avoid.side && txt) {
             titleGroup.attr('transform', null);
 
             // move toward avoid.side (= left, right, top, bottom) if needed
@@ -19445,7 +19490,7 @@ Titles.draw = function(gd, title) {
 
                 // iterate over a set of elements (avoid.selection)
                 // to avoid collisions with
-                avoid.selection.each(function(){
+                avoid.selection.each(function() {
                     var avoidbb = Drawing.bBox(this);
 
                     if(Lib.bBoxIntersect(titlebb, avoidbb, pad)) {
@@ -19490,7 +19535,7 @@ Titles.draw = function(gd, title) {
             });
     }
 
-    if(gd._context.editable){
+    if(gd._context.editable) {
         if(!txt) setPlaceholder();
 
         el.call(svgTextUtils.makeEditable)
@@ -19562,7 +19607,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.6.0';
+exports.version = '1.6.1';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -19607,7 +19652,7 @@ exports.d3 = require('d3');
 /**
  * Check and configure MathJax
  */
-if (typeof MathJax !== 'undefined'){
+if(typeof MathJax !== 'undefined') {
     exports.MathJax = true;
 
     MathJax.Hub.Config({
@@ -19967,7 +20012,7 @@ var isNumeric = require('fast-isnumeric');
 exports.dateTime2ms = function(s) {
     // first check if s is a date object
     try {
-        if (s.getTime) return +s;
+        if(s.getTime) return +s;
     }
     catch(e) {
         return false;
@@ -19976,51 +20021,51 @@ exports.dateTime2ms = function(s) {
     var y, m, d, h;
     // split date and time parts
     var datetime = String(s).split(' ');
-    if (datetime.length > 2) return false;
+    if(datetime.length > 2) return false;
 
     var p = datetime[0].split('-'); // date part
-    if (p.length > 3 || (p.length !== 3 && datetime[1])) return false;
+    if(p.length > 3 || (p.length !== 3 && datetime[1])) return false;
 
     // year
-    if (p[0].length === 4) y = Number(p[0]);
-    else if (p[0].length === 2) {
+    if(p[0].length === 4) y = Number(p[0]);
+    else if(p[0].length === 2) {
         var yNow = new Date().getFullYear();
         y = ((Number(p[0]) - yNow + 70)%100 + 200)%100 + yNow - 70;
     }
     else return false;
-    if (!isNumeric(y)) return false;
-    if (p.length === 1) return new Date(y,0,1).getTime(); // year only
+    if(!isNumeric(y)) return false;
+    if(p.length === 1) return new Date(y,0,1).getTime(); // year only
 
     // month
     m = Number(p[1]) - 1; // new Date() uses zero-based months
-    if (p[1].length > 2 || !(m >= 0 && m <= 11)) return false;
-    if (p.length === 2) return new Date(y, m, 1).getTime(); // year-month
+    if(p[1].length > 2 || !(m >= 0 && m <= 11)) return false;
+    if(p.length === 2) return new Date(y, m, 1).getTime(); // year-month
 
     // day
     d = Number(p[2]);
-    if (p[2].length > 2 || !(d >= 1 && d <= 31)) return false;
+    if(p[2].length > 2 || !(d >= 1 && d <= 31)) return false;
 
     // now save the date part
     d = new Date(y, m, d).getTime();
-    if (!datetime[1]) return d; // year-month-day
+    if(!datetime[1]) return d; // year-month-day
     p = datetime[1].split(':');
-    if (p.length > 3) return false;
+    if(p.length > 3) return false;
 
     // hour
     h = Number(p[0]);
-    if (p[0].length > 2 || !(h >= 0 && h <= 23)) return false;
+    if(p[0].length > 2 || !(h >= 0 && h <= 23)) return false;
     d += 3600000*h;
-    if (p.length === 1) return d;
+    if(p.length === 1) return d;
 
     // minute
     m = Number(p[1]);
-    if (p[1].length > 2 || !(m >= 0 && m <= 59)) return false;
+    if(p[1].length > 2 || !(m >= 0 && m <= 59)) return false;
     d += 60000*m;
-    if (p.length === 2) return d;
+    if(p.length === 2) return d;
 
     // second
     s = Number(p[2]);
-    if (!(s >= 0 && s < 60)) return false;
+    if(!(s >= 0 && s < 60)) return false;
     return d+s*1000;
 };
 
@@ -20030,7 +20075,7 @@ exports.isDateTime = function(s) {
 };
 
 // pad a number with zeroes, to given # of digits before the decimal point
-function lpad(val, digits){
+function lpad(val, digits) {
     return String(val + Math.pow(10, digits)).substr(1);
 }
 
@@ -20042,7 +20087,7 @@ function lpad(val, digits){
  * If rng is big, the later parts of time will be omitted
  */
 exports.ms2DateTime = function(ms, r) {
-    if(typeof(d3)==='undefined'){
+    if(typeof(d3)==='undefined') {
         console.log('d3 is not defined');
         return;
     }
@@ -20087,22 +20132,22 @@ exports.ms2DateTime = function(ms, r) {
 // TODO: this is way out of date vs. the server-side version
 var timeFormats = {
     // 24 hour
-    H:['%H:%M:%S~%L', '%H:%M:%S', '%H:%M'],
+    H: ['%H:%M:%S~%L', '%H:%M:%S', '%H:%M'],
     // with am/pm
-    I:['%I:%M:%S~%L%p', '%I:%M:%S%p', '%I:%M%p'],
+    I: ['%I:%M:%S~%L%p', '%I:%M:%S%p', '%I:%M%p'],
     // no colon, ie only date or date with hour (could also support eg 12h34m?)
-    D:['%H', '%I%p', '%Hh']
+    D: ['%H', '%I%p', '%Hh']
 };
 
 var dateFormats = {
-    Y:[
+    Y: [
         '%Y~%m~%d',
         '%Y%m%d',
         '%y%m%d', // YYMMDD, has 6 digits together so will match Y, not y
         '%m~%d~%Y', // MM/DD/YYYY has first precedence
         '%d~%m~%Y' // then DD/MM/YYYY
     ],
-    Yb:[
+    Yb: [
         '%b~%d~%Y', // eg nov 21 2013
         '%d~%b~%Y', // eg 21 nov 2013
         '%Y~%d~%b', // eg 2013 21 nov (or 2013 q3, after replacement)
@@ -20112,12 +20157,12 @@ var dateFormats = {
      * the two-digit year cases have so many potential ambiguities
      * it's not even funny, but we'll try them anyway.
      */
-    y:[
+    y: [
         '%m~%d~%y',
         '%d~%m~%y',
         '%y~%m~%d'
     ],
-    yb:[
+    yb: [
         '%b~%d~%y',
         '%d~%b~%y',
         '%y~%d~%b',
@@ -20191,13 +20236,13 @@ function getTimeType(v) {
 
 exports.parseDate = function(v) {
     // is it already a date? just return it
-    if (v.getTime) return v;
+    if(v.getTime) return v;
     /**
      * otherwise, if it's not a string, return nothing
      * the case of numbers that just have years will get
      * dealt with elsewhere.
      */
-    if (typeof v !== 'string') return false;
+    if(typeof v !== 'string') return false;
 
     // first clean up the string a bit to reduce the number of formats we have to test
     v = v.toLowerCase()
@@ -20241,13 +20286,13 @@ exports.parseDate = function(v) {
     formatList = dateTimeFormats[dateType][timeType];
     len = formatList.length;
 
-    for (var i = 0; i < len; i++) {
+    for(var i = 0; i < len; i++) {
         out = formatList[i].parse(v);
-        if (out) break;
+        if(out) break;
     }
 
     // If not an instance of Date at this point, just return it.
-    if (!(out instanceof Date)) return false;
+    if(!(out instanceof Date)) return false;
     // parse() method interprets arguments with local time zone.
     var tzoff = out.getTimezoneOffset();
     // In general (default) this is not what we want, so force into UTC:
@@ -20279,7 +20324,7 @@ var Events = {
          * If we have already instantiated an emitter for this plot
          * return early.
          */
-        if (plotObj._ev instanceof EventEmitter) return plotObj;
+        if(plotObj._ev instanceof EventEmitter) return plotObj;
 
         var ev = new EventEmitter();
 
@@ -20311,7 +20356,7 @@ var Events = {
          * events.
          */
         plotObj.emit = function(event, data) {
-            if (typeof $ !== 'undefined') {
+            if(typeof $ !== 'undefined') {
                 $(plotObj).trigger(event, data);
             }
 
@@ -20334,7 +20379,7 @@ var Events = {
          * If Jquery exists run all its handlers for this event and
          * collect the return value of the LAST handler function
          */
-        if (typeof $ !== 'undefined') {
+        if(typeof $ !== 'undefined') {
             jQueryHandlerValue = $(plotObj).triggerHandler(event, data);
         }
 
@@ -20342,21 +20387,21 @@ var Events = {
          * Now run all the node style event handlers
          */
         var ev = plotObj._ev;
-        if (!ev) return jQueryHandlerValue;
+        if(!ev) return jQueryHandlerValue;
 
         var handlers = ev._events[event];
-        if (!handlers) return jQueryHandlerValue;
+        if(!handlers) return jQueryHandlerValue;
 
         /*
          * handlers can be function or an array of functions
          */
-        if (typeof handlers === 'function') handlers = [handlers];
+        if(typeof handlers === 'function') handlers = [handlers];
         var lastHandler = handlers.pop();
 
         /*
          * Call all the handlers except the last one.
          */
-        for (var i = 0; i < handlers.length; i++) {
+        for(var i = 0; i < handlers.length; i++) {
             handlers[i](data);
         }
 
@@ -20545,7 +20590,7 @@ lib.swapAttrs = function(cont, attrList, part1, part2) {
  * for maximum effect use:
  *      return pauseEvent(e);
  */
-lib.pauseEvent = function(e){
+lib.pauseEvent = function(e) {
     if(e.stopPropagation) e.stopPropagation();
     if(e.preventDefault) e.preventDefault();
     e.cancelBubble = true;
@@ -20565,7 +20610,7 @@ lib.VERBOSE = false;
 lib.TIMER = new Date().getTime();
 
 // console.log that only runs if VERBOSE is on
-lib.log = function(){
+lib.log = function() {
     if(lib.VERBOSE) console.log.apply(console, arguments);
 };
 
@@ -20573,7 +20618,7 @@ lib.log = function(){
  * markTime - for debugging, mark the number of milliseconds
  * since the previous call to markTime and log arbitrary info too
  */
-lib.markTime = function(v){
+lib.markTime = function(v) {
     if(!lib.VERBOSE) return;
     var t2 = new Date().getTime();
     console.log(v, t2 - lib.TIMER, '(msec)');
@@ -20592,7 +20637,7 @@ lib.constrain = function(v, v0, v1) {
  * ie {left,right,top,bottom,width,height}, overlap?
  * takes optional padding pixels
  */
-lib.bBoxIntersect = function(a, b, pad){
+lib.bBoxIntersect = function(a, b, pad) {
     pad = pad || 0;
     return (a.left <= b.right + pad &&
             b.left <= a.right + pad &&
@@ -20609,9 +20654,9 @@ lib.randstr = function randstr(existing, bits, base) {
      * Include number of bits, the base of the string you want
      * and an optional array of existing strings to avoid.
      */
-    if (!base) base = 16;
-    if (bits === undefined) bits = 24;
-    if (bits <= 0) return '0';
+    if(!base) base = 16;
+    if(bits === undefined) bits = 24;
+    if(bits <= 0) return '0';
 
     var digits = Math.log(Math.pow(2, bits)) / Math.log(base),
         res = '',
@@ -20619,25 +20664,25 @@ lib.randstr = function randstr(existing, bits, base) {
         b,
         x;
 
-    for (i = 2; digits === Infinity; i *= 2) {
+    for(i = 2; digits === Infinity; i *= 2) {
         digits = Math.log(Math.pow(2, bits / i)) / Math.log(base) * i;
     }
 
     var rem = digits - Math.floor(digits);
 
-    for (i = 0; i < Math.floor(digits); i++) {
+    for(i = 0; i < Math.floor(digits); i++) {
         x = Math.floor(Math.random() * base).toString(base);
         res = x + res;
     }
 
-    if (rem) {
+    if(rem) {
         b = Math.pow(base, rem);
         x = Math.floor(Math.random() * b).toString(base);
         res = x + res;
     }
 
     var parsed = parseInt(res, base);
-    if ((existing && (existing.indexOf(res) > -1)) ||
+    if((existing && (existing.indexOf(res) > -1)) ||
          (parsed !== Infinity && parsed >= Math.pow(2, bits))) {
         return randstr(existing, bits, base);
     }
@@ -20654,8 +20699,8 @@ lib.OptionControl = function(opt, optname) {
      *
      * See FitOpts for example of usage
      */
-    if (!opt) opt = {};
-    if (!optname) optname = 'opt';
+    if(!opt) opt = {};
+    if(!optname) optname = 'opt';
 
     var self = {};
     self.optionList = [];
@@ -20741,7 +20786,7 @@ lib.promiseError = function(err) { console.log(err, err.stack); };
 lib.syncOrAsync = function(sequence, arg, finalStep) {
     var ret, fni;
 
-    function continueAsync(){
+    function continueAsync() {
         lib.markTime('async done ' + fni.name);
         return lib.syncOrAsync(sequence, arg, finalStep);
     }
@@ -20765,7 +20810,7 @@ lib.syncOrAsync = function(sequence, arg, finalStep) {
  * http://stackoverflow.com/questions/6680825/return-string-without-trailing-slash
  */
 lib.stripTrailingSlash = function(str) {
-    if (str.substr(-1) === '/') return str.substr(0, str.length - 1);
+    if(str.substr(-1) === '/') return str.substr(0, str.length - 1);
     return str;
 };
 
@@ -20944,12 +20989,12 @@ exports.transposeRagged = function(z) {
         i,
         j;
     // Maximum row length:
-    for (i = 0; i < zlen; i++) maxlen = Math.max(maxlen, z[i].length);
+    for(i = 0; i < zlen; i++) maxlen = Math.max(maxlen, z[i].length);
 
     var t = new Array(maxlen);
-    for (i = 0; i < maxlen; i++) {
+    for(i = 0; i < maxlen; i++) {
         t[i] = new Array(zlen);
-        for (j = 0; j < zlen; j++) t[i][j] = z[j][i];
+        for(j = 0; j < zlen; j++) t[i][j] = z[j][i];
     }
 
     return t;
@@ -20957,7 +21002,7 @@ exports.transposeRagged = function(z) {
 
 // our own dot function so that we don't need to include numeric
 exports.dot = function(x, y) {
-    if (!(x.length && y.length) || x.length !== y.length) return null;
+    if(!(x.length && y.length) || x.length !== y.length) return null;
 
     var len = x.length,
         out,
@@ -21008,7 +21053,7 @@ exports.rotationXYMatrix = function(a, x, y) {
 exports.apply2DTransform = function(transform) {
     return function() {
         var args = arguments;
-        if (args.length === 3) {
+        if(args.length === 3) {
             args = args[0];
         }//from map
         var xy = arguments.length === 1 ? args[0] : [args[0], args[1]];
@@ -21310,8 +21355,8 @@ module.exports = function(text, displayLength) {
     NOTEDATA.push(text);
 
     var ts = 1000;
-    if (isNumeric(displayLength)) ts = displayLength;
-    else if (displayLength === 'long') ts = 3000;
+    if(isNumeric(displayLength)) ts = displayLength;
+    else if(displayLength === 'long') ts = 3000;
 
     var notifierContainer = d3.select('body')
         .selectAll('.plotly-notifier')
@@ -21666,13 +21711,13 @@ queue.add = function(gd, undoFunc, undoArgs, redoFunc, redoArgs) {
 
     // if we're already playing an undo or redo, or if this is an auto operation
     // (like pane resize... any others?) then we don't save this to the undo queue
-    if (gd.autoplay) {
-        if (!gd.undoQueue.inSequence) gd.autoplay = false;
+    if(gd.autoplay) {
+        if(!gd.undoQueue.inSequence) gd.autoplay = false;
         return;
     }
 
     // if we're not in a sequence or are just starting, we need a new queue item
-    if (!gd.undoQueue.sequence || gd.undoQueue.beginSequence) {
+    if(!gd.undoQueue.sequence || gd.undoQueue.beginSequence) {
         queueObj = {undo: {calls: [], args: []}, redo: {calls: [], args: []}};
         gd.undoQueue.queue.splice(queueIndex, gd.undoQueue.queue.length - queueIndex, queueObj);
         gd.undoQueue.index += 1;
@@ -21721,11 +21766,11 @@ queue.stopSequence = function(gd) {
 queue.undo = function undo(gd) {
     var queueObj, i;
 
-    if(gd.framework && gd.framework.isPolar){
+    if(gd.framework && gd.framework.isPolar) {
         gd.framework.undo();
         return;
     }
-    if (gd.undoQueue === undefined ||
+    if(gd.undoQueue === undefined ||
             isNaN(gd.undoQueue.index) ||
             gd.undoQueue.index <= 0) {
         return;
@@ -21739,7 +21784,7 @@ queue.undo = function undo(gd) {
 
     // this sequence keeps things from adding to the queue during undo/redo
     gd.undoQueue.inSequence = true;
-    for (i = 0; i < queueObj.undo.calls.length; i++) {
+    for(i = 0; i < queueObj.undo.calls.length; i++) {
         queue.plotDo(gd, queueObj.undo.calls[i], queueObj.undo.args[i]);
     }
     gd.undoQueue.inSequence = false;
@@ -21754,11 +21799,11 @@ queue.undo = function undo(gd) {
 queue.redo = function redo(gd) {
     var queueObj, i;
 
-    if(gd.framework && gd.framework.isPolar){
+    if(gd.framework && gd.framework.isPolar) {
         gd.framework.redo();
         return;
     }
-    if (gd.undoQueue === undefined ||
+    if(gd.undoQueue === undefined ||
             isNaN(gd.undoQueue.index) ||
             gd.undoQueue.index >= gd.undoQueue.queue.length) {
         return;
@@ -21769,7 +21814,7 @@ queue.redo = function redo(gd) {
 
     // this sequence keeps things from adding to the queue during undo/redo
     gd.undoQueue.inSequence = true;
-    for (i = 0; i < queueObj.redo.calls.length; i++) {
+    for(i = 0; i < queueObj.redo.calls.length; i++) {
         queue.plotDo(gd, queueObj.redo.calls[i], queueObj.redo.args[i]);
     }
     gd.undoQueue.inSequence = false;
@@ -21843,7 +21888,7 @@ exports.findBin = function(val, bins, linelow) {
             test = linelow ? greaterOrEqual : greaterThan;
         }
         // c is just to avoid infinite loops if there's an error
-        while(n1 < n2 && c++ < 100){
+        while(n1 < n2 && c++ < 100) {
             n = Math.floor((n1 + n2) / 2);
             if(test(bins[n], val)) n1 = n + 1;
             else n2 = n;
@@ -21893,7 +21938,7 @@ exports.distinctVals = function(valsIn) {
  * particularly useful for date/time where things are not powers of 10
  * binary search is probably overkill here...
  */
-exports.roundUp = function(val, arrayIn, reverse){
+exports.roundUp = function(val, arrayIn, reverse) {
     var low = 0,
         high = arrayIn.length - 1,
         mid,
@@ -21902,7 +21947,7 @@ exports.roundUp = function(val, arrayIn, reverse){
         dhigh = reverse ? 1 : 0,
         rounded = reverse ? Math.ceil : Math.floor;
     // c is just to avoid infinite loops if there's an error
-    while(low < high && c++ < 100){
+    while(low < high && c++ < 100) {
         mid = rounded((low + high) / 2);
         if(arrayIn[mid] <= val) low = mid + dlow;
         else high = mid - dhigh;
@@ -21941,17 +21986,17 @@ var isNumeric = require('fast-isnumeric');
 exports.aggNums = function(f, v, a, len) {
     var i,
         b;
-    if (!len) len = a.length;
-    if (!isNumeric(v)) v = false;
-    if (Array.isArray(a[0])) {
+    if(!len) len = a.length;
+    if(!isNumeric(v)) v = false;
+    if(Array.isArray(a[0])) {
         b = new Array(len);
         for(i = 0; i < len; i++) b[i] = exports.aggNums(f, v, a[i]);
         a = b;
     }
 
-    for (i = 0; i < len; i++) {
-        if (!isNumeric(v)) v = a[i];
-        else if (isNumeric(a[i])) v = f(+v, +a[i]);
+    for(i = 0; i < len; i++) {
+        if(!isNumeric(v)) v = a[i];
+        else if(isNumeric(a[i])) v = f(+v, +a[i]);
     }
     return v;
 };
@@ -21961,17 +22006,17 @@ exports.aggNums = function(f, v, a, len) {
  * even need to use aggNums instead of .length, to toss out non-numerics
  */
 exports.len = function(data) {
-    return exports.aggNums(function(a){ return a + 1; }, 0, data);
+    return exports.aggNums(function(a) { return a + 1; }, 0, data);
 };
 
 exports.mean = function(data, len) {
     if(!len) len = exports.len(data);
-    return exports.aggNums(function(a, b){ return a + b; }, 0, data) / len;
+    return exports.aggNums(function(a, b) { return a + b; }, 0, data) / len;
 };
 
 exports.variance = function(data, len, mean) {
-    if (!len) len = exports.len(data);
-    if (!isNumeric(mean)) mean = exports.mean(data, len);
+    if(!len) len = exports.len(data);
+    if(!isNumeric(mean)) mean = exports.mean(data, len);
 
     return exports.aggNums(function(a, b) {
         return a + Math.pow(b - mean, 2);
@@ -21998,10 +22043,10 @@ exports.stdev = function(data, len, mean) {
  * @return {Number} - percentile
  */
 exports.interp = function(arr, n) {
-    if (!isNumeric(n)) throw 'n should be a finite number';
+    if(!isNumeric(n)) throw 'n should be a finite number';
     n = n * arr.length - 0.5;
-    if (n < 0) return arr[0];
-    if (n > arr.length - 1) return arr[arr.length - 1];
+    if(n < 0) return arr[0];
+    if(n > arr.length - 1) return arr[arr.length - 1];
     var frac = n % 1;
     return frac * arr[Math.ceil(n)] + (1 - frac) * arr[Math.floor(n)];
 };
@@ -22044,7 +22089,7 @@ d3.selection.prototype.appendSVG = function(_svgString) {
         this.node().appendChild(this.node().ownerDocument.importNode(childNode, true));
         childNode = childNode.nextSibling;
     }
-    if (dom.querySelector('parsererror')){
+    if(dom.querySelector('parsererror')) {
         console.log(dom.querySelector('parsererror div').textContent);
         return null;
     }
@@ -22055,7 +22100,7 @@ d3.selection.prototype.appendSVG = function(_svgString) {
 
 util.html_entity_decode = function(s) {
     var hiddenDiv = d3.select('body').append('div').style({display: 'none'}).html('');
-    var replaced = s.replace(/(&[^;]*;)/gi, function(d){
+    var replaced = s.replace(/(&[^;]*;)/gi, function(d) {
         if(d==='&lt;') { return '&#60;'; } // special handling for brackets
         if(d==='&rt;') { return '&#62;'; }
         return hiddenDiv.html(d).text(); // everything else, let the browser decode it to unicode
@@ -22064,17 +22109,17 @@ util.html_entity_decode = function(s) {
     return replaced;
 };
 
-util.xml_entity_encode = function(str){
+util.xml_entity_encode = function(str) {
     return str.replace(/&(?!\w+;|\#[0-9]+;| \#x[0-9A-F]+;)/g,'&amp;');
 };
 
 // text converter
 
-function getSize(_selection, _dimension){
+function getSize(_selection, _dimension) {
     return _selection.node().getBoundingClientRect()[_dimension];
 }
 
-util.convertToTspans = function(_context, _callback){
+util.convertToTspans = function(_context, _callback) {
     var str = _context.text();
     var converted = convertToSVG(str);
     var that = _context;
@@ -22094,7 +22139,7 @@ util.convertToTspans = function(_context, _callback){
     }
 
     function showText() {
-        if(!parent.empty()){
+        if(!parent.empty()) {
             svgClass = that.attr('class') + '-math';
             parent.select('svg.' + svgClass).remove();
         }
@@ -22116,7 +22161,7 @@ util.convertToTspans = function(_context, _callback){
         if(_callback) _callback.call(that);
     }
 
-    if(tex){
+    if(tex) {
         var td = Plotly.Lib.getPlotDiv(that.node());
         ((td && td._promises)||[]).push(new Promise(function(resolve) {
             that.style({visibility: 'hidden'});
@@ -22158,23 +22203,23 @@ util.convertToTspans = function(_context, _callback){
                 var newSvgW = getSize(newSvg, 'width'),
                     newSvgH = getSize(newSvg, 'height'),
                     newX = +that.attr('x') - newSvgW *
-                        {start:0, middle:0.5, end:1}[that.attr('text-anchor') || 'start'],
+                        {start: 0, middle: 0.5, end: 1}[that.attr('text-anchor') || 'start'],
                     // font baseline is about 1/4 fontSize below centerline
                     textHeight = parseInt(that.style('font-size'), 10) ||
                         getSize(that, 'height'),
                     dy = -textHeight/4;
 
-                if(svgClass[0] === 'y'){
+                if(svgClass[0] === 'y') {
                     mathjaxGroup.attr({
                         transform: 'rotate(' + [-90, +that.attr('x'), +that.attr('y')] +
                         ') translate(' + [-newSvgW / 2, dy - newSvgH / 2] + ')'
                     });
                     newSvg.attr({x: +that.attr('x'), y: +that.attr('y')});
                 }
-                else if(svgClass[0] === 'l'){
+                else if(svgClass[0] === 'l') {
                     newSvg.attr({x: that.attr('x'), y: dy - (newSvgH / 2)});
                 }
-                else if(svgClass[0] === 'a'){
+                else if(svgClass[0] === 'a') {
                     newSvg.attr({x: 0, y: dy});
                 }
                 else {
@@ -22199,7 +22244,7 @@ function cleanEscapesForTex(s) {
         .replace(/(>|&gt;|&#62;)/g, '\\gt ');
 }
 
-function texToSVG(_texString, _config, _callback){
+function texToSVG(_texString, _config, _callback) {
     var randomID = 'math-output-' + Plotly.Lib.randstr([],64);
     var tmpDiv = d3.select('body').append('div')
         .attr({id: randomID})
@@ -22207,10 +22252,10 @@ function texToSVG(_texString, _config, _callback){
         .style({'font-size': _config.fontSize + 'px'})
         .text(cleanEscapesForTex(_texString));
 
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, tmpDiv.node()], function(){
+    MathJax.Hub.Queue(['Typeset', MathJax.Hub, tmpDiv.node()], function() {
         var glyphDefs = d3.select('body').select('#MathJax_SVG_glyphs');
 
-        if(tmpDiv.select('.MathJax_SVG').empty() || !tmpDiv.select('svg').node()){
+        if(tmpDiv.select('.MathJax_SVG').empty() || !tmpDiv.select('svg').node()) {
             console.log('There was an error in the tex syntax.', _texString);
             _callback();
         }
@@ -22241,20 +22286,20 @@ var PROTOCOLS = ['http:', 'https:', 'mailto:'];
 
 var STRIP_TAGS = new RegExp('</?(' + Object.keys(TAG_STYLES).join('|') + ')( [^>]*)?/?>', 'g');
 
-util.plainText = function(_str){
+util.plainText = function(_str) {
     // strip out our pseudo-html so we have a readable
     // version to put into text fields
     return (_str||'').replace(STRIP_TAGS, ' ');
 };
 
-function convertToSVG(_str){
+function convertToSVG(_str) {
     var htmlEntitiesDecoded = Plotly.util.html_entity_decode(_str);
     var result = htmlEntitiesDecoded
-        .split(/(<[^<>]*>)/).map(function(d){
+        .split(/(<[^<>]*>)/).map(function(d) {
             var match = d.match(/<(\/?)([^ >]*)\s*(.*)>/i),
                 tag = match && match[2].toLowerCase(),
                 style = TAG_STYLES[tag];
-            if(style !== undefined){
+            if(style !== undefined) {
                 var close = match[1],
                     extra = match[3],
                     /**
@@ -22267,7 +22312,7 @@ function convertToSVG(_str){
                      */
                     extraStyle = extra.match(/^style\s*=\s*"([^"]+)"\s*/i);
                 // anchor and br are the only ones that don't turn into a tspan
-                if(tag === 'a'){
+                if(tag === 'a') {
                     if(close) return '</a>';
                     else if(extra.substr(0,4).toLowerCase() !== 'href') return '<a>';
                     else {
@@ -22306,28 +22351,28 @@ function convertToSVG(_str){
                     return tspanStart + (style ? ' style="' + style + '"' : '') + '>';
                 }
             }
-            else{
+            else {
                 return Plotly.util.xml_entity_encode(d).replace(/</g, '&lt;');
             }
         });
 
     var indices = [];
-    for (var index = result.indexOf('<br>'); index > 0; index = result.indexOf('<br>', index+1)){
+    for(var index = result.indexOf('<br>'); index > 0; index = result.indexOf('<br>', index+1)) {
         indices.push(index);
     }
     var count = 0;
-    indices.forEach(function(d){
+    indices.forEach(function(d) {
         var brIndex = d + count;
         var search = result.slice(0, brIndex);
         var previousOpenTag = '';
-        for(var i2=search.length-1; i2>=0; i2--){
+        for(var i2=search.length-1; i2>=0; i2--) {
             var isTag = search[i2].match(/<(\/?).*>/i);
-            if(isTag && search[i2] !== '<br>'){
+            if(isTag && search[i2] !== '<br>') {
                 if(!isTag[1]) previousOpenTag = search[i2];
                 break;
             }
         }
-        if(previousOpenTag){
+        if(previousOpenTag) {
             result.splice(brIndex+1, 0, previousOpenTag);
             result.splice(brIndex, 0, '</tspan>');
             count += 2;
@@ -22336,8 +22381,8 @@ function convertToSVG(_str){
 
     var joined = result.join('');
     var splitted = joined.split(/<br>/gi);
-    if(splitted.length > 1){
-        result = splitted.map(function(d, i){
+    if(splitted.length > 1) {
+        result = splitted.map(function(d, i) {
             // TODO: figure out max font size of this line and alter dy
             // this requires either:
             // 1) bringing the base font size into convertToTspans, or
@@ -22350,7 +22395,7 @@ function convertToSVG(_str){
     return result.join('');
 }
 
-function alignHTMLWith(_base, container, options){
+function alignHTMLWith(_base, container, options) {
     var alignH = options.horizontalAlign,
         alignV = options.verticalAlign || 'top',
         bRect = _base.node().getBoundingClientRect(),
@@ -22375,7 +22420,7 @@ function alignHTMLWith(_base, container, options){
         getLeft = function() { return bRect.left; };
     }
 
-    return function(){
+    return function() {
         thisRect = this.node().getBoundingClientRect();
         this.style({
             top: (getTop() - cRect.top) + 'px',
@@ -22388,7 +22433,7 @@ function alignHTMLWith(_base, container, options){
 
 // Editable title
 
-util.makeEditable = function(context, _delegate, options){
+util.makeEditable = function(context, _delegate, options) {
     if(!options) options = {};
     var that = this;
     var dispatch = d3.dispatch('edit', 'input', 'cancel');
@@ -22398,7 +22443,7 @@ util.makeEditable = function(context, _delegate, options){
     var handlerElement = _delegate || textSelection;
     if(_delegate) textSelection.style({'pointer-events': 'none'});
 
-    function handleClick(){
+    function handleClick() {
         appendEditable();
         that.style({opacity: 0});
         // also hide any mathjax svg
@@ -22421,7 +22466,7 @@ util.makeEditable = function(context, _delegate, options){
         el.focus();
     }
 
-    function appendEditable(){
+    function appendEditable() {
         var plotDiv = d3.select(Plotly.Lib.getPlotDiv(that.node())),
             container = plotDiv.select('.svg-container'),
             div = container.append('div');
@@ -22441,7 +22486,7 @@ util.makeEditable = function(context, _delegate, options){
             .attr({contenteditable: true})
             .text(options.text || that.attr('data-unformatted'))
             .call(alignHTMLWith(that, container, options))
-            .on('blur', function(){
+            .on('blur', function() {
                 that.text(this.textContent)
                     .style({opacity: 1});
                 var svgClass = d3.select(this).attr('class'),
@@ -22456,28 +22501,28 @@ util.makeEditable = function(context, _delegate, options){
                 d3.select(document).on('mouseup', null);
                 dispatch.edit.call(that, text);
             })
-            .on('focus', function(){
+            .on('focus', function() {
                 var context = this;
-                d3.select(document).on('mouseup', function(){
+                d3.select(document).on('mouseup', function() {
                     if(d3.event.target === context) return false;
                     if(document.activeElement === div.node()) div.node().blur();
                 });
             })
-            .on('keyup', function(){
-                if(d3.event.which === 27){
+            .on('keyup', function() {
+                if(d3.event.which === 27) {
                     that.style({opacity: 1});
                     d3.select(this)
                         .style({opacity: 0})
-                        .on('blur', function(){ return false; })
+                        .on('blur', function() { return false; })
                         .transition().remove();
                     dispatch.cancel.call(that, this.textContent);
                 }
-                else{
+                else {
                     dispatch.input.call(that, this.textContent);
                     d3.select(this).call(alignHTMLWith(that, container, options));
                 }
             })
-            .on('keydown', function(){
+            .on('keydown', function() {
                 if(d3.event.which === 13) this.blur();
             })
             .call(selectElementContents);
@@ -22673,10 +22718,10 @@ Plotly.plot = function(gd, data, layout, config) {
 
         Legend.draw(gd);
 
-        for (i = 0; i < calcdata.length; i++) {
+        for(i = 0; i < calcdata.length; i++) {
             cd = calcdata[i];
             trace = cd[0].trace;
-            if (trace.visible !== true || !trace._module.colorbar) {
+            if(trace.visible !== true || !trace._module.colorbar) {
                 Plots.autoMargin(gd, 'cb'+trace.uid);
             }
             else trace._module.colorbar(gd, cd);
@@ -22796,7 +22841,7 @@ Plotly.plot = function(gd, data, layout, config) {
     // An initial paint must be completed before these components can be
     // correctly sized and the whole plot re-margined. gd._replotting must
     // be set to false before these will work properly.
-    function finalDraw(){
+    function finalDraw() {
         Shapes.drawAll(gd);
         Plotly.Annotations.drawAll(gd);
         Legend.draw(gd);
@@ -22943,9 +22988,9 @@ function plotPolar(gd, data, layout) {
     var title = polarPlotSVG.select('.title-group text')
         .call(titleLayout);
 
-    if(gd._context.editable){
+    if(gd._context.editable) {
         title.attr({'data-unformatted': txt});
-        if(!txt || txt === placeholderText){
+        if(!txt || txt === placeholderText) {
             opacity = 0.2;
             title.attr({'data-unformatted': placeholderText})
                 .text(placeholderText)
@@ -22962,7 +23007,7 @@ function plotPolar(gd, data, layout) {
 
         var setContenteditable = function() {
             this.call(Plotly.util.makeEditable)
-                .on('edit', function(text){
+                .on('edit', function(text) {
                     gd.framework({layout: {title: text}});
                     this.attr({'data-unformatted': text})
                         .text(text)
@@ -23093,7 +23138,7 @@ function cleanLayout(layout) {
     /*
      * Moved from rotate -> orbit for dragmode
      */
-    if (layout.dragmode === 'rotate') layout.dragmode = 'orbit';
+    if(layout.dragmode === 'rotate') layout.dragmode = 'orbit';
 
     // cannot have scene1, numbering goes scene, scene2, scene3...
     if(layout.scene1) {
@@ -23162,8 +23207,9 @@ function cleanData(data, existingData) {
 
     for(var tracei = 0; tracei < data.length; tracei++) {
         var trace = data[tracei];
+
         // assign uids to each trace and detect collisions.
-        if (!('uid' in trace) || suids.indexOf(trace.uid) !== -1) {
+        if(!('uid' in trace) || suids.indexOf(trace.uid) !== -1) {
             var newUid, i;
             for(i=0; i<100; i++) {
                 newUid = Lib.randstr(uids);
@@ -23240,6 +23286,17 @@ function cleanData(data, existingData) {
             else if(trace.textposition) {
                 trace.textposition = cleanTextPosition(trace.textposition);
             }
+        }
+
+        // fix typo in colorscale definition
+        if(Plots.traceIs(trace, '2dMap')) {
+            if(trace.colorscale === 'YIGnBu') trace.colorscale = 'YlGnBu';
+            if(trace.colorscale === 'YIOrRd') trace.colorscale = 'YlOrRd';
+        }
+        if(Plots.traceIs(trace, 'markerColorscale') && trace.marker) {
+            var cont = trace.marker;
+            if(cont.colorscale === 'YIGnBu') cont.colorscale = 'YlGnBu';
+            if(cont.colorscale === 'YIOrRd') cont.colorscale = 'YlOrRd';
         }
 
         // prune empty containers made before the new nestedProperty
@@ -23333,28 +23390,28 @@ function doCalcdata(gd) {
 
     // delete category list, if there is one, so we start over
     // to be filled in later by ax.d2c
-    for (i = 0; i < axList.length; i++) {
+    for(i = 0; i < axList.length; i++) {
         axList[i]._categories = [];
     }
 
-    for (i = 0; i < fullData.length; i++) {
+    for(i = 0; i < fullData.length; i++) {
         trace = fullData[i];
         module = trace._module;
         cd = [];
 
-        if (module && trace.visible === true) {
-            if (module.calc) cd = module.calc(gd, trace);
+        if(module && trace.visible === true) {
+            if(module.calc) cd = module.calc(gd, trace);
         }
 
         // make sure there is a first point
         // this ensures there is a calcdata item for every trace,
         // even if cartesian logic doesn't handle it
-        if (!Array.isArray(cd) || !cd[0]) cd = [{x: false, y: false}];
+        if(!Array.isArray(cd) || !cd[0]) cd = [{x: false, y: false}];
 
         // add the trace-wide properties to the first point,
         // per point properties to every point
         // t is the holder for trace-wide properties
-        if (!cd[0].t) cd[0].t = {};
+        if(!cd[0].t) cd[0].t = {};
         cd[0].trace = trace;
 
         Lib.markTime('done with calcdata for '+i);
@@ -23374,9 +23431,9 @@ function positivifyIndices(indices, maxIndex) {
         i,
         index;
 
-    for (i = 0; i < indices.length; i++) {
+    for(i = 0; i < indices.length; i++) {
         index = indices[i];
-        if (index < 0) {
+        if(index < 0) {
             positiveIndices.push(parentLength + index);
         } else {
             positiveIndices.push(index);
@@ -23398,21 +23455,21 @@ function assertIndexArray(gd, indices, arrayName) {
     var i,
         index;
 
-    for (i = 0; i < indices.length; i++) {
+    for(i = 0; i < indices.length; i++) {
         index = indices[i];
 
         // validate that indices are indeed integers
-        if (index !== parseInt(index, 10)) {
+        if(index !== parseInt(index, 10)) {
             throw new Error('all values in ' + arrayName + ' must be integers');
         }
 
         // check that all indices are in bounds for given gd.data array length
-        if (index >= gd.data.length || index < -gd.data.length) {
+        if(index >= gd.data.length || index < -gd.data.length) {
             throw new Error(arrayName + ' must be valid indices for gd.data.');
         }
 
         // check that indices aren't repeated
-        if (indices.indexOf(index, i + 1) > -1 ||
+        if(indices.indexOf(index, i + 1) > -1 ||
                 index >= 0 && indices.indexOf(-gd.data.length + index) > -1 ||
                 index < 0 && indices.indexOf(gd.data.length + index) > -1) {
             throw new Error('each index in ' + arrayName + ' must be unique.');
@@ -23430,28 +23487,28 @@ function assertIndexArray(gd, indices, arrayName) {
 function checkMoveTracesArgs(gd, currentIndices, newIndices) {
 
     // check that gd has attribute 'data' and 'data' is array
-    if (!Array.isArray(gd.data)) {
+    if(!Array.isArray(gd.data)) {
         throw new Error('gd.data must be an array.');
     }
 
     // validate currentIndices array
-    if (typeof currentIndices === 'undefined') {
+    if(typeof currentIndices === 'undefined') {
         throw new Error('currentIndices is a required argument.');
-    } else if (!Array.isArray(currentIndices)) {
+    } else if(!Array.isArray(currentIndices)) {
         currentIndices = [currentIndices];
     }
     assertIndexArray(gd, currentIndices, 'currentIndices');
 
     // validate newIndices array if it exists
-    if (typeof newIndices !== 'undefined' && !Array.isArray(newIndices)) {
+    if(typeof newIndices !== 'undefined' && !Array.isArray(newIndices)) {
         newIndices = [newIndices];
     }
-    if (typeof newIndices !== 'undefined') {
+    if(typeof newIndices !== 'undefined') {
         assertIndexArray(gd, newIndices, 'newIndices');
     }
 
     // check currentIndices and newIndices are the same length if newIdices exists
-    if (typeof newIndices !== 'undefined' && currentIndices.length !== newIndices.length) {
+    if(typeof newIndices !== 'undefined' && currentIndices.length !== newIndices.length) {
         throw new Error('current and new indices must be of equal length.');
     }
 
@@ -23468,33 +23525,33 @@ function checkAddTracesArgs(gd, traces, newIndices) {
         value;
 
     // check that gd has attribute 'data' and 'data' is array
-    if (!Array.isArray(gd.data)) {
+    if(!Array.isArray(gd.data)) {
         throw new Error('gd.data must be an array.');
     }
 
     // make sure traces exists
-    if (typeof traces === 'undefined') {
+    if(typeof traces === 'undefined') {
         throw new Error('traces must be defined.');
     }
 
     // make sure traces is an array
-    if (!Array.isArray(traces)) {
+    if(!Array.isArray(traces)) {
         traces = [traces];
     }
 
     // make sure each value in traces is an object
-    for (i = 0; i < traces.length; i++) {
+    for(i = 0; i < traces.length; i++) {
         value = traces[i];
-        if (typeof value !== 'object' || (Array.isArray(value) || value === null)) {
+        if(typeof value !== 'object' || (Array.isArray(value) || value === null)) {
             throw new Error('all values in traces array must be non-array objects');
         }
     }
 
     // make sure we have an index for each trace
-    if (typeof newIndices !== 'undefined' && !Array.isArray(newIndices)) {
+    if(typeof newIndices !== 'undefined' && !Array.isArray(newIndices)) {
         newIndices = [newIndices];
     }
-    if (typeof newIndices !== 'undefined' && newIndices.length !== traces.length) {
+    if(typeof newIndices !== 'undefined' && newIndices.length !== traces.length) {
         throw new Error(
             'if indices is specified, traces.length must equal indices.length'
         );
@@ -23515,33 +23572,33 @@ function assertExtendTracesArgs(gd, update, indices, maxPoints) {
 
     var maxPointsIsObject = Lib.isPlainObject(maxPoints);
 
-    if (!Array.isArray(gd.data)) {
+    if(!Array.isArray(gd.data)) {
         throw new Error('gd.data must be an array');
     }
-    if (!Lib.isPlainObject(update)) {
+    if(!Lib.isPlainObject(update)) {
         throw new Error('update must be a key:value object');
     }
 
-    if (typeof indices === 'undefined') {
+    if(typeof indices === 'undefined') {
         throw new Error('indices must be an integer or array of integers');
     }
 
     assertIndexArray(gd, indices, 'indices');
 
-    for (var key in update) {
+    for(var key in update) {
 
         /*
          * Verify that the attribute to be updated contains as many trace updates
          * as indices. Failure must result in throw and no-op
          */
-        if (!Array.isArray(update[key]) || update[key].length !== indices.length) {
+        if(!Array.isArray(update[key]) || update[key].length !== indices.length) {
             throw new Error('attribute ' + key + ' must be an array of length equal to indices array length');
         }
 
         /*
          * if maxPoints is an object it must match keys and array lengths of 'update' 1:1
          */
-        if (maxPointsIsObject &&
+        if(maxPointsIsObject &&
             (!(key in maxPoints) || !Array.isArray(maxPoints[key]) ||
             maxPoints[key].length !== update[key].length)) {
             throw new Error('when maxPoints is set as a key:value object it must contain a 1:1 ' +
@@ -23566,15 +23623,15 @@ function getExtendProperties(gd, update, indices, maxPoints) {
     var trace, target, prop, insert, maxp;
 
     // allow scalar index to represent a single trace position
-    if (!Array.isArray(indices)) indices = [indices];
+    if(!Array.isArray(indices)) indices = [indices];
 
     // negative indices are wrapped around to their positive value. Equivalent to python indexing.
     indices = positivifyIndices(indices, gd.data.length - 1);
 
     // loop through all update keys and traces and harvest validated data.
-    for (var key in update) {
+    for(var key in update) {
 
-        for (var j = 0; j < indices.length; j++) {
+        for(var j = 0; j < indices.length; j++) {
 
             /*
              * Choose the trace indexed by the indices map argument and get the prop setter-getter
@@ -23590,10 +23647,10 @@ function getExtendProperties(gd, update, indices, maxPoints) {
             target = prop.get();
             insert = update[key][j];
 
-            if (!Array.isArray(insert)) {
+            if(!Array.isArray(insert)) {
                 throw new Error('attribute: ' + key + ' index: ' + j + ' must be an array');
             }
-            if (!Array.isArray(target)) {
+            if(!Array.isArray(target)) {
                 throw new Error('cannot extend missing or non-array attribute: ' + key);
             }
 
@@ -23604,7 +23661,7 @@ function getExtendProperties(gd, update, indices, maxPoints) {
             maxp = maxPointsIsObject ? maxPoints[key][j] : maxPoints;
 
             // could have chosen null here, -1 just tells us to not take a window
-            if (!isNumeric(maxp)) maxp = -1;
+            if(!isNumeric(maxp)) maxp = -1;
 
             /*
              * Wrap the nestedProperty in an object containing required data
@@ -23645,7 +23702,7 @@ function spliceTraces(gd, update, indices, maxPoints, lengthenArray, spliceArray
         undoPoints = {};
     var target, prop, maxp;
 
-    for (var i = 0; i < updateProps.length; i++) {
+    for(var i = 0; i < updateProps.length; i++) {
 
         /*
          * prop is the object returned by Lib.nestedProperties
@@ -23659,7 +23716,7 @@ function spliceTraces(gd, update, indices, maxPoints, lengthenArray, spliceArray
          * If maxp is set within post-extension trace.length, splice to maxp length.
          * Otherwise skip function call as splice op will have no effect anyway.
          */
-        if (maxp >= 0 && maxp < target.length) remainder = spliceArray(target, maxp);
+        if(maxp >= 0 && maxp < target.length) remainder = spliceArray(target, maxp);
 
         /*
          * to reverse this operation we need the size of the original trace as the reverse
@@ -23672,8 +23729,8 @@ function spliceTraces(gd, update, indices, maxPoints, lengthenArray, spliceArray
          */
         prop.set(target);
 
-        if (!Array.isArray(undoUpdate[prop.astr])) undoUpdate[prop.astr] = [];
-        if (!Array.isArray(undoPoints[prop.astr])) undoPoints[prop.astr] = [];
+        if(!Array.isArray(undoUpdate[prop.astr])) undoUpdate[prop.astr] = [];
+        if(!Array.isArray(undoPoints[prop.astr])) undoPoints[prop.astr] = [];
 
         /*
          * build the inverse update object for the undo operation
@@ -23728,7 +23785,7 @@ Plotly.extendTraces = function extendTraces(gd, update, indices, maxPoints) {
     var promise = Plotly.redraw(gd);
 
     var undoArgs = [gd, undo.update, indices, undo.maxPoints];
-    if (Queue) {
+    if(Queue) {
         Queue.add(gd, Plotly.prependTraces, undoArgs, extendTraces, arguments);
     }
 
@@ -23757,7 +23814,7 @@ Plotly.prependTraces = function prependTraces(gd, update, indices, maxPoints) {
     var promise = Plotly.redraw(gd);
 
     var undoArgs = [gd, undo.update, indices, undo.maxPoints];
-    if (Queue) {
+    if(Queue) {
         Queue.add(gd, Plotly.extendTraces, undoArgs, prependTraces, arguments);
     }
 
@@ -23788,31 +23845,31 @@ Plotly.addTraces = function addTraces(gd, traces, newIndices) {
     checkAddTracesArgs(gd, traces, newIndices);
 
     // make sure traces is an array
-    if (!Array.isArray(traces)) {
+    if(!Array.isArray(traces)) {
         traces = [traces];
     }
     cleanData(traces, gd.data);
 
     // add the traces to gd.data (no redrawing yet!)
-    for (i = 0; i < traces.length; i += 1) {
+    for(i = 0; i < traces.length; i += 1) {
         gd.data.push(traces[i]);
     }
 
     // to continue, we need to call moveTraces which requires currentIndices
-    for (i = 0; i < traces.length; i++) {
+    for(i = 0; i < traces.length; i++) {
         currentIndices.push(-traces.length + i);
     }
 
     // if the user didn't define newIndices, they just want the traces appended
     // i.e., we can simply redraw and be done
-    if (typeof newIndices === 'undefined') {
+    if(typeof newIndices === 'undefined') {
         promise = Plotly.redraw(gd);
-        if (Queue) Queue.add(gd, undoFunc, undoArgs, redoFunc, redoArgs);
+        if(Queue) Queue.add(gd, undoFunc, undoArgs, redoFunc, redoArgs);
         return promise;
     }
 
     // make sure indices is property defined
-    if (!Array.isArray(newIndices)) {
+    if(!Array.isArray(newIndices)) {
         newIndices = [newIndices];
     }
 
@@ -23830,10 +23887,10 @@ Plotly.addTraces = function addTraces(gd, traces, newIndices) {
 
     // if we're here, the user has defined specific places to place the new traces
     // this requires some extra work that moveTraces will do
-    if (Queue) Queue.startSequence(gd);
-    if (Queue) Queue.add(gd, undoFunc, undoArgs, redoFunc, redoArgs);
+    if(Queue) Queue.startSequence(gd);
+    if(Queue) Queue.add(gd, undoFunc, undoArgs, redoFunc, redoArgs);
     promise = Plotly.moveTraces(gd, currentIndices, newIndices);
-    if (Queue) Queue.stopSequence(gd);
+    if(Queue) Queue.stopSequence(gd);
     return promise;
 };
 
@@ -23856,9 +23913,9 @@ Plotly.deleteTraces = function deleteTraces(gd, indices) {
         deletedTrace;
 
     // make sure indices are defined
-    if (typeof indices === 'undefined') {
+    if(typeof indices === 'undefined') {
         throw new Error('indices must be an integer or array of integers.');
-    } else if (!Array.isArray(indices)) {
+    } else if(!Array.isArray(indices)) {
         indices = [indices];
     }
     assertIndexArray(gd, indices, 'indices');
@@ -23868,14 +23925,14 @@ Plotly.deleteTraces = function deleteTraces(gd, indices) {
 
     // we want descending here so that splicing later doesn't affect indexing
     indices.sort(Lib.sorterDes);
-    for (i = 0; i < indices.length; i += 1) {
+    for(i = 0; i < indices.length; i += 1) {
         deletedTrace = gd.data.splice(indices[i], 1)[0];
         traces.push(deletedTrace);
     }
 
     var promise = Plotly.redraw(gd);
 
-    if (Queue) Queue.add(gd, undoFunc, undoArgs, redoFunc, redoArgs);
+    if(Queue) Queue.add(gd, undoFunc, undoArgs, redoFunc, redoArgs);
 
     return promise;
 };
@@ -23930,9 +23987,9 @@ Plotly.moveTraces = function moveTraces(gd, currentIndices, newIndices) {
     currentIndices = Array.isArray(currentIndices) ? currentIndices : [currentIndices];
 
     // if undefined, define newIndices to point to the end of gd.data array
-    if (typeof newIndices === 'undefined') {
+    if(typeof newIndices === 'undefined') {
         newIndices = [];
-        for (i = 0; i < currentIndices.length; i++) {
+        for(i = 0; i < currentIndices.length; i++) {
             newIndices.push(-currentIndices.length + i);
         }
     }
@@ -23947,16 +24004,16 @@ Plotly.moveTraces = function moveTraces(gd, currentIndices, newIndices) {
     // at this point, we've coerced the index arrays into predictable forms
 
     // get the traces that aren't being moved around
-    for (i = 0; i < gd.data.length; i++) {
+    for(i = 0; i < gd.data.length; i++) {
 
         // if index isn't in currentIndices, include it in ignored!
-        if (currentIndices.indexOf(i) === -1) {
+        if(currentIndices.indexOf(i) === -1) {
             newData.push(gd.data[i]);
         }
     }
 
     // get a mapping of indices to moving traces
-    for (i = 0; i < currentIndices.length; i++) {
+    for(i = 0; i < currentIndices.length; i++) {
         movingTraceMap.push({newIndex: newIndices[i], trace: gd.data[currentIndices[i]]});
     }
 
@@ -23966,7 +24023,7 @@ Plotly.moveTraces = function moveTraces(gd, currentIndices, newIndices) {
     });
 
     // now, add the moving traces back in, in order!
-    for (i = 0; i < movingTraceMap.length; i += 1) {
+    for(i = 0; i < movingTraceMap.length; i += 1) {
         newData.splice(movingTraceMap[i].newIndex, 0, movingTraceMap[i].trace);
     }
 
@@ -23974,7 +24031,7 @@ Plotly.moveTraces = function moveTraces(gd, currentIndices, newIndices) {
 
     var promise = Plotly.redraw(gd);
 
-    if (Queue) Queue.add(gd, undoFunc, undoArgs, redoFunc, redoArgs);
+    if(Queue) Queue.add(gd, undoFunc, undoArgs, redoFunc, redoArgs);
 
     return promise;
 };
@@ -24022,7 +24079,7 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
 
     if(isNumeric(traces)) traces=[traces];
     else if(!Array.isArray(traces) || !traces.length) {
-        traces=gd._fullData.map(function(v,i){ return i; });
+        traces=gd._fullData.map(function(v,i) { return i; });
     }
 
     // recalcAttrs attributes need a full regeneration of calcdata
@@ -24178,7 +24235,7 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
             newVal;
         redoit[ai] = vi;
 
-        if(ai.substr(0,6)==='LAYOUT'){
+        if(ai.substr(0,6)==='LAYOUT') {
             param = Lib.nestedProperty(gd.layout, ai.replace('LAYOUT', ''));
             undoit[ai] = [param.get()];
             // since we're allowing val to be an array, allow it here too,
@@ -24323,7 +24380,7 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
                 // it flips everything and the axes
                 else if(ai==='orientationaxes') {
                     cont.orientation =
-                        {v:'h', h:'v'}[contFull.orientation];
+                        {v: 'h', h: 'v'}[contFull.orientation];
                 }
                 swapXYData(cont);
             }
@@ -24338,11 +24395,11 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
         }
 
         // swap hovermode if set to "compare x/y data"
-        if (ai === 'orientationaxes') {
+        if(ai === 'orientationaxes') {
             var hovermode = Lib.nestedProperty(gd.layout, 'hovermode');
-            if (hovermode.get() === 'x') {
+            if(hovermode.get() === 'x') {
                 hovermode.set('y');
-            } else if (hovermode.get() === 'y') {
+            } else if(hovermode.get() === 'y') {
                 hovermode.set('x');
             }
         }
@@ -24419,7 +24476,7 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
 
     // do we need to force a recalc?
     var autorangeOn = false;
-    Plotly.Axes.list(gd).forEach(function(ax){
+    Plotly.Axes.list(gd).forEach(function(ax) {
         if(ax.autorange) autorangeOn = true;
     });
     if(docalc || dolayout || (docalcAutorange && autorangeOn)) {
@@ -24672,7 +24729,7 @@ Plotly.relayout = function relayout(gd, astr, val) {
         // logical XOR (ie are we toggling log)
         if(pleaf==='type' && ((parentFull.type === 'log') !== (vi === 'log'))) {
             var ax = parentIn;
-            if (!ax || !ax.range) {
+            if(!ax || !ax.range) {
                 doextra(ptrunk+'.autorange', true);
             }
             else if(!parentFull.autorange) {
@@ -24751,8 +24808,8 @@ Plotly.relayout = function relayout(gd, astr, val) {
         else {
             // check whether we can short-circuit a full redraw
             // 3d or geo at this point just needs to redraw.
-            if (p.parts[0].indexOf('scene') === 0) doplot = true;
-            else if (p.parts[0].indexOf('geo') === 0) doplot = true;
+            if(p.parts[0].indexOf('scene') === 0) doplot = true;
+            else if(p.parts[0].indexOf('geo') === 0) doplot = true;
             else if(fullLayout._hasGL2D &&
                 (ai.indexOf('axis') !== -1 || p.parts[0] === 'plot_bgcolor')
             ) doplot = true;
@@ -24896,9 +24953,9 @@ function calculateReservedMargins(margins) {
     var resultingMargin = {left: 0, right: 0, bottom: 0, top: 0},
         marginName;
 
-    if (margins) {
-        for (marginName in margins) {
-            if (margins.hasOwnProperty(marginName)) {
+    if(margins) {
+        for(marginName in margins) {
+            if(margins.hasOwnProperty(marginName)) {
                 resultingMargin.left += margins[marginName].left || 0;
                 resultingMargin.right += margins[marginName].right || 0;
                 resultingMargin.bottom += margins[marginName].bottom || 0;
@@ -25738,7 +25795,7 @@ function getModule(arg) {
 }
 
 function removeUnderscoreAttrs(attributes) {
-    Object.keys(attributes).forEach(function(k){
+    Object.keys(attributes).forEach(function(k) {
         if(k.charAt(0) === '_' &&
             UNDERSCORE_ATTRS.indexOf(k) === -1) delete attributes[k];
     });
@@ -25897,21 +25954,21 @@ exports.Legend = require('./components/legend');
 exports.ModeBar = require('./components/modebar');
 
 exports.register = function register(_modules) {
-    if(!_modules){
+    if(!_modules) {
         throw new Error('No argument passed to Plotly.register.');
-    } else if(_modules && !Array.isArray(_modules)){
+    } else if(_modules && !Array.isArray(_modules)) {
         _modules = [_modules];
     }
 
-    for(var i = 0; i < _modules.length; i++){
+    for(var i = 0; i < _modules.length; i++) {
         var newModule = _modules[i];
 
-        if(newModule && newModule.moduleType !== 'trace'){
+        if(newModule && newModule.moduleType !== 'trace') {
             throw new Error('Invalid module was attempted to be registered!');
         } else {
             Plots.register(newModule, newModule.name, newModule.categories, newModule.meta);
 
-            if(!Plots.subplotsRegistry[newModule.basePlotModule.name]){
+            if(!Plots.subplotsRegistry[newModule.basePlotModule.name]) {
                 Plots.registerSubplot(newModule.basePlotModule);
             }
         }
@@ -26192,14 +26249,14 @@ axes.doAutoRange = function(ax) {
         else if(mbest) {
             if(ax.type==='linear' || ax.type==='-') {
                 if(ax.rangemode==='tozero' && minbest.val>=0) {
-                    minbest = {val:0, pad:0};
+                    minbest = {val: 0, pad: 0};
                 }
                 else if(ax.rangemode==='nonnegative') {
                     if(minbest.val - mbest*minbest.pad<0) {
-                        minbest = {val:0, pad:0};
+                        minbest = {val: 0, pad: 0};
                     }
                     if(maxbest.val<0) {
-                        maxbest = {val:1, pad:0};
+                        maxbest = {val: 1, pad: 0};
                     }
                 }
 
@@ -26293,7 +26350,7 @@ axes.expand = function(ax, data, options) {
         }
         else {
             var v = Math.max(Number(item||0),0);
-            return function(){ return v; };
+            return function() { return v; };
         }
     }
     var ppadplus = getPad((ax._m>0 ?
@@ -26348,8 +26405,8 @@ axes.expand = function(ax, data, options) {
             }
             if(includeThis) {
                 ax._min.push({
-                    val:dmin,
-                    pad:(tozero && dmin===0) ? 0 : ppadiminus
+                    val: dmin,
+                    pad: (tozero && dmin===0) ? 0 : ppadiminus
                 });
             }
         }
@@ -26368,8 +26425,8 @@ axes.expand = function(ax, data, options) {
             }
             if(includeThis) {
                 ax._max.push({
-                    val:dmax,
-                    pad:(tozero && dmax===0) ? 0 : ppadiplus
+                    val: dmax,
+                    pad: (tozero && dmax===0) ? 0 : ppadiplus
                 });
             }
         }
@@ -26414,7 +26471,7 @@ axes.autoBin = function(data,ax,nbins,is2d) {
     // piggyback off autotick code to make "nice" bin sizes
     var dummyax = {
         type: ax.type==='log' ? 'linear' : ax.type,
-        range:[datamin, datamax]
+        range: [datamin, datamax]
     };
     axes.autoTicks(dummyax, size0);
     var binstart = axes.tickIncrement(
@@ -26498,7 +26555,7 @@ axes.calcTicks = function calcTicks(ax) {
     if(ax.tickmode === 'array') return arrayTicks(ax);
 
     // calculate max number of (auto) ticks to display based on plot size
-    if(ax.tickmode === 'auto' || !ax.dtick){
+    if(ax.tickmode === 'auto' || !ax.dtick) {
         var nt = ax.nticks,
             minPx;
         if(!nt) {
@@ -26622,38 +26679,38 @@ function roundDTick(roughDTick, base, roundingSet) {
 //      log with linear ticks: L# where # is the linear tick spacing
 //      log showing powers plus some intermediates:
 //          D1 shows all digits, D2 shows 2 and 5
-axes.autoTicks = function(ax, roughDTick){
+axes.autoTicks = function(ax, roughDTick) {
     var base;
 
-    if(ax.type === 'date'){
+    if(ax.type === 'date') {
         ax.tick0 = new Date(2000, 0, 1).getTime();
 
-        if(roughDTick > 15778800000){
+        if(roughDTick > 15778800000) {
             // years if roughDTick > 6mo
             roughDTick /= 31557600000;
             base = Math.pow(10, Math.floor(Math.log(roughDTick) / Math.LN10));
             ax.dtick = 'M' + (12 * roundDTick(roughDTick, base, roundBase10));
         }
-        else if(roughDTick > 1209600000){
+        else if(roughDTick > 1209600000) {
             // months if roughDTick > 2wk
             roughDTick /= 2629800000;
             ax.dtick = 'M' + roundDTick(roughDTick, 1, roundBase24);
         }
-        else if(roughDTick > 43200000){
+        else if(roughDTick > 43200000) {
             // days if roughDTick > 12h
             ax.dtick = roundDTick(roughDTick, 86400000, roundDays);
             // get week ticks on sunday
             ax.tick0 = new Date(2000, 0, 2).getTime();
         }
-        else if(roughDTick > 1800000){
+        else if(roughDTick > 1800000) {
             // hours if roughDTick > 30m
             ax.dtick = roundDTick(roughDTick, 3600000, roundBase24);
         }
-        else if(roughDTick > 30000){
+        else if(roughDTick > 30000) {
             // minutes if roughDTick > 30sec
             ax.dtick = roundDTick(roughDTick, 60000, roundBase60);
         }
-        else if(roughDTick > 500){
+        else if(roughDTick > 500) {
             // seconds if roughDTick > 0.5sec
             ax.dtick = roundDTick(roughDTick, 1000, roundBase60);
         }
@@ -26663,12 +26720,12 @@ axes.autoTicks = function(ax, roughDTick){
             ax.dtick = roundDTick(roughDTick, base, roundBase10);
         }
     }
-    else if(ax.type === 'log'){
+    else if(ax.type === 'log') {
         ax.tick0 = 0;
 
         //only show powers of 10
         if(roughDTick > 0.7) ax.dtick = Math.ceil(roughDTick);
-        else if(Math.abs(ax.range[1] - ax.range[0]) < 1){
+        else if(Math.abs(ax.range[1] - ax.range[0]) < 1) {
             // span is less than one power of 10
             var nt = 1.5 * Math.abs((ax.range[1] - ax.range[0]) / roughDTick);
 
@@ -26689,7 +26746,7 @@ axes.autoTicks = function(ax, roughDTick){
         ax.tick0 = 0;
         ax.dtick = Math.ceil(Math.max(roughDTick, 1));
     }
-    else{
+    else {
         // auto ticks always start at 0
         ax.tick0 = 0;
         base = Math.pow(10, Math.floor(Math.log(roughDTick) / Math.LN10));
@@ -26757,7 +26814,7 @@ function autoTickRound(ax) {
 // for pure powers of 10
 // numeric ticks always have constant differences, other datetime ticks
 // can all be calculated as constant number of milliseconds
-axes.tickIncrement = function(x, dtick, axrev){
+axes.tickIncrement = function(x, dtick, axrev) {
     var axSign = axrev ? -1 : 1;
 
     // includes all dates smaller than month, and pure 10^n in log
@@ -26767,7 +26824,7 @@ axes.tickIncrement = function(x, dtick, axrev){
         dtSigned = axSign * Number(dtick.substr(1));
 
     // Dates: months (or years)
-    if(tType === 'M'){
+    if(tType === 'M') {
         var y = new Date(x);
         // is this browser consistent? setMonth edits a date but
         // returns that date's milliseconds
@@ -26791,7 +26848,7 @@ axes.tickIncrement = function(x, dtick, axrev){
 };
 
 // calculate the first tick on an axis
-axes.tickFirst = function(ax){
+axes.tickFirst = function(ax) {
     var axrev = ax.range[1] < ax.range[0],
         sRound = axrev ? Math.floor : Math.ceil,
         // add a tiny extra bit to make sure we get ticks
@@ -26816,7 +26873,7 @@ axes.tickFirst = function(ax){
         t1;
 
     // Dates: months (or years)
-    if(tType === 'M'){
+    if(tType === 'M') {
         t0 = new Date(tick0);
         r0 = new Date(r0);
         mdif = (r0.getFullYear() - t0.getFullYear()) * 12 +
@@ -26876,7 +26933,7 @@ function modDateFormat(fmt,x) {
 // ax is the axis layout, x is the tick value
 // hover is a (truthy) flag for whether to show numbers with a bit
 // more precision for hovertext
-axes.tickText = function(ax, x, hover){
+axes.tickText = function(ax, x, hover) {
     var out = tickTextObj(ax, x),
         hideexp,
         arrayMode = ax.tickmode === 'array',
@@ -26897,8 +26954,8 @@ axes.tickText = function(ax, x, hover){
     function isHidden(showAttr) {
         var first_or_last;
 
-        if (showAttr===undefined) return true;
-        if (hover) return showAttr==='none';
+        if(showAttr === undefined) return true;
+        if(hover) return showAttr==='none';
 
         first_or_last = {
             first: ax._tmin,
@@ -26916,8 +26973,8 @@ axes.tickText = function(ax, x, hover){
     else formatLinear(ax, out, hover, extraPrecision, hideexp);
 
     // add prefix and suffix
-    if (ax.tickprefix && !isHidden(ax.showtickprefix)) out.text = ax.tickprefix + out.text;
-    if (ax.ticksuffix && !isHidden(ax.showticksuffix)) out.text += ax.ticksuffix;
+    if(ax.tickprefix && !isHidden(ax.showtickprefix)) out.text = ax.tickprefix + out.text;
+    if(ax.ticksuffix && !isHidden(ax.showticksuffix)) out.text += ax.ticksuffix;
 
     return out;
 };
@@ -26955,7 +27012,7 @@ function formatDate(ax, out, hover, extraPrecision) {
     else {
         if(extraPrecision) {
             if(isNumeric(tr)) tr+=2;
-            else tr = {y:'m', m:'d', d:'H', H:'M', M:'S', S:2}[tr];
+            else tr = {y: 'm', m: 'd', d: 'H', H: 'M', M: 'S', S: 2}[tr];
         }
         if(tr==='y') tt = yearFormat(d);
         else if(tr==='m') tt = monthFormat(d);
@@ -26972,7 +27029,7 @@ function formatDate(ax, out, hover, extraPrecision) {
                 }
 
                 tt = minuteFormat(d);
-                if(tr!=='M'){
+                if(tr!=='M') {
                     tt += secondFormat(d);
                     if(tr!=='S') {
                         tt += numFormat(mod(x/1000,1),ax,'none',hover)
@@ -27067,7 +27124,7 @@ function numFormat(v, ax, fmtoverride, hover) {
     if(hover) {
         // make a dummy axis obj to get the auto rounding and exponent
         var ah = {
-            exponentformat:ax.exponentformat,
+            exponentformat: ax.exponentformat,
             dtick: ax.showexponent==='none' ? ax.dtick :
                 (isNumeric(v) ? Math.abs(v) || 1 : 1),
             // if not showing any exponents, don't change the exponent
@@ -27174,7 +27231,7 @@ function numSeparate(nStr, separators) {
     // even if there is a thousands separator, don't use it on
     // 4-digit integers (like years)
     if(thou && (x.length > 1 || x1.length>4)) {
-        while (findThousands.test(x1)) {
+        while(findThousands.test(x1)) {
             x1 = x1.replace(findThousands, '$1' + thou + '$2');
         }
     }
@@ -27375,7 +27432,7 @@ axes.doTicks = function(td, axid, skipTitle) {
 
         if(!axid || axid==='redraw') {
             return Plotly.Lib.syncOrAsync(axes.list(td, '', true).map(function(ax) {
-                return function(){
+                return function() {
                     if(!ax._id) return;
                     var axDone = axes.doTicks(td,ax._id);
                     if(axid==='redraw') ax._r = ax.range.slice();
@@ -27405,7 +27462,7 @@ axes.doTicks = function(td, axid, skipTitle) {
     var axletter = axid.charAt(0),
         counterLetter = axes.counterLetter(axid),
         vals = axes.calcTicks(ax),
-        datafn = function(d){ return d.text + d.x + ax.mirror; },
+        datafn = function(d) { return d.text + d.x + ax.mirror; },
         tcls = axid+'tick',
         gcls = axid+'grid',
         zcls = axid+'zl',
@@ -27421,7 +27478,7 @@ axes.doTicks = function(td, axid, skipTitle) {
     // positioning arguments for x vs y axes
     if(axletter==='x') {
         sides = ['bottom', 'top'];
-        transfn = function(d){
+        transfn = function(d) {
             return 'translate('+ax.l2p(d.x)+',0)';
         };
         // dumb templating with string concat
@@ -27431,7 +27488,7 @@ axes.doTicks = function(td, axid, skipTitle) {
     }
     else if(axletter==='y') {
         sides = ['left', 'right'];
-        transfn = function(d){
+        transfn = function(d) {
             return 'translate(0,'+ax.l2p(d.x)+')';
         };
         tickprefix = 'M';
@@ -27446,7 +27503,7 @@ axes.doTicks = function(td, axid, skipTitle) {
     // then we flip if outside XOR y axis
         ticksign = [-1, 1, axside===sides[1] ? 1 : -1];
     if((ax.ticks!=='inside') === (axletter==='x')) {
-        ticksign = ticksign.map(function(v){ return -v; });
+        ticksign = ticksign.map(function(v) { return -v; });
     }
 
     // remove zero lines, grid lines, and inside ticks if they're within
@@ -27486,13 +27543,13 @@ axes.doTicks = function(td, axid, skipTitle) {
         var labelx, labely, labelanchor, labelpos0;
         if(axletter==='x') {
             var flipit = axside==='bottom' ? 1 : -1;
-            labelx = function(d){ return d.dx; };
+            labelx = function(d) { return d.dx; };
             labelpos0 = position + (labelStandoff+pad)*flipit;
-            labely = function(d){
+            labely = function(d) {
                 return d.dy+labelpos0+d.fontSize *
                     (axside==='bottom' ? 1 : -0.5);
             };
-            labelanchor = function(angle){
+            labelanchor = function(angle) {
                 if(!isNumeric(angle) || angle===0 || angle===180) {
                     return 'middle';
                 }
@@ -27500,13 +27557,13 @@ axes.doTicks = function(td, axid, skipTitle) {
             };
         }
         else {
-            labely = function(d){ return d.dy+d.fontSize/2; };
-            labelx = function(d){
+            labely = function(d) { return d.dy+d.fontSize/2; };
+            labelx = function(d) {
                 return d.dx + position + (labelStandoff + pad +
                     (Math.abs(ax.tickangle)===90 ? d.fontSize/2 : 0)) *
                     (axside==='right' ? 1 : -1);
             };
-            labelanchor = function(angle){
+            labelanchor = function(angle) {
                 if(isNumeric(angle) && Math.abs(angle)===90) {
                     return 'middle';
                 }
@@ -27521,7 +27578,7 @@ axes.doTicks = function(td, axid, skipTitle) {
                 // only so tex has predictable alignment that we can
                 // alter later
                 .attr('text-anchor', 'middle')
-                .each(function(d){
+                .each(function(d) {
                     var thisLabel = d3.select(this),
                         newPromise = td._promises.length;
                     thisLabel
@@ -27537,7 +27594,7 @@ axes.doTicks = function(td, axid, skipTitle) {
                         // all here so take it out of td._promises and
                         // instead position the label and promise this in
                         // labelsReady
-                        labelsReady.push(td._promises.pop().then(function(){
+                        labelsReady.push(td._promises.pop().then(function() {
                             positionLabels(thisLabel, ax.tickangle);
                         }));
                     }
@@ -27548,7 +27605,7 @@ axes.doTicks = function(td, axid, skipTitle) {
                 });
         tickLabels.exit().remove();
 
-        tickLabels.each(function(d){
+        tickLabels.each(function(d) {
             maxFontSize = Math.max(maxFontSize, d.fontSize);
         });
 
@@ -27578,7 +27635,7 @@ axes.doTicks = function(td, axid, skipTitle) {
                 else {
                     var mjShift =
                         Plotly.Drawing.bBox(mathjaxGroup.node()).width *
-                            {end:-0.5, start:0.5}[anchor];
+                            {end: -0.5, start: 0.5}[anchor];
                     mathjaxGroup.attr('transform', transform +
                         (mjShift ? 'translate(' + mjShift + ',0)' : ''));
                 }
@@ -27592,11 +27649,11 @@ axes.doTicks = function(td, axid, skipTitle) {
         // there, putting back the prescribed angle to check for overlaps.
         positionLabels(tickLabels,ax._lastangle || ax.tickangle);
 
-        function allLabelsReady(){
+        function allLabelsReady() {
             return labelsReady.length && Promise.all(labelsReady);
         }
 
-        function fixLabelOverlaps(){
+        function fixLabelOverlaps() {
             positionLabels(tickLabels,ax.tickangle);
 
             // check for auto-angling if x labels overlap
@@ -27605,7 +27662,7 @@ axes.doTicks = function(td, axid, skipTitle) {
             if(axletter==='x' && !isNumeric(ax.tickangle) &&
                     (ax.type!=='log' || String(ax.dtick).charAt(0)!=='D')) {
                 var lbbArray = [];
-                tickLabels.each(function(d){
+                tickLabels.each(function(d) {
                     var s = d3.select(this),
                         thisLabel = s.select('.text-math-group'),
                         x = ax.l2p(d.x);
@@ -27614,9 +27671,9 @@ axes.doTicks = function(td, axid, skipTitle) {
 
                     lbbArray.push({
                         // ignore about y, just deal with x overlaps
-                        top:0,
-                        bottom:10,
-                        height:10,
+                        top: 0,
+                        bottom: 10,
+                        height: 10,
                         left: x-bb.width/2,
                         // impose a 2px gap
                         right: x+bb.width/2 + 2,
@@ -27697,10 +27754,10 @@ axes.doTicks = function(td, axid, skipTitle) {
         }
         var showZl = (ax.range[0]*ax.range[1]<=0) && ax.zeroline &&
             (ax.type==='linear' || ax.type==='-') && gridvals.length &&
-            (hasBarsOrFill || clipEnds({x:0}) || !ax.showline);
+            (hasBarsOrFill || clipEnds({x: 0}) || !ax.showline);
 
         var zl = zlcontainer.selectAll('path.'+zcls)
-            .data(showZl ? [{x:0}] : []);
+            .data(showZl ? [{x: 0}] : []);
         zl.enter().append('path').classed(zcls,1).classed('zl',1)
             .classed('crisp',1)
             .attr('d',gridpath);
@@ -27793,7 +27850,7 @@ function makeAxisGroups(gd, traces) {
         }
 
         if(!groupsi.length) {
-            groups.push({x:[xi], y: [yi]});
+            groups.push({x: [xi], y: [yi]});
             continue;
         }
 
@@ -27912,7 +27969,7 @@ function swapAxisAttrs(layout, key, xFullAxes, yFullAxes) {
 
 // mod - version of modulus that always restricts to [0,divisor)
 // rather than built-in % which gives a negative value for negative v
-function mod(v,d){ return ((v%d) + d) % d; }
+function mod(v,d) { return ((v%d) + d) % d; }
 
 },{"../../components/titles":51,"../../plotly":73,"./axis_ids":78,"./layout_attributes":83,"./layout_defaults":84,"./set_convert":87,"d3":9,"fast-isnumeric":11}],77:[function(require,module,exports){
 /**
@@ -28041,7 +28098,7 @@ module.exports = function handleAxisDefaults(containerIn, containerOut, coerce, 
     return containerOut;
 };
 
-function setAutoType(ax, data){
+function setAutoType(ax, data) {
     // new logic: let people specify any type they want,
     // only autotype if type is '-'
     if(ax.type!=='-') return;
@@ -28058,7 +28115,7 @@ function setAutoType(ax, data){
     // first check for histograms, as the count direction
     // should always default to a linear axis
     if(d0.type==='histogram' &&
-            axLetter === {v:'y', h:'x'}[d0.orientation || 'v']) {
+            axLetter === {v: 'y', h: 'x'}[d0.orientation || 'v']) {
         ax.type='linear';
         return;
     }
@@ -28088,7 +28145,7 @@ function setAutoType(ax, data){
 }
 
 function getBoxPosLetter(trace) {
-    return {v:'x', h:'y'}[trace.orientation || 'v'];
+    return {v: 'x', h: 'y'}[trace.orientation || 'v'];
 }
 
 function isBoxWithoutPositionCoords(trace, axLetter) {
@@ -28319,7 +28376,7 @@ var Lib = require('../../lib');
  * but also handling dates, numbers, and NaN, null, Infinity etc
  */
 module.exports = function cleanDatum(c) {
-    try{
+    try {
         if(typeof c === 'object' && c !== null && c.getTime) {
             return Lib.ms2DateTime(c);
         }
@@ -28440,7 +28497,7 @@ fx.layoutAttributes = {
     }
 };
 
-fx.supplyLayoutDefaults = function (layoutIn, layoutOut, fullData) {
+fx.supplyLayoutDefaults = function(layoutIn, layoutOut, fullData) {
     function coerce(attr, dflt) {
         return Lib.coerce(layoutIn, layoutOut, fx.layoutAttributes, attr, dflt);
     }
@@ -28448,7 +28505,7 @@ fx.supplyLayoutDefaults = function (layoutIn, layoutOut, fullData) {
     coerce('dragmode');
 
     var hovermodeDflt;
-    if (layoutOut._hasCartesian) {
+    if(layoutOut._hasCartesian) {
         // flag for 'horizontal' plots:
         // determines the state of the mode bar 'compare' hovermode button
         var isHoriz = layoutOut._isHoriz = fx.isHoriz(fullData);
@@ -28459,13 +28516,13 @@ fx.supplyLayoutDefaults = function (layoutIn, layoutOut, fullData) {
     coerce('hovermode', hovermodeDflt);
 };
 
-fx.isHoriz = function (fullData) {
+fx.isHoriz = function(fullData) {
     var isHoriz = true;
 
     for(var i = 0; i < fullData.length; i++) {
         var trace = fullData[i];
 
-        if (trace.orientation !== 'h') {
+        if(trace.orientation !== 'h') {
             isHoriz = false;
             break;
         }
@@ -28474,51 +28531,51 @@ fx.isHoriz = function (fullData) {
     return isHoriz;
 };
 
-fx.init = function (gd) {
+fx.init = function(gd) {
     var fullLayout = gd._fullLayout;
 
     if(!fullLayout._hasCartesian || gd._context.staticPlot) return;
 
-    var subplots = Object.keys(fullLayout._plots || {}).sort(function (a, b) {
+    var subplots = Object.keys(fullLayout._plots || {}).sort(function(a,b) {
         // sort overlays last, then by x axis number, then y axis number
-        if ((fullLayout._plots[a].mainplot && true) ===
+        if((fullLayout._plots[a].mainplot && true) ===
             (fullLayout._plots[b].mainplot && true)) {
             var aParts = a.split('y'),
                 bParts = b.split('y');
-            return (aParts[0] === bParts[0]) ?
-                (Number(aParts[1] || 1) - Number(bParts[1] || 1)) :
-                (Number(aParts[0] || 1) - Number(bParts[0] || 1));
+            return (aParts[0]===bParts[0]) ?
+                (Number(aParts[1]||1) - Number(bParts[1]||1)) :
+                (Number(aParts[0]||1) - Number(bParts[0]||1));
         }
         return fullLayout._plots[a].mainplot ? 1 : -1;
     });
 
-    subplots.forEach(function (subplot) {
+    subplots.forEach(function(subplot) {
         var plotinfo = fullLayout._plots[subplot];
 
-        if (!fullLayout._hasCartesian) return;
+        if(!fullLayout._hasCartesian) return;
 
         var xa = plotinfo.x(),
             ya = plotinfo.y(),
 
             // the y position of the main x axis line
-            y0 = (xa._linepositions[subplot] || [])[3],
+            y0 = (xa._linepositions[subplot]||[])[3],
 
             // the x position of the main y axis line
-            x0 = (ya._linepositions[subplot] || [])[3];
+            x0 = (ya._linepositions[subplot]||[])[3];
 
         var DRAGGERSIZE = constants.DRAGGERSIZE;
-        if (isNumeric(y0) && xa.side === 'top') y0 -= DRAGGERSIZE;
-        if (isNumeric(x0) && ya.side !== 'right') x0 -= DRAGGERSIZE;
+        if(isNumeric(y0) && xa.side==='top') y0 -= DRAGGERSIZE;
+        if(isNumeric(x0) && ya.side!=='right') x0 -= DRAGGERSIZE;
 
         // main and corner draggers need not be repeated for
         // overlaid subplots - these draggers drag them all
-        if (!plotinfo.mainplot) {
+        if(!plotinfo.mainplot) {
             // main dragger goes over the grids and data, so we use its
             // mousemove events for all data hover effects
             var maindrag = dragBox(gd, plotinfo, 0, 0,
-                xa._length, ya._length, 'ns', 'ew');
+                xa._length, ya._length,'ns','ew');
 
-            maindrag.onmousemove = function (evt) {
+            maindrag.onmousemove = function(evt) {
                 fx.hover(gd, evt, subplot);
                 fullLayout._lasthover = maindrag;
                 fullLayout._hoversubplot = subplot;
@@ -28531,13 +28588,13 @@ fx.init = function (gd) {
              * maindrag before each 'click' event, which has the effect
              * of clearing the hoverdata; thus, cancelling the click event.
              */
-            maindrag.onmouseout = function (evt) {
-                if (gd._dragging) return;
+            maindrag.onmouseout = function(evt) {
+                if(gd._dragging) return;
 
                 fx.unhover(gd, evt);
             };
 
-            maindrag.onclick = function (evt) {
+            maindrag.onclick = function(evt) {
                 fx.click(gd, evt);
             };
 
@@ -28554,24 +28611,24 @@ fx.init = function (gd) {
 
         // x axis draggers - if you have overlaid plots,
         // these drag each axis separately
-        if (isNumeric(y0)) {
-            if (xa.anchor === 'free') y0 -= fullLayout._size.h * (1 - ya.domain[1]);
-            dragBox(gd, plotinfo, xa._length * 0.1, y0,
-                xa._length * 0.8, DRAGGERSIZE, '', 'ew');
+        if(isNumeric(y0)) {
+            if(xa.anchor==='free') y0 -= fullLayout._size.h*(1-ya.domain[1]);
+            dragBox(gd, plotinfo, xa._length*0.1, y0,
+                xa._length*0.8, DRAGGERSIZE, '', 'ew');
             dragBox(gd, plotinfo, 0, y0,
-                xa._length * 0.1, DRAGGERSIZE, '', 'w');
-            dragBox(gd, plotinfo, xa._length * 0.9, y0,
-                xa._length * 0.1, DRAGGERSIZE, '', 'e');
+                xa._length*0.1, DRAGGERSIZE, '', 'w');
+            dragBox(gd, plotinfo, xa._length*0.9, y0,
+                xa._length*0.1, DRAGGERSIZE, '', 'e');
         }
         // y axis draggers
-        if (isNumeric(x0)) {
-            if (ya.anchor === 'free') x0 -= fullLayout._size.w * xa.domain[0];
-            dragBox(gd, plotinfo, x0, ya._length * 0.1,
-                DRAGGERSIZE, ya._length * 0.8, 'ns', '');
-            dragBox(gd, plotinfo, x0, ya._length * 0.9,
-                DRAGGERSIZE, ya._length * 0.1, 's', '');
+        if(isNumeric(x0)) {
+            if(ya.anchor==='free') x0 -= fullLayout._size.w*xa.domain[0];
+            dragBox(gd, plotinfo, x0, ya._length*0.1,
+                DRAGGERSIZE, ya._length*0.8, 'ns', '');
+            dragBox(gd, plotinfo, x0, ya._length*0.9,
+                DRAGGERSIZE, ya._length*0.1, 's', '');
             dragBox(gd, plotinfo, x0, 0,
-                DRAGGERSIZE, ya._length * 0.1, 'n', '');
+                DRAGGERSIZE, ya._length*0.1, 'n', '');
         }
     });
 
@@ -28580,18 +28637,18 @@ fx.init = function (gd) {
     // but still be able to interact with everything as if it isn't there
     var hoverLayer = fullLayout._hoverlayer.node();
 
-    hoverLayer.onmousemove = function (evt) {
+    hoverLayer.onmousemove = function(evt) {
         evt.target = fullLayout._lasthover;
         fx.hover(gd, evt, fullLayout._hoversubplot);
     };
 
-    hoverLayer.onclick = function (evt) {
+    hoverLayer.onclick = function(evt) {
         evt.target = fullLayout._lasthover;
         fx.click(gd, evt);
     };
 
     // also delegate mousedowns... TODO: does this actually work?
-    hoverLayer.onmousedown = function (evt) {
+    hoverLayer.onmousedown = function(evt) {
         fullLayout._lasthover.onmousedown(evt);
     };
 };
@@ -28599,10 +28656,10 @@ fx.init = function (gd) {
 // hover labels for multiple horizontal bars get tilted by some angle,
 // then need to be offset differently if they overlap
 var YANGLE = constants.YANGLE,
-    YA_RADIANS = Math.PI * YANGLE / 180,
+    YA_RADIANS = Math.PI*YANGLE/180,
 
     // expansion of projected height
-    YFACTOR = 1 / Math.sin(YA_RADIANS),
+    YFACTOR = 1/Math.sin(YA_RADIANS),
 
     // to make the appropriate post-rotation x offset,
     // you need both x and y offsets
@@ -28612,21 +28669,21 @@ var YANGLE = constants.YANGLE,
 // convenience functions for mapping all relevant axes
 function flat(subplots, v) {
     var out = [];
-    for (var i = subplots.length; i > 0; i--) out.push(v);
+    for(var i=subplots.length; i>0; i--) out.push(v);
     return out;
 }
 
 function p2c(axArray, v) {
     var out = [];
-    for (var i = 0; i < axArray.length; i++) out.push(axArray[i].p2c(v));
+    for(var i=0; i<axArray.length; i++) out.push(axArray[i].p2c(v));
     return out;
 }
 
 function quadrature(dx, dy) {
-    return function (di) {
+    return function(di) {
         var x = dx(di),
             y = dy(di);
-        return Math.sqrt(x * x + y * y);
+        return Math.sqrt(x*x + y*y);
     };
 }
 
@@ -28662,71 +28719,71 @@ var HOVERARROWSIZE = constants.HOVERARROWSIZE,
 // The actual rendering is done by private functions
 // hover() and unhover().
 
-fx.hover = function (gd, evt, subplot) {
-    if (typeof gd === 'string') gd = document.getElementById(gd);
-    if (gd._lastHoverTime === undefined) gd._lastHoverTime = 0;
+fx.hover = function(gd, evt, subplot) {
+    if(typeof gd === 'string') gd = document.getElementById(gd);
+    if(gd._lastHoverTime === undefined) gd._lastHoverTime = 0;
 
     // If we have an update queued, discard it now
-    if (gd._hoverTimer !== undefined) {
+    if(gd._hoverTimer !== undefined) {
         clearTimeout(gd._hoverTimer);
         gd._hoverTimer = undefined;
     }
     // Is it more than 100ms since the last update?  If so, force
     // an update now (synchronously) and exit
-    if (Date.now() > gd._lastHoverTime + constants.HOVERMINTIME) {
-        hover(gd, evt, subplot);
+    if(Date.now() > gd._lastHoverTime + constants.HOVERMINTIME) {
+        hover(gd,evt,subplot);
         gd._lastHoverTime = Date.now();
         return;
     }
     // Queue up the next hover for 100ms from now (if no further events)
-    gd._hoverTimer = setTimeout(function () {
-        hover(gd, evt, subplot);
+    gd._hoverTimer = setTimeout(function() {
+        hover(gd,evt,subplot);
         gd._lastHoverTime = Date.now();
         gd._hoverTimer = undefined;
     }, constants.HOVERMINTIME);
 };
 
-fx.unhover = function (gd, evt, subplot) {
-    if (typeof gd === 'string') gd = document.getElementById(gd);
+fx.unhover = function(gd, evt, subplot) {
+    if(typeof gd === 'string') gd = document.getElementById(gd);
     // Important, clear any queued hovers
-    if (gd._hoverTimer) {
+    if(gd._hoverTimer) {
         clearTimeout(gd._hoverTimer);
         gd._hoverTimer = undefined;
     }
-    unhover(gd, evt, subplot);
+    unhover(gd,evt,subplot);
 };
 
 // The actual implementation is here:
 
 function hover(gd, evt, subplot) {
-    if (subplot === 'pie') {
+    if(subplot === 'pie') {
         gd.emit('plotly_hover', {
             points: [evt]
         });
         return;
     }
 
-    if (!subplot) subplot = 'xy';
+    if(!subplot) subplot = 'xy';
 
     var fullLayout = gd._fullLayout,
         plotinfo = fullLayout._plots[subplot],
         // list of all overlaid subplots to look at
         subplots = [subplot].concat(plotinfo.overlays
-            .map(function (pi) { return pi.id; })),
-        xaArray = subplots.map(function (spId) {
+            .map(function(pi) { return pi.id; })),
+        xaArray = subplots.map(function(spId) {
             return Plotly.Axes.getFromId(gd, spId, 'x');
         }),
-        yaArray = subplots.map(function (spId) {
+        yaArray = subplots.map(function(spId) {
             return Plotly.Axes.getFromId(gd, spId, 'y');
         }),
         hovermode = evt.hovermode || fullLayout.hovermode;
 
-    if (['x', 'y', 'closest'].indexOf(hovermode) === -1 || !gd.calcdata ||
-        gd.querySelector('.zoombox') || gd._dragging) {
+    if(['x','y','closest'].indexOf(hovermode)===-1 || !gd.calcdata ||
+            gd.querySelector('.zoombox') || gd._dragging) {
         return unhover(gd, evt);
     }
 
-    // hoverData: the set of candidate points we've found to highlight
+        // hoverData: the set of candidate points we've found to highlight
     var hoverData = [],
 
         // searchData: the data to search in. Mostly this is just a copy of
@@ -28755,19 +28812,19 @@ function hover(gd, evt, subplot) {
     // Figure out what we're hovering on:
     // mouse location or user-supplied data
 
-    if (Array.isArray(evt)) {
+    if(Array.isArray(evt)) {
         // user specified an array of points to highlight
         hovermode = 'array';
-        for (itemnum = 0; itemnum < evt.length; itemnum++) {
-            cd = gd.calcdata[evt[itemnum].curveNumber || 0];
-            if (cd[0].trace.hoverinfo !== 'none') searchData.push(cd);
+        for(itemnum = 0; itemnum<evt.length; itemnum++) {
+            cd = gd.calcdata[evt[itemnum].curveNumber||0];
+            if(cd[0].trace.hoverinfo!=='none') searchData.push(cd);
         }
     }
     else {
-        for (curvenum = 0; curvenum < gd.calcdata.length; curvenum++) {
+        for(curvenum = 0; curvenum<gd.calcdata.length; curvenum++) {
             cd = gd.calcdata[curvenum];
             trace = cd[0].trace;
-            if (trace.hoverinfo !== 'none' && subplots.indexOf(trace.xaxis + trace.yaxis) !== -1) {
+            if(trace.hoverinfo!=='none' && subplots.indexOf(trace.xaxis + trace.yaxis)!==-1) {
                 searchData.push(cd);
             }
         }
@@ -28778,12 +28835,12 @@ function hover(gd, evt, subplot) {
 
         // mouse event? ie is there a target element with
         // clientX and clientY values?
-        if (evt.target && ('clientX' in evt) && ('clientY' in evt)) {
+        if(evt.target && ('clientX' in evt) && ('clientY' in evt)) {
 
             // fire the beforehover event and quit if it returns false
             // note that we're only calling this on real mouse events, so
             // manual calls to fx.hover will always run.
-            if (Events.triggerHandler(gd, 'plotly_beforehover', evt) === false) {
+            if(Events.triggerHandler(gd, 'plotly_beforehover', evt)===false) {
                 return;
             }
 
@@ -28794,25 +28851,25 @@ function hover(gd, evt, subplot) {
 
             // in case hover was called from mouseout into hovertext,
             // it's possible you're not actually over the plot anymore
-            if (xpx < 0 || xpx > dbb.width || ypx < 0 || ypx > dbb.height) {
-                return unhover(gd, evt);
+            if(xpx<0 || xpx>dbb.width || ypx<0 || ypx>dbb.height) {
+                return unhover(gd,evt);
             }
         }
         else {
-            if ('xpx' in evt) xpx = evt.xpx;
-            else xpx = xaArray[0]._length / 2;
+            if('xpx' in evt) xpx = evt.xpx;
+            else xpx = xaArray[0]._length/2;
 
-            if ('ypx' in evt) ypx = evt.ypx;
-            else ypx = yaArray[0]._length / 2;
+            if('ypx' in evt) ypx = evt.ypx;
+            else ypx = yaArray[0]._length/2;
         }
 
-        if ('xval' in evt) xvalArray = flat(subplots, evt.xval);
+        if('xval' in evt) xvalArray = flat(subplots, evt.xval);
         else xvalArray = p2c(xaArray, xpx);
 
-        if ('yval' in evt) yvalArray = flat(subplots, evt.yval);
+        if('yval' in evt) yvalArray = flat(subplots, evt.yval);
         else yvalArray = p2c(yaArray, ypx);
 
-        if (!isNumeric(xvalArray[0]) || !isNumeric(yvalArray[0])) {
+        if(!isNumeric(xvalArray[0]) || !isNumeric(yvalArray[0])) {
             console.log('Plotly.Fx.hover failed', evt, gd);
             return unhover(gd, evt);
         }
@@ -28825,11 +28882,11 @@ function hover(gd, evt, subplot) {
     // find the closest point in each trace
     // this is minimum dx and/or dy, depending on mode
     // and the pixel position for the label (labelXpx, labelYpx)
-    for (curvenum = 0; curvenum < searchData.length; curvenum++) {
+    for(curvenum = 0; curvenum<searchData.length; curvenum++) {
         cd = searchData[curvenum];
 
         // filter out invisible or broken data
-        if (!cd || !cd[0] || !cd[0].trace || cd[0].trace.visible !== true) continue;
+        if(!cd || !cd[0] || !cd[0].trace || cd[0].trace.visible !== true) continue;
 
         trace = cd[0].trace;
         subploti = subplots.indexOf(trace.xaxis + trace.yaxis);
@@ -28844,7 +28901,7 @@ function hover(gd, evt, subplot) {
             trace: trace,
             xa: xaArray[subploti],
             ya: yaArray[subploti],
-            name: (gd.data.length > 1 || trace.hoverinfo.indexOf('name') !== -1) ? trace.name : undefined,
+            name: (gd.data.length>1 || trace.hoverinfo.indexOf('name')!==-1) ? trace.name : undefined,
             // point properties - override all of these
             index: false, // point index in trace - only used by plotly.js hoverdata consumers
             distance: Math.min(distance, constants.MAXDIST), // pixel distance or pseudo-distance
@@ -28863,19 +28920,19 @@ function hover(gd, evt, subplot) {
 
         // for a highlighting array, figure out what
         // we're searching for with this element
-        if (mode === 'array') {
+        if(mode==='array') {
             var selection = evt[curvenum];
-            if ('pointNumber' in selection) {
+            if('pointNumber' in selection) {
                 pointData.index = selection.pointNumber;
                 mode = 'closest';
             }
             else {
                 mode = '';
-                if ('xval' in selection) {
+                if('xval' in selection) {
                     xval = selection.xval;
                     mode = 'x';
                 }
-                if ('yval' in selection) {
+                if('yval' in selection) {
                     yval = selection.yval;
                     mode = mode ? 'closest' : 'y';
                 }
@@ -28887,13 +28944,13 @@ function hover(gd, evt, subplot) {
         }
 
         // Now find the points.
-        if (trace._module && trace._module.hoverPoints) {
+        if(trace._module && trace._module.hoverPoints) {
             var newPoints = trace._module.hoverPoints(pointData, xval, yval, mode);
-            if (newPoints) {
+            if(newPoints) {
                 var newPoint;
-                for (var newPointNum = 0; newPointNum < newPoints.length; newPointNum++) {
+                for(var newPointNum=0; newPointNum<newPoints.length; newPointNum++) {
                     newPoint = newPoints[newPointNum];
-                    if (isNumeric(newPoint.x0) && isNumeric(newPoint.y0)) {
+                    if(isNumeric(newPoint.x0) && isNumeric(newPoint.y0)) {
                         hoverData.push(cleanPoint(newPoint, hovermode));
                     }
                 }
@@ -28905,7 +28962,7 @@ function hover(gd, evt, subplot) {
 
         // in closest mode, remove any existing (farther) points
         // and don't look any farther than this latest point (or points, if boxes)
-        if (hovermode === 'closest' && hoverData.length > closedataPreviousLength) {
+        if(hovermode==='closest' && hoverData.length > closedataPreviousLength) {
             hoverData.splice(0, closedataPreviousLength);
             distance = hoverData[0].distance;
         }
@@ -28913,13 +28970,13 @@ function hover(gd, evt, subplot) {
     }
 
     // nothing left: remove all labels and quit
-    if (hoverData.length === 0) return unhover(gd, evt);
+    if(hoverData.length===0) return unhover(gd,evt);
 
     // if there's more than one horz bar trace,
     // rotate the labels so they don't overlap
-    var rotateLabels = hovermode === 'y' && searchData.length > 1;
+    var rotateLabels = hovermode==='y' && searchData.length>1;
 
-    hoverData.sort(function (d1, d2) { return d1.distance - d2.distance; });
+    hoverData.sort(function(d1, d2) { return d1.distance - d2.distance; });
 
     var labelOpts = {
         hovermode: hovermode,
@@ -28940,7 +28997,7 @@ function hover(gd, evt, subplot) {
 
     // pull out just the data that's useful to
     // other people and send it to the event
-    for (itemnum = 0; itemnum < hoverData.length; itemnum++) {
+    for(itemnum = 0; itemnum<hoverData.length; itemnum++) {
         var pt = hoverData[itemnum];
         var out = {
             data: pt.trace._input,
@@ -28952,19 +29009,19 @@ function hover(gd, evt, subplot) {
             xaxis: pt.xa,
             yaxis: pt.ya
         };
-        if (pt.zLabelVal !== undefined) out.z = pt.zLabelVal;
+        if(pt.zLabelVal!==undefined) out.z = pt.zLabelVal;
         newhoverdata.push(out);
     }
     gd._hoverdata = newhoverdata;
 
-    if (!hoverChanged(gd, evt, oldhoverdata)) return;
+    if(!hoverChanged(gd, evt, oldhoverdata)) return;
 
     /* Emit the custom hover handler. Bind this like:
      *  gd.on('hover.plotly', function(extras) {
      *      // do something with extras.data
      *  });
      */
-    if (oldhoverdata) {
+    if(oldhoverdata) {
         gd.emit('plotly_unhover', { points: oldhoverdata });
     }
     gd.emit('plotly_hover', {
@@ -28976,15 +29033,15 @@ function hover(gd, evt, subplot) {
     });
 }
 
-fx.getDistanceFunction = function (mode, dx, dy, dxy) {
-    if (mode === 'closest') return dxy || quadrature(dx, dy);
-    return mode === 'x' ? dx : dy;
+fx.getDistanceFunction = function(mode, dx, dy, dxy) {
+    if(mode==='closest') return dxy || quadrature(dx, dy);
+    return mode==='x' ? dx : dy;
 };
 
-fx.getClosest = function (cd, distfn, pointData) {
+fx.getClosest = function(cd, distfn, pointData) {
     // do we already have a point number? (array mode only)
-    if (pointData.index !== false) {
-        if (pointData.index >= 0 && pointData.index < cd.length) {
+    if(pointData.index!==false) {
+        if(pointData.index>=0 && pointData.index<cd.length) {
             pointData.distance = 0;
         }
         else pointData.index = false;
@@ -28994,9 +29051,9 @@ fx.getClosest = function (cd, distfn, pointData) {
         // this is the longest loop... if this bogs down, we may need
         // to create pre-sorted data (by x or y), not sure how to
         // do this for 'closest'
-        for (var i = 0; i < cd.length; i++) {
+        for(var i=0; i<cd.length; i++) {
             var newDistance = distfn(cd[i]);
-            if (newDistance < pointData.distance) {
+            if(newDistance < pointData.distance) {
                 pointData.index = i;
                 pointData.distance = newDistance;
             }
@@ -29006,7 +29063,7 @@ fx.getClosest = function (cd, distfn, pointData) {
 };
 
 function cleanPoint(d, hovermode) {
-    d.posref = hovermode === 'y' ? (d.x0 + d.x1) / 2 : (d.y0 + d.y1) / 2;
+    d.posref = hovermode==='y' ? (d.x0+d.x1)/2 : (d.y0+d.y1)/2;
 
     // then constrain all the positions to be on the plot
     d.x0 = Plotly.Lib.constrain(d.x0, 0, d.xa._length);
@@ -29017,70 +29074,70 @@ function cleanPoint(d, hovermode) {
     // and convert the x and y label values into objects
     // formatted as text, with font info
     var logOffScale;
-    if (d.xLabelVal !== undefined) {
-        logOffScale = (d.xa.type === 'log' && d.xLabelVal <= 0);
+    if(d.xLabelVal!==undefined) {
+        logOffScale = (d.xa.type==='log' && d.xLabelVal<=0);
         var xLabelObj = Plotly.Axes.tickText(d.xa,
-            d.xa.c2l(logOffScale ? -d.xLabelVal : d.xLabelVal), 'hover');
-        if (logOffScale) {
-            if (d.xLabelVal === 0) d.xLabel = '0';
+                d.xa.c2l(logOffScale ? -d.xLabelVal : d.xLabelVal), 'hover');
+        if(logOffScale) {
+            if(d.xLabelVal===0) d.xLabel = '0';
             else d.xLabel = '-' + xLabelObj.text;
         }
         else d.xLabel = xLabelObj.text;
         d.xVal = d.xa.c2d(d.xLabelVal);
     }
 
-    if (d.yLabelVal !== undefined) {
-        logOffScale = (d.ya.type === 'log' && d.yLabelVal <= 0);
+    if(d.yLabelVal!==undefined) {
+        logOffScale = (d.ya.type==='log' && d.yLabelVal<=0);
         var yLabelObj = Plotly.Axes.tickText(d.ya,
-            d.ya.c2l(logOffScale ? -d.yLabelVal : d.yLabelVal), 'hover');
-        if (logOffScale) {
-            if (d.yLabelVal === 0) d.yLabel = '0';
+                d.ya.c2l(logOffScale ? -d.yLabelVal : d.yLabelVal), 'hover');
+        if(logOffScale) {
+            if(d.yLabelVal===0) d.yLabel = '0';
             else d.yLabel = '-' + yLabelObj.text;
         }
         else d.yLabel = yLabelObj.text;
         d.yVal = d.ya.c2d(d.yLabelVal);
     }
 
-    if (d.zLabelVal !== undefined) d.zLabel = String(d.zLabelVal);
+    if(d.zLabelVal!==undefined) d.zLabel = String(d.zLabelVal);
 
     // for box means and error bars, add the range to the label
-    if (d.xerr !== undefined) {
+    if(d.xerr!==undefined) {
         var xeText = Plotly.Axes.tickText(d.xa, d.xa.c2l(d.xerr), 'hover').text;
-        if (d.xerrneg !== undefined) {
+        if(d.xerrneg!==undefined) {
             d.xLabel += ' +' + xeText + ' / -' +
-            Plotly.Axes.tickText(d.xa, d.xa.c2l(d.xerrneg), 'hover').text;
+                Plotly.Axes.tickText(d.xa, d.xa.c2l(d.xerrneg), 'hover').text;
         }
         else d.xLabel += ' &plusmn; ' + xeText;
 
         // small distance penalty for error bars, so that if there are
         // traces with errors and some without, the error bar label will
         // hoist up to the point
-        if (hovermode === 'x') d.distance += 1;
+        if(hovermode==='x') d.distance += 1;
     }
-    if (d.yerr !== undefined) {
+    if(d.yerr!==undefined) {
         var yeText = Plotly.Axes.tickText(d.ya, d.ya.c2l(d.yerr), 'hover').text;
-        if (d.yerrneg !== undefined) {
+        if(d.yerrneg!==undefined) {
             d.yLabel += ' +' + yeText + ' / -' +
-            Plotly.Axes.tickText(d.ya, d.ya.c2l(d.yerrneg), 'hover').text;
+                Plotly.Axes.tickText(d.ya, d.ya.c2l(d.yerrneg), 'hover').text;
         }
         else d.yLabel += ' &plusmn; ' + yeText;
 
-        if (hovermode === 'y') d.distance += 1;
+        if(hovermode==='y') d.distance += 1;
     }
 
     var infomode = d.trace.hoverinfo;
-    if (infomode !== 'all') {
+    if(infomode!=='all') {
         infomode = infomode.split('+');
-        if (infomode.indexOf('x') === -1) d.xLabel = undefined;
-        if (infomode.indexOf('y') === -1) d.yLabel = undefined;
-        if (infomode.indexOf('z') === -1) d.zLabel = undefined;
-        if (infomode.indexOf('text') === -1) d.text = undefined;
-        if (infomode.indexOf('name') === -1) d.name = undefined;
+        if(infomode.indexOf('x')===-1) d.xLabel = undefined;
+        if(infomode.indexOf('y')===-1) d.yLabel = undefined;
+        if(infomode.indexOf('z')===-1) d.zLabel = undefined;
+        if(infomode.indexOf('text')===-1) d.text = undefined;
+        if(infomode.indexOf('name')===-1) d.name = undefined;
     }
     return d;
 }
 
-fx.loneHover = function (hoverItem, opts) {
+fx.loneHover = function(hoverItem, opts) {
     // draw a single hover item in a pre-existing svg container somewhere
     // hoverItem should have keys:
     //    - x and y (or x0, x1, y0, and y1):
@@ -29115,8 +29172,8 @@ fx.loneHover = function (hoverItem, opts) {
             index: 0,
             hoverinfo: ''
         },
-        xa: { _offset: 0 },
-        ya: { _offset: 0 },
+        xa: {_offset: 0},
+        ya: {_offset: 0},
         index: 0
     };
 
@@ -29138,10 +29195,10 @@ fx.loneHover = function (hoverItem, opts) {
     return hoverLabel.node();
 };
 
-fx.loneUnhover = function (containerOrSelection) {
+fx.loneUnhover = function(containerOrSelection) {
     var selection = containerOrSelection instanceof d3.selection ?
-        containerOrSelection :
-        d3.select(containerOrSelection);
+            containerOrSelection :
+            d3.select(containerOrSelection);
 
     selection.selectAll('g.hovertext').remove();
 };
@@ -29156,9 +29213,9 @@ function createHoverText(hoverData, opts) {
         c0 = hoverData[0],
         xa = c0.xa,
         ya = c0.ya,
-        commonAttr = hovermode === 'y' ? 'yLabel' : 'xLabel',
+        commonAttr = hovermode==='y' ? 'yLabel' : 'xLabel',
         t0 = c0[commonAttr],
-        t00 = (String(t0) || '').split(' ')[0],
+        t00 = (String(t0)||'').split(' ')[0],
         outerContainerBB = outerContainer.node().getBoundingClientRect(),
         outerTop = outerContainerBB.top,
         outerWidth = outerContainerBB.width,
@@ -29167,16 +29224,16 @@ function createHoverText(hoverData, opts) {
     // show the common label, if any, on the axis
     // never show a common label in array mode,
     // even if sometimes there could be one
-    var showCommonLabel = c0.distance <= constants.MAXDIST &&
-        (hovermode === 'x' || hovermode === 'y');
+    var showCommonLabel = c0.distance<=constants.MAXDIST &&
+                          (hovermode==='x' || hovermode==='y');
 
     // all hover traces hoverinfo must contain the hovermode
     // to have common labels
     var i, traceHoverinfo;
-    for (i = 0; i < hoverData.length; i++) {
+    for(i = 0; i < hoverData.length; i++) {
         traceHoverinfo = hoverData[i].trace.hoverinfo;
         var parts = traceHoverinfo.split('+');
-        if (parts.indexOf('all') === -1 &&
+        if(parts.indexOf('all') === -1 &&
             parts.indexOf(hovermode) === -1) {
             showCommonLabel = false;
             break;
@@ -29189,72 +29246,78 @@ function createHoverText(hoverData, opts) {
         .classed('axistext', true);
     commonLabel.exit().remove();
 
-    commonLabel.each(function () {
+    commonLabel.each(function() {
         var label = d3.select(this),
             lpath = label.selectAll('path').data([0]),
             ltext = label.selectAll('text').data([0]);
 
         lpath.enter().append('path')
-            .style({ fill: Plotly.Color.defaultLine, 'stroke-width': '1px', stroke: Plotly.Color.background });
+            .style({fill: Plotly.Color.defaultLine, 'stroke-width': '1px', stroke: Plotly.Color.background});
         ltext.enter().append('text')
             .call(Plotly.Drawing.font, HOVERFONT, HOVERFONTSIZE, Plotly.Color.background)
-        // prohibit tex interpretation until we can handle
-        // tex and regular text together
-            .attr('data-notex', 1);
+            // prohibit tex interpretation until we can handle
+            // tex and regular text together
+            .attr('data-notex',1);
 
         ltext.text(t0)
             .call(Plotly.util.convertToTspans)
             .call(Plotly.Drawing.setPosition, 0, 0)
-            .selectAll('tspan.line')
+          .selectAll('tspan.line')
             .call(Plotly.Drawing.setPosition, 0, 0);
-        label.attr('transform', '');
+        label.attr('transform','');
 
         var tbb = ltext.node().getBoundingClientRect();
-        if (hovermode === 'x') {
-            ltext.attr('text-anchor', 'middle')
-                .call(Plotly.Drawing.setPosition, 0, (xa.side === 'top' ?
-                    (outerTop - tbb.bottom - HOVERARROWSIZE - HOVERTEXTPAD) :
-                    (outerTop - tbb.top + HOVERARROWSIZE + HOVERTEXTPAD)))
+        if(hovermode==='x') {
+            ltext.attr('text-anchor','middle')
+                .call(Plotly.Drawing.setPosition,0,(xa.side==='top' ?
+                    (outerTop-tbb.bottom-HOVERARROWSIZE-HOVERTEXTPAD) :
+                    (outerTop-tbb.top+HOVERARROWSIZE+HOVERTEXTPAD)))
                 .selectAll('tspan.line')
-                .attr({ x: ltext.attr('x'), y: ltext.attr('y') });
+                    .attr({
+                        x: ltext.attr('x'),
+                        y: ltext.attr('y')
+                    });
 
-            var topsign = xa.side === 'top' ? '-' : '';
-            lpath.attr('d', 'M0,0' +
-                'L' + HOVERARROWSIZE + ',' + topsign + HOVERARROWSIZE +
-                'H' + (HOVERTEXTPAD + tbb.width / 2) +
-                'v' + topsign + (HOVERTEXTPAD * 2 + tbb.height) +
-                'H-' + (HOVERTEXTPAD + tbb.width / 2) +
-                'V' + topsign + HOVERARROWSIZE + 'H-' + HOVERARROWSIZE + 'Z');
+            var topsign = xa.side==='top' ? '-' : '';
+            lpath.attr('d','M0,0'+
+                'L'+HOVERARROWSIZE+','+topsign+HOVERARROWSIZE+
+                'H'+(HOVERTEXTPAD+tbb.width/2)+
+                'v'+topsign+(HOVERTEXTPAD*2+tbb.height)+
+                'H-'+(HOVERTEXTPAD+tbb.width/2)+
+                'V'+topsign+HOVERARROWSIZE+'H-'+HOVERARROWSIZE+'Z');
 
-            label.attr('transform', 'translate(' +
-                (xa._offset + (c0.x0 + c0.x1) / 2) + ',' +
-                (ya._offset + (xa.side === 'top' ? 0 : ya._length)) + ')');
+            label.attr('transform','translate(' +
+                (xa._offset+(c0.x0+c0.x1)/2)+',' +
+                (ya._offset + (xa.side==='top' ? 0 : ya._length))+')');
         }
         else {
-            ltext.attr('text-anchor', ya.side === 'right' ? 'start' : 'end')
+            ltext.attr('text-anchor',ya.side==='right' ? 'start' : 'end')
                 .call(Plotly.Drawing.setPosition,
-                    (ya.side === 'right' ? 1 : -1) * (HOVERTEXTPAD + HOVERARROWSIZE),
-                    outerTop - tbb.top - tbb.height / 2)
+                    (ya.side==='right' ? 1 : -1)*(HOVERTEXTPAD+HOVERARROWSIZE),
+                    outerTop-tbb.top-tbb.height/2)
                 .selectAll('tspan.line')
-                .attr({ x: ltext.attr('x'), y: ltext.attr('y') });
+                    .attr({
+                        x: ltext.attr('x'),
+                        y: ltext.attr('y')
+                    });
 
-            var leftsign = ya.side === 'right' ? '' : '-';
-            lpath.attr('d', 'M0,0' +
-                'L' + leftsign + HOVERARROWSIZE + ',' + HOVERARROWSIZE +
-                'V' + (HOVERTEXTPAD + tbb.height / 2) +
-                'h' + leftsign + (HOVERTEXTPAD * 2 + tbb.width) +
-                'V-' + (HOVERTEXTPAD + tbb.height / 2) +
-                'H' + leftsign + HOVERARROWSIZE + 'V-' + HOVERARROWSIZE + 'Z');
+            var leftsign = ya.side==='right' ? '' : '-';
+            lpath.attr('d','M0,0'+
+                'L'+leftsign+HOVERARROWSIZE+','+HOVERARROWSIZE+
+                'V'+(HOVERTEXTPAD+tbb.height/2)+
+                'h'+leftsign+(HOVERTEXTPAD*2+tbb.width)+
+                'V-'+(HOVERTEXTPAD+tbb.height/2)+
+                'H'+leftsign+HOVERARROWSIZE+'V-'+HOVERARROWSIZE+'Z');
 
-            label.attr('transform', 'translate(' +
-                (xa._offset + (ya.side === 'right' ? xa._length : 0)) + ',' +
-                (ya._offset + (c0.y0 + c0.y1) / 2) + ')');
+            label.attr('transform','translate(' +
+                (xa._offset+(ya.side==='right' ? xa._length : 0))+',' +
+                (ya._offset+(c0.y0+c0.y1)/2)+')');
         }
         // remove the "close but not quite" points
         // because of error bars, only take up to a space
-        hoverData = hoverData.filter(function (d) {
-            return (d.zLabelVal !== undefined) ||
-                (d[commonAttr] || '').split(' ')[0] === t00;
+        hoverData = hoverData.filter(function(d) {
+            return (d.zLabelVal!==undefined) ||
+                (d[commonAttr]||'').split(' ')[0]===t00;
         });
     });
 
@@ -29262,30 +29325,30 @@ function createHoverText(hoverData, opts) {
 
     // first create the objects
     var hoverLabels = container.selectAll('g.hovertext')
-        .data(hoverData, function (d) {
-            return [d.trace.index, d.index, d.x0, d.y0, d.name, d.attr || ''].join(',');
+        .data(hoverData,function(d) {
+            return [d.trace.index,d.index,d.x0,d.y0,d.name,d.attr||''].join(',');
         });
     hoverLabels.enter().append('g')
-        .classed('hovertext', true)
-        .each(function () {
+        .classed('hovertext',true)
+        .each(function() {
             var g = d3.select(this);
             // trace name label (rect and text.name)
             g.append('rect')
                 .call(Plotly.Color.fill,
                     Plotly.Color.addOpacity(bgColor, 0.8));
-            g.append('text').classed('name', true)
-                .call(Plotly.Drawing.font, HOVERFONT, HOVERFONTSIZE);
+            g.append('text').classed('name',true)
+                .call(Plotly.Drawing.font,HOVERFONT,HOVERFONTSIZE);
             // trace data label (path and text.nums)
             g.append('path')
-                .style('stroke-width', '1px');
-            g.append('text').classed('nums', true)
-                .call(Plotly.Drawing.font, HOVERFONT, HOVERFONTSIZE);
+                .style('stroke-width','1px');
+            g.append('text').classed('nums',true)
+                .call(Plotly.Drawing.font,HOVERFONT,HOVERFONTSIZE);
         });
     hoverLabels.exit().remove();
 
     // then put the text in, position the pointer to the data,
     // and figure out sizes
-    hoverLabels.each(function (d) {
+    hoverLabels.each(function(d) {
         var g = d3.select(this).attr('transform', ''),
             name = '',
             text = '',
@@ -29295,68 +29358,68 @@ function createHoverText(hoverData, opts) {
             traceColor = Plotly.Color.combine(baseColor, bgColor),
 
             // find a contrasting color for border and text
-            contrastColor = tinycolor(traceColor).getBrightness() > 128 ?
+            contrastColor = tinycolor(traceColor).getBrightness()>128 ?
                 '#000' : Plotly.Color.background;
 
 
-        if (d.name && d.zLabelVal === undefined) {
+        if(d.name && d.zLabelVal===undefined) {
             // strip out any html elements from d.name (if it exists at all)
             // Note that this isn't an XSS vector, only because it never gets
             // attached to the DOM
             var tmp = document.createElement('p');
             tmp.innerHTML = d.name;
-            name = tmp.textContent || '';
+            name = tmp.textContent||'';
 
-            if (name.length > 15) name = name.substr(0, 12) + '...';
+            if(name.length>15) name = name.substr(0,12)+'...';
         }
 
-        if (d.zLabel !== undefined) {
-            if (d.xLabel !== undefined) text += 'x: ' + d.xLabel + '<br>';
-            if (d.yLabel !== undefined) text += 'y: ' + d.yLabel + '<br>';
+        if(d.zLabel!==undefined) {
+            if(d.xLabel!==undefined) text += 'x: ' + d.xLabel + '<br>';
+            if(d.yLabel!==undefined) text += 'y: ' + d.yLabel + '<br>';
             text += (text ? 'z: ' : '') + d.zLabel;
         }
-        else if (showCommonLabel && d[hovermode + 'Label'] === t0) {
-            text = d[(hovermode === 'x' ? 'y' : 'x') + 'Label'] || '';
+        else if(showCommonLabel && d[hovermode+'Label']===t0) {
+            text = d[(hovermode==='x' ? 'y' : 'x') + 'Label'] || '';
         }
-        else if (d.xLabel === undefined) {
-            if (d.yLabel !== undefined) text = d.yLabel;
+        else if(d.xLabel===undefined) {
+            if(d.yLabel!==undefined) text = d.yLabel;
         }
-        else if (d.yLabel === undefined) text = d.xLabel;
-        else text = '(' + d.xLabel + ', ' + d.yLabel + ')';
+        else if(d.yLabel===undefined) text = d.xLabel;
+        else text = '('+d.xLabel+', '+d.yLabel+')';
 
-        if (d.text) text += (text ? '<br>' : '') + d.text;
+        if(d.text) text += (text ? '<br>' : '') + d.text;
 
         // if 'text' is empty at this point,
         // put 'name' in main label and don't show secondary label
-        if (text === '') {
+        if(text === '') {
             // if 'name' is also empty, remove entire label
-            if (name === '') g.remove();
+            if(name === '') g.remove();
             text = name;
         }
 
         // main label
         var tx = g.select('text.nums')
-            .style('fill', contrastColor)
-            .call(Plotly.Drawing.setPosition, 0, 0)
+            .style('fill',contrastColor)
+            .call(Plotly.Drawing.setPosition,0,0)
             .text(text)
-            .attr('data-notex', 1)
+            .attr('data-notex',1)
             .call(Plotly.util.convertToTspans);
         tx.selectAll('tspan.line')
-            .call(Plotly.Drawing.setPosition, 0, 0);
+            .call(Plotly.Drawing.setPosition,0,0);
 
         var tx2 = g.select('text.name'),
             tx2width = 0;
 
         // secondary label for non-empty 'name'
-        if (name && name !== text) {
-            tx2.style('fill', traceColor)
+        if(name && name!==text) {
+            tx2.style('fill',traceColor)
                 .text(name)
-                .call(Plotly.Drawing.setPosition, 0, 0)
-                .attr('data-notex', 1)
+                .call(Plotly.Drawing.setPosition,0,0)
+                .attr('data-notex',1)
                 .call(Plotly.util.convertToTspans);
             tx2.selectAll('tspan.line')
-                .call(Plotly.Drawing.setPosition, 0, 0);
-            tx2width = tx2.node().getBoundingClientRect().width + 2 * HOVERTEXTPAD;
+                .call(Plotly.Drawing.setPosition,0,0);
+            tx2width = tx2.node().getBoundingClientRect().width+2*HOVERTEXTPAD;
         }
         else {
             tx2.remove();
@@ -29364,32 +29427,35 @@ function createHoverText(hoverData, opts) {
         }
 
         g.select('path')
-            .style({ fill: traceColor, stroke: contrastColor });
+            .style({
+                fill: traceColor,
+                stroke: contrastColor
+            });
         var tbb = tx.node().getBoundingClientRect(),
-            htx = xa._offset + (d.x0 + d.x1) / 2,
-            hty = ya._offset + (d.y0 + d.y1) / 2,
-            dx = Math.abs(d.x1 - d.x0),
-            dy = Math.abs(d.y1 - d.y0),
-            txTotalWidth = tbb.width + HOVERARROWSIZE + HOVERTEXTPAD + tx2width,
+            htx = xa._offset+(d.x0+d.x1)/2,
+            hty = ya._offset+(d.y0+d.y1)/2,
+            dx = Math.abs(d.x1-d.x0),
+            dy = Math.abs(d.y1-d.y0),
+            txTotalWidth = tbb.width+HOVERARROWSIZE+HOVERTEXTPAD+tx2width,
             anchorStartOK,
             anchorEndOK;
 
-        d.ty0 = outerTop - tbb.top;
-        d.bx = tbb.width + 2 * HOVERTEXTPAD;
-        d.by = tbb.height + 2 * HOVERTEXTPAD;
+        d.ty0 = outerTop-tbb.top;
+        d.bx = tbb.width+2*HOVERTEXTPAD;
+        d.by = tbb.height+2*HOVERTEXTPAD;
         d.anchor = 'start';
         d.txwidth = tbb.width;
         d.tx2width = tx2width;
         d.offset = 0;
 
-        if (rotateLabels) {
+        if(rotateLabels) {
             d.pos = htx;
             anchorStartOK = hty + dy / 2 + txTotalWidth <= outerHeight;
             anchorEndOK = hty - dy / 2 - txTotalWidth >= 0;
-            if ((d.idealAlign === 'top' || !anchorStartOK) && anchorEndOK) {
+            if((d.idealAlign === 'top' || !anchorStartOK) && anchorEndOK) {
                 hty -= dy / 2;
                 d.anchor = 'end';
-            } else if (anchorStartOK) {
+            } else if(anchorStartOK) {
                 hty += dy / 2;
                 d.anchor = 'start';
             } else d.anchor = 'middle';
@@ -29398,19 +29464,19 @@ function createHoverText(hoverData, opts) {
             d.pos = hty;
             anchorStartOK = htx + dx / 2 + txTotalWidth <= outerWidth;
             anchorEndOK = htx - dx / 2 - txTotalWidth >= 0;
-            if ((d.idealAlign === 'left' || !anchorStartOK) && anchorEndOK) {
+            if((d.idealAlign === 'left' || !anchorStartOK) && anchorEndOK) {
                 htx -= dx / 2;
                 d.anchor = 'end';
-            } else if (anchorStartOK) {
+            } else if(anchorStartOK) {
                 htx += dx / 2;
                 d.anchor = 'start';
             } else d.anchor = 'middle';
         }
 
-        tx.attr('text-anchor', d.anchor);
-        if (tx2width) tx2.attr('text-anchor', d.anchor);
-        g.attr('transform', 'translate(' + htx + ',' + hty + ')' +
-            (rotateLabels ? 'rotate(' + YANGLE + ')' : ''));
+        tx.attr('text-anchor',d.anchor);
+        if(tx2width) tx2.attr('text-anchor',d.anchor);
+        g.attr('transform','translate('+htx+','+hty+')'+
+            (rotateLabels ? 'rotate('+YANGLE+')' : ''));
     });
 
     return hoverLabels;
@@ -29431,20 +29497,20 @@ function createHoverText(hoverData, opts) {
 function hoverAvoidOverlaps(hoverData, ax) {
     var nummoves = 0,
         pmin = ax._offset,
-        pmax = ax._offset + ax._length,
+        pmax = ax._offset+ax._length,
 
         // make groups of touching points
         pointgroups = hoverData
-            .map(function (d, i) {
+            .map(function(d,i) {
                 return [{
                     i: i,
                     dp: 0,
                     pos: d.pos,
                     posref: d.posref,
-                    size: d.by * (ax._id.charAt(0) === 'x' ? YFACTOR : 1) / 2
+                    size: d.by*(ax._id.charAt(0)==='x' ? YFACTOR : 1)/2
                 }];
             })
-            .sort(function (a, b) { return a[0].posref - b[0].posref; }),
+            .sort(function(a,b) { return a[0].posref-b[0].posref; }),
         donepositioning,
         topOverlap,
         bottomOverlap,
@@ -29454,71 +29520,71 @@ function hoverAvoidOverlaps(hoverData, ax) {
 
     function constrainGroup(grp) {
         var minPt = grp[0],
-            maxPt = grp[grp.length - 1];
+            maxPt = grp[grp.length-1];
 
         // overlap with the top - positive vals are overlaps
-        topOverlap = pmin - minPt.pos - minPt.dp + minPt.size;
+        topOverlap = pmin-minPt.pos-minPt.dp+minPt.size;
 
         // overlap with the bottom - positive vals are overlaps
-        bottomOverlap = maxPt.pos + maxPt.dp + maxPt.size - pmax;
+        bottomOverlap = maxPt.pos+maxPt.dp+maxPt.size-pmax;
 
         // check for min overlap first, so that we always
         // see the largest labels
         // allow for .01px overlap, so we don't get an
         // infinite loop from rounding errors
-        if (topOverlap > 0.01) {
-            for (j = grp.length - 1; j >= 0; j--) grp[j].dp += topOverlap;
+        if(topOverlap>0.01) {
+            for(j=grp.length-1; j>=0; j--) grp[j].dp += topOverlap;
             donepositioning = false;
         }
-        if (bottomOverlap < 0.01) return;
-        if (topOverlap < -0.01) {
+        if(bottomOverlap<0.01) return;
+        if(topOverlap<-0.01) {
             // make sure we're not pushing back and forth
-            for (j = grp.length - 1; j >= 0; j--) grp[j].dp -= bottomOverlap;
+            for(j=grp.length-1; j>=0; j--) grp[j].dp -= bottomOverlap;
             donepositioning = false;
         }
-        if (!donepositioning) return;
+        if(!donepositioning) return;
 
         // no room to fix positioning, delete off-screen points
 
         // first see how many points we need to delete
         var deleteCount = 0;
-        for (i = 0; i < grp.length; i++) {
+        for(i=0; i<grp.length; i++) {
             pti = grp[i];
-            if (pti.pos + pti.dp + pti.size > pmax) deleteCount++;
+            if(pti.pos+pti.dp+pti.size>pmax) deleteCount++;
         }
 
         // start by deleting points whose data is off screen
-        for (i = grp.length - 1; i >= 0; i--) {
-            if (deleteCount <= 0) break;
+        for(i=grp.length-1; i>=0; i--) {
+            if(deleteCount<=0) break;
             pti = grp[i];
 
             // pos has already been constrained to [pmin,pmax]
             // so look for points close to that to delete
-            if (pti.pos > pmax - 1) {
+            if(pti.pos>pmax-1) {
                 pti.del = true;
                 deleteCount--;
             }
         }
-        for (i = 0; i < grp.length; i++) {
-            if (deleteCount <= 0) break;
+        for(i=0; i<grp.length; i++) {
+            if(deleteCount<=0) break;
             pti = grp[i];
 
             // pos has already been constrained to [pmin,pmax]
             // so look for points close to that to delete
-            if (pti.pos < pmin + 1) {
+            if(pti.pos<pmin+1) {
                 pti.del = true;
                 deleteCount--;
 
                 // shift the whole group minus into this new space
-                bottomOverlap = pti.size * 2;
-                for (j = grp.length - 1; j >= 0; j--) grp[j].dp -= bottomOverlap;
+                bottomOverlap = pti.size*2;
+                for(j=grp.length-1; j>=0; j--) grp[j].dp -= bottomOverlap;
             }
         }
         // then delete points that go off the bottom
-        for (i = grp.length - 1; i >= 0; i--) {
-            if (deleteCount <= 0) break;
+        for(i=grp.length-1; i>=0; i--) {
+            if(deleteCount<=0) break;
             pti = grp[i];
-            if (pti.pos + pti.dp + pti.size > pmax) {
+            if(pti.pos+pti.dp+pti.size>pmax) {
                 pti.del = true;
                 deleteCount--;
             }
@@ -29527,7 +29593,7 @@ function hoverAvoidOverlaps(hoverData, ax) {
 
     // loop through groups, combining them if they overlap,
     // until nothing moves
-    while (!donepositioning && nummoves <= hoverData.length) {
+    while(!donepositioning && nummoves<=hoverData.length) {
         // to avoid infinite loops, don't move more times
         // than there are traces
         nummoves++;
@@ -29536,29 +29602,29 @@ function hoverAvoidOverlaps(hoverData, ax) {
         // reverse this if it does
         donepositioning = true;
         i = 0;
-        while (i < pointgroups.length - 1) {
-            // the higher (g0) and lower (g1) point group
+        while(i<pointgroups.length-1) {
+                // the higher (g0) and lower (g1) point group
             var g0 = pointgroups[i],
-                g1 = pointgroups[i + 1],
+                g1 = pointgroups[i+1],
 
                 // the lowest point in the higher group (p0)
                 // the highest point in the lower group (p1)
-                p0 = g0[g0.length - 1],
+                p0 = g0[g0.length-1],
                 p1 = g1[0];
-            topOverlap = p0.pos + p0.dp + p0.size - p1.pos - p1.dp + p1.size;
-            if (topOverlap > 0.01) {
+            topOverlap = p0.pos+p0.dp+p0.size-p1.pos-p1.dp+p1.size;
+            if(topOverlap>0.01) {
                 // push the new point(s) added to this group out of the way
-                for (j = g1.length - 1; j >= 0; j--) g1[j].dp += topOverlap;
+                for(j=g1.length-1; j>=0; j--) g1[j].dp += topOverlap;
 
                 // add them to the group
-                g0.push.apply(g0, g1);
-                pointgroups.splice(i + 1, 1);
+                g0.push.apply(g0,g1);
+                pointgroups.splice(i+1,1);
 
                 // adjust for minimum average movement
                 sumdp = 0;
-                for (j = g0.length - 1; j >= 0; j--) sumdp += g0[j].dp;
-                bottomOverlap = sumdp / g0.length;
-                for (j = g0.length - 1; j >= 0; j--) g0[j].dp -= bottomOverlap;
+                for(j=g0.length-1; j>=0; j--) sumdp += g0[j].dp;
+                bottomOverlap = sumdp/g0.length;
+                for(j=g0.length-1; j>=0; j--) g0[j].dp -= bottomOverlap;
                 donepositioning = false;
             }
             else i++;
@@ -29569,9 +29635,9 @@ function hoverAvoidOverlaps(hoverData, ax) {
     }
 
     // now put these offsets into hoverData
-    for (i = pointgroups.length - 1; i >= 0; i--) {
+    for(i=pointgroups.length-1; i>=0; i--) {
         var grp = pointgroups[i];
-        for (j = grp.length - 1; j >= 0; j--) {
+        for(j=grp.length-1; j>=0; j--) {
             var pt = grp[j],
                 hoverPt = hoverData[pt.i];
             hoverPt.offset = pt.dp;
@@ -29583,55 +29649,58 @@ function hoverAvoidOverlaps(hoverData, ax) {
 function alignHoverText(hoverLabels, rotateLabels) {
     // finally set the text positioning relative to the data and draw the
     // box around it
-    hoverLabels.each(function (d) {
+    hoverLabels.each(function(d) {
         var g = d3.select(this);
-        if (d.del) {
+        if(d.del) {
             g.remove();
             return;
         }
-        var horzSign = d.anchor === 'end' ? -1 : 1,
+        var horzSign = d.anchor==='end' ? -1 : 1,
             tx = g.select('text.nums'),
-            alignShift = { start: 1, end: -1, middle: 0 }[d.anchor],
-            txx = alignShift * (HOVERARROWSIZE + HOVERTEXTPAD),
-            tx2x = txx + alignShift * (d.txwidth + HOVERTEXTPAD),
+            alignShift = {start: 1, end: -1, middle: 0}[d.anchor],
+            txx = alignShift*(HOVERARROWSIZE+HOVERTEXTPAD),
+            tx2x = txx+alignShift*(d.txwidth+HOVERTEXTPAD),
             offsetX = 0,
             offsetY = d.offset;
-        if (d.anchor === 'middle') {
-            txx -= d.tx2width / 2;
-            tx2x -= d.tx2width / 2;
+        if(d.anchor==='middle') {
+            txx-=d.tx2width/2;
+            tx2x-=d.tx2width/2;
         }
-        if (rotateLabels) {
+        if(rotateLabels) {
             offsetY *= -YSHIFTY;
-            offsetX = d.offset * YSHIFTX;
+            offsetX = d.offset*YSHIFTX;
         }
 
-        g.select('path').attr('d', d.anchor === 'middle' ?
+        g.select('path').attr('d',d.anchor==='middle' ?
             // middle aligned: rect centered on data
-            ('M-' + (d.bx / 2) + ',-' + (d.by / 2) + 'h' + d.bx + 'v' + d.by + 'h-' + d.bx + 'Z') :
+            ('M-'+(d.bx/2)+',-'+(d.by/2)+'h'+d.bx+'v'+d.by+'h-'+d.bx+'Z') :
             // left or right aligned: side rect with arrow to data
-            ('M0,0L' + (horzSign * HOVERARROWSIZE + offsetX) + ',' + (HOVERARROWSIZE + offsetY) +
-                'v' + (d.by / 2 - HOVERARROWSIZE) +
-                'h' + (horzSign * d.bx) +
-                'v-' + d.by +
-                'H' + (horzSign * HOVERARROWSIZE + offsetX) +
-                'V' + (offsetY - HOVERARROWSIZE) +
+            ('M0,0L'+(horzSign*HOVERARROWSIZE+offsetX)+','+(HOVERARROWSIZE+offsetY)+
+                'v'+(d.by/2-HOVERARROWSIZE)+
+                'h'+(horzSign*d.bx)+
+                'v-'+d.by+
+                'H'+(horzSign*HOVERARROWSIZE+offsetX)+
+                'V'+(offsetY-HOVERARROWSIZE)+
                 'Z'));
 
         tx.call(Plotly.Drawing.setPosition,
-            txx + offsetX, offsetY + d.ty0 - d.by / 2 + HOVERTEXTPAD)
+                txx+offsetX, offsetY+d.ty0-d.by/2+HOVERTEXTPAD)
             .selectAll('tspan.line')
-            .attr({ x: tx.attr('x'), y: tx.attr('y') });
+                .attr({
+                    x: tx.attr('x'),
+                    y: tx.attr('y')
+                });
 
-        if (d.tx2width) {
+        if(d.tx2width) {
             g.select('text.name, text.name tspan.line')
                 .call(Plotly.Drawing.setPosition,
-                    tx2x + alignShift * HOVERTEXTPAD + offsetX,
-                    offsetY + d.ty0 - d.by / 2 + HOVERTEXTPAD);
+                    tx2x+alignShift*HOVERTEXTPAD+offsetX,
+                    offsetY+d.ty0-d.by/2+HOVERTEXTPAD);
             g.select('rect')
                 .call(Plotly.Drawing.setRect,
-                    tx2x + (alignShift - 1) * d.tx2width / 2 + offsetX,
-                    offsetY - d.by / 2 - 1,
-                    d.tx2width, d.by + 2);
+                    tx2x+(alignShift-1)*d.tx2width/2+offsetX,
+                    offsetY-d.by/2-1,
+                    d.tx2width, d.by+2);
         }
     });
 }
@@ -29639,14 +29708,14 @@ function alignHoverText(hoverLabels, rotateLabels) {
 function hoverChanged(gd, evt, oldhoverdata) {
     // don't emit any events if nothing changed or
     // if fx.hover was called manually
-    if (!evt.target) return false;
-    if (!oldhoverdata || oldhoverdata.length !== gd._hoverdata.length) return true;
+    if(!evt.target) return false;
+    if(!oldhoverdata || oldhoverdata.length!==gd._hoverdata.length) return true;
 
-    for (var i = oldhoverdata.length - 1; i >= 0; i--) {
+    for(var i = oldhoverdata.length-1; i>=0; i--) {
         var oldPt = oldhoverdata[i],
             newPt = gd._hoverdata[i];
-        if (oldPt.curveNumber !== newPt.curveNumber ||
-            String(oldPt.pointNumber) !== String(newPt.pointNumber)) {
+        if(oldPt.curveNumber!==newPt.curveNumber ||
+                String(oldPt.pointNumber)!==String(newPt.pointNumber)) {
             return true;
         }
     }
@@ -29656,24 +29725,24 @@ function hoverChanged(gd, evt, oldhoverdata) {
 // remove hover effects on mouse out, and emit unhover event
 function unhover(gd, evt) {
     var fullLayout = gd._fullLayout;
-    if (!evt) evt = {};
-    if (evt.target &&
-        Events.triggerHandler(gd, 'plotly_beforehover', evt) === false) {
+    if(!evt) evt = {};
+    if(evt.target &&
+       Events.triggerHandler(gd, 'plotly_beforehover', evt) === false) {
         return;
     }
     fullLayout._hoverlayer.selectAll('g').remove();
-    if (evt.target && gd._hoverdata) {
-        gd.emit('plotly_unhover', { points: gd._hoverdata });
+    if(evt.target && gd._hoverdata) {
+        gd.emit('plotly_unhover', {points: gd._hoverdata});
     }
     gd._hoverdata = undefined;
 }
 
 // on click
-fx.click = function (gd, evt) {
-    if (gd._hoverdata && evt && evt.target) {
-        gd.emit('plotly_click', { button: evt.button, points: gd._hoverdata });
+fx.click = function(gd,evt) {
+    if(gd._hoverdata && evt && evt.target) {
+        gd.emit('plotly_click', {points: gd._hoverdata});
         // why do we get a double event without this???
-        if (evt.stopImmediatePropagation) evt.stopImmediatePropagation();
+        if(evt.stopImmediatePropagation) evt.stopImmediatePropagation();
     }
 };
 
@@ -29683,9 +29752,9 @@ fx.click = function (gd, evt) {
 // ----------------------------------------------------
 
 function getDragCursor(nsew, dragmode) {
-    if (!nsew) return 'pointer';
-    if (nsew === 'nsew') {
-        if (dragmode === 'pan') return 'move';
+    if(!nsew) return 'pointer';
+    if(nsew === 'nsew') {
+        if(dragmode === 'pan') return 'move';
         return 'crosshair';
     }
     return nsew.toLowerCase() + '-resize';
@@ -29723,16 +29792,16 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         subplotXa,
         subplotYa;
 
-    for (i = 1; i < subplots.length; i++) {
+    for(i = 1; i < subplots.length; i++) {
         subplotXa = subplots[i].x();
         subplotYa = subplots[i].y();
-        if (xa.indexOf(subplotXa) === -1) xa.push(subplotXa);
-        if (ya.indexOf(subplotYa) === -1) ya.push(subplotYa);
+        if(xa.indexOf(subplotXa) === -1) xa.push(subplotXa);
+        if(ya.indexOf(subplotYa) === -1) ya.push(subplotYa);
     }
 
     function isDirectionActive(axList, activeVal) {
-        for (i = 0; i < axList.length; i++) {
-            if (!axList[i].fixedrange) return activeVal;
+        for(i = 0; i < axList.length; i++) {
+            if(!axList[i].fixedrange) return activeVal;
         }
         return '';
     }
@@ -29747,16 +29816,16 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     dragger3.enter().append('rect')
         .classed('drag', true)
         .classed(dragClass, true)
-        .style({ fill: 'transparent', 'stroke-width': 0 })
+        .style({fill: 'transparent', 'stroke-width': 0})
         .attr('data-subplot', plotinfo.id);
     dragger3.call(Plotly.Drawing.setRect, x, y, w, h)
-        .call(fx.setCursor, cursor);
+        .call(fx.setCursor,cursor);
     var dragger = dragger3.node();
 
     // still need to make the element if the axes are disabled
     // but nuke its events (except for maindrag which needs them for hover)
     // and stop there
-    if (!yActive && !xActive) {
+    if(!yActive && !xActive) {
         dragger.onmousedown = null;
         dragger.style.pointerEvents = (ns + ew === 'nsew') ? 'all' : 'none';
         return dragger;
@@ -29774,33 +29843,33 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         xaxes: xa,
         yaxes: ya,
         doubleclick: doubleClick,
-        prepFn: function (e, startX, startY) {
+        prepFn: function(e, startX, startY) {
             var dragModeNow = gd._fullLayout.dragmode;
-            if (ns + ew === 'nsew') {
+            if(ns + ew === 'nsew') {
                 // main dragger handles all drag modes, and changes
                 // to pan (or to zoom if it already is pan) on shift
-                if (e.shiftKey) {
-                    if (dragModeNow === 'pan') dragModeNow = 'zoom';
+                if(e.shiftKey) {
+                    if(dragModeNow === 'pan') dragModeNow = 'zoom';
                     else dragModeNow = 'pan';
                 }
             }
             // all other draggers just pan
             else dragModeNow = 'pan';
 
-            if (dragModeNow === 'lasso') dragOptions.minDrag = 1;
+            if(dragModeNow === 'lasso') dragOptions.minDrag = 1;
             else dragOptions.minDrag = undefined;
 
-            if (dragModeNow === 'zoom') {
+            if(dragModeNow === 'zoom') {
                 dragOptions.moveFn = zoomMove;
                 dragOptions.doneFn = zoomDone;
                 zoomPrep(e, startX, startY);
             }
-            else if (dragModeNow === 'pan') {
+            else if(dragModeNow === 'pan') {
                 dragOptions.moveFn = plotDrag;
                 dragOptions.doneFn = dragDone;
                 clearSelect();
             }
-            else if (dragModeNow === 'select' || dragModeNow === 'lasso') {
+            else if(dragModeNow === 'select' || dragModeNow === 'lasso') {
                 prepSelect(e, startX, startY, dragOptions, dragModeNow);
             }
         }
@@ -29822,18 +29891,18 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         var dragBBox = dragger.getBoundingClientRect();
         x0 = startX - dragBBox.left;
         y0 = startY - dragBBox.top;
-        box = { l: x0, r: x0, w: 0, t: y0, b: y0, h: 0 };
+        box = {l: x0, r: x0, w: 0, t: y0, b: y0, h: 0};
         lum = gd._hmpixcount ?
             (gd._hmlumcount / gd._hmpixcount) :
             tinycolor(gd._fullLayout.plot_bgcolor).getLuminance();
-        path0 = path0 = 'M0,0H' + pw + 'V' + ph + 'H0V0';
+        path0 = path0 = 'M0,0H'+pw+'V'+ph+'H0V0';
         dimmed = false;
         zoomMode = 'xy';
 
         zb = plotinfo.plot.append('path')
             .attr('class', 'zoombox')
             .style({
-                'fill': lum > 0.2 ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,0)',
+                'fill': lum>0.2 ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,0)',
                 'stroke-width': 0
             })
             .attr('d', path0 + 'Z');
@@ -29846,10 +29915,10 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 'stroke-width': 1,
                 opacity: 0
             })
-            .attr('d', 'M0,0Z');
+            .attr('d','M0,0Z');
 
         clearSelect();
-        for (i = 0; i < allaxes.length; i++) forceNumbers(allaxes[i].range);
+        for(i = 0; i < allaxes.length; i++) forceNumbers(allaxes[i].range);
     }
 
     function clearSelect() {
@@ -29873,8 +29942,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         // look for small drags in one direction or the other,
         // and only drag the other axis
-        if (!yActive || dy < Math.min(Math.max(dx * 0.6, MINDRAG), MINZOOM)) {
-            if (dx < MINDRAG) {
+        if(!yActive || dy < Math.min(Math.max(dx * 0.6, MINDRAG), MINZOOM)) {
+            if(dx < MINDRAG) {
                 zoomMode = '';
                 box.r = box.l;
                 box.t = box.b;
@@ -29891,7 +29960,7 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                     'h3v' + (2 * MINZOOM + 1) + 'h-3Z');
             }
         }
-        else if (!xActive || dx < Math.min(dy * 0.6, MINZOOM)) {
+        else if(!xActive || dx < Math.min(dy * 0.6, MINZOOM)) {
             box.l = 0;
             box.r = pw;
             zoomMode = 'y';
@@ -29904,14 +29973,14 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         else {
             zoomMode = 'xy';
             corners.attr('d',
-                'M' + (box.l - 3.5) + ',' + (box.t - 0.5 + clen) + 'h3v' + (-clen) +
-                'h' + clen + 'v-3h-' + (clen + 3) + 'ZM' +
-                (box.r + 3.5) + ',' + (box.t - 0.5 + clen) + 'h-3v' + (-clen) +
-                'h' + (-clen) + 'v-3h' + (clen + 3) + 'ZM' +
-                (box.r + 3.5) + ',' + (box.b + 0.5 - clen) + 'h-3v' + clen +
-                'h' + (-clen) + 'v3h' + (clen + 3) + 'ZM' +
-                (box.l - 3.5) + ',' + (box.b + 0.5 - clen) + 'h3v' + clen +
-                'h' + clen + 'v3h-' + (clen + 3) + 'Z');
+                'M'+(box.l-3.5)+','+(box.t-0.5+clen)+'h3v'+(-clen)+
+                        'h'+clen+'v-3h-'+(clen+3)+'ZM'+
+                    (box.r+3.5)+','+(box.t-0.5+clen)+'h-3v'+(-clen)+
+                        'h'+(-clen)+'v-3h'+(clen+3)+'ZM'+
+                    (box.r+3.5)+','+(box.b+0.5-clen)+'h-3v'+clen+
+                        'h'+(-clen)+'v3h'+(clen+3)+'ZM'+
+                    (box.l-3.5)+','+(box.b+0.5-clen)+'h3v'+clen+
+                        'h'+clen+'v3h-'+(clen+3)+'Z');
         }
         box.w = box.r - box.l;
         box.h = box.b - box.t;
@@ -29919,15 +29988,15 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         // Not sure about the addition of window.scrollX/Y...
         // seems to work but doesn't seem robust.
         zb.attr('d',
-            path0 + 'M' + (box.l) + ',' + (box.t) + 'v' + (box.h) +
-            'h' + (box.w) + 'v-' + (box.h) + 'h-' + (box.w) + 'Z');
-        if (!dimmed) {
+            path0+'M'+(box.l)+','+(box.t)+'v'+(box.h)+
+            'h'+(box.w)+'v-'+(box.h)+'h-'+(box.w)+'Z');
+        if(!dimmed) {
             zb.transition()
-                .style('fill', lum > 0.2 ? 'rgba(0,0,0,0.4)' :
+                .style('fill', lum>0.2 ? 'rgba(0,0,0,0.4)' :
                     'rgba(255,255,255,0.3)')
                 .duration(200);
             corners.transition()
-                .style('opacity', 1)
+                .style('opacity',1)
                 .duration(200);
             dimmed = true;
         }
@@ -29940,9 +30009,9 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         var zoomInfo = [];
 
-        for (i = 0; i < axList.length; i++) {
+        for(i = 0; i < axList.length; i++) {
             axi = axList[i];
-            if (axi.fixedrange) continue;
+            if(axi.fixedrange) continue;
 
             axRange = axi.range;
             axi.range = [
@@ -29962,8 +30031,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     }
 
     function zoomDone(dragged, numClicks) {
-        if (Math.min(box.h, box.w) < MINDRAG * 2) {
-            if (numClicks === 2) doubleClick();
+        if(Math.min(box.h, box.w) < MINDRAG * 2) {
+            if(numClicks === 2) doubleClick();
             else pauseForDrag(gd);
 
             return removeZoombox(gd);
@@ -29987,36 +30056,36 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         gd.emit('plotly_zoom', args);
 
         if (!args.userHandled) {
-            dragTail(zoomMode);
+        dragTail(zoomMode);
 
-            if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
-                Plotly.Lib.notifier('Double-click to<br>zoom back out', 'long');
-                SHOWZOOMOUTTIP = false;
-            }
+        if(SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+            Plotly.Lib.notifier('Double-click to<br>zoom back out','long');
+            SHOWZOOMOUTTIP = false;
+        }
             args.pre = false;
             gd.emit('plotly_zoom', args);
-        }
+    }
     }
 
     function dragDone(dragged, numClicks) {
         var singleEnd = (ns + ew).length === 1;
-        if (dragged) dragTail();
-        else if (numClicks === 2 && !singleEnd) doubleClick();
-        else if (numClicks === 1 && singleEnd) {
+        if(dragged) dragTail();
+        else if(numClicks === 2 && !singleEnd) doubleClick();
+        else if(numClicks === 1 && singleEnd) {
             var ax = ns ? ya[0] : xa[0],
-                end = (ns === 's' || ew === 'w') ? 0 : 1,
+                end = (ns==='s' || ew==='w') ? 0 : 1,
                 attrStr = ax._name + '.range[' + end + ']',
                 initialText = getEndText(ax, end),
                 hAlign = 'left',
                 vAlign = 'middle';
 
-            if (ax.fixedrange) return;
+            if(ax.fixedrange) return;
 
-            if (ns) {
+            if(ns) {
                 vAlign = (ns === 'n') ? 'top' : 'bottom';
-                if (ax.side === 'right') hAlign = 'right';
+                if(ax.side === 'right') hAlign = 'right';
             }
-            else if (ew === 'e') hAlign = 'right';
+            else if(ew === 'e') hAlign = 'right';
 
             dragger3
                 .call(Plotly.util.makeEditable, null, {
@@ -30027,9 +30096,9 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                     horizontalAlign: hAlign,
                     verticalAlign: vAlign
                 })
-                .on('edit', function (text) {
-                    var v = ax.type === 'category' ? ax.c2l(text) : ax.d2l(text);
-                    if (v !== undefined) {
+                .on('edit', function(text) {
+                    var v = ax.type==='category' ? ax.c2l(text) : ax.d2l(text);
+                    if(v !== undefined) {
                         Plotly.relayout(gd, attrStr, v);
                     }
                 });
@@ -30038,7 +30107,7 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     }
 
     // scroll zoom, on all draggers except corners
-    var scrollViewBox = [0, 0, pw, ph],
+    var scrollViewBox = [0,0,pw,ph],
         // wait a little after scrolling before redrawing
         redrawTimer = null,
         REDRAWDELAY = 300,
@@ -30049,23 +30118,23 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         // deactivate mousewheel scrolling on embedded graphs
         // devs can override this with layout._enablescrollzoom,
         // but _ ensures this setting won't leave their page
-        if (!gd._context.scrollZoom && !fullLayout._enablescrollzoom) {
+        if(!gd._context.scrollZoom && !fullLayout._enablescrollzoom) {
             return;
         }
         var pc = gd.querySelector('.plotly');
 
         // if the plot has scrollbars (more than a tiny excess)
         // disable scrollzoom too.
-        if (pc.scrollHeight - pc.clientHeight > 10 ||
-            pc.scrollWidth - pc.clientWidth > 10) {
+        if(pc.scrollHeight-pc.clientHeight>10 ||
+                pc.scrollWidth-pc.clientWidth>10) {
             return;
         }
 
         clearTimeout(redrawTimer);
 
         var wheelDelta = -e.deltaY;
-        if (!isFinite(wheelDelta)) wheelDelta = e.wheelDelta / 10;
-        if (!isFinite(wheelDelta)) {
+        if(!isFinite(wheelDelta)) wheelDelta = e.wheelDelta / 10;
+        if(!isFinite(wheelDelta)) {
             console.log('did not find wheel motion attributes', e);
             return;
         }
@@ -30074,38 +30143,38 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             gbb = mainplot.draglayer.select('.nsewdrag')
                 .node().getBoundingClientRect(),
             xfrac = (e.clientX - gbb.left) / gbb.width,
-            vbx0 = scrollViewBox[0] + scrollViewBox[2] * xfrac,
-            yfrac = (gbb.bottom - e.clientY) / gbb.height,
-            vby0 = scrollViewBox[1] + scrollViewBox[3] * (1 - yfrac),
+            vbx0 = scrollViewBox[0] + scrollViewBox[2]*xfrac,
+            yfrac = (gbb.bottom - e.clientY)/gbb.height,
+            vby0 = scrollViewBox[1]+scrollViewBox[3]*(1-yfrac),
             i;
 
         function zoomWheelOneAxis(ax, centerFraction, zoom) {
-            if (ax.fixedrange) return;
+            if(ax.fixedrange) return;
             forceNumbers(ax.range);
             var axRange = ax.range,
                 v0 = axRange[0] + (axRange[1] - axRange[0]) * centerFraction;
             ax.range = [v0 + (axRange[0] - v0) * zoom, v0 + (axRange[1] - v0) * zoom];
         }
 
-        if (ew) {
-            for (i = 0; i < xa.length; i++) zoomWheelOneAxis(xa[i], xfrac, zoom);
+        if(ew) {
+            for(i = 0; i < xa.length; i++) zoomWheelOneAxis(xa[i], xfrac, zoom);
             scrollViewBox[2] *= zoom;
             scrollViewBox[0] = vbx0 - scrollViewBox[2] * xfrac;
         }
-        if (ns) {
-            for (i = 0; i < ya.length; i++) zoomWheelOneAxis(ya[i], yfrac, zoom);
+        if(ns) {
+            for(i = 0; i < ya.length; i++) zoomWheelOneAxis(ya[i], yfrac, zoom);
             scrollViewBox[3] *= zoom;
             scrollViewBox[1] = vby0 - scrollViewBox[3] * (1 - yfrac);
         }
 
         // viewbox redraw at first
         updateViewBoxes(scrollViewBox);
-        ticksAndAnnotations(ns, ew);
+        ticksAndAnnotations(ns,ew);
 
         // then replot after a delay to make sure
         // no more scrolling is coming
-        redrawTimer = setTimeout(function () {
-            scrollViewBox = [0, 0, pw, ph];
+        redrawTimer = setTimeout(function() {
+            scrollViewBox = [0,0,pw,ph];
             dragTail();
         }, REDRAWDELAY);
 
@@ -30113,26 +30182,26 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     }
 
     // everything but the corners gets wheel zoom
-    if (ns.length * ew.length !== 1) {
+    if(ns.length*ew.length!==1) {
         // still seems to be some confusion about onwheel vs onmousewheel...
-        if (dragger.onwheel !== undefined) dragger.onwheel = zoomWheel;
-        else if (dragger.onmousewheel !== undefined) dragger.onmousewheel = zoomWheel;
+        if(dragger.onwheel!==undefined) dragger.onwheel = zoomWheel;
+        else if(dragger.onmousewheel!==undefined) dragger.onmousewheel = zoomWheel;
     }
 
     // plotDrag: move the plot in response to a drag
-    function plotDrag(dx, dy) {
+    function plotDrag(dx,dy) {
         function dragAxList(axList, pix) {
-            for (var i = 0; i < axList.length; i++) {
+            for(var i = 0; i < axList.length; i++) {
                 var axi = axList[i];
-                if (!axi.fixedrange) {
+                if(!axi.fixedrange) {
                     axi.range = [axi._r[0] - pix / axi._m, axi._r[1] - pix / axi._m];
                 }
             }
         }
 
-        if (xActive === 'ew' || yActive === 'ns') {
-            if (xActive) dragAxList(xa, dx);
-            if (yActive) dragAxList(ya, dy);
+        if(xActive === 'ew' || yActive === 'ns') {
+            if(xActive) dragAxList(xa, dx);
+            if(yActive) dragAxList(ya, dy);
             updateViewBoxes([xActive ? -dx : 0, yActive ? -dy : 0, pw, ph]);
             ticksAndAnnotations(yActive, xActive);
             return;
@@ -30144,8 +30213,8 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         // d<0 is expanding (cursor is off the plot, axis end moves
         //  nonlinearly so you can expand far)
         function dZoom(d) {
-            return 1 - ((d >= 0) ? Math.min(d, 0.9) :
-                1 / (1 / Math.max(d, -0.3) + 3.222));
+            return 1-((d>=0) ? Math.min(d,0.9) :
+                1/(1/Math.max(d,-0.3)+3.222));
         }
 
         // dz: set a new value for one end (0 or 1) of an axis array ax,
@@ -30156,24 +30225,24 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         function dz(ax, end, d) {
             var otherEnd = 1 - end,
                 movedi = 0;
-            for (var i = 0; i < ax.length; i++) {
+            for(var i = 0; i < ax.length; i++) {
                 var axi = ax[i];
-                if (axi.fixedrange) continue;
+                if(axi.fixedrange) continue;
                 movedi = i;
                 axi.range[end] = axi._r[otherEnd] +
-                (axi._r[end] - axi._r[otherEnd]) / dZoom(d / axi._length);
+                    (axi._r[end] - axi._r[otherEnd]) / dZoom(d / axi._length);
             }
             return ax[movedi]._length * (ax[movedi]._r[end] - ax[movedi].range[end]) /
                 (ax[movedi]._r[end] - ax[movedi]._r[otherEnd]);
         }
 
-        if (xActive === 'w') dx = dz(xa, 0, dx);
-        else if (xActive === 'e') dx = dz(xa, 1, -dx);
-        else if (!xActive) dx = 0;
+        if(xActive === 'w') dx = dz(xa, 0, dx);
+        else if(xActive === 'e') dx = dz(xa, 1, -dx);
+        else if(!xActive) dx = 0;
 
-        if (yActive === 'n') dy = dz(ya, 1, dy);
-        else if (yActive === 's') dy = dz(ya, 0, -dy);
-        else if (!yActive) dy = 0;
+        if(yActive === 'n') dy = dz(ya, 1, dy);
+        else if(yActive === 's') dy = dz(ya, 0, -dy);
+        else if(!yActive) dy = 0;
 
         updateViewBoxes([
             (xActive === 'w') ? dx : 0,
@@ -30189,23 +30258,23 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             i;
 
         function pushActiveAxIds(axList) {
-            for (i = 0; i < axList.length; i++) {
-                if (!axList[i].fixedrange) activeAxIds.push(axList[i]._id);
+            for(i = 0; i < axList.length; i++) {
+                if(!axList[i].fixedrange) activeAxIds.push(axList[i]._id);
             }
         }
 
-        if (ew) pushActiveAxIds(xa);
-        if (ns) pushActiveAxIds(ya);
+        if(ew) pushActiveAxIds(xa);
+        if(ns) pushActiveAxIds(ya);
 
-        for (i = 0; i < activeAxIds.length; i++) {
+        for(i = 0; i < activeAxIds.length; i++) {
             Plotly.Axes.doTicks(gd, activeAxIds[i], true);
         }
 
         function redrawObjs(objArray, module) {
             var obji;
-            for (i = 0; i < objArray.length; i++) {
+            for(i = 0; i < objArray.length; i++) {
                 obji = objArray[i];
-                if ((ew && activeAxIds.indexOf(obji.xref) !== -1) ||
+                if((ew && activeAxIds.indexOf(obji.xref) !== -1) ||
                     (ns && activeAxIds.indexOf(obji.yref) !== -1)) {
                     module.draw(gd, i);
                 }
@@ -30225,19 +30294,19 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         if (!args.userHandled) {
             var axList = (xActive ? xa : []).concat(yActive ? ya : []),
-                attrs = {};
+            attrs = {};
 
-            var ax, i;
+        var ax, i;
 
-            if (doubleClickConfig === 'autosize') {
-                for (i = 0; i < axList.length; i++) {
-                    ax = axList[i];
-                    if (!ax.fixedrange) attrs[ax._name + '.autorange'] = true;
-                }
+        if(doubleClickConfig === 'autosize') {
+            for(i = 0; i < axList.length; i++) {
+                ax = axList[i];
+                if(!ax.fixedrange) attrs[ax._name + '.autorange'] = true;
             }
-            else if (doubleClickConfig === 'reset') {
-                for (i = 0; i < axList.length; i++) {
-                    ax = axList[i];
+        }
+        else if(doubleClickConfig === 'reset') {
+            for(i = 0; i < axList.length; i++) {
+                ax = axList[i];
 
                 if(!ax._rangeInitial) {
                     attrs[ax._name + '.autorange'] = true;
@@ -30247,27 +30316,27 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 }
             }
         }
-            else if (doubleClickConfig === 'reset+autosize') {
-                for (i = 0; i < axList.length; i++) {
-                    ax = axList[i];
+        else if(doubleClickConfig === 'reset+autosize') {
+            for(i = 0; i < axList.length; i++) {
+                ax = axList[i];
 
-                    if (ax.fixedrange) continue;
-                    if (ax._rangeInitial === undefined ||
+                if(ax.fixedrange) continue;
+                if(ax._rangeInitial === undefined ||
                     ax.range[0] === ax._rangeInitial[0] &&
                     ax.range[1] === ax._rangeInitial[1]
                 ) {
-                        attrs[ax._name + '.autorange'] = true;
-                    }
-                    else attrs[ax._name + '.range'] = ax._rangeInitial.slice();
+                    attrs[ax._name + '.autorange'] = true;
                 }
+                else attrs[ax._name + '.range'] = ax._rangeInitial.slice();
             }
-            
+        }
+
         gd.emit('plotly_doubleclick', null);
-            Plotly.relayout(gd, attrs);
+        Plotly.relayout(gd, attrs);
             
             args.pre = false;
             gd.emit('plotly_zoom', args);
-        }
+    }
     }
 
     // dragTail - finish a drag event with a redraw
@@ -30275,19 +30344,19 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         var attrs = {};
         // revert to the previous axis settings, then apply the new ones
         // through relayout - this lets relayout manage undo/redo
-        for (var i = 0; i < allaxes.length; i++) {
+        for(var i = 0; i < allaxes.length; i++) {
             var axi = allaxes[i];
-            if (zoommode && zoommode.indexOf(axi._id.charAt(0)) === -1) {
+            if(zoommode && zoommode.indexOf(axi._id.charAt(0))===-1) {
                 continue;
             }
-            if (axi._r[0] !== axi.range[0]) attrs[axi._name + '.range[0]'] = axi.range[0];
-            if (axi._r[1] !== axi.range[1]) attrs[axi._name + '.range[1]'] = axi.range[1];
+            if(axi._r[0] !== axi.range[0]) attrs[axi._name+'.range[0]'] = axi.range[0];
+            if(axi._r[1] !== axi.range[1]) attrs[axi._name+'.range[1]'] = axi.range[1];
 
-            axi.range = axi._r.slice();
+            axi.range=axi._r.slice();
         }
 
-        updateViewBoxes([0, 0, pw, ph]);
-        Plotly.relayout(gd, attrs);
+        updateViewBoxes([0,0,pw,ph]);
+        Plotly.relayout(gd,attrs);
     }
 
     // updateViewBoxes - find all plot viewboxes that should be
@@ -30303,24 +30372,24 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             editX,
             editY;
 
-        for (i = 0; i < subplots.length; i++) {
+        for(i = 0; i < subplots.length; i++) {
             plotinfo2 = plotinfos[subplots[i]];
             xa2 = plotinfo2.x();
             ya2 = plotinfo2.y();
-            editX = ew && xa.indexOf(xa2) !== -1 && !xa2.fixedrange;
-            editY = ns && ya.indexOf(ya2) !== -1 && !ya2.fixedrange;
+            editX = ew && xa.indexOf(xa2)!==-1 && !xa2.fixedrange;
+            editY = ns && ya.indexOf(ya2)!==-1 && !ya2.fixedrange;
 
-            if (editX || editY) {
-                var newVB = [0, 0, xa2._length, ya2._length];
-                if (editX) {
+            if(editX || editY) {
+                var newVB = [0,0,xa2._length,ya2._length];
+                if(editX) {
                     newVB[0] = viewBox[0];
                     newVB[2] = viewBox[2];
                 }
-                if (editY) {
+                if(editY) {
                     newVB[1] = viewBox[1];
                     newVB[3] = viewBox[3];
                 }
-                plotinfo2.plot.attr('viewBox', newVB.join(' '));
+                plotinfo2.plot.attr('viewBox',newVB.join(' '));
             }
         }
     }
@@ -30333,17 +30402,17 @@ function getEndText(ax, end) {
         diff = Math.abs(initialVal - ax.range[1 - end]),
         dig;
 
-    if (ax.type === 'date') {
+    if(ax.type === 'date') {
         return Plotly.Lib.ms2DateTime(initialVal, diff);
     }
-    else if (ax.type === 'log') {
+    else if(ax.type==='log') {
         dig = Math.ceil(Math.max(0, -Math.log(diff) / Math.LN10)) + 3;
         return d3.format('.' + dig + 'g')(Math.pow(10, initialVal));
     }
     else { // linear numeric (or category... but just show numbers here)
         dig = Math.floor(Math.log(Math.abs(initialVal)) / Math.LN10) -
-        Math.floor(Math.log(diff) / Math.LN10) + 4;
-        return d3.format('.' + String(dig) + 'g')(initialVal);
+            Math.floor(Math.log(diff) / Math.LN10) + 4;
+        return d3.format('.'+String(dig)+'g')(initialVal);
     }
 }
 
@@ -30354,17 +30423,17 @@ function pauseForDrag(gd) {
     var deferredReplot = gd._replotPending;
     gd._replotPending = false;
 
-    setTimeout(function () {
+    setTimeout(function() {
         gd._replotPending = deferredReplot;
         finishDrag(gd);
     },
         constants.DBLCLICKDELAY
-        );
+    );
 }
 
 function finishDrag(gd) {
     gd._dragging = false;
-    if (gd._replotPending) Plotly.plot(gd);
+    if(gd._replotPending) Plotly.plot(gd);
 }
 
 function removeZoombox(gd) {
@@ -30377,19 +30446,19 @@ function removeZoombox(gd) {
 // >2/3 means right, and between is center. Pick the right fraction
 // based on where you are, and return the fraction corresponding to
 // that position on the object
-fx.dragAlign = function (v, dv, v0, v1, anchor) {
-    var vmin = (v - v0) / (v1 - v0),
-        vmax = vmin + dv / (v1 - v0),
-        vc = (vmin + vmax) / 2;
+fx.dragAlign = function(v, dv, v0, v1, anchor) {
+    var vmin = (v-v0)/(v1-v0),
+        vmax = vmin+dv/(v1-v0),
+        vc = (vmin+vmax)/2;
 
     // explicitly specified anchor
-    if (anchor === 'left' || anchor === 'bottom') return vmin;
-    if (anchor === 'center' || anchor === 'middle') return vc;
-    if (anchor === 'right' || anchor === 'top') return vmax;
+    if(anchor==='left' || anchor==='bottom') return vmin;
+    if(anchor==='center' || anchor==='middle') return vc;
+    if(anchor==='right' || anchor==='top') return vmax;
 
     // automatic based on position
-    if (vmin < (2 / 3) - vc) return vmin;
-    if (vmax > (4 / 3) - vc) return vmax;
+    if(vmin<(2/3)-vc) return vmin;
+    if(vmax>(4/3)-vc) return vmax;
     return vc;
 };
 
@@ -30397,19 +30466,19 @@ fx.dragAlign = function (v, dv, v0, v1, anchor) {
 // set cursors pointing toward the closest corner/side,
 // to indicate alignment
 // x and y are 0-1, fractions of the plot area
-var cursorset = [['sw-resize', 's-resize', 'se-resize'],
-    ['w-resize', 'move', 'e-resize'],
-    ['nw-resize', 'n-resize', 'ne-resize']];
-fx.dragCursors = function (x, y, xanchor, yanchor) {
-    if (xanchor === 'left') x = 0;
-    else if (xanchor === 'center') x = 1;
-    else if (xanchor === 'right') x = 2;
-    else x = Plotly.Lib.constrain(Math.floor(x * 3), 0, 2);
+var cursorset = [['sw-resize','s-resize','se-resize'],
+            ['w-resize','move','e-resize'],
+            ['nw-resize','n-resize','ne-resize']];
+fx.dragCursors = function(x,y,xanchor,yanchor) {
+    if(xanchor==='left') x=0;
+    else if(xanchor==='center') x=1;
+    else if(xanchor==='right') x=2;
+    else x = Plotly.Lib.constrain(Math.floor(x*3),0,2);
 
-    if (yanchor === 'bottom') y = 0;
-    else if (yanchor === 'middle') y = 1;
-    else if (yanchor === 'top') y = 2;
-    else y = Plotly.Lib.constrain(Math.floor(y * 3), 0, 2);
+    if(yanchor==='bottom') y=0;
+    else if(yanchor==='middle') y=1;
+    else if(yanchor==='top') y=2;
+    else y = Plotly.Lib.constrain(Math.floor(y*3),0,2);
 
     return cursorset[y][x];
 };
@@ -30434,7 +30503,7 @@ fx.dragCursors = function (x, y, xanchor, yanchor) {
  *          numClicks is how many clicks we've registered within
  *          a doubleclick time
  */
-fx.dragElement = function (options) {
+fx.dragElement = function(options) {
     var gd = Plotly.Lib.getPlotDiv(options.element) || {},
         numClicks = 1,
         DBLCLICKDELAY = constants.DBLCLICKDELAY,
@@ -30444,13 +30513,13 @@ fx.dragElement = function (options) {
         dragCover,
         initialTarget;
 
-    if (!gd._mouseDownTime) gd._mouseDownTime = 0;
+    if(!gd._mouseDownTime) gd._mouseDownTime = 0;
 
     function onStart(e) {
         // because we cancel event bubbling,
         // explicitly trigger input blur event.
         var inputBox = document.querySelector('.plugin-editable');
-        if (inputBox) d3.select(inputBox).on('blur').call(inputBox);
+        if(inputBox) d3.select(inputBox).on('blur').call(inputBox);
 
         // make dragging and dragged into properties of gd
         // so that others can look at and modify them
@@ -30461,7 +30530,7 @@ fx.dragElement = function (options) {
         initialTarget = e.target;
 
         newMouseDownTime = (new Date()).getTime();
-        if (newMouseDownTime - gd._mouseDownTime < DBLCLICKDELAY) {
+        if(newMouseDownTime - gd._mouseDownTime < DBLCLICKDELAY) {
             // in a click train
             numClicks += 1;
         }
@@ -30471,7 +30540,7 @@ fx.dragElement = function (options) {
             gd._mouseDownTime = newMouseDownTime;
         }
 
-        if (options.prepFn) options.prepFn(e, startX, startY);
+        if(options.prepFn) options.prepFn(e, startX, startY);
 
         dragCover = coverSlip();
 
@@ -30489,14 +30558,14 @@ fx.dragElement = function (options) {
             dy = e.clientY - startY,
             minDrag = options.minDrag || constants.MINDRAG;
 
-        if (Math.abs(dx) < minDrag) dx = 0;
-        if (Math.abs(dy) < minDrag) dy = 0;
-        if (dx || dy) {
+        if(Math.abs(dx) < minDrag) dx = 0;
+        if(Math.abs(dy) < minDrag) dy = 0;
+        if(dx||dy) {
             gd._dragged = true;
             fx.unhover(gd);
         }
 
-        if (options.moveFn) options.moveFn(dx, dy, gd._dragged);
+        if(options.moveFn) options.moveFn(dx, dy, gd._dragged);
 
         return Plotly.Lib.pauseEvent(e);
     }
@@ -30507,7 +30576,7 @@ fx.dragElement = function (options) {
         dragCover.onmouseout = null;
         Plotly.Lib.removeElement(dragCover);
 
-        if (!gd._dragging) {
+        if(!gd._dragging) {
             gd._dragged = false;
             return;
         }
@@ -30515,13 +30584,13 @@ fx.dragElement = function (options) {
 
         // don't count as a dblClick unless the mouseUp is also within
         // the dblclick delay
-        if ((new Date()).getTime() - gd._mouseDownTime > DBLCLICKDELAY) {
+        if((new Date()).getTime() - gd._mouseDownTime > DBLCLICKDELAY) {
             numClicks = Math.max(numClicks - 1, 1);
         }
 
-        if (options.doneFn) options.doneFn(gd._dragged, numClicks);
+        if(options.doneFn) options.doneFn(gd._dragged, numClicks);
 
-        if (!gd._dragged) {
+        if(!gd._dragged) {
             var e2 = new MouseEvent('click', { 'button': e.button });
             initialTarget.dispatchEvent(e2);
         }
@@ -30555,11 +30624,11 @@ function coverSlip() {
     return cover;
 }
 
-fx.setCursor = function (el3, csr) {
-    (el3.attr('class') || '').split(' ').forEach(function (cls) {
-        if (cls.indexOf('cursor-') === 0) { el3.classed(cls, false); }
+fx.setCursor = function(el3,csr) {
+    (el3.attr('class')||'').split(' ').forEach(function(cls) {
+        if(cls.indexOf('cursor-')===0) { el3.classed(cls,false); }
     });
-    if (csr) { el3.classed('cursor-' + csr, true); }
+    if(csr) { el3.classed('cursor-'+csr, true); }
 };
 
 // for bar charts and others with finite-size objects: you must be inside
@@ -30570,9 +30639,9 @@ fx.setCursor = function (el3, csr) {
 // note that for closest mode, two inbox's will get added in quadrature
 // args are (signed) difference from the two opposite edges
 // count one edge as in, so that over continuous ranges you never get a gap
-fx.inbox = function (v0, v1) {
-    if (v0 * v1 < 0 || v0 === 0) {
-        return constants.MAXDIST * (0.6 - 0.3 / Math.max(3, Math.abs(v0 - v1)));
+fx.inbox = function(v0,v1) {
+    if(v0*v1<0 || v0===0) {
+        return constants.MAXDIST*(0.6-0.3/Math.max(3,Math.abs(v0-v1)));
     }
     return Infinity;
 };
@@ -31134,7 +31203,7 @@ module.exports = function supplyLayoutDefaults(layoutIn, layoutOut, fullData) {
             positioningOptions = {
                 letter: axLetter,
                 counterAxes: {x: yaList, y: xaList}[axLetter].map(axisIds.name2id),
-                overlayableAxes: {x: xaList, y: yaList}[axLetter].filter(function(axName2){
+                overlayableAxes: {x: xaList, y: yaList}[axLetter].filter(function(axName2) {
                     return axName2!==axName && !(layoutIn[axName2]||{}).overlaying;
                 }).map(axisIds.name2id)
             };
@@ -31186,7 +31255,7 @@ module.exports = function handlePositionDefaults(containerIn, containerOut, coer
 
     var anchor = Lib.coerce(containerIn, containerOut, {
         anchor: {
-            valType:'enumerated',
+            valType: 'enumerated',
             values: ['free'].concat(counterAxes),
             dflt: isNumeric(containerIn.position) ? 'free' :
                 (counterAxes[0] || 'free')
@@ -31317,7 +31386,7 @@ module.exports = function prepSelect(e, startX, startY, dragOptions, mode) {
         return function(v) { return ax.p2d(v[index]); };
     }
 
-    function ascending(a, b){ return a - b; }
+    function ascending(a, b) { return a - b; }
 
     dragOptions.moveFn = function(dx0, dy0) {
         var poly,
@@ -31456,7 +31525,7 @@ module.exports = function setConvert(ax) {
     // also, clipping can affect the direction of lines off the edge...
     var clipMult = 10;
 
-    function toLog(v, clip){
+    function toLog(v, clip) {
         if(v>0) return Math.log(v)/Math.LN10;
 
         else if(v<=0 && clip && ax.range && ax.range.length===2) {
@@ -31469,8 +31538,8 @@ module.exports = function setConvert(ax) {
 
         else return constants.BADNUM;
     }
-    function fromLog(v){ return Math.pow(10,v); }
-    function num(v){ return isNumeric(v) ? Number(v) : constants.BADNUM; }
+    function fromLog(v) { return Math.pow(10,v); }
+    function num(v) { return isNumeric(v) ? Number(v) : constants.BADNUM; }
 
     ax.c2l = (ax.type==='log') ? toLog : num;
     ax.l2c = (ax.type==='log') ? fromLog : num;
@@ -31478,12 +31547,12 @@ module.exports = function setConvert(ax) {
     ax.p2d = function(v) { return ax.l2d(ax.p2l(v)); };
 
     // set scaling to pixels
-    ax.setScale = function(){
+    ax.setScale = function() {
         var gs = ax._td._fullLayout._size,
             i;
 
         // TODO cleaner way to handle this case
-        if (!ax._categories) ax._categories = [];
+        if(!ax._categories) ax._categories = [];
 
         // make sure we have a domain (pull it in from the axis
         // this one is overlaying if necessary)
@@ -31526,7 +31595,7 @@ module.exports = function setConvert(ax) {
             ax._b = -ax._m*ax.range[0];
         }
 
-        if (!isFinite(ax._m) || !isFinite(ax._b)) {
+        if(!isFinite(ax._m) || !isFinite(ax._b)) {
             Lib.notifier(
                 'Something went wrong with axis scaling',
                 'long');
@@ -31545,16 +31614,16 @@ module.exports = function setConvert(ax) {
     ax.p2l = function(px) { return (px-ax._b)/ax._m; };
 
     ax.c2p = function(v, clip) { return ax.l2p(ax.c2l(v, clip)); };
-    ax.p2c = function(px){ return ax.l2c(ax.p2l(px)); };
+    ax.p2c = function(px) { return ax.l2c(ax.p2l(px)); };
 
     if(['linear','log','-'].indexOf(ax.type)!==-1) {
         ax.c2d = num;
-        ax.d2c = function(v){
+        ax.d2c = function(v) {
             v = cleanDatum(v);
             return isNumeric(v) ? Number(v) : constants.BADNUM;
         };
         ax.d2l = function(v, clip) {
-            if (ax.type === 'log') return ax.c2l(ax.d2c(v), clip);
+            if(ax.type === 'log') return ax.c2l(ax.d2c(v), clip);
             else return ax.d2c(v);
         };
     }
@@ -31563,7 +31632,7 @@ module.exports = function setConvert(ax) {
             return isNumeric(v) ? Lib.ms2DateTime(v) : constants.BADNUM;
         };
 
-        ax.d2c = function(v){
+        ax.d2c = function(v) {
             return (isNumeric(v)) ? Number(v) : Lib.dateTime2ms(v);
         };
 
@@ -31599,7 +31668,7 @@ module.exports = function setConvert(ax) {
             // TODO: sorting options - do the sorting
             // progressively here as we insert?
 
-            if(v !== null && v !== undefined && ax._categories.indexOf(v) === -1){
+            if(v !== null && v !== undefined && ax._categories.indexOf(v) === -1) {
                 ax._categories.push(v);
             }
 
@@ -31699,7 +31768,7 @@ module.exports = function handleTickDefaults(containerIn, containerOut, coerce, 
         Lib.coerceFont(coerce, 'tickfont', options.font || {});
         coerce('tickangle');
 
-        if(axType !== 'category'){
+        if(axType !== 'category') {
             var tickFormat = coerce('tickformat');
             if(!tickFormat && axType !== 'date') {
                 coerce('showexponent', showAttrDflt);
@@ -31729,13 +31798,14 @@ function getShowAttrDflt(containerIn) {
     var showAttrsAll = ['showexponent',
                         'showtickprefix',
                         'showticksuffix'],
-        showAttrs = showAttrsAll.filter(function(a){
+        showAttrs = showAttrsAll.filter(function(a) {
             return containerIn[a]!==undefined;
         }),
-        sameVal = function(a){
+        sameVal = function(a) {
             return containerIn[a]===containerIn[showAttrs[0]];
         };
-    if (showAttrs.every(sameVal) || showAttrs.length===1) {
+
+    if(showAttrs.every(sameVal) || showAttrs.length===1) {
         return containerIn[showAttrs[0]];
     }
 }
@@ -32260,10 +32330,10 @@ plots.redrawText = function(gd) {
     }
 
     return new Promise(function(resolve) {
-        setTimeout(function(){
+        setTimeout(function() {
             Plotly.Annotations.drawAll(gd);
             Plotly.Legend.draw(gd);
-            (gd.calcdata||[]).forEach(function(d){
+            (gd.calcdata||[]).forEach(function(d) {
                 if(d[0]&&d[0].t&&d[0].t.cb) d[0].t.cb();
             });
             resolve(plots.previousPromises(gd));
@@ -32275,14 +32345,14 @@ plots.redrawText = function(gd) {
 plots.resize = function(gd) {
     return new Promise(function(resolve, reject) {
 
-        if (!gd || d3.select(gd).style('display') === 'none'){
+        if(!gd || d3.select(gd).style('display') === 'none') {
             reject(new Error('Resize must be passed a plot div element.'));
         }
 
-        if (gd._redrawTimer) clearTimeout(gd._redrawTimer);
+        if(gd._redrawTimer) clearTimeout(gd._redrawTimer);
 
         gd._redrawTimer = setTimeout(function() {
-            if ((gd._fullLayout || {}).autosize) {
+            if((gd._fullLayout || {}).autosize) {
                 // autosizing doesn't count as a change that needs saving
                 var oldchanged = gd.changed;
 
@@ -32303,7 +32373,7 @@ plots.resize = function(gd) {
 plots.previousPromises = function(gd) {
     if((gd._promises || []).length) {
         return Promise.all(gd._promises)
-            .then(function(){ gd._promises=[]; });
+            .then(function() { gd._promises=[]; });
     }
 };
 
@@ -32322,12 +32392,12 @@ plots.addLinks = function(gd) {
     linkContainer.enter().append('text')
         .classed('js-plot-link-container', true)
         .style({
-            'font-family':'"Open Sans", Arial, sans-serif',
+            'font-family': '"Open Sans", Arial, sans-serif',
             'font-size': '12px',
             'fill': Plotly.Color.defaultLine,
             'pointer-events': 'all'
         })
-        .each(function(){
+        .each(function() {
             var links = d3.select(this);
             links.append('tspan').classed('js-link-to-tool', true);
             links.append('tspan').classed('js-link-spacer', true);
@@ -32344,7 +32414,7 @@ plots.addLinks = function(gd) {
     // IE doesn't like getComputedTextLength if an element
     // isn't visible, which it (sometimes?) isn't
     // apparently offsetParent is null for invisibles.
-    if (text && text.getComputedTextLength() >= (fullLayout.width - 20)) {
+    if(text && text.getComputedTextLength() >= (fullLayout.width - 20)) {
         // Align the text at the left
         attrs['text-anchor'] = 'start';
         attrs.x = 5;
@@ -32372,13 +32442,13 @@ plots.addLinks = function(gd) {
 
 // note that now this function is only adding the brand in
 // iframes and 3rd-party apps
-function positionPlayWithData(gd, container){
+function positionPlayWithData(gd, container) {
     container.text('');
     var link = container.append('a')
         .attr({
             'xlink:xlink:href': '#',
             'class': 'link--impt link--embedview',
-            'font-weight':'bold'
+            'font-weight': 'bold'
         })
         .text(gd._context.linkText + ' ' + String.fromCharCode(187));
 
@@ -32454,7 +32524,7 @@ plots.supplyDefaults = function(gd) {
     newFullLayout._dataLength = newData.length;
 
     // then do the data
-    for (i = 0; i < newData.length; i++) {
+    for(i = 0; i < newData.length; i++) {
         trace = newData[i];
 
         fullTrace = plots.supplyDataDefaults(trace, i, newFullLayout);
@@ -32469,17 +32539,17 @@ plots.supplyDefaults = function(gd) {
         else if('r' in fullTrace) newFullLayout._hasPolar = true;
 
         _module = fullTrace._module;
-        if (_module && modules.indexOf(_module)===-1) modules.push(_module);
+        if(_module && modules.indexOf(_module)===-1) modules.push(_module);
     }
 
     // special cases that introduce interactions between traces
-    for (i = 0; i < modules.length; i++) {
+    for(i = 0; i < modules.length; i++) {
         _module = modules[i];
-        if (_module.cleanData) _module.cleanData(newFullData);
+        if(_module.cleanData) _module.cleanData(newFullData);
     }
 
-    if (oldFullData.length === newData.length) {
-        for (i = 0; i < newFullData.length; i++) {
+    if(oldFullData.length === newData.length) {
+        for(i = 0; i < newFullData.length; i++) {
             relinkPrivateKeys(newFullData[i], oldFullData[i]);
         }
     }
@@ -32501,15 +32571,15 @@ plots.supplyDefaults = function(gd) {
     // can't quite figure out how to get rid of this... each axis needs
     // a reference back to the DOM object for just a few purposes
     axList = Plotly.Axes.list(gd);
-    for (i = 0; i < axList.length; i++) {
+    for(i = 0; i < axList.length; i++) {
         ax = axList[i];
         ax._td = gd;
         ax.setScale();
     }
 
     // update object references in calcdata
-    if ((gd.calcdata || []).length === newFullData.length) {
-        for (i = 0; i < newFullData.length; i++) {
+    if((gd.calcdata || []).length === newFullData.length) {
+        for(i = 0; i < newFullData.length; i++) {
             trace = newFullData[i];
             (gd.calcdata[i][0] || {}).trace = trace;
         }
@@ -32569,7 +32639,7 @@ function relinkPrivateKeys(toLayout, fromLayout) {
     var keys = Object.keys(fromLayout);
     var j;
 
-    for (var i = 0; i < keys.length; ++i) {
+    for(var i = 0; i < keys.length; ++i) {
         var k = keys[i];
         if(k.charAt(0)==='_' || typeof fromLayout[k]==='function') {
             // if it already exists at this point, it's something
@@ -32578,7 +32648,7 @@ function relinkPrivateKeys(toLayout, fromLayout) {
 
             toLayout[k] = fromLayout[k];
         }
-        else if (Array.isArray(fromLayout[k]) &&
+        else if(Array.isArray(fromLayout[k]) &&
                  Array.isArray(toLayout[k]) &&
                  fromLayout[k].length &&
                  Lib.isPlainObject(fromLayout[k][0])) {
@@ -32593,11 +32663,11 @@ function relinkPrivateKeys(toLayout, fromLayout) {
                 relinkPrivateKeys(toLayout[k][j], fromLayout[k][j]);
             }
         }
-        else if (Lib.isPlainObject(fromLayout[k]) &&
+        else if(Lib.isPlainObject(fromLayout[k]) &&
                  Lib.isPlainObject(toLayout[k])) {
             // recurse into objects, but only if they still exist
             relinkPrivateKeys(toLayout[k], fromLayout[k]);
-            if (!Object.keys(toLayout[k]).length) delete toLayout[k];
+            if(!Object.keys(toLayout[k]).length) delete toLayout[k];
         }
     }
 }
@@ -32827,13 +32897,13 @@ plots.sanitizeMargins = function(fullLayout) {
     // as width >= 10 by supplyDefaults
     // similarly for margin.t + margin.b
 
-    if (plotWidth < 0) {
+    if(plotWidth < 0) {
         correction = (width - 1) / (margin.l + margin.r);
         margin.l = Math.floor(correction * margin.l);
         margin.r = Math.floor(correction * margin.r);
     }
 
-    if (plotHeight < 0) {
+    if(plotHeight < 0) {
         correction = (height - 1) / (margin.t + margin.b);
         margin.t = Math.floor(correction * margin.t);
         margin.b = Math.floor(correction * margin.b);
@@ -32858,10 +32928,10 @@ plots.autoMargin = function(gd,id,o) {
             if(o.b+o.t > fullLayout.height*0.5) o.b = o.t = 0;
 
             fullLayout._pushmargin[id] = {
-                l: {val:o.x, size: o.l+pad},
-                r: {val:o.x, size: o.r+pad},
-                b: {val:o.y, size: o.b+pad},
-                t: {val:o.y, size: o.t+pad}
+                l: {val: o.x, size: o.l+pad},
+                r: {val: o.x, size: o.r+pad},
+                b: {val: o.y, size: o.b+pad},
+                t: {val: o.y, size: o.t+pad}
             };
         }
 
@@ -32887,10 +32957,10 @@ plots.doAutoMargin = function(gd) {
     if(fullLayout.margin.autoexpand!==false) {
         // fill in the requested margins
         pm.base = {
-            l:{val:0, size:ml},
-            r:{val:1, size:mr},
-            t:{val:1, size:mt},
-            b:{val:0, size:mb}
+            l: {val: 0, size: ml},
+            r: {val: 1, size: mr},
+            t: {val: 1, size: mt},
+            b: {val: 0, size: mb}
         };
         // now cycle through all the combinations of l and r
         // (and t and b) to find the required margins
@@ -32971,9 +33041,9 @@ plots.doAutoMargin = function(gd) {
  * @param {Boolean} useDefaults If truthy, use _fullLayout and _fullData
  * @returns {Object|String}
  */
-plots.graphJson = function(gd, dataonly, mode, output, useDefaults){
+plots.graphJson = function(gd, dataonly, mode, output, useDefaults) {
     // if the defaults aren't supplied yet, we need to do that...
-    if ((useDefaults && dataonly && !gd._fullData) ||
+    if((useDefaults && dataonly && !gd._fullData) ||
             (useDefaults && !dataonly && !gd._fullLayout)) {
         plots.supplyDefaults(gd);
     }
@@ -33042,7 +33112,7 @@ plots.graphJson = function(gd, dataonly, mode, output, useDefaults){
     }
 
     var obj = {
-        data:(data||[]).map(function(v){
+        data: (data || []).map(function(v) {
             var d = stripObj(v);
             // fit has some little arrays in it that don't contain data,
             // just fit params and meta
@@ -34640,11 +34710,11 @@ var manager = module.exports = {};
 
 var extendDeepAll = Plotly.Lib.extendDeepAll;
 
-manager.framework = function(_gd){
+manager.framework = function(_gd) {
     var config, previousConfigClone, plot, convertedInput, container;
     var undoManager = new UndoManager();
 
-    function exports(_inputConfig, _container){
+    function exports(_inputConfig, _container) {
         if(_container) container = _container;
         d3.select(d3.select(container).node().parentNode).selectAll('.svg-container>*:not(.chart-root)').remove();
 
@@ -34661,22 +34731,22 @@ manager.framework = function(_gd){
         return config;
     }
     exports.isPolar = true;
-    exports.svg = function(){ return plot.svg(); };
-    exports.getConfig = function(){ return config; };
-    exports.getLiveConfig = function(){
+    exports.svg = function() { return plot.svg(); };
+    exports.getConfig = function() { return config; };
+    exports.getLiveConfig = function() {
         return Plotly.micropolar.adapter.plotly().convert(plot.getLiveConfig(), true);
     };
-    exports.getLiveScales = function(){ return {t: plot.angularScale(), r: plot.radialScale()}; };
-    exports.setUndoPoint = function(){
+    exports.getLiveScales = function() { return {t: plot.angularScale(), r: plot.radialScale()}; };
+    exports.setUndoPoint = function() {
         var that = this;
         var configClone = Plotly.micropolar.util.cloneJson(config);
-        (function(_configClone, _previousConfigClone){
+        (function(_configClone, _previousConfigClone) {
             undoManager.add({
-                undo: function(){
+                undo: function() {
                     //console.log('undo', _previousConfigClone);
                     if(_previousConfigClone) that(_previousConfigClone);
                 },
-                redo: function(){
+                redo: function() {
                     //console.log('redo', _configClone);
                     that(_configClone);
                 }
@@ -34684,8 +34754,8 @@ manager.framework = function(_gd){
         })(configClone, previousConfigClone);
         previousConfigClone = Plotly.micropolar.util.cloneJson(configClone);
     };
-    exports.undo = function(){ undoManager.undo(); };
-    exports.redo = function(){ undoManager.redo(); };
+    exports.undo = function() { undoManager.undo(); };
+    exports.redo = function() { undoManager.redo(); };
     return exports;
 };
 
@@ -34724,7 +34794,7 @@ module.exports = function UndoManager() {
         isExecuting = false,
         callback;
 
-    function execute(command, action){
+    function execute(command, action) {
         if(!command) return this;
 
         isExecuting = true;
@@ -34735,15 +34805,15 @@ module.exports = function UndoManager() {
     }
 
     return {
-        add: function(command){
+        add: function(command) {
             if(isExecuting) return this;
             undoCommands.splice(index + 1, undoCommands.length - index);
             undoCommands.push(command);
             index = undoCommands.length - 1;
             return this;
         },
-        setCallback: function(callbackFunc){ callback = callbackFunc; },
-        undo: function(){
+        setCallback: function(callbackFunc) { callback = callbackFunc; },
+        undo: function() {
             var command = undoCommands[index];
             if(!command) return this;
             execute(command, 'undo');
@@ -34751,7 +34821,7 @@ module.exports = function UndoManager() {
             if(callback) callback(command.undo);
             return this;
         },
-        redo: function(){
+        redo: function() {
             var command = undoCommands[index + 1];
             if(!command) return this;
             execute(command, 'redo');
@@ -34759,15 +34829,15 @@ module.exports = function UndoManager() {
             if(callback) callback(command.redo);
             return this;
         },
-        clear: function(){
+        clear: function() {
             undoCommands = [];
             index = -1;
         },
-        hasUndo: function(){ return index !== -1; },
-        hasRedo: function(){ return index < (undoCommands.length - 1); },
-        getCommands: function(){ return undoCommands; },
-        getPreviousCommand: function(){ return undoCommands[index-1]; },
-        getIndex: function(){ return index; }
+        hasUndo: function() { return index !== -1; },
+        hasRedo: function() { return index < (undoCommands.length - 1); },
+        getCommands: function() { return undoCommands; },
+        getPreviousCommand: function() { return undoCommands[index-1]; },
+        getIndex: function() { return index; }
     };
 };
 
@@ -34792,7 +34862,7 @@ var extendDeep = Plotly.Lib.extendDeep;
 function cloneLayoutOverride(tileClass) {
     var override;
 
-    switch (tileClass) {
+    switch(tileClass) {
         case 'themes__thumb':
             override = {
                 autosize: true,
@@ -34834,7 +34904,7 @@ function keyIsAxis(keyName) {
 module.exports = function clonePlot(graphObj, options) {
 
     // Polar plot compatibility
-    if (graphObj.framework && graphObj.framework.isPolar) {
+    if(graphObj.framework && graphObj.framework.isPolar) {
         graphObj = graphObj.framework.getConfig();
     }
 
@@ -34844,22 +34914,22 @@ module.exports = function clonePlot(graphObj, options) {
     var newData = extendDeep([], oldData);
     var newLayout = extendDeep({}, oldLayout, cloneLayoutOverride(options.tileClass));
 
-    if (options.width) newLayout.width = options.width;
-    if (options.height) newLayout.height = options.height;
+    if(options.width) newLayout.width = options.width;
+    if(options.height) newLayout.height = options.height;
 
-    if (options.tileClass === 'thumbnail' || options.tileClass === 'themes__thumb') {
+    if(options.tileClass === 'thumbnail' || options.tileClass === 'themes__thumb') {
         // kill annotations
         newLayout.annotations = [];
         var keys = Object.keys(newLayout);
 
-        for (i = 0; i < keys.length; i++) {
-            if (keyIsAxis(keys[i])) {
+        for(i = 0; i < keys.length; i++) {
+            if(keyIsAxis(keys[i])) {
                 newLayout[keys[i]].title = '';
             }
         }
 
         // kill colorbar and pie labels
-        for (i = 0; i < newData.length; i++) {
+        for(i = 0; i < newData.length; i++) {
             var trace = newData[i];
             trace.showscale = false;
             if(trace.marker) trace.marker.showscale = false;
@@ -34867,17 +34937,17 @@ module.exports = function clonePlot(graphObj, options) {
         }
     }
 
-    if (Array.isArray(options.annotations)) {
-        for (i = 0; i < options.annotations.length; i++) {
+    if(Array.isArray(options.annotations)) {
+        for(i = 0; i < options.annotations.length; i++) {
             newLayout.annotations.push(options.annotations[i]);
         }
     }
 
     var sceneIds = Plotly.Plots.getSubplotIds(newLayout, 'gl3d');
 
-    if (sceneIds.length) {
+    if(sceneIds.length) {
         var axesImageOverride = {};
-        if (options.tileClass === 'thumbnail') {
+        if(options.tileClass === 'thumbnail') {
             axesImageOverride = {
                 title: '',
                 showaxeslabels: false,
@@ -34885,7 +34955,7 @@ module.exports = function clonePlot(graphObj, options) {
                 linetickenable: false
             };
         }
-        for (i = 0; i < sceneIds.length; i++) {
+        for(i = 0; i < sceneIds.length; i++) {
             var sceneId = sceneIds[i];
 
             extendFlat(newLayout[sceneId].xaxis, axesImageOverride);
@@ -34898,7 +34968,7 @@ module.exports = function clonePlot(graphObj, options) {
     }
 
     var td = document.createElement('div');
-    if (options.tileClass) td.className = options.tileClass;
+    if(options.tileClass) td.className = options.tileClass;
 
     var plotTile = {
         td: td,
@@ -34917,7 +34987,7 @@ module.exports = function clonePlot(graphObj, options) {
         }
     };
 
-    if (options.setBackground !== 'transparent') {
+    if(options.setBackground !== 'transparent') {
         plotTile.config.setBackground = options.setBackground || 'opaque';
     }
 
@@ -35009,7 +35079,7 @@ function svgToImg(opts) {
         DOMURL.revokeObjectURL(url);
         ctx.drawImage(img, 0, 0);
 
-        switch (format) {
+        switch(format) {
             case 'jpeg':
                 imgData = canvas.toDataURL('image/jpeg');
                 break;
@@ -35101,7 +35171,7 @@ function toImage(gd, opts) {
             });
 
             ev.clean = function() {
-                if (clonedGd) clonedGd.remove();
+                if(clonedGd) clonedGd.remove();
             };
 
         }, delay);
@@ -35529,21 +35599,21 @@ module.exports = function hoverPoints(pointData, xval, yval, hovermode) {
 
     var dx, dy;
     if(trace.orientation==='h') {
-        dx = function(di){
+        dx = function(di) {
             // add a gradient so hovering near the end of a
             // bar makes it a little closer match
             return Fx.inbox(di.b-xval, di.x-xval) + (di.x-xval)/(di.x-di.b);
         };
-        dy = function(di){
+        dy = function(di) {
             var centerPos = barPos(di) - yval;
             return Fx.inbox(centerPos - barDelta, centerPos + barDelta);
         };
     }
     else {
-        dy = function(di){
+        dy = function(di) {
             return Fx.inbox(di.b-yval, di.y-yval) + (di.y-yval)/(di.y-di.b);
         };
-        dx = function(di){
+        dx = function(di) {
             var centerPos = barPos(di) - xval;
             return Fx.inbox(centerPos - barDelta, centerPos + barDelta);
         };
@@ -35759,7 +35829,7 @@ module.exports = function plot(gd, plotinfo, cdbar) {
 
     bartraces.append('g')
         .attr('class','points')
-        .each(function(d){
+        .each(function(d) {
             var t = d[0].t,
                 trace = d[0].trace;
 
@@ -35768,7 +35838,7 @@ module.exports = function plot(gd, plotinfo, cdbar) {
             d3.select(this).selectAll('path')
                 .data(Lib.identity)
               .enter().append('path')
-                .each(function(di){
+                .each(function(di) {
                     // now display the bar
                     // clipped xf/yf (2nd arg true): non-positive
                     // log values go off-screen by plotwidth
@@ -35863,10 +35933,10 @@ module.exports = function setPositions(gd, plotinfo) {
         ya = plotinfo.y(),
         i, j;
 
-    ['v', 'h'].forEach(function(dir){
+    ['v', 'h'].forEach(function(dir) {
         var bl = [],
-            pLetter = {v:'x', h:'y'}[dir],
-            sLetter = {v:'y', h:'x'}[dir],
+            pLetter = {v: 'x', h: 'y'}[dir],
+            sLetter = {v: 'y', h: 'x'}[dir],
             pa = plotinfo[pLetter](),
             sa = plotinfo[sLetter]();
 
@@ -35891,7 +35961,7 @@ module.exports = function setPositions(gd, plotinfo) {
             // find the min. difference between any points
             // in any traces in bl1
             var pvals = [];
-            bl1.forEach(function(i){
+            bl1.forEach(function(i) {
                 gd.calcdata[i].forEach(function(v) { pvals.push(v.p); });
             });
             var dv = Lib.distinctVals(pvals),
@@ -35932,7 +36002,7 @@ module.exports = function setPositions(gd, plotinfo) {
             var barCenter;
             function setBarCenter(v) { v[pLetter] = v.p + barCenter; }
 
-            for(var i = 0; i < bl1.length; i++){
+            for(var i = 0; i < bl1.length; i++) {
                 var t = gd.calcdata[bl1[i]][0].t;
                 t.barwidth = barDiff * (1 - fullLayout.bargroupgap);
                 t.poffset = ((overlap ? (2 * i + 1 - bl1.length) * barDiff : 0) -
@@ -35946,7 +36016,7 @@ module.exports = function setPositions(gd, plotinfo) {
         }
 
         if(fullLayout.barmode === 'overlay') {
-            bl.forEach(function(bli){ barposition([bli]); });
+            bl.forEach(function(bli) { barposition([bli]); });
         }
         else barposition(bl);
 
@@ -35954,7 +36024,7 @@ module.exports = function setPositions(gd, plotinfo) {
             norm = fullLayout.barnorm;
 
         // bar size range and stacking calculation
-        if(stack || norm){
+        if(stack || norm) {
             // for stacked bars, we need to evaluate every step in every
             // stack, because negative bars mean the extremes could be
             // anywhere
@@ -35973,7 +36043,7 @@ module.exports = function setPositions(gd, plotinfo) {
                 ti,
                 scale;
 
-            for(i = 0; i < bl.length; i++){ // trace index
+            for(i = 0; i < bl.length; i++) { // trace index
                 ti = gd.calcdata[bl[i]];
                 for(j = 0; j < ti.length; j++) {
                     sv = Math.round(ti[j].p / sumround);
@@ -35999,7 +36069,7 @@ module.exports = function setPositions(gd, plotinfo) {
                     tiny = top/1e9; // in case of rounding error in sum
                 sMin = 0;
                 sMax = stack ? top : 0;
-                for(i = 0; i < bl.length; i++){ // trace index
+                for(i = 0; i < bl.length; i++) { // trace index
                     ti = gd.calcdata[bl[i]];
                     for(j = 0; j < ti.length; j++) {
                         scale = top / sums[Math.round(ti[j].p/sumround)];
@@ -36030,7 +36100,7 @@ module.exports = function setPositions(gd, plotinfo) {
             // these bar tops in calcdata
             var fs = function(v) { v[sLetter] = v.s; return v.s; };
 
-            for(i = 0; i < bl.length; i++){
+            for(i = 0; i < bl.length; i++) {
                 Axes.expand(sa, gd.calcdata[bl[i]].map(fs),
                     {tozero: true, padded: true});
             }
@@ -36067,17 +36137,17 @@ module.exports = function style(gd) {
     // for gapless (either stacked or neighboring grouped) bars use
     // crispEdges to turn off antialiasing so an artificial gap
     // isn't introduced.
-    .each(function(d){
+    .each(function(d) {
         if((fullLayout.barmode==='stack' && barcount>1) ||
                 (fullLayout.bargap===0 &&
                  fullLayout.bargroupgap===0 &&
-                 !d[0].trace.marker.line.width)){
+                 !d[0].trace.marker.line.width)) {
             d3.select(this).attr('shape-rendering','crispEdges');
         }
     });
 
     // then style the individual bars
-    s.selectAll('g.points').each(function(d){
+    s.selectAll('g.points').each(function(d) {
         var trace = d[0].trace,
             marker = trace.marker,
             markerLine = marker.line,
@@ -37861,7 +37931,7 @@ module.exports = function calc(gd, trace) {
         marker = trace.marker;
         s = marker.size;
 
-        if (Array.isArray(s)) {
+        if(Array.isArray(s)) {
             // I tried auto-type but category and dates dont make much sense.
             var ax = {type: 'linear'};
             Axes.setConvert(ax);
@@ -37933,7 +38003,7 @@ module.exports = function calc(gd, trace) {
     }
 
     // this has migrated up from arraysToCalcdata as we have a reference to 's' here
-    if (typeof s !== undefined) Lib.mergeArray(s, cd, 'ms');
+    if(typeof s !== undefined) Lib.mergeArray(s, cd, 'ms');
 
     gd.firstscatter = false;
     return cd;
@@ -38011,7 +38081,7 @@ module.exports = function colorbar(gd, cd) {
     // TODO unify Scatter.colorbar and Heatmap.colorbar
     // TODO make Plotly[module].colorbar support multiple colorbar per trace
 
-    if((marker === undefined) || !marker.showscale){
+    if((marker === undefined) || !marker.showscale) {
         Plots.autoMargin(gd, cbId);
         return;
     }
@@ -38027,8 +38097,8 @@ module.exports = function colorbar(gd, cd) {
     var cb = cd[0].t.cb = drawColorbar(gd, cbId);
 
     cb.fillcolor(d3.scale.linear()
-            .domain(scl.map(function(v){ return cmin + v[0] * (cmax - cmin); }))
-            .range(scl.map(function(v){ return v[1]; })))
+            .domain(scl.map(function(v) { return cmin + v[0] * (cmax - cmin); }))
+            .range(scl.map(function(v) { return v[1]; })))
         .filllevels({start: cmin, end: cmax, size: (cmax - cmin) / 254})
         .options(marker.colorbar)();
 
@@ -38704,7 +38774,7 @@ module.exports = function plot(gd, plotinfo, cdscatter) {
     var prevpath = '',
         tozero, tonext, nexttonext;
 
-    scattertraces.each(function(d){
+    scattertraces.each(function(d) {
         var trace = d[0].trace,
             line = trace.line,
             tr = d3.select(this);
@@ -38811,7 +38881,7 @@ module.exports = function plot(gd, plotinfo, cdscatter) {
     // remove paths that didn't get used
     scattertraces.selectAll('path:not([d])').remove();
 
-    function visFilter(d){
+    function visFilter(d) {
         return d.filter(function(v) { return v.vis; });
     }
 
@@ -38984,7 +39054,7 @@ module.exports = function style(gd) {
     });
 
     s.selectAll('g.points')
-        .each(function(d){
+        .each(function(d) {
             d3.select(this).selectAll('path.point')
                 .call(Drawing.pointStyle, d.trace || d[0].trace);
             d3.select(this).selectAll('text')
