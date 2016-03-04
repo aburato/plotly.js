@@ -9,6 +9,7 @@ var rules = {
     "X a": "text-decoration:none;",
     "X a:hover": "text-decoration:none;",
     "X .crisp": "shape-rendering:crispEdges;",
+    "X svg": "overflow:hidden;",
     "X svg a": "fill:#447adb;",
     "X svg a:hover": "fill:#3c6dc5;",
     "X .main-svg": "position:absolute;top:0;left:0;pointer-events:none;",
@@ -19607,7 +19608,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.6.1';
+exports.version = '1.6.2';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -29387,7 +29388,7 @@ function createHoverText(hoverData, opts) {
         else if(d.yLabel===undefined) text = d.xLabel;
         else text = '('+d.xLabel+', '+d.yLabel+')';
 
-        if(d.text) text += (text ? '<br>' : '') + d.text;
+        if(d.text && !Array.isArray(d.text)) text += (text ? '<br>' : '') + d.text;
 
         // if 'text' is empty at this point,
         // put 'name' in main label and don't show secondary label
@@ -35302,6 +35303,11 @@ module.exports = function toSVG(gd, format) {
 
     svg.selectAll('text')
         .attr({'data-unformatted': null})
+        .style({
+            '-webkit-user-select': null,
+            '-moz-user-select': null,
+            '-ms-user-select': null
+        })
         .each(function() {
             // hidden text is pre-formatting mathjax, the browser ignores it but it can still confuse batik
             var txt = d3.select(this);
