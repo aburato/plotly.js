@@ -9,6 +9,11 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.6.3-d2] -- 2016-03-23
+
+### Added
+- Plotly now emits a "plotly_legend_toggleVisible"
+
 ## [1.6.3] -- 2016-03-07
 
 ### Fixed

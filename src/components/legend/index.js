@@ -555,6 +555,8 @@ legend.draw = function(td) {
 
                     newVisible = trace.visible === true ? 'legendonly' : true;
                     Plotly.restyle(td, 'visible', newVisible, traceIndicesInGroup);
+
+                    td.emit('plotly_legend_toggleVisible', {traceIndices: traceIndicesInGroup, visible: newVisible});
                 }
             });
         });

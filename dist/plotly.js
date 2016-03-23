@@ -1,5 +1,5 @@
 /**
-* plotly.js v1.6.3-d1
+* plotly.js v1.6.3-d2
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -17369,6 +17369,8 @@ legend.draw = function(td) {
 
                     newVisible = trace.visible === true ? 'legendonly' : true;
                     Plotly.restyle(td, 'visible', newVisible, traceIndicesInGroup);
+
+                    td.emit('plotly_legend_toggleVisible', {traceIndices: traceIndicesInGroup, visible: newVisible});
                 }
             });
         });
@@ -19602,7 +19604,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.6.3-d1';
+exports.version = '1.6.3-d2';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -30035,31 +30037,30 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         var axesZoomInfo = [];
 
-        if (zoomMode === 'xy' || zoomMode === 'x') {
+        if(zoomMode === 'xy' || zoomMode === 'x') {
             var xZoomInfo = zoomAxRanges(xa, box.l / pw, box.r / pw);
             axesZoomInfo = axesZoomInfo.concat(xZoomInfo);
         }
-        if (zoomMode === 'xy' || zoomMode === 'y') {
+        if(zoomMode === 'xy' || zoomMode === 'y') {
             var yZoomInfo = zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph);
             axesZoomInfo = axesZoomInfo.concat(yZoomInfo);
         }
 
         removeZoombox(gd);
-        
         // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
         var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
         gd.emit('plotly_zoom', args);
 
-        if (!args.userHandled) {
-        dragTail(zoomMode);
+        if(!args.userHandled) {
+            dragTail(zoomMode);
 
-        if(SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
-            Plotly.Lib.notifier('Double-click to<br>zoom back out','long');
-            SHOWZOOMOUTTIP = false;
-        }
+            if(SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+                Plotly.Lib.notifier('Double-click to<br>zoom back out','long');
+                SHOWZOOMOUTTIP = false;
+            }
             args.pre = false;
             gd.emit('plotly_zoom', args);
-    }
+        }
     }
 
     function dragDone(dragged, numClicks) {
