@@ -9,6 +9,11 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.7.1-d3] -- 2016-03-31
+
+### Changed
+- Aligned to plotly.js 1.7.1
+
 ## [1.7.1] -- 2016-03-30
 
 ### Fixed
