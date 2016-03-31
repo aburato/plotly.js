@@ -1,5 +1,5 @@
 /**
-* plotly.js v1.7.0-d3
+* plotly.js v1.7.1-d3
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -17023,8 +17023,9 @@ module.exports = function draw(gd) {
         });
 
     var clipPath = fullLayout._topdefs.selectAll('#' + clipId)
-        .data([0])
-      .enter().append('clipPath')
+        .data([0]);
+
+    clipPath.enter().append('clipPath')
         .attr('id', clipId)
         .append('rect');
 
@@ -17179,7 +17180,7 @@ module.exports = function draw(gd) {
 
     legend.attr('transform', 'translate(' + lx + ',' + ly + ')');
 
-    clipPath.attr({
+    clipPath.select('rect').attr({
         width: opts.width,
         height: scrollheight,
         x: 0,
@@ -17189,7 +17190,8 @@ module.exports = function draw(gd) {
     legend.call(Drawing.setClipUrl, clipId);
 
     // If scrollbar should be shown.
-    if(gd.firstRender && opts.height - scrollheight > 0 && !gd._context.staticPlot) {
+    if(opts.height - scrollheight > 0 && !gd._context.staticPlot) {
+
         bg.attr({
             width: opts.width - 2 * opts.borderwidth + constants.scrollBarWidth
         });
@@ -17198,44 +17200,46 @@ module.exports = function draw(gd) {
             width: opts.width + constants.scrollBarWidth
         });
 
-        legend.node().addEventListener('wheel', function(e) {
+        if(gd.firstRender) {
+            // Move scrollbar to starting position
+            scrollBar.call(
+                Drawing.setRect,
+                opts.width - (constants.scrollBarWidth + constants.scrollBarMargin),
+                constants.scrollBarMargin,
+                constants.scrollBarWidth,
+                constants.scrollBarHeight
+            );
+            scrollBox.attr('data-scroll',0);
+        }
+
+        scrollHandler(0,scrollheight);
+
+        legend.on('wheel',null);
+
+        legend.on('wheel', function() {
+            var e = d3.event;
             e.preventDefault();
-            scrollHandler(e.deltaY / 20);
+            scrollHandler(e.deltaY / 20, scrollheight);
         });
 
-        scrollBar.node().addEventListener('mousedown', function(e) {
-            e.preventDefault();
+        scrollBar.on('.drag',null);
+        scrollBox.on('.drag',null);
+        var drag = d3.behavior.drag()
+            .on('drag', function() {
+                scrollHandler(d3.event.dy, scrollheight);
+            });
 
-            function mMove(e) {
-                if(e.buttons === 1) {
-                    scrollHandler(e.movementY);
-                }
-            }
+        scrollBar.call(drag);
+        scrollBox.call(drag);
 
-            function mUp() {
-                scrollBar.node().removeEventListener('mousemove', mMove);
-                window.removeEventListener('mouseup', mUp);
-            }
-
-            window.addEventListener('mousemove', mMove);
-            window.addEventListener('mouseup', mUp);
-        });
-
-        // Move scrollbar to starting position on the first render
-        scrollBar.call(
-            Drawing.setRect,
-            opts.width - (constants.scrollBarWidth + constants.scrollBarMargin),
-            constants.scrollBarMargin,
-            constants.scrollBarWidth,
-            constants.scrollBarHeight
-        );
     }
 
-    function scrollHandler(delta) {
+
+    function scrollHandler(delta, scrollheight) {
 
         var scrollBarTrack = scrollheight - constants.scrollBarHeight - 2 * constants.scrollBarMargin,
             translateY = scrollBox.attr('data-scroll'),
-            scrollBoxY = Lib.constrain(translateY - delta, Math.min(scrollheight - opts.height, 0), 0),
+            scrollBoxY = Lib.constrain(translateY - delta, scrollheight-opts.height, 0),
             scrollBarY = -scrollBoxY / (opts.height - scrollheight) * scrollBarTrack + constants.scrollBarMargin;
 
         scrollBox.attr('data-scroll', scrollBoxY);
@@ -19804,7 +19808,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.7.0-d3';
+exports.version = '1.7.1-d3';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -20510,7 +20514,7 @@ exports.parseDate = function(v) {
 
 'use strict';
 
-/* global $:false */
+/* global jQuery:false */
 
 var EventEmitter = require('events').EventEmitter;
 
@@ -20555,7 +20559,7 @@ var Events = {
          */
         plotObj.emit = function(event, data) {
             if(typeof jQuery !== 'undefined') {
-                $(plotObj).trigger(event, data);
+                jQuery(plotObj).trigger(event, data);
             }
 
             ev.emit(event, data);
@@ -20578,7 +20582,7 @@ var Events = {
          * collect the return value of the LAST handler function
          */
         if(typeof jQuery !== 'undefined') {
-            jQueryHandlerValue = $(plotObj).triggerHandler(event, data);
+            jQueryHandlerValue = jQuery(plotObj).triggerHandler(event, data);
         }
 
         /*
@@ -22894,20 +22898,17 @@ Plotly.plot = function(gd, data, layout, config) {
     }
     else if(graphWasEmpty) makePlotFramework(gd);
 
+    // save initial axis range once per graph
+    if(graphWasEmpty) Plotly.Axes.saveRangeInitial(gd);
+
     var fullLayout = gd._fullLayout;
 
     // prepare the data and find the autorange
 
     // generate calcdata, if we need to
     // to force redoing calcdata, just delete it before calling Plotly.plot
-    var recalc = !gd.calcdata || gd.calcdata.length!==(gd.data||[]).length;
-    if(recalc) {
-        doCalcdata(gd);
-
-        if(gd._context.doubleClick!==false || gd._context.displayModeBar!==false) {
-            Plotly.Axes.saveRangeInitial(gd);
-        }
-    }
+    var recalc = !gd.calcdata || gd.calcdata.length !== (gd.data || []).length;
+    if(recalc) doCalcdata(gd);
 
     // in case it has changed, attach fullData traces to calcdata
     for(var i = 0; i < gd.calcdata.length; i++) {
@@ -28668,7 +28669,7 @@ module.exports = {
 
     // ms between first mousedown and 2nd mouseup to constitute dblclick...
     // we don't seem to have access to the system setting
-    DBLCLICKDELAY: 600,
+    DBLCLICKDELAY: 300,
 
     // pixels to move mouse before you stop clamping to starting point
     MINDRAG: 8,
@@ -30286,7 +30287,6 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     function zoomDone(dragged, numClicks) {
         if(Math.min(box.h, box.w) < MINDRAG * 2) {
             if(numClicks === 2) doubleClick();
-            else pauseForDrag(gd);
 
             return removeZoombox(gd);
         }
@@ -30355,7 +30355,6 @@ function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                     }
                 });
         }
-        else pauseForDrag(gd);
     }
 
     // scroll zoom, on all draggers except corners
@@ -30668,21 +30667,6 @@ function getEndText(ax, end) {
     }
 }
 
-function pauseForDrag(gd) {
-    // prevent more redraws until we know if a doubleclick
-    // has occurred
-    gd._dragging = true;
-    var deferredReplot = gd._replotPending;
-    gd._replotPending = false;
-
-    setTimeout(function() {
-        gd._replotPending = deferredReplot;
-        finishDrag(gd);
-    },
-        constants.DBLCLICKDELAY
-    );
-}
-
 function finishDrag(gd) {
     gd._dragging = false;
     if(gd._replotPending) Plotly.plot(gd);
@@ -30768,11 +30752,6 @@ fx.dragElement = function(options) {
     if(!gd._mouseDownTime) gd._mouseDownTime = 0;
 
     function onStart(e) {
-        // because we cancel event bubbling,
-        // explicitly trigger input blur event.
-        var inputBox = document.querySelector('.plugin-editable');
-        if(inputBox) d3.select(inputBox).on('blur').call(inputBox);
-
         // make dragging and dragged into properties of gd
         // so that others can look at and modify them
         gd._dragged = false;
@@ -31847,9 +31826,9 @@ module.exports = function setConvert(ax) {
 
     ax.l2p = function(v) {
         if(!isNumeric(v)) return constants.BADNUM;
+
         // include 2 fractional digits on pixel, for PDF zooming etc
-        return d3.round(Lib.constrain(ax._b + ax._m*v,
-            -clipMult*ax._length, (1+clipMult)*ax._length), 2);
+        return d3.round(ax._b + ax._m * v, 2);
     };
 
     ax.p2l = function(px) { return (px-ax._b)/ax._m; };
