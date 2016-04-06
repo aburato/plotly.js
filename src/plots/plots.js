@@ -346,10 +346,11 @@ plots.addLinks = function(gd) {
         };
 
     // If text's width is bigger than the layout
-    // IE doesn't like getComputedTextLength if an element
-    // isn't visible, which it (sometimes?) isn't
-    // apparently offsetParent is null for invisibles.
-    if(text && text.getComputedTextLength() >= (fullLayout.width - 20)) {
+    // Check that text is a child node or document.body
+    // because otherwise IE/Edge might throw an exception
+    // when calling getComputedTextLength().
+    // Apparently offsetParent is null for invisibles.
+    if(document.body.contains(text) && text.getComputedTextLength() >= (fullLayout.width - 20)) {
         // Align the text at the left
         attrs['text-anchor'] = 'start';
         attrs.x = 5;
@@ -848,13 +849,15 @@ plots.sanitizeMargins = function(fullLayout) {
 // o is {x,l,r,y,t,b} where x and y are plot fractions,
 // the rest are pixels in each direction
 // or leave o out to delete this entry (like if it's hidden)
-plots.autoMargin = function(gd,id,o) {
+plots.autoMargin = function(gd, id, o) {
     var fullLayout = gd._fullLayout;
+
     if(!fullLayout._pushmargin) fullLayout._pushmargin = {};
-    if(fullLayout.margin.autoexpand!==false) {
+
+    if(fullLayout.margin.autoexpand !== false) {
         if(!o) delete fullLayout._pushmargin[id];
         else {
-            var pad = o.pad||12;
+            var pad = o.pad === undefined ? 12 : o.pad;
 
             // if the item is too big, just give it enough automargin to
             // make sure you can still grab it and bring it back
