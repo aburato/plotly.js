@@ -2122,7 +2122,7 @@ fx.dragElement = function(options) {
         if(options.doneFn) options.doneFn(gd._dragged, numClicks);
 
         if(!gd._dragged) {
-            var e2 = new MouseEvent('click', { 'button': e.button });
+            var e2 = new MouseEvent('click', { 'bubbles':true, 'button': e.button });
             initialTarget.dispatchEvent(e2);
         }
 
