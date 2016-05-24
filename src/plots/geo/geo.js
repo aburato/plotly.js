@@ -17,13 +17,15 @@ var Color = require('../../components/color');
 var Drawing = require('../../components/drawing');
 var Axes = require('../../plots/cartesian/axes');
 
+var filterVisible = require('../../lib/filter_visible');
+
 var addProjectionsToD3 = require('./projections');
 var createGeoScale = require('./set_scale');
 var createGeoZoom = require('./zoom');
 var createGeoZoomReset = require('./zoom_reset');
+var constants = require('./constants');
 
 var xmlnsNamespaces = require('../../constants/xmlns_namespaces');
-var constants = require('../../constants/geo_constants');
 var topojsonUtils = require('../../lib/topojson_utils');
 var topojsonFeature = require('topojson').feature;
 
@@ -35,9 +37,8 @@ function Geo(options, fullLayout) {
     this.container = options.container;
     this.topojsonURL = options.topojsonURL;
 
-    // add a few projection types to d3.geo,
-    // a subset of https://github.com/d3/d3-geo-projection
-    addProjectionsToD3();
+    // add a few projection types to d3.geo
+    addProjectionsToD3(d3);
 
     this.hoverContainer = null;
 
@@ -139,20 +140,6 @@ proto.plot = function(geoData, fullLayout, promises) {
     // to avoid making multiple request while streaming
 };
 
-// filter out non-visible trace
-// geo plot routine use the classic join/enter/exit pattern to update traces
-function filterData(dataIn) {
-    var dataOut = [];
-
-    for(var i = 0; i < dataIn.length; i++) {
-        var trace = dataIn[i];
-
-        if(trace.visible === true) dataOut.push(trace);
-    }
-
-    return dataOut;
-}
-
 proto.onceTopojsonIsLoaded = function(geoData, geoLayout) {
     var i;
 
@@ -190,7 +177,7 @@ proto.onceTopojsonIsLoaded = function(geoData, geoLayout) {
         var moduleData = traceHash[moduleNames[i]];
         var _module = moduleData[0]._module;
 
-        _module.plot(this, filterData(moduleData), geoLayout);
+        _module.plot(this, filterVisible(moduleData), geoLayout);
     }
 
     this.traceHash = traceHash;
@@ -320,10 +307,7 @@ proto.adjustLayout = function(geoLayout, graphSize) {
             width: geoLayout._width,
             height: geoLayout._height
         })
-        .style({
-            'fill': geoLayout.bgcolor,
-            'stroke-width': 0
-        });
+        .call(Color.fill, geoLayout.bgcolor);
 };
 
 proto.drawTopo = function(selection, layerName, geoLayout) {
@@ -500,7 +484,7 @@ function createMockAxis(fullLayout) {
         type: 'linear',
         showexponent: 'all',
         exponentformat: Axes.layoutAttributes.exponentformat.dflt,
-        _td: { _fullLayout: fullLayout }
+        _gd: { _fullLayout: fullLayout }
     };
 
     Axes.setConvert(mockAxis);

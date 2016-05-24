@@ -22,8 +22,10 @@ var MINSELECT = constants.MINSELECT;
 function getAxId(ax) { return ax._id; }
 
 module.exports = function prepSelect(e, startX, startY, dragOptions, mode) {
-    var plot = dragOptions.plotinfo.plot,
+    var plot = dragOptions.gd._fullLayout._zoomlayer,
         dragBBox = dragOptions.element.getBoundingClientRect(),
+        xs = dragOptions.plotinfo.x()._offset,
+        ys = dragOptions.plotinfo.y()._offset,
         x0 = startX - dragBBox.left,
         y0 = startY - dragBBox.top,
         x1 = x0,
@@ -45,6 +47,7 @@ module.exports = function prepSelect(e, startX, startY, dragOptions, mode) {
     outlines.enter()
         .append('path')
         .attr('class', function(d) { return 'select-outline select-outline-' + d; })
+        .attr('transform','translate(' + xs + ', ' + ys + ')')
         .attr('d', path0 + 'Z');
 
     var corners = plot.append('path')
@@ -54,6 +57,7 @@ module.exports = function prepSelect(e, startX, startY, dragOptions, mode) {
             stroke: color.defaultLine,
             'stroke-width': 1
         })
+        .attr('transform','translate(' + xs + ', ' + ys + ')')
         .attr('d','M0,0Z');
 
 
@@ -71,15 +75,27 @@ module.exports = function prepSelect(e, startX, startY, dragOptions, mode) {
         trace = cd[0].trace;
         if(!trace._module || !trace._module.selectPoints) continue;
 
-        if(xAxisIds.indexOf(trace.xaxis) === -1) continue;
-        if(yAxisIds.indexOf(trace.yaxis) === -1) continue;
+        if(dragOptions.subplot) {
+            if(trace.subplot !== dragOptions.subplot) continue;
 
-        searchTraces.push({
-            selectPoints: trace._module.selectPoints,
-            cd: cd,
-            xaxis: axes.getFromId(gd, trace.xaxis),
-            yaxis: axes.getFromId(gd, trace.yaxis)
-        });
+            searchTraces.push({
+                selectPoints: trace._module.selectPoints,
+                cd: cd,
+                xaxis: dragOptions.xaxes[0],
+                yaxis: dragOptions.yaxes[0]
+            });
+        }
+        else {
+            if(xAxisIds.indexOf(trace.xaxis) === -1) continue;
+            if(yAxisIds.indexOf(trace.yaxis) === -1) continue;
+
+            searchTraces.push({
+                selectPoints: trace._module.selectPoints,
+                cd: cd,
+                xaxis: axes.getFromId(gd, trace.xaxis),
+                yaxis: axes.getFromId(gd, trace.yaxis)
+            });
+        }
     }
 
     function axValue(ax) {
@@ -164,6 +180,7 @@ module.exports = function prepSelect(e, startX, startY, dragOptions, mode) {
     };
 
     dragOptions.doneFn = function(dragged, numclicks) {
+        corners.remove();
         if(!dragged && numclicks === 2) {
             // clear selection on doubleclick
             outlines.remove();
@@ -177,6 +194,5 @@ module.exports = function prepSelect(e, startX, startY, dragOptions, mode) {
         else {
             dragOptions.gd.emit('plotly_selected', eventData);
         }
-        corners.remove();
     };
 };

@@ -24,6 +24,7 @@ var Fx = require('../plots/cartesian/graph_interact');
 var Color = require('../components/color');
 var Drawing = require('../components/drawing');
 var ErrorBars = require('../components/errorbars');
+var Images = require('../components/images');
 var Legend = require('../components/legend');
 var RangeSlider = require('../components/rangeslider');
 var RangeSelector = require('../components/rangeselector');
@@ -205,7 +206,7 @@ Plotly.plot = function(gd, data, layout, config) {
         if(!recalc) return;
 
         var subplots = Plots.getSubplotIds(fullLayout, 'cartesian'),
-            modules = gd._modules;
+            modules = fullLayout._modules;
 
         // position and range calculations for traces that
         // depend on each other ie bars (stacked or grouped)
@@ -245,17 +246,17 @@ Plotly.plot = function(gd, data, layout, config) {
 
     function drawAxes() {
         // draw ticks, titles, and calculate axis scaling (._b, ._m)
-        RangeSlider.draw(gd);
         return Plotly.Axes.doTicks(gd, 'redraw');
     }
 
     // Now plot the data
     function drawData() {
-        var calcdata = gd.calcdata;
+        var calcdata = gd.calcdata,
+            i;
 
         // in case of traces that were heatmaps or contour maps
         // previously, remove them and their colorbars explicitly
-        for(var i = 0; i < calcdata.length; i++) {
+        for(i = 0; i < calcdata.length; i++) {
             var trace = calcdata[i][0].trace,
                 isVisible = (trace.visible === true),
                 uid = trace.uid;
@@ -273,17 +274,11 @@ Plotly.plot = function(gd, data, layout, config) {
             }
         }
 
-        var plotRegistry = Plots.subplotsRegistry;
-
-        if(fullLayout._hasGL3D) plotRegistry.gl3d.plot(gd);
-        if(fullLayout._hasGeo) plotRegistry.geo.plot(gd);
-        if(fullLayout._hasGL2D) plotRegistry.gl2d.plot(gd);
-        if(fullLayout._hasCartesian || fullLayout._hasPie) {
-            plotRegistry.cartesian.plot(gd);
+        // loop over the base plot modules present on graph
+        var basePlotModules = fullLayout._basePlotModules;
+        for(i = 0; i < basePlotModules.length; i++) {
+            basePlotModules[i].plot(gd);
         }
-
-        // clean up old scenes that no longer have associated data
-        // will this be a performance hit?
 
         // styling separate from drawing
         Plots.style(gd);
@@ -307,8 +302,10 @@ Plotly.plot = function(gd, data, layout, config) {
     // be set to false before these will work properly.
     function finalDraw() {
         Shapes.drawAll(gd);
+        Images.draw(gd);
         Plotly.Annotations.drawAll(gd);
         Legend.draw(gd);
+        RangeSlider.draw(gd);
         RangeSelector.draw(gd);
     }
 
@@ -319,12 +316,12 @@ Plotly.plot = function(gd, data, layout, config) {
         gd.emit('plotly_afterplot');
     }
 
-    var donePlotting = Lib.syncOrAsync([
+    Lib.syncOrAsync([
         Plots.previousPromises,
         marginPushers,
-        layoutStyles,
         marginPushersAgain,
         positionAndAutorange,
+        layoutStyles,
         drawAxes,
         drawData,
         finalDraw
@@ -332,8 +329,9 @@ Plotly.plot = function(gd, data, layout, config) {
 
     // even if everything we did was synchronous, return a promise
     // so that the caller doesn't care which route we took
-    return (donePlotting && donePlotting.then) ?
-        donePlotting : Promise.resolve(gd);
+    return Promise.all(gd._promises).then(function() {
+        return gd;
+    });
 };
 
 // Get the container div: we store all variables for this plot as
@@ -658,13 +656,11 @@ function cleanAxRef(container, attr) {
     }
 }
 
+// Make a few changes to the data right away
+// before it gets used for anything
 function cleanData(data, existingData) {
-    // make a few changes to the data right away
-    // before it gets used for anything
 
-    /*
-     * Enforce unique IDs
-     */
+    // Enforce unique IDs
     var suids = [], // seen uids --- so we can weed out incoming repeats
         uids = data.concat(Array.isArray(existingData) ? existingData : [])
                .filter(function(trace) { return 'uid' in trace; })
@@ -672,11 +668,13 @@ function cleanData(data, existingData) {
 
     for(var tracei = 0; tracei < data.length; tracei++) {
         var trace = data[tracei];
+        var i;
 
         // assign uids to each trace and detect collisions.
         if(!('uid' in trace) || suids.indexOf(trace.uid) !== -1) {
-            var newUid, i;
-            for(i=0; i<100; i++) {
+            var newUid;
+
+            for(i = 0; i < 100; i++) {
                 newUid = Lib.randstr(uids);
                 if(suids.indexOf(newUid)===-1) break;
             }
@@ -762,6 +760,27 @@ function cleanData(data, existingData) {
             var cont = trace.marker;
             if(cont.colorscale === 'YIGnBu') cont.colorscale = 'YlGnBu';
             if(cont.colorscale === 'YIOrRd') cont.colorscale = 'YlOrRd';
+        }
+
+        // fix typo in surface 'highlight*' definitions
+        if(trace.type === 'surface' && Lib.isPlainObject(trace.contours)) {
+            var dims = ['x', 'y', 'z'];
+
+            for(i = 0; i < dims.length; i++) {
+                var opts = trace.contours[dims[i]];
+
+                if(!Lib.isPlainObject(opts)) continue;
+
+                if(opts.highlightColor) {
+                    opts.highlightcolor = opts.highlightColor;
+                    delete opts.highlightColor;
+                }
+
+                if(opts.highlightWidth) {
+                    opts.highlightwidth = opts.highlightWidth;
+                    delete opts.highlightWidth;
+                }
+            }
         }
 
         // prune empty containers made before the new nestedProperty
@@ -853,10 +872,10 @@ function doCalcdata(gd) {
     fullLayout._piecolormap = {};
     fullLayout._piedefaultcolorcount = 0;
 
-    // delete category list, if there is one, so we start over
+    // initialize the category list, if there is one, so we start over
     // to be filled in later by ax.d2c
     for(i = 0; i < axList.length; i++) {
-        axList[i]._categories = [];
+        axList[i]._categories = axList[i]._initialCategories.slice();
     }
 
     for(i = 0; i < fullData.length; i++) {
@@ -1556,6 +1575,7 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
         'mode','visible','type','orientation','fill',
         'histfunc','histnorm','text',
         'x', 'y', 'z',
+        'a', 'b', 'c',
         'xtype','x0','dx','ytype','y0','dy','xaxis','yaxis',
         'line.width',
         'connectgaps', 'transpose', 'zsmooth',
@@ -1638,10 +1658,12 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
         axlist,
         flagAxForDelete = {};
 
-    // for now, if we detect gl or geo stuff, just re-do the plot
-    if(fullLayout._hasGL3D || fullLayout._hasGeo || fullLayout._hasGL2D) {
-        doplot = true;
-    }
+    // At the moment, only cartesian, pie and ternary plot types can afford
+    // to not go through a full replot
+    var doPlotWhiteList = ['cartesian', 'pie', 'ternary'];
+    fullLayout._basePlotModules.forEach(function(_module) {
+        if(doPlotWhiteList.indexOf(_module.name) === -1) doplot = true;
+    });
 
     // make a new empty vals array for undoit
     function a0() { return traces.map(function() { return undefined; }); }
@@ -2189,6 +2211,16 @@ Plotly.relayout = function relayout(gd, astr, val) {
         else if(/[xy]axis[0-9]*?$/.test(pleaf) && !Object.keys(vi || {}).length) {
             docalc = true;
         }
+        else if(/[xy]axis[0-9]*\.categoryorder$/.test(pleafPlus)) {
+            docalc = true;
+        }
+        else if(/[xy]axis[0-9]*\.categoryarray/.test(pleafPlus)) {
+            docalc = true;
+        }
+
+        if(pleafPlus.indexOf('rangeslider') !== -1) {
+            docalc = true;
+        }
 
         // toggling log without autorange: need to also recalculate ranges
         // logical XOR (ie are we toggling log)
@@ -2268,6 +2300,12 @@ Plotly.relayout = function relayout(gd, astr, val) {
             // as it is we get separate calls for x and y (or ax and ay) on move
             objModule.draw(gd, objNum, p.parts.slice(2).join('.'), aobj[ai]);
             delete aobj[ai];
+        } else if(p.parts[0] === 'images') {
+            var update = Lib.objectFromPath(astr, vi);
+            Lib.extendDeepAll(gd.layout, update);
+
+            Images.supplyLayoutDefaults(gd.layout, gd._fullLayout);
+            Images.draw(gd);
         }
         // alter gd.layout
         else {
@@ -2275,7 +2313,8 @@ Plotly.relayout = function relayout(gd, astr, val) {
             // 3d or geo at this point just needs to redraw.
             if(p.parts[0].indexOf('scene') === 0) doplot = true;
             else if(p.parts[0].indexOf('geo') === 0) doplot = true;
-            else if(fullLayout._hasGL2D &&
+            else if(p.parts[0].indexOf('ternary') === 0) doplot = true;
+            else if(fullLayout._has('gl2d') &&
                 (ai.indexOf('axis') !== -1 || p.parts[0] === 'plot_bgcolor')
             ) doplot = true;
             else if(ai === 'hiddenlabels') docalc = true;
@@ -2368,7 +2407,7 @@ Plotly.relayout = function relayout(gd, astr, val) {
         if(doticks) {
             seq.push(function() {
                 Plotly.Axes.doTicks(gd,'redraw');
-                Titles.draw(gd, 'gtitle');
+                drawMainTitle(gd);
                 return Plots.previousPromises(gd);
             });
         }
@@ -2548,9 +2587,6 @@ function makePlotFramework(gd) {
     var gd3 = d3.select(gd),
         fullLayout = gd._fullLayout;
 
-    // TODO - find a better place for 3D to initialize axes
-    if(fullLayout._hasGL3D) Plots.subplotsRegistry.gl3d.initAxes(gd);
-
     // Plot container
     fullLayout._container = gd3.selectAll('.plot-container').data([0]);
     fullLayout._container.enter().insert('div', ':first-child')
@@ -2613,15 +2649,40 @@ function makePlotFramework(gd) {
     fullLayout._draggers = fullLayout._paper.append('g')
         .classed('draglayer', true);
 
+    // lower shape layer
+    // (only for shapes to be drawn below the whole plot)
+    var layerBelow = fullLayout._paper.append('g')
+        .classed('layer-below', true);
+    fullLayout._imageLowerLayer = layerBelow.append('g')
+        .classed('imagelayer', true);
+    fullLayout._shapeLowerLayer = layerBelow.append('g')
+        .classed('shapelayer', true);
+
     var subplots = Plotly.Axes.getSubplots(gd);
     if(subplots.join('') !== Object.keys(gd._fullLayout._plots || {}).join('')) {
         makeSubplots(gd, subplots);
     }
 
-    if(fullLayout._hasCartesian) makeCartesianPlotFramwork(gd, subplots);
+    if(fullLayout._has('cartesian')) makeCartesianPlotFramwork(gd, subplots);
 
-    // single shape and pie layers for the whole plot
-    fullLayout._shapelayer = fullLayout._paper.append('g').classed('shapelayer', true);
+    // single ternary layer for the whole plot
+    fullLayout._ternarylayer = fullLayout._paper.append('g').classed('ternarylayer', true);
+
+    // shape layers in subplots
+    var layerSubplot = fullLayout._paper.selectAll('.layer-subplot');
+    fullLayout._imageSubplotLayer = layerSubplot.selectAll('.imagelayer');
+    fullLayout._shapeSubplotLayer = layerSubplot.selectAll('.shapelayer');
+
+    // upper shape layer
+    // (only for shapes to be drawn above the whole plot, including subplots)
+    var layerAbove = fullLayout._paper.append('g')
+        .classed('layer-above', true);
+    fullLayout._imageUpperLayer = layerAbove.append('g')
+        .classed('imagelayer', true);
+    fullLayout._shapeUpperLayer = layerAbove.append('g')
+        .classed('shapelayer', true);
+
+    // single pie layer for the whole plot
     fullLayout._pielayer = fullLayout._paper.append('g').classed('pielayer', true);
 
     // fill in image server scrape-svg
@@ -2632,6 +2693,7 @@ function makePlotFramework(gd) {
     // these are in a different svg element normally, but get collapsed into a single
     // svg when exporting (after inserting 3D)
     fullLayout._infolayer = fullLayout._toppaper.append('g').classed('infolayer', true);
+    fullLayout._zoomlayer = fullLayout._toppaper.append('g').classed('zoomlayer', true);
     fullLayout._hoverlayer = fullLayout._toppaper.append('g').classed('hoverlayer', true);
 
     gd.emit('plotly_framework');
@@ -2749,11 +2811,21 @@ function makeCartesianPlotFramwork(gd, subplots) {
                 // the plot and containers for overlays
                 plotinfo.bg = plotgroup.append('rect')
                     .style('stroke-width', 0);
+
+                // back layer for shapes and images to
+                // be drawn below a subplot
+                var backlayer = plotgroup.append('g')
+                    .classed('layer-subplot', true);
+
+                plotinfo.shapelayer = backlayer.append('g')
+                    .classed('shapelayer', true);
+                plotinfo.imagelayer = backlayer.append('g')
+                    .classed('imagelayer', true);
                 plotinfo.gridlayer = plotgroup.append('g');
                 plotinfo.overgrid = plotgroup.append('g');
                 plotinfo.zerolinelayer = plotgroup.append('g');
                 plotinfo.overzero = plotgroup.append('g');
-                plotinfo.plot = plotgroup.append('svg').call(plotLayers);
+                plotinfo.plot = plotgroup.append('g').call(plotLayers);
                 plotinfo.overplot = plotgroup.append('g');
                 plotinfo.xlines = plotgroup.append('path');
                 plotinfo.ylines = plotgroup.append('path');
@@ -2779,7 +2851,7 @@ function makeCartesianPlotFramwork(gd, subplots) {
 
         plotinfo.gridlayer = mainplot.overgrid.append('g');
         plotinfo.zerolinelayer = mainplot.overzero.append('g');
-        plotinfo.plot = mainplot.overplot.append('svg').call(plotLayers);
+        plotinfo.plot = mainplot.overplot.append('g').call(plotLayers);
         plotinfo.xlines = mainplot.overlines.append('path');
         plotinfo.ylines = mainplot.overlines.append('path');
         plotinfo.xaxislayer = mainplot.overaxes.append('g');
@@ -2790,9 +2862,6 @@ function makeCartesianPlotFramwork(gd, subplots) {
     subplots.forEach(function(subplot) {
         var plotinfo = fullLayout._plots[subplot];
 
-        plotinfo.plot
-            .attr('preserveAspectRatio', 'none')
-            .style('fill', 'none');
         plotinfo.xlines
             .style('fill', 'none')
             .classed('crisp', true);
@@ -2841,9 +2910,31 @@ function lsInner(gd) {
                     xa._length+2*gs.p, ya._length+2*gs.p)
                 .call(Color.fill, fullLayout.plot_bgcolor);
         }
-        plotinfo.plot
-            .call(Drawing.setRect,
-                xa._offset, ya._offset, xa._length, ya._length);
+
+
+        // Clip so that data only shows up on the plot area.
+        var clips = fullLayout._defs.selectAll('g.clips'),
+            clipId = 'clip' + fullLayout._uid + subplot + 'plot';
+
+        var plotClip = clips.selectAll('#' + clipId)
+            .data([0]);
+
+        plotClip.enter().append('clipPath')
+            .attr({
+                'class': 'plotclip',
+                'id': clipId
+            })
+            .append('rect');
+
+        plotClip.selectAll('rect')
+            .attr({
+                'width': xa._length,
+                'height': ya._length
+            });
+
+
+        plotinfo.plot.call(Lib.setTranslate, xa._offset, ya._offset);
+        plotinfo.plot.call(Drawing.setClipUrl, clipId);
 
         var xlw = Drawing.crispRound(gd, xa.linewidth, 1),
             ylw = Drawing.crispRound(gd, ya.linewidth, 1),
@@ -2967,9 +3058,24 @@ function lsInner(gd) {
 
     Plotly.Axes.makeClipPaths(gd);
 
-    Titles.draw(gd, 'gtitle');
+    drawMainTitle(gd);
 
     manageModeBar(gd);
 
     return gd._promises.length && Promise.all(gd._promises);
+}
+
+function drawMainTitle(gd) {
+    var fullLayout = gd._fullLayout;
+
+    Titles.draw(gd, 'gtitle', {
+        propContainer: fullLayout,
+        propName: 'title',
+        dfltName: 'Plot',
+        attributes: {
+            x: fullLayout.width / 2,
+            y: fullLayout._size.t / 2,
+            'text-anchor': 'middle'
+        }
+    });
 }

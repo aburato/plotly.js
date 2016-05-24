@@ -18,7 +18,7 @@ chart types, including 3D charts, statistical graphs, and SVG maps.
 * [Documentation](#documentation)
 * [Contributing](#contributing)
 * [Community](#community)
-* [Clients for R, Python, and MATLAB](#clients-for-r-python-and-matlab)
+* [Clients for R, Python, Node, and MATLAB](#clients-for-r-python-node-and-matlab)
 * [Creators](#creators)
 * [Copyright and license](#copyright-and-license)
 
@@ -28,26 +28,34 @@ chart types, including 3D charts, statistical graphs, and SVG maps.
 #### Download the latest release
 [Latest Release on Github](https://github.com/plotly/plotly.js/releases/)
 
+and use the plotly.js `dist` file(s). More info [here](https://github.com/plotly/plotly.js/blob/master/dist/README.md).
+
 #### Clone the repo
 ```bash
 git clone https://github.com/plotly/plotly.js.git
 ```
+
+and use the plotly.js `dist` file(s).
 
 #### Install with `npm`
 ```bash
 npm install plotly.js
 ```
 
+and use the plotly.js `dist` file(s) or require plotly.js using CommonJS as `var Plotly = require('plotly.js');`.
+
 #### Use the plotly.js CDN hosted by Fastly:
 ```html
 <!-- Latest compiled and minified plotly.js JavaScript -->
 <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-<!-- OR use a specific plotly.js release (e.g. version 1.5.0)-->
+<!-- OR use a specific plotly.js release (e.g. version 1.5.0) -->
 <script type="text/javascript" src="https://cdn.plot.ly/plotly-1.5.0.min.js"></script>
 ```
 
-Read the [Getting started page](https://plot.ly/javascript/getting-started/) for more examples.
+and use the `Plotly` object in the window scope.
+
+##### Read the [Getting started page](https://plot.ly/javascript/getting-started/) for more examples.
 
 ## Modules
 
@@ -55,15 +63,15 @@ If you would like to reduce the bundle size of plotly.js, you can create a *cust
 
 ```javascript
 // in custom-plotly.js
-var plotlyCore = require('plotly.js/lib/core');
+var Plotly = require('plotly.js/lib/core');
 
 // Load in the trace types for pie, and choropleth
-plotlyCore.register([
+Plotly.register([
     require('plotly.js/lib/pie'),
     require('plotly.js/lib/choropleth')
 ]);
 
-module.exports = plotlyCore;
+module.exports = Plotly;
 ```
 
 Then elsewhere in your code:
@@ -76,7 +84,7 @@ To learn more about the plotly.js module architecture, refer to our [modularizin
 
 #### Non-ascii characters
 
-Important: the plotly.js code base contains some non-ascii characters. Therefore, please make sure to set the `chartset` attribute to `"utf-8"` in the script tag that imports your plotly.js bundle. For example:
+Important: the plotly.js code base contains some non-ascii characters. Therefore, please make sure to set the `charset` attribute to `"utf-8"` in the script tag that imports your plotly.js bundle. For example:
 
 ```html
 <script type="text/javascript" src="my-plotly-bundle.js" charset="utf-8"></script>

@@ -50,8 +50,9 @@ exports.plot = function plotGl2d(gd) {
         // If Scene is not instantiated, create one!
         if(scene === undefined) {
             scene = new Scene2D({
-                container: gd.querySelector('.gl-container'),
                 id: subplotId,
+                graphDiv: gd,
+                container: gd.querySelector('.gl-container'),
                 staticPlot: gd._context.staticPlot,
                 plotGlPixelRatio: gd._context.plotGlPixelRatio
             },
@@ -62,7 +63,7 @@ exports.plot = function plotGl2d(gd) {
             subplotObj._scene2d = scene;
         }
 
-        scene.plot(fullSubplotData, fullLayout, gd.layout);
+        scene.plot(fullSubplotData, gd.calcdata, fullLayout, gd.layout);
     }
 };
 

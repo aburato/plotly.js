@@ -335,6 +335,23 @@ lib.noneOrAll = function(containerIn, containerOut, attrList) {
     }
 };
 
+/**
+ * Push array with unique items
+ *
+ * @param {array} array
+ *  array to be filled
+ * @param {any} item
+ *  item to be or not to be inserted
+ * @return {array}
+ *  ref to array (now possibly containing one more item)
+ *
+ */
+lib.pushUnique = function(array, item) {
+    if(item && array.indexOf(item) === -1) array.push(item);
+
+    return array;
+};
+
 lib.mergeArray = function(traceAttr, cd, cdAttr) {
     if(Array.isArray(traceAttr)) {
         var imax = Math.min(traceAttr.length, cd.length);
@@ -430,6 +447,97 @@ lib.addStyleRule = function(selector, styleString) {
     else console.warn('addStyleRule failed');
 };
 
+lib.getTranslate = function(element) {
+
+    var re = /(\btranslate\()(\d*\.?\d*)([^\d]*)(\d*\.?\d*)([^\d]*)(.*)/,
+        getter = element.attr ? 'attr' : 'getAttribute',
+        transform = element[getter]('transform') || '';
+
+    var translate = transform.replace(re, function(match, p1, p2, p3, p4) {
+        return [p2, p4].join(' ');
+    })
+    .split(' ');
+
+    return {
+        x: +translate[0] || 0,
+        y: +translate[1] || 0
+    };
+};
+
+lib.setTranslate = function(element, x, y) {
+
+    var re = /(\btranslate\(.*?\);?)/,
+        getter = element.attr ? 'attr' : 'getAttribute',
+        setter = element.attr ? 'attr' : 'setAttribute',
+        transform = element[getter]('transform') || '';
+
+    x = x || 0;
+    y = y || 0;
+
+    transform = transform.replace(re, '').trim();
+    transform += ' translate(' + x + ', ' + y + ')';
+    transform = transform.trim();
+
+    element[setter]('transform', transform);
+
+    return transform;
+};
+
 lib.isIE = function() {
     return typeof window.navigator.msSaveBlob !== 'undefined';
+};
+
+
+/**
+ * Converts a string path to an object.
+ *
+ * When given a string containing an array element, it will create a `null`
+ * filled array of the given size.
+ *
+ * @example
+ * lib.objectFromPath('nested.test[2].path', 'value');
+ * // returns { nested: { test: [null, null, { path: 'value' }]}
+ *
+ * @param   {string}    path to nested value
+ * @param   {*}         any value to be set
+ *
+ * @return {Object} the constructed object with a full nested path
+ */
+lib.objectFromPath = function(path, value) {
+    var keys = path.split('.'),
+        tmpObj,
+        obj = tmpObj = {};
+
+    for(var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var el = null;
+
+        var parts = keys[i].match(/(.*)\[([0-9]+)\]/);
+
+        if(parts) {
+            key = parts[1];
+            el = parts[2];
+
+            tmpObj = tmpObj[key] = [];
+
+            if(i === keys.length - 1) {
+                tmpObj[el] = value;
+            } else {
+                tmpObj[el] = {};
+            }
+
+            tmpObj = tmpObj[el];
+        } else {
+
+            if(i === keys.length - 1) {
+                tmpObj[key] = value;
+            } else {
+                tmpObj[key] = {};
+            }
+
+            tmpObj = tmpObj[key];
+        }
+    }
+
+    return obj;
 };

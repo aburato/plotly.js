@@ -91,7 +91,7 @@ describe('plot schema', function() {
 
     it('all subplot objects should contain _isSubplotObj', function() {
         var IS_SUBPLOT_OBJ = '_isSubplotObj',
-            astrs = ['xaxis', 'yaxis', 'scene', 'geo'],
+            astrs = ['xaxis', 'yaxis', 'scene', 'geo', 'ternary'],
             list = [];
 
         // check if the subplot objects have '_isSubplotObj'
@@ -115,7 +115,7 @@ describe('plot schema', function() {
 
     it('should convert _isLinkedToArray attributes to items object', function() {
         var astrs = [
-            'annotations', 'shapes',
+            'annotations', 'shapes', 'images',
             'xaxis.rangeselector.buttons', 'yaxis.rangeselector.buttons'
         ];
 
