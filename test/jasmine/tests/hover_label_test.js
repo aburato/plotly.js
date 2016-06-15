@@ -2,6 +2,7 @@ var d3 = require('d3');
 
 var Plotly = require('@lib/index');
 var Fx = require('@src/plots/cartesian/graph_interact');
+var constants = require('@src/plots/cartesian/constants');
 var Lib = require('@src/lib');
 
 var createGraphDiv = require('../assets/create_graph_div');
@@ -428,8 +429,8 @@ describe('hover info', function() {
     describe('textmode', function() {
 
         var data = [{
-                x: [1,2,3,4],
-                y: [2,3,4,5],
+                x: [1, 2, 3, 4],
+                y: [2, 3, 4, 5],
                 mode: 'text',
                 hoverinfo: 'text',
                 text: ['test', null, 42, undefined]
@@ -485,7 +486,7 @@ describe('hover info on stacked subplots', function() {
 
         it('responds to hover', function() {
             var gd = document.getElementById('graph');
-            Plotly.Fx.hover(gd, {xval: 3}, ['xy','xy2','xy3']);
+            Plotly.Fx.hover(gd, {xval: 3}, ['xy', 'xy2', 'xy3']);
 
             expect(gd._hoverdata.length).toEqual(2);
 
@@ -572,5 +573,82 @@ describe('hover info on stacked subplots', function() {
             expect(textNodes[2][0].innerHTML).toEqual('trace 2');
             expect(textNodes[2][1].innerHTML).toEqual('3');
         });
+    });
+});
+
+
+describe('hover info on overlaid subplots', function() {
+    'use strict';
+
+    afterEach(destroyGraphDiv);
+
+    it('should respond to hover', function(done) {
+        var mock = require('@mocks/autorange-tozero-rangemode.json');
+
+        Plotly.plot(createGraphDiv(), mock.data, mock.layout).then(function() {
+            mouseEvent('mousemove', 775, 352);
+
+            var axisText = d3.selectAll('g.axistext'),
+                hoverText = d3.selectAll('g.hovertext');
+
+            expect(axisText.size()).toEqual(1, 'with 1 label on axis');
+            expect(hoverText.size()).toEqual(2, 'with 2 labels on the overlaid pts');
+
+            expect(axisText.select('text').html()).toEqual('1', 'with correct axis label');
+
+            var textNodes = hoverText.selectAll('text');
+
+            expect(textNodes[0][0].innerHTML).toEqual('Take Rate', 'with correct hover labels');
+            expect(textNodes[0][1].innerHTML).toEqual('0.35', 'with correct hover labels');
+            expect(textNodes[1][0].innerHTML).toEqual('Revenue', 'with correct hover labels');
+            expect(textNodes[1][1].innerHTML).toEqual('2,352.5', 'with correct hover labels');
+
+        }).then(done);
+    });
+});
+
+describe('hover after resizing', function() {
+    'use strict';
+
+    afterEach(destroyGraphDiv);
+
+    function assertLabelCount(pos, cnt, msg) {
+        return new Promise(function(resolve) {
+            mouseEvent('mousemove', pos[0], pos[1]);
+
+            setTimeout(function() {
+                var hoverText = d3.selectAll('g.hovertext');
+                expect(hoverText.size()).toEqual(cnt, msg);
+
+                resolve();
+            }, constants.HOVERMINTIME);
+        });
+    }
+
+    it('should work', function(done) {
+        var data = [{ y: [2, 1, 2] }],
+            layout = { width: 600, height: 500 },
+            gd = createGraphDiv();
+
+        var pos0 = [311, 409],
+            pos1 = [407, 128];
+
+        Plotly.plot(gd, data, layout).then(function() {
+            return assertLabelCount(pos0, 1, 'before resize, showing pt label');
+        }).then(function() {
+            return assertLabelCount(pos1, 0, 'before resize, not showing blank spot');
+        }).then(function() {
+            return Plotly.relayout(gd, 'width', 500);
+        }).then(function() {
+            return assertLabelCount(pos0, 0, 'after resize, not showing blank spot');
+        }).then(function() {
+            return assertLabelCount(pos1, 1, 'after resize, showing pt label');
+        }).then(function() {
+            return Plotly.relayout(gd, 'width', 600);
+        }).then(function() {
+            return assertLabelCount(pos0, 1, 'back to initial, showing pt label');
+        }).then(function() {
+            return assertLabelCount(pos1, 0, 'back to initial, not showing blank spot');
+        }).then(done);
     });
 });

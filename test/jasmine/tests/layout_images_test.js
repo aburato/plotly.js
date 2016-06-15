@@ -69,7 +69,7 @@ describe('Layout images', function() {
     describe('drawing', function() {
 
         var gd,
-            data = [{ x: [1,2,3], y: [1,2,3] }];
+            data = [{ x: [1, 2, 3], y: [1, 2, 3] }];
 
         beforeEach(function() {
             gd = createGraphDiv();
@@ -155,7 +155,7 @@ describe('Layout images', function() {
 
     describe('when the plot is dragged', function() {
         var gd,
-            data = [{ x: [1,2,3], y: [1,2,3] }];
+            data = [{ x: [1, 2, 3], y: [1, 2, 3] }];
 
         beforeEach(function() {
             gd = createGraphDiv();
@@ -232,7 +232,7 @@ describe('Layout images', function() {
     describe('when relayout', function() {
 
         var gd,
-            data = [{ x: [1,2,3], y: [1,2,3] }];
+            data = [{ x: [1, 2, 3], y: [1, 2, 3] }];
 
         beforeEach(function(done) {
             gd = createGraphDiv();
@@ -243,7 +243,9 @@ describe('Layout images', function() {
                     y: 2,
                     sizex: 1,
                     sizey: 1
-                }]
+                }],
+                width: 500,
+                height: 400
             }).then(done);
         });
 
@@ -257,6 +259,22 @@ describe('Layout images', function() {
                 var newImg = Plotly.d3.select('image'),
                     newUrl = newImg.attr('xlink:href');
                 expect(url).not.toBe(newUrl);
+            }).then(done);
+        });
+
+        it('should update the image position if changed', function(done) {
+            var update = {
+                'images[0].x': 0,
+                'images[0].y': 1
+            };
+
+            var img = Plotly.d3.select('image');
+
+            expect([+img.attr('x'), +img.attr('y')]).toEqual([760, -120]);
+
+            Plotly.relayout(gd, update).then(function() {
+                var newImg = Plotly.d3.select('image');
+                expect([+newImg.attr('x'), +newImg.attr('y')]).toEqual([80, 100]);
             }).then(done);
         });
 

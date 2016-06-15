@@ -9,6 +9,69 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+
+## [1.13.0-d3] -- 2016-06-15
+
+### Changed
+- Aligned to plotly.js 1.13.0
+
+
+## [1.13.0] -- 2016-05-26
+
+### Added
+- Beta version of the `scattermapbox` trace type - which allows users to create
+  `mapbox-gl` maps using the plotly.js API. Note that `scattermapbox` is only
+  available through custom bundling in this release [#626]
+- Configurable log levels. All plotly.js logging is now turned off by default.
+  Use `Plotly.setPlotConfig({ logging: /* 1 or 2 */ })` to (1) display warnings
+  only or (2) all logs [#590]
+- Thorough `mesh3d` attribute descriptions [#593]
+
+### Changed
+- Generalize hover picking routine (to make more easily re-usable for other plot
+  types) [#575, #631]
+
+### Fixed
+- Fix `Plotly.toImage` and `Plotly.downloadImage` bug specific to Chrome 51 on
+  OSX [#604]
+- Fix `Plotly.downloadImage` for `svg` types [#604]
+- Fix `scattergl` opacity and connectgaps for `'lines'` mode [#589]
+- Make legend scroll bar keep its position after redraws [#584]
+- Properly handle axis-reference shapes on overlaid axes [#612]
+- Fix `Plotly.relayout` calls for `layout.images` in `{ astr: val }` notation
+  [#624]
+- Bring back correct default value for `lightposition` in surface traces (bug
+  introduced in 1.12.0) [#571]
+- Fix typos in contours descriptions in contour traces [#583]
+- Fix typos in `axis.ticktext` description [#607]
+- Fix ambiguities in histogram `nbin` descriptions [#623]
+
+
+## [1.12.0] -- 2016-05-26
+
+### Added
+- Light positions, face normal epsilon and vertex normal epsilon are now
+  configurable in `mesh3d` traces [#556]
+- Light position is now configurable in `surface` traces [#556]
+- `surface` and `mesh3d` lighting attributes are now accompanied with
+  comprehensive descriptions. [#556]
+
+### Changed
+- Plot modules are now allowed to have their own `toSVG` method for
+  subplot-specific to-svg logic [#554]
+
+### Fixed
+- gl2d plots are now functional in `core-js` environments (e.g. in babel es6
+  presets) [#569]
+- gl2d replot calls from a blank plot are now functional [#570]
+- SVG graph config argument `scrollZoom` is now again functional (bug introduced
+  in v1.10.0) [#564]
+- `layout.separators` is now honored in pie text labels [#547]
+- Heatmap `zsmooth` value `'fast'` is now functional for arbitrary layout widths
+  [#548]
+- Range sliders now respond to all axis range relayout calls [#568]
+
+
 ## [1.11.0-d3] -- 2016-05-24
 
 ### Changed

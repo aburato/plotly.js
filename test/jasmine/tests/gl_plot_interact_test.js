@@ -245,8 +245,8 @@ describe('Test gl plot interactions', function() {
             var originalX = [-0.022068095838587643, 5.022068095838588];
             var originalY = [-0.21331533513634046, 5.851205650049042];
 
-            var newX = [-0.23224043715846995,4.811895754518705];
-            var newY = [-1.2962655110623016,4.768255474123081];
+            var newX = [-0.23224043715846995, 4.811895754518705];
+            var newY = [-1.2962655110623016, 4.768255474123081];
 
             expect(gd.layout.xaxis.range).toBeCloseToArray(originalX, precision);
             expect(gd.layout.yaxis.range).toBeCloseToArray(originalY, precision);
@@ -531,15 +531,15 @@ describe('Test gl plot interactions', function() {
 
             var mockData = [{
                 type: 'scattergl',
-                x: [1,2,3],
-                y: [1,2,3]
+                x: [1, 2, 3],
+                y: [1, 2, 3]
             }];
 
             Plotly.plot(gd, mockData).then(function() {
                 expect(gd._fullLayout._plots.xy._scene2d.glplot).toBeDefined();
 
                 Plots.cleanPlot([], {}, gd._fullData, gd._fullLayout);
-                expect(gd._fullLayout._plots.xy._scene2d.glplot).toBe(null);
+                expect(gd._fullLayout._plots).toEqual({});
 
                 done();
             });
@@ -548,24 +548,23 @@ describe('Test gl plot interactions', function() {
 });
 
 describe('Test gl plot side effects', function() {
+    var gd;
+
+    beforeEach(function() {
+        gd = createGraphDiv();
+    });
+
+    afterEach(destroyGraphDiv);
+
     describe('when present with rangeslider', function() {
-
-        var gd;
-
-        beforeEach(function() {
-            gd = createGraphDiv();
-        });
-
-        afterEach(destroyGraphDiv);
-
         it('should not draw the rangeslider', function(done) {
             var data = [{
-                x: [1,2,3],
-                y: [2,3,4],
+                x: [1, 2, 3],
+                y: [2, 3, 4],
                 type: 'scattergl'
             }, {
-                x: [1,2,3],
-                y: [2,3,4],
+                x: [1, 2, 3],
+                y: [2, 3, 4],
                 type: 'scatter'
             }];
 
@@ -579,5 +578,40 @@ describe('Test gl plot side effects', function() {
                 done();
             });
         });
+    });
+
+    it('should be able to replot from a blank graph', function(done) {
+        function countCanvases(cnt) {
+            var nodes = d3.selectAll('canvas');
+            expect(nodes.size()).toEqual(cnt);
+        }
+
+        var data = [{
+            type: 'scattergl',
+            x: [1, 2, 3],
+            y: [2, 1, 2]
+        }];
+
+        Plotly.plot(gd, []).then(function() {
+            countCanvases(0);
+
+            return Plotly.plot(gd, data);
+        }).then(function() {
+            countCanvases(1);
+
+            return Plotly.purge(gd);
+        }).then(function() {
+            countCanvases(0);
+
+            return Plotly.plot(gd, data);
+        }).then(function() {
+            countCanvases(1);
+
+            return Plotly.deleteTraces(gd, [0]);
+        }).then(function() {
+            countCanvases(0);
+
+            return Plotly.purge(gd);
+        }).then(done);
     });
 });
