@@ -12,6 +12,6 @@ var saneTopojson = require('sane-topojson');
 
 
 // package version injected by `npm run preprocess`
-exports.version = '1.13.0-d3';
+exports.version = '1.13.0-d4';
 
 exports.topojson = saneTopojson;

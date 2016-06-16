@@ -1,5 +1,5 @@
 /**
-* plotly.js v1.13.0-d3
+* plotly.js v1.13.0-d4
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -22041,6 +22041,9 @@ Titles.draw = function(gd, titleClass, options) {
         el.remove();
     }
     el.classed('js-placeholder', isplaceholder);
+
+    // ABURATO: storing the title element inside its containing axis object
+    cont._titleElement = el;
 };
 
 },{"../../lib":89,"../../lib/svg_text_utils":100,"../../plotly":106,"../../plots/plots":129,"../color":18,"../drawing":41,"d3":7,"fast-isnumeric":10}],82:[function(require,module,exports){
@@ -22085,7 +22088,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.13.0-d3';
+exports.version = '1.13.0-d4';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -30721,6 +30724,42 @@ axes.doTicks = function(gd, axid, skipTitle) {
             return axid + ' done';
         }
 
+        function adjustAutoMarginForLabels() {
+            var axBB = ax._boundingBox;
+            var shiftDimension;
+            var marginDimension;
+
+            if (ax._id.charAt(0) === "x") {
+
+                shiftDimension = "height";
+                marginDimension = "b";
+
+            } else if (ax._id.charAt(0) === "y") {
+
+                shiftDimension = "width";
+                marginDimension = ax._id.charAt(1) !== "2" ? "l" : "r";
+            }
+
+            if (shiftDimension && marginDimension) {
+                var shiftAmount = axBB[shiftDimension];
+                if (ax._titleElement) {
+                    var titleBB = ax._titleElement.node().getBoundingClientRect();
+                    shiftAmount += (titleBB[shiftDimension] + 2);
+                }          
+                var shiftMargins = {
+                    x: 0,
+                    y: 0,
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 0
+                };
+                shiftMargins[marginDimension] = shiftAmount;
+                Plotly.Plots.autoMargin(gd, ax._name, shiftMargins);
+            }
+
+        }
+
         function calcBoundingBox() {
             ax._boundingBox = container.node().getBoundingClientRect();
         }
@@ -30728,8 +30767,10 @@ axes.doTicks = function(gd, axid, skipTitle) {
         var done = Lib.syncOrAsync([
             allLabelsReady,
             fixLabelOverlaps,
-            calcBoundingBox
+            calcBoundingBox,
+            adjustAutoMarginForLabels
         ]);
+        
         if(done && done.then) gd._promises.push(done);
         return done;
     }
