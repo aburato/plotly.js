@@ -225,4 +225,7 @@ Titles.draw = function(gd, titleClass, options) {
         el.remove();
     }
     el.classed('js-placeholder', isplaceholder);
+
+    // ABURATO: storing the title element inside its containing axis object
+    cont._titleElement = el;
 };
