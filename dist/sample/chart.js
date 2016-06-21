@@ -26,24 +26,29 @@ var trace2 = {
 var data = [trace1, trace2];
 
 var layout = {
-    title: '2013 Sales Report',
+    title: "I AM THE LOOOOOONG CHART TITLE",
     margin: {
         l: 10,
         b: 10,
+        t: 10,
+        r: 10,
         autoexpand: true
     },
     xaxis: {
-        title: "foffolo"
+        title: "xaxis title"
     },
     yaxis: {
-        title: "trombolomeo"
+        title: "yaxis1 long long title"
     },
     yaxis2: {
-        title: 'yaxis2 title',
+        title: 'yaxis2 title, it is very very long',
         overlaying: 'y',
         side: 'right'
     },
-    barmode: 'group'
+    barmode: 'group',
+    legend: {
+        x: 1.2
+    }
 };
 
 Plotly.newPlot('myDiv', data, layout);

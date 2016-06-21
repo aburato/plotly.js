@@ -3083,4 +3083,17 @@ function drawMainTitle(gd) {
             'text-anchor': 'middle'
         }
     });
+
+    if (fullLayout._titleElement) {
+        var titleBB = fullLayout._titleElement.node().getBoundingClientRect();        
+        var shiftMargins = {
+            x: 0,
+            y: 1,
+            l: 0,
+            r: 0,
+            b: 0,
+            t: titleBB.height + 2
+        };
+        Plotly.Plots.autoMargin(gd, "chart_title", shiftMargins);
+    }
 }
