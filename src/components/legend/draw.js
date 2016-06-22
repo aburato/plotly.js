@@ -421,6 +421,7 @@ function setupTraceToggle(g, gd) {
 
             newVisible = trace.visible === true ? 'legendonly' : true;
             Plotly.restyle(gd, 'visible', newVisible, traceIndicesInGroup);
+            gd.emit('plotly_legend_toggleVisible', {traceIndices: traceIndicesInGroup, visible: newVisible});
         }
     });
 }

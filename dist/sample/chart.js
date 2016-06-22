@@ -1,4 +1,4 @@
-var categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Junabcdefghijklmnopqrstuvxyz12345678', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+var categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Junabcdefdfsdfsdfsdfsdfsdfsdfghijklmn', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 var trace1 = {
     x: categories,
@@ -26,7 +26,7 @@ var trace2 = {
 var data = [trace1, trace2];
 
 var layout = {
-    title: "I AM THE LOOOOOONG CHART TITLE",
+    title: "I AM THE LOOOOOONG CHART TITLE fgdgfd gdflkghrdf;gh dfgjhdf;gjdfghdfjgheriuterhtoieruterityer tieryteiru tyer",
     margin: {
         l: 10,
         b: 10,
@@ -46,9 +46,7 @@ var layout = {
         side: 'right'
     },
     barmode: 'group',
-    legend: {
-        x: 1.2
-    }
+    showlegend: true
 };
 
 Plotly.newPlot('myDiv', data, layout);

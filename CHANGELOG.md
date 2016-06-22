@@ -9,6 +9,12 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.13.0-d5] -- 2016-06-22
+
+### Changed
+- Automargins takes into account axes labels and titles
+- Fixed regression, reintroduced plotly_legend_toggleVisible
+
 
 ## [1.13.0-d3] -- 2016-06-15
 

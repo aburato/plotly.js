@@ -1,5 +1,5 @@
 /**
-* plotly.js v1.13.0-d4
+* plotly.js v1.13.0-d5
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -18242,6 +18242,7 @@ function setupTraceToggle(g, gd) {
 
             newVisible = trace.visible === true ? 'legendonly' : true;
             Plotly.restyle(gd, 'visible', newVisible, traceIndicesInGroup);
+            gd.emit('plotly_legend_toggleVisible', {traceIndices: traceIndicesInGroup, visible: newVisible});
         }
     });
 }
@@ -22088,7 +22089,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.13.0-d4';
+exports.version = '1.13.0-d5';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -28333,6 +28334,19 @@ function drawMainTitle(gd) {
             'text-anchor': 'middle'
         }
     });
+
+    if (fullLayout._titleElement) {
+        var titleBB = fullLayout._titleElement.node().getBoundingClientRect();        
+        var shiftMargins = {
+            x: 0,
+            y: 1,
+            l: 0,
+            r: 0,
+            b: 0,
+            t: titleBB.height + 2
+        };
+        Plotly.Plots.autoMargin(gd, "chart_title", shiftMargins);
+    }
 }
 
 },{"../components/color":18,"../components/drawing":41,"../components/errorbars":47,"../components/images":53,"../components/legend":61,"../components/modebar/manage":65,"../components/rangeselector":72,"../components/rangeslider":77,"../components/shapes":80,"../components/titles":81,"../constants/xmlns_namespaces":82,"../lib":89,"../lib/events":87,"../lib/queue":96,"../plotly":106,"../plots/cartesian/graph_interact":116,"../plots/plots":129,"d3":7,"fast-isnumeric":10,"gl-mat4/fromQuat":11}],102:[function(require,module,exports){
@@ -30588,6 +30602,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 return axside === 'right' ? 'start' : 'end';
             };
         }
+        var maxLabelLength = 20;
         var maxFontSize = 0,
             autoangle = 0,
             labelsReady = [];
@@ -30597,6 +30612,9 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 // alter later
                 .attr('text-anchor', 'middle')
                 .each(function(d) {
+                    if (d.text.length > maxLabelLength) {
+                        d.text = d.text.substr(0, maxLabelLength-2) + '…';
+                    }
                     var thisLabel = d3.select(this),
                         newPromise = gd._promises.length;
                     thisLabel
@@ -30728,16 +30746,24 @@ axes.doTicks = function(gd, axid, skipTitle) {
             var axBB = ax._boundingBox;
             var shiftDimension;
             var marginDimension;
+            var x = 0, y = 0;
 
             if (ax._id.charAt(0) === "x") {
-
                 shiftDimension = "height";
-                marginDimension = "b";
-
+                if (ax._id.charAt(1) === "2") {
+                    y = 1;
+                    marginDimension = "t";
+                } else {
+                    marginDimension = "b";
+                }
             } else if (ax._id.charAt(0) === "y") {
-
                 shiftDimension = "width";
-                marginDimension = ax._id.charAt(1) !== "2" ? "l" : "r";
+                if (ax._id.charAt(1) === "2") {
+                    x = 1;
+                    marginDimension = "r";
+                } else {
+                    marginDimension = "l";
+                }
             }
 
             if (shiftDimension && marginDimension) {
@@ -30745,10 +30771,15 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 if (ax._titleElement) {
                     var titleBB = ax._titleElement.node().getBoundingClientRect();
                     shiftAmount += (titleBB[shiftDimension] + 2);
-                }          
+                }
+                
+                var maxAmount = gd._fullLayout[shiftDimension] * 0.4;
+
+                shiftAmount = Math.min(shiftAmount, maxAmount);
+
                 var shiftMargins = {
-                    x: 0,
-                    y: 0,
+                    x: x,
+                    y: y,
                     l: 0,
                     r: 0,
                     b: 0,
@@ -30757,7 +30788,6 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 shiftMargins[marginDimension] = shiftAmount;
                 Plotly.Plots.autoMargin(gd, ax._name, shiftMargins);
             }
-
         }
 
         function calcBoundingBox() {
