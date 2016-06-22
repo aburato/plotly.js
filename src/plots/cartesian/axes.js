@@ -1627,16 +1627,24 @@ axes.doTicks = function(gd, axid, skipTitle) {
             var axBB = ax._boundingBox;
             var shiftDimension;
             var marginDimension;
+            var x = 0, y = 0;
 
             if (ax._id.charAt(0) === "x") {
-
                 shiftDimension = "height";
-                marginDimension = "b";
-
+                if (ax._id.charAt(1) === "2") {
+                    y = 1;
+                    marginDimension = "t";
+                } else {
+                    marginDimension = "b";
+                }
             } else if (ax._id.charAt(0) === "y") {
-
                 shiftDimension = "width";
-                marginDimension = ax._id.charAt(1) !== "2" ? "l" : "r";
+                if (ax._id.charAt(1) === "2") {
+                    x = 1;
+                    marginDimension = "r";
+                } else {
+                    marginDimension = "l";
+                }
             }
 
             if (shiftDimension && marginDimension) {
@@ -1646,8 +1654,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
                     shiftAmount += (titleBB[shiftDimension] + 2);
                 }          
                 var shiftMargins = {
-                    x: 0,
-                    y: 0,
+                    x: x,
+                    y: y,
                     l: 0,
                     r: 0,
                     b: 0,
@@ -1656,7 +1664,6 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 shiftMargins[marginDimension] = shiftAmount;
                 Plotly.Plots.autoMargin(gd, ax._name, shiftMargins);
             }
-
         }
 
         function calcBoundingBox() {
