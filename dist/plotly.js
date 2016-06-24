@@ -1,5 +1,5 @@
 /**
-* plotly.js v1.13.0-d5
+* plotly.js v1.13.0-d6
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -13673,6 +13673,10 @@ color.defaultLine = colorAttrs.defaultLine;
 color.lightLine = colorAttrs.lightLine;
 color.background = colorAttrs.background;
 
+color.overrideDefaults = function(ca) {
+    color.defaults = ca;
+}
+
 color.tinyRGB = function(tc) {
     var c = tc.toRgb();
     return 'rgb(' + Math.round(c.r) + ', ' +
@@ -22089,7 +22093,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.13.0-d5';
+exports.version = '1.13.0-d6';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -22117,6 +22121,9 @@ exports.Fx = Plotly.Fx;
 exports.Snapshot = Plotly.Snapshot;
 exports.PlotSchema = Plotly.PlotSchema;
 exports.Queue = Plotly.Queue;
+
+// Unofficial color defaults override
+exports.overrideColorDefaults = Plotly.Color.overrideDefaults;
 
 // export d3 used in the bundle
 exports.d3 = require('d3');

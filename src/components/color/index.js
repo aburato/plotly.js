@@ -20,6 +20,10 @@ color.defaultLine = colorAttrs.defaultLine;
 color.lightLine = colorAttrs.lightLine;
 color.background = colorAttrs.background;
 
+color.overrideDefaults = function(ca) {
+    color.defaults = ca;
+}
+
 color.tinyRGB = function(tc) {
     var c = tc.toRgb();
     return 'rgb(' + Math.round(c.r) + ', ' +

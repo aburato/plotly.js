@@ -9,6 +9,11 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.13.0-d6] -- 2016-06-24
+
+### Changed
+- Added Plotly.overrideColorDefaults(color[]) to API.
+
 ## [1.13.0-d5] -- 2016-06-22
 
 ### Changed
