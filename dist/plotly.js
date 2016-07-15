@@ -1,5 +1,5 @@
 /**
-* plotly.js v1.14.2-d6
+* plotly.js v1.14.2-d7
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -22349,7 +22349,25 @@ Titles.draw = function(gd, titleClass, options) {
             });
     }
 
-    if(gd._context.editable) {
+    // ABURATO: main title-specific edit settings
+    var isEditable = gd._context.editable;
+    
+    if (isEditable) {
+        if (cont === fullLayout) {
+            // MAIN TITLE
+            isEditable = gd._context.editableMainTitle;
+        } else if (cont === fullLayout.xaxis) {
+            isEditable = gd._context.editableAxisX;
+        } else if (cont === fullLayout.yaxis) {
+            isEditable = gd._context.editableAxisY;
+        } else if (cont === fullLayout.yaxis2) {
+            isEditable = gd._context.editableAxisY2;
+        } else if (cont === fullLayout.xaxis2) {
+            isEditable = gd._context.editableAxisX2;
+        }
+    }
+
+    if(isEditable) {
         if(!txt) setPlaceholder();
 
         el.call(svgTextUtils.makeEditable)
@@ -22418,7 +22436,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.14.2-d6';
+exports.version = '1.14.2-d7';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -28720,6 +28738,21 @@ module.exports = {
 
     // we can edit titles, move annotations, etc
     editable: false,
+
+    // if editable is set to true, this can be used to deactivate main title editing ONLY. 
+    editableMainTitle: true,
+
+    // if editable is set to true, this can be used to deactivate X axis title editing ONLY. 
+    editableAxisX: true,
+
+    // if editable is set to true, this can be used to deactivate X2 axis title editing ONLY. 
+    editableAxisX2: true,
+
+    // if editable is set to true, this can be used to deactivate Y axis title editing ONLY. 
+    editableAxisY: true,
+
+    // if editable is set to true, this can be used to deactivate Y2 axis title editing ONLY. 
+    editableAxisY2: true,
 
     // plot will respect layout.autosize=true and infer its container size
     autosizable: false,

@@ -26,6 +26,21 @@ module.exports = {
     // we can edit titles, move annotations, etc
     editable: false,
 
+    // if editable is set to true, this can be used to deactivate main title editing ONLY. 
+    editableMainTitle: true,
+
+    // if editable is set to true, this can be used to deactivate X axis title editing ONLY. 
+    editableAxisX: true,
+
+    // if editable is set to true, this can be used to deactivate X2 axis title editing ONLY. 
+    editableAxisX2: true,
+
+    // if editable is set to true, this can be used to deactivate Y axis title editing ONLY. 
+    editableAxisY: true,
+
+    // if editable is set to true, this can be used to deactivate Y2 axis title editing ONLY. 
+    editableAxisY2: true,
+
     // plot will respect layout.autosize=true and infer its container size
     autosizable: false,
 

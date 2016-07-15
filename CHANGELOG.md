@@ -9,6 +9,11 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.14.2-d7] -- 2016-07-15
+
+### Changed
+- Can enable title editing independently for main Title, X, X2, Y, Y2 axes.
+
 
 ## [1.14.2-d6] -- 2016-07-15
 

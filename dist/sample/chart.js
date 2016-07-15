@@ -18,7 +18,6 @@ var trace2 = {
 var data = [trace1, trace2];
 
 var layout = {
-    title: "I AM THE LOOOOOONG CHART TITLE fgdgfd gdflkghrdf;gh dfgjhdf;gjdfghdfjgheriuterhtoieruterityer tieryteiru tyer",
     margin: {
         l: 10,
         b: 10,
@@ -27,10 +26,10 @@ var layout = {
         autoexpand: true
     },
     xaxis: {
-        title: "xaxis title"
+        
     },
     yaxis: {
-        title: "yaxis1 long long title"
+        
     },
     yaxis2: {
         title: 'yaxis2 title, it is very very long',
@@ -43,4 +42,4 @@ var layout = {
 
 Plotly.overrideColorDefaults(["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]);
 
-Plotly.newPlot('myDiv', data, layout);
+Plotly.newPlot('myDiv', data, layout, {displayModeBar: false, editable: true, editableMainTitle: false, editableAxisX: false, editableAxisY: false});
