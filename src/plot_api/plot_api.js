@@ -835,6 +835,10 @@ Plotly.redraw = function(gd) {
  */
 Plotly.newPlot = function(gd, data, layout, config) {
     gd = getGraphDiv(gd);
+
+    // remove gl contexts
+    Plots.cleanPlot([], {}, gd._fullData || {}, gd._fullLayout || {});
+
     Plots.purge(gd);
     return Plotly.plot(gd, data, layout, config);
 };
@@ -1590,7 +1594,9 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
         'outsidetextfont.size', 'outsidetextfont.family', 'outsidetextfont.color',
         'hole', 'scalegroup', 'domain', 'domain.x', 'domain.y',
         'domain.x[0]', 'domain.x[1]', 'domain.y[0]', 'domain.y[1]',
-        'tilt', 'tiltaxis', 'depth', 'direction', 'rotation', 'pull'
+        'tilt', 'tiltaxis', 'depth', 'direction', 'rotation', 'pull',
+        'line.showscale', 'line.cauto', 'line.autocolorscale', 'line.reversescale',
+        'marker.line.showscale', 'marker.line.cauto', 'marker.line.autocolorscale', 'marker.line.reversescale'
     ];
     for(i = 0; i < traces.length; i++) {
         if(Plots.traceIs(gd._fullData[traces[i]], 'box')) {
@@ -1612,6 +1618,8 @@ Plotly.restyle = function restyle(gd, astr, val, traces) {
     var replotAttrs = [
         'zmin', 'zmax', 'zauto',
         'marker.cmin', 'marker.cmax', 'marker.cauto',
+        'line.cmin', 'line.cmax',
+        'marker.line.cmin', 'marker.line.cmax',
         'contours.start', 'contours.end', 'contours.size',
         'contours.showlines',
         'line', 'line.smoothing', 'line.shape',
@@ -2420,6 +2428,9 @@ Plotly.relayout = function relayout(gd, astr, val) {
         if(domodebar) {
             var subplotIds;
             manageModeBar(gd);
+
+            Plotly.Fx.supplyLayoutDefaults(gd.layout, fullLayout, gd._fullData);
+            Plotly.Fx.init(gd);
 
             subplotIds = Plots.getSubplotIds(fullLayout, 'gl3d');
             for(i = 0; i < subplotIds.length; i++) {
