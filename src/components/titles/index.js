@@ -211,13 +211,13 @@ Titles.draw = function(gd, titleClass, options) {
             // MAIN TITLE
             isEditable = gd._context.editableMainTitle;
         } else if (cont === fullLayout.xaxis) {
-            isEditable = gd._context.editableAxisX;
+            isEditable = gd._context.editableAxisXTitle;
         } else if (cont === fullLayout.yaxis) {
-            isEditable = gd._context.editableAxisY;
+            isEditable = gd._context.editableAxisYTitle;
         } else if (cont === fullLayout.yaxis2) {
-            isEditable = gd._context.editableAxisY2;
+            isEditable = gd._context.editableAxisY2Title;
         } else if (cont === fullLayout.xaxis2) {
-            isEditable = gd._context.editableAxisX2;
+            isEditable = gd._context.editableAxisX2Title;
         }
     }
 
