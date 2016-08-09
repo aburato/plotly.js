@@ -157,7 +157,8 @@ module.exports = function plot(gd, cdpie) {
                 sliceTop
                     .on('mouseover', handleMouseOver)
                     .on('mouseout', handleMouseOut)
-                    .on('click', handleClick);
+                    .on('click', handleClick)
+                    .on('contextmenu', handleClick);
 
                 if(trace.pull) {
                     var pull = +(Array.isArray(trace.pull) ? trace.pull[pt.i] : trace.pull) || 0;
