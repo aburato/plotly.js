@@ -9,6 +9,12 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.14.2-d9] -- 2016-08-09
+
+### Changed
+- Peter: added right click detection in PIEs
+
+
 ## [1.14.2-d7] -- 2016-07-15
 
 ### Changed

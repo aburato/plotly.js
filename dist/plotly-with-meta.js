@@ -1,5 +1,5 @@
 /**
-* plotly.js v1.14.2-d8
+* plotly.js v1.14.2-d9
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -22860,7 +22860,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.14.2-d8';
+exports.version = '1.14.2-d9';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -41667,7 +41667,8 @@ module.exports = function plot(gd, cdpie) {
                 sliceTop
                     .on('mouseover', handleMouseOver)
                     .on('mouseout', handleMouseOut)
-                    .on('click', handleClick);
+                    .on('click', handleClick)
+                    .on('contextmenu', handleClick);
 
                 if(trace.pull) {
                     var pull = +(Array.isArray(trace.pull) ? trace.pull[pt.i] : trace.pull) || 0;
