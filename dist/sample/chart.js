@@ -1,21 +1,29 @@
-var categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Junabcdefdfsdfsdfsdfsdfsdfsdfghijklmn', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+var data = [];
 
-var trace1 = {
-    x: categories,
-    y: [20, 14, 25, 16, 18, 22, 19, 15, 12, 16, 14, 17],
-    type: 'bar',
-    name: 'Primary Product'
+// var numOfPoints = 3;
+// var numOfTraces = 6;
+var bargap = 0.4;
 
-};
+// var categories = [];
 
-var trace2 = {
-    x: categories,
-    y: [19, 14, 22, 14, 16, 19, 15, 14, 10, 12, 12, 16],
-    type: 'bar',
-    name: 'Secondary Product'
-};
+// for (p = 0; p < numOfPoints; p++) {
+//     categories.push("cat " + p);
+// }
 
-var data = [trace1, trace2];
+// for (var t = 0; t < numOfTraces; t++) {
+//     var values = [];
+//     for (p = 0; p < numOfPoints; p++) {
+//         values.push(Math.round((Math.random() - 0.5) * 100));
+//     }
+//     var trace = {
+//         x: categories,
+//         y: values,
+//         type: "bar",
+//         name: "Series " + t
+//     }
+
+//     data.push(trace);
+// }
 
 var layout = {
     margin: {
@@ -25,21 +33,70 @@ var layout = {
         r: 10,
         autoexpand: true
     },
-    xaxis: {
-        
-    },
-    yaxis: {
-        
-    },
-    yaxis2: {
-        title: 'yaxis2 title, it is very very long',
-        overlaying: 'y',
-        side: 'right'
-    },
     barmode: 'group',
-    showlegend: true
+    bargroupgap: 0.02,
+    bargap: bargap,
+    showlegend: true,
 };
 
-Plotly.overrideColorDefaults(["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]);
+data = [
+    {
+        x: ["D", "A", "C"],
+        y: [40, 10, 30],
+        type: "bar"
+    },
+    {
+        x: ["B", "A", "D"],
+        y: [-20, -10, -40],
+        type: "bar"
+    },
+];
 
-Plotly.newPlot('myDiv', data, layout, {displayModeBar: false, editable: true, editableMainTitle: false, editableAxisX: false, editableAxisY: false});
+//Plotly.overrideColorDefaults(["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]);
+
+Plotly.newPlot('myDiv', data, layout, { displayModeBar: true, editable: true, editableMainTitle: false, editableAxisX: false, editableAxisY: false });
+
+var annotations = [];
+var delta = (1 - bargap) / data.length;
+var pivot = Math.floor(data.length / 2);
+var d = document.getElementById('myDiv');
+var categories = d._fullLayout.xaxis._categories;
+
+// console.log("delta: " + delta);
+
+for (var si = 0; si < data.length; si++) {
+    var offset = si - pivot;
+    if ((data.length % 2) === 0) {
+        offset += 0.5;
+    }
+    for (var ci = 0; ci < categories.length; ci++) {
+        var cat = categories[ci];
+        var aci = data[si].x.indexOf(cat);
+        if (aci >= 0) {
+            var x = ci + offset * delta;
+            var y = data[si].y[aci];
+            var a = {
+                x: x,
+                y: y,
+                text: y,
+                xanchor: 'center',
+                yanchor: y >= 0 ? 'bottom' : 'top',
+                showarrow: false
+            };
+            annotations.push(a);
+        }
+    }
+}
+
+var a = JSON.stringify(annotations);
+
+Plotly.relayout('myDiv', { hovermode: "closest", annotations: annotations });
+
+var myPlot = document.getElementById('myDiv');
+myPlot.on('plotly_hover', function (eventData) {
+    eventData.points.forEach(function (p) {
+        console.log('pixel position', p.xaxis.c2p(p.xaxis.d2c(p.x)), p.yaxis.l2p(p.y));
+    });
+});
+
+// console.log("Annotations: " + a);

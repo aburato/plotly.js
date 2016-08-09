@@ -1,13 +1,34 @@
 <head>
   <meta charset="utf-8" />
+  <style type="text/css">
+    .hoverlayer .hovertext > path {
+      fill: grey !important;
+      stroke-width: 2px !important;
+      stroke: grey !important;
+      shape-rendering: crispedges;
+    }
+    
+    .hoverlayer .hovertext > rect {
+      fill: grey !important;
+      fill-opacity: 1 !important;
+      shape-rendering: crispedges;
+    }
+    
+    .hoverlayer .hovertext > text {
+      fill: white !important;
+    }
+  </style>
 </head>
 
 <body style="background: gray">
 
-  <div id="myDiv" style="width: 500px; height: 500px;">
+  <div id="myDiv" style="width: 100%; height: 500px;">
     <!-- Plotly chart will be drawn inside this DIV -->
   </div>
 
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+    crossorigin="anonymous"></script>
   <script type="text/javascript" src="../plotly.js" charset="utf-8"></script>
-  <script type="text/javascript" src="chart.js" charset="utf-8"></script>
+  <!--<script type="text/javascript" src="chart.js" charset="utf-8"></script>-->
+  <script type="text/javascript" src="scatterChart.js" charset="utf-8"></script>
 </body>
