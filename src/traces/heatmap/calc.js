@@ -29,6 +29,7 @@ module.exports = function calc(gd, trace) {
         ya = Axes.getFromId(gd, trace.yaxis || 'y'),
         isContour = Plots.traceIs(trace, 'contour'),
         isHist = Plots.traceIs(trace, 'histogram'),
+        isGL2D = Plots.traceIs(trace, 'gl2d'),
         zsmooth = isContour ? 'best' : trace.zsmooth,
         x,
         x0,
@@ -112,8 +113,11 @@ module.exports = function calc(gd, trace) {
         yIn = trace.ytype === 'scaled' ? '' : trace.y,
         yArray = makeBoundArray(trace, yIn, y0, dy, z.length, ya);
 
-    Axes.expand(xa, xArray);
-    Axes.expand(ya, yArray);
+    // handled in gl2d convert step
+    if(!isGL2D) {
+        Axes.expand(xa, xArray);
+        Axes.expand(ya, yArray);
+    }
 
     var cd0 = {x: xArray, y: yArray, z: z};
 
@@ -219,9 +223,9 @@ function makeBoundArray(trace, arrayIn, v0In, dvIn, numbricks, ax) {
     else {
         dv = dvIn || 1;
 
-        if(Array.isArray(arrayIn) && arrayIn.length === 1) v0 = arrayIn[0];
+        if(isHist || ax.type === 'category') v0 = v0In || 0;
+        else if(Array.isArray(arrayIn) && arrayIn.length === 1) v0 = arrayIn[0];
         else if(v0In === undefined) v0 = 0;
-        else if(isHist || ax.type === 'category') v0 = v0In;
         else v0 = ax.d2c(v0In);
 
         for(i = (isContour || isGL2D) ? 0 : -0.5; i < numbricks; i++) {

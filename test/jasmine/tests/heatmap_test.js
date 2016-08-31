@@ -51,13 +51,13 @@ describe('heatmap supplyDefaults', function() {
             type: 'heatmap',
             z: [[1, 2], []]
         };
-        traceOut = Plots.supplyDataDefaults(traceIn, 0, layout);
+        traceOut = Plots.supplyTraceDefaults(traceIn, 0, layout);
 
         traceIn = {
             type: 'heatmap',
             z: [[], [1, 2], [1, 2, 3]]
         };
-        traceOut = Plots.supplyDataDefaults(traceIn, 0, layout);
+        traceOut = Plots.supplyTraceDefaults(traceIn, 0, layout);
         expect(traceOut.visible).toBe(true);
         expect(traceOut.visible).toBe(true);
     });
@@ -301,6 +301,18 @@ describe('heatmap calc', function() {
         expect(out.x).toBeCloseToArray([-0.5, 0.5, 1.5, 2.5]);
         expect(out.y).toBeCloseToArray([-0.5, 0.5, 1.5]);
         expect(out.z).toBeCloseTo2DArray([[1, 2, 3], [3, 1, 2]]);
+    });
+
+    it('should handle the category case', function() {
+        var out = _calc({
+            x: ['a', 'b', 'c'],
+            y: ['z'],
+            z: [[17, 18, 19]]
+        });
+
+        expect(out.x).toBeCloseToArray([-0.5, 0.5, 1.5, 2.5]);
+        expect(out.y).toBeCloseToArray([-0.5, 0.5]);
+        expect(out.z).toBeCloseTo2DArray([[17, 18, 19]]);
     });
 });
 

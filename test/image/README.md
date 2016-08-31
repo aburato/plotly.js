@@ -15,6 +15,12 @@ Boot up docker machine (named `default`):
 docker-machine start default
 ```
 
+If this is your first time, you'll need to create the machine instead:
+
+```bash
+docker-machine create --driver virtualbox default
+```
+
 Set up the docker environment for `docker-compose`:
 
 ```bash
@@ -40,8 +46,8 @@ as listed on [hub.docker.com](https://hub.docker.com/r/plotly/testbed/tags/) and
 
 ### Step 2: Run the image tests
 
-The image testing docker container allows plotly.js developers to ([A](#a-run-image-comparison-tests) run image
-comparison tests, ([B](#b-run-image-export-tests) run image export tests and ([C](#c-generate-or-update-existing-baseline-image)) generate baseline
+The image testing docker container allows plotly.js developers to ([A](#a-run-image-comparison-tests)) run image
+comparison tests, ([B](#b-run-image-export-tests)) run image export tests and ([C](#c-generate-or-update-existing-baseline-image)) generate baseline
 images.
 
 **IMPORTANT:** the image tests scripts do **not** bundle the source files before
@@ -117,7 +123,7 @@ which generates a baseline png image in [`test/image/baselines`][baselines].
 To update existing baseline image(s), run
 
 ```bash
-npm run basline -- <glob-of-mocks-to-update>
+npm run baseline -- <glob-of-mocks-to-update>
 ```
 
 

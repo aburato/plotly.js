@@ -7,6 +7,12 @@ build/*
 !build/README.md
 
 npm-debug.log*
+
+.*
+!/.gitignore
+!/.npmignore
+!/.eslintrc
+!/.eslintignore
 _ReSharper.Caches
 bin
 obj

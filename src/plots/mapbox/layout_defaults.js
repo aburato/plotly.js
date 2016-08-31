@@ -25,6 +25,7 @@ module.exports = function supplyLayoutDefaults(layoutIn, layoutOut, fullData) {
 };
 
 function handleDefaults(containerIn, containerOut, coerce) {
+    coerce('accesstoken');
     coerce('style');
     coerce('center.lon');
     coerce('center.lat');
@@ -49,8 +50,10 @@ function handleLayerDefaults(containerIn, containerOut) {
     }
 
     for(var i = 0; i < layersIn.length; i++) {
-        layerIn = layersIn[i] || {};
+        layerIn = layersIn[i];
         layerOut = {};
+
+        if(!Lib.isPlainObject(layerIn)) continue;
 
         var sourceType = coerce('sourcetype');
         coerce('source');
@@ -85,6 +88,7 @@ function handleLayerDefaults(containerIn, containerOut) {
             coerce('symbol.textposition');
         }
 
+        layerOut._index = i;
         layersOut.push(layerOut);
     }
 }

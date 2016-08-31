@@ -13,13 +13,9 @@ var customMatchers = require('../assets/custom_matchers');
 
 var MAPBOX_ACCESS_TOKEN = require('@build/credentials.json').MAPBOX_ACCESS_TOKEN;
 var TRANSITION_DELAY = 500;
+var MOUSE_DELAY = 100;
 
 var noop = function() {};
-
-// until it is part of the main plotly.js bundle
-Plotly.register(
-    require('@lib/scattermapbox')
-);
 
 Plotly.setPlotConfig({
     mapboxAccessToken: MAPBOX_ACCESS_TOKEN
@@ -54,6 +50,24 @@ describe('mapbox defaults', function() {
         expect(layoutOut.mapbox._input).toBe(mapbox);
     });
 
+    it('should accept both string and object style', function() {
+        var mapboxStyleJSON = {
+            id: 'cdsa213wqdsa',
+            owner: 'johnny'
+        };
+
+        layoutIn = {
+            mapbox: { style: 'light' },
+            mapbox2: { style: mapboxStyleJSON }
+        };
+
+        fullData.push({ type: 'scattermapbox', subplot: 'mapbox2' });
+
+        supplyLayoutDefaults(layoutIn, layoutOut, fullData);
+        expect(layoutOut.mapbox.style).toEqual('light');
+        expect(layoutOut.mapbox2.style).toBe(mapboxStyleJSON);
+    });
+
     it('should fill layer containers', function() {
         layoutIn = {
             mapbox: {
@@ -64,6 +78,20 @@ describe('mapbox defaults', function() {
         supplyLayoutDefaults(layoutIn, layoutOut, fullData);
         expect(layoutOut.mapbox.layers[0].sourcetype).toEqual('geojson');
         expect(layoutOut.mapbox.layers[1].sourcetype).toEqual('geojson');
+    });
+
+    it('should skip over non-object layer containers', function() {
+        layoutIn = {
+            mapbox: {
+                layers: [{}, null, 'remove', {}]
+            }
+        };
+
+        supplyLayoutDefaults(layoutIn, layoutOut, fullData);
+        expect(layoutOut.mapbox.layers[0].sourcetype).toEqual('geojson');
+        expect(layoutOut.mapbox.layers[0]._index).toEqual(0);
+        expect(layoutOut.mapbox.layers[1].sourcetype).toEqual('geojson');
+        expect(layoutOut.mapbox.layers[1]._index).toEqual(3);
     });
 
     it('should coerce \'sourcelayer\' only for *vector* \'sourcetype\'', function() {
@@ -179,6 +207,8 @@ describe('mapbox credentials', function() {
     });
 
     it('should throw error if token is invalid', function(done) {
+        var cnt = 0;
+
         Plotly.plot(gd, [{
             type: 'scattermapbox',
             lon: [10, 20, 30],
@@ -186,7 +216,32 @@ describe('mapbox credentials', function() {
         }], {}, {
             mapboxAccessToken: dummyToken
         }).catch(function(err) {
+            cnt++;
             expect(err).toEqual(new Error(constants.mapOnErrorMsg));
+        }).then(function() {
+            expect(cnt).toEqual(1);
+            done();
+        });
+    });
+
+    it('should use access token in mapbox layout options if present', function(done) {
+        var cnt = 0;
+
+        Plotly.plot(gd, [{
+            type: 'scattermapbox',
+            lon: [10, 20, 30],
+            lat: [10, 20, 30]
+        }], {
+            mapbox: {
+                accesstoken: MAPBOX_ACCESS_TOKEN
+            }
+        }, {
+            mapboxAccessToken: dummyToken
+        }).catch(function() {
+            cnt++;
+        }).then(function() {
+            expect(cnt).toEqual(0);
+            expect(gd._fullLayout.mapbox.accesstoken).toEqual(MAPBOX_ACCESS_TOKEN);
             done();
         });
     });
@@ -471,6 +526,20 @@ describe('mapbox plots', function() {
         }).then(function() {
             expect(countVisibleLayers(gd)).toEqual(1);
 
+            done();
+        });
+    });
+
+    it('should be able to update the access token', function(done) {
+        Plotly.relayout(gd, 'mapbox.accesstoken', 'wont-work').catch(function(err) {
+            expect(gd._fullLayout.mapbox.accesstoken).toEqual('wont-work');
+            expect(err).toEqual(new Error(constants.mapOnErrorMsg));
+            expect(gd._promises.length).toEqual(1);
+
+            return Plotly.relayout(gd, 'mapbox.accesstoken', MAPBOX_ACCESS_TOKEN);
+        }).then(function() {
+            expect(gd._fullLayout.mapbox.accesstoken).toEqual(MAPBOX_ACCESS_TOKEN);
+            expect(gd._promises.length).toEqual(0);
             done();
         });
     });
@@ -763,15 +832,13 @@ describe('mapbox plots', function() {
     }
 
     function _mouseEvent(type, pos, cb) {
-        var DELAY = 100;
-
         return new Promise(function(resolve) {
             mouseEvent(type, pos[0], pos[1]);
 
             setTimeout(function() {
                 cb();
                 resolve();
-            }, DELAY);
+            }, MOUSE_DELAY);
         });
     }
 

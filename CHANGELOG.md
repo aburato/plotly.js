@@ -9,6 +9,91 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+
+## [1.16.3-d9] -- 2016-08-31
+
+### Changed
+- Aligned to plotly.js 1.16.3
+
+
+## [1.16.3] -- 2016-08-23
+
+### Fixed
+- Fix SVG exports for graphs with layout images [#846]
+- Properly handles duplicate categories in non-default `categoryorder` [#863]
+- Fix range selector position logic for overlaying axes [#873]
+- Autorange is now properly computed for heatmapgl and contourgl traces [#855,
+  #874]
+- Trace toggling via legend preserves axis ranges in gl2d plots [#855, #874]
+- Bump `mapbox-gl` dependency to 0.22.0 [#867]
+
+
+## [1.16.2] -- 2016-08-09
+
+### Fixed
+- Fix decoding for the supported HTML entities (bug introduced in 1.16.0) [#835]
+- Fix layout images position on subplots [#831]
+- Fix a few cartesian autorange edge cases [#813]
+
+
+## [1.16.1] -- 2016-08-05
+
+### Changed
+- Drop support for plotting in child windows which broke `Plotly.plot` in
+  some numerous browsers (e.g. FF46, FF47, FF48) [#829]
+
+
+## [1.16.0] -- 2016-08-04
+
+### Added
+- Add `updatemenus` (aka dropdowns) layout components [#770]
+- Trace type `scattermapbox` is now part of the main bundle [#816]
+- Add support for `plot` in child windows [#764, #806]
+- Horizontal legends with many items are now wrapped into multiple lines [#786]
+- Active color of range selector button is now configurable via `activecolor`
+  [#796]
+- Add support for mapbox style JSON [#795]
+
+### Changed
+- Promise queue is cleared on `restyle` and `relayout` instead of in
+  the `plot` catch handler (which ate up user-defined catch handlers as of
+  1.15.0) [#776, #789]
+- Improve performance in `convertToSVG` step [#791, #804]
+
+### Fixed
+- Skip over non-container arrays in relink private key step (performance bug
+  introduced in 1.15.0) [#817]
+- Categorical heatmap traces with insufficient brick are now functional again
+  (bug introduced in 1.14.0) [#783, #812]
+- Fix `Plotly.validate` for info and container array attributes [#814, #819]
+- Range selector buttons can now be deleted via `relayout` [#793]
+
+
+## [1.15.0] -- 2016-07-25
+
+### Added
+- Add `Plotly.validate` method [#697]
+- Add support for transforms plugins modules [#499]
+- Some partial bundles are now distributed  in `dist/` [#740]
+- Mapbox access token can now be set in `layout.mapbox` [#729]
+- Undo/Redo queue length is now configurable via configuration option
+  `queueLength` [#737]
+
+### Changed
+- Improve performance in gl2d request animation frame loop [#731]
+- Improve `Lib.extendDeep` performance for primitive arrays [#732]
+- Improve potential XSS input in `text` fields [#736]
+- Improve scaling on scroll zoom for scatter lines and markers [#761, #762]
+
+### Fixed
+- `toImage` pixel output for gl2d graphs are now scaled properly [#735]
+- `scattermapbox` marker size and color arrays are now correctly converted when
+  they include repeated values [#747]
+- Fix scatter3d marker line color inheritance [#754]
+- `text` fields can now support link with query params `=` and `&` [#736]
+- Fix Chrome 50 bug where tester svg blocked other DOM nodes [#745]
+
+
 ## [1.14.2-d9] -- 2016-08-09
 
 ### Changed

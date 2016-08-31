@@ -11,7 +11,7 @@
 var Lib = require('../lib');
 
 /**
- * This will be transfered over to gd and overridden by
+ * This will be transferred over to gd and overridden by
  * config args to Plotly.plot.
  *
  * The defaults are the appropriate settings for plotly.js,
@@ -40,6 +40,9 @@ module.exports = {
 
     // if editable is set to true, this can be used to deactivate Y2 axis title editing ONLY. 
     editableAxisY2Title: true,
+
+    // set the length of the undo/redo queue
+    queueLength: 0,
 
     // plot will respect layout.autosize=true and infer its container size
     autosizable: false,

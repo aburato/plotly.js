@@ -15,7 +15,7 @@
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.14.2-d9';
+exports.version = '1.16.3-d9';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -33,6 +33,7 @@ exports.setPlotConfig = require('./plot_api/set_plot_config');
 exports.register = Plotly.register;
 exports.toImage = require('./plot_api/to_image');
 exports.downloadImage = require('./snapshot/download');
+exports.validate = require('./plot_api/validate');
 
 // plot icons
 exports.Icons = require('../build/ploticon');
@@ -43,9 +44,6 @@ exports.Fx = Plotly.Fx;
 exports.Snapshot = Plotly.Snapshot;
 exports.PlotSchema = Plotly.PlotSchema;
 exports.Queue = Plotly.Queue;
-
-// Unofficial color defaults override
-exports.overrideColorDefaults = Plotly.Color.overrideDefaults;
 
 // export d3 used in the bundle
 exports.d3 = require('d3');

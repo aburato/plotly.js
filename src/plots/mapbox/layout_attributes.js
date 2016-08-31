@@ -45,16 +45,29 @@ module.exports = {
         }
     },
 
-    style: {
+    accesstoken: {
         valType: 'string',
+        noBlank: true,
+        strict: true,
+        role: 'info',
+        description: [
+            'Sets the mapbox access token to be used for this mapbox map.',
+            'Alternatively, the mapbox access token can be set in the',
+            'configuration options under `mapboxAccessToken`.'
+        ].join(' ')
+    },
+    style: {
+        valType: 'any',
         values: ['basic', 'streets', 'outdoors', 'light', 'dark', 'satellite', 'satellite-streets'],
         dflt: 'basic',
         role: 'style',
         description: [
             'Sets the Mapbox map style.',
-            'Either input the defaults Mapbox names or the URL to a custom style.'
+            'Either input one of the default Mapbox style names or the URL to a custom style',
+            'or a valid Mapbox style JSON.'
         ].join(' ')
     },
+
     center: {
         lon: {
             valType: 'number',

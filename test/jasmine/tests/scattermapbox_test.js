@@ -10,11 +10,6 @@ var destroyGraphDiv = require('../assets/destroy_graph_div');
 var hasWebGLSupport = require('../assets/has_webgl_support');
 var customMatchers = require('../assets/custom_matchers');
 
-// until it is part of the main plotly.js bundle
-Plotly.register(
-    require('@lib/scattermapbox')
-);
-
 Plotly.setPlotConfig({
     mapboxAccessToken: require('@build/credentials.json').MAPBOX_ACCESS_TOKEN
 });
@@ -243,6 +238,10 @@ describe('scattermapbox calc', function() {
 describe('scattermapbox convert', function() {
     'use strict';
 
+    beforeAll(function() {
+        jasmine.addMatchers(customMatchers);
+    });
+
     function _convert(trace) {
         var gd = { data: [trace] };
 
@@ -308,14 +307,14 @@ describe('scattermapbox convert', function() {
 
         assertVisibility(opts, ['visible', 'visible', 'visible', 'none']);
 
-        var lineCoords = [[
-            [10, 20], [20, 20], [30, 10]
-        ], [
-            [20, 10], [10, 20]
-        ]];
+        var segment1 = [[10, 20], [20, 20], [30, 10]],
+            segment2 = [[20, 10], [10, 20]];
 
-        expect(opts.fill.geojson.coordinates).toEqual(lineCoords, 'have correct fill coords');
+        var lineCoords = [segment1, segment2],
+            fillCoords = [[segment1], [segment2]];
+
         expect(opts.line.geojson.coordinates).toEqual(lineCoords, 'have correct line coords');
+        expect(opts.fill.geojson.coordinates).toEqual(fillCoords, 'have correct fill coords');
 
         var circleCoords = opts.circle.geojson.features.map(function(f) {
             return f.geometry.coordinates;
@@ -395,6 +394,23 @@ describe('scattermapbox convert', function() {
                 opts.symbol.layout['text-offset']
             ]).toEqual(spec, '(case ' + k + ')');
         });
+    });
+
+    it('for markers + circle bubbles traces with repeated values, should', function() {
+        var opts = _convert(Lib.extendFlat({}, base, {
+            lon: ['-96.796988', '-81.379236', '-85.311819', ''],
+            lat: ['32.776664', '28.538335', '35.047157', '' ],
+            marker: { size: ['5', '49', '5', ''] }
+        }));
+
+        expect(opts.circle.paint['circle-radius'].stops)
+            .toBeCloseTo2DArray([[0, 2.5], [1, 24.5]], 'not replicate stops');
+
+        var radii = opts.circle.geojson.features.map(function(f) {
+            return f.properties['circle-radius'];
+        });
+
+        expect(radii).toBeCloseToArray([0, 1, 0], 'link features to correct stops');
     });
 
     function assertVisibility(opts, expectations) {
