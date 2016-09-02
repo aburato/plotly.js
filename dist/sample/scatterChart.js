@@ -19,7 +19,11 @@ var trace3 = {
 var data = [ trace1, trace2, trace3 ];
 
 var layout = {
-  title:'Line and Scatter Plot'
+  title:'Line and Scatter Plot', autosize: true, margin: {t: 10, b: 10, l: 10, r: 10}
 };
 
-Plotly.newPlot('myDiv', data, layout);
+var d = document.getElementById('myDiv');
+
+Plotly.newPlot(d, data, layout);
+
+window.setInterval(function(){Plotly.Plots.resize(d)}, 1000);

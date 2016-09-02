@@ -1,6 +1,11 @@
 <head>
   <meta charset="utf-8" />
   <style type="text/css">
+    .plot-container.plotly > .svg-container {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    
     .hoverlayer .hovertext > path {
       fill: grey !important;
       stroke-width: 2px !important;
@@ -20,15 +25,15 @@
   </style>
 </head>
 
-<body style="background: gray">
+<body style="background: gray; display: flex">
 
-  <div id="myDiv" style="width: 100%; height: 500px;">
+  <div id="myDiv" style="width: 200px; height: 250px;">
     <!-- Plotly chart will be drawn inside this DIV -->
   </div>
 
   <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
     crossorigin="anonymous"></script>
-  <script type="text/javascript" src="../plotly.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../plotly-basic.js" charset="utf-8"></script>
   <!--<script type="text/javascript" src="chart.js" charset="utf-8"></script>-->
   <script type="text/javascript" src="scatterChart.js" charset="utf-8"></script>
 </body>
