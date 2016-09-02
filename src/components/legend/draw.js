@@ -166,15 +166,15 @@ module.exports = function draw(gd) {
     var legendWidth = opts.width,
         legendWidthMax = gs.w;
 
-    if(legendWidth > legendWidthMax) {
-        lx = gs.l;
-        legendWidth = legendWidthMax;
-    }
-    else {
+    // if(legendWidth > legendWidthMax) {
+    //     lx = gs.l;
+    //     legendWidth = legendWidthMax;
+    // }
+    // else {
         if(lx + legendWidth > lxMax) lx = lxMax - legendWidth;
         if(lx < lxMin) lx = lxMin;
         legendWidth = Math.min(lxMax - lx, opts.width);
-    }
+    // }
 
     // Make sure the legend top and bottom are visible
     // (legends with a scroll bar are not allowed to stretch beyond the extended

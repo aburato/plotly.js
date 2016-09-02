@@ -1,5 +1,5 @@
 /**
-* plotly.js v1.14.2-d9
+* plotly.js v1.14.2-d11
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -18422,15 +18422,15 @@ module.exports = function draw(gd) {
     var legendWidth = opts.width,
         legendWidthMax = gs.w;
 
-    if(legendWidth > legendWidthMax) {
-        lx = gs.l;
-        legendWidth = legendWidthMax;
-    }
-    else {
+    // if(legendWidth > legendWidthMax) {
+    //     lx = gs.l;
+    //     legendWidth = legendWidthMax;
+    // }
+    // else {
         if(lx + legendWidth > lxMax) lx = lxMax - legendWidth;
         if(lx < lxMin) lx = lxMin;
         legendWidth = Math.min(lxMax - lx, opts.width);
-    }
+    // }
 
     // Make sure the legend top and bottom are visible
     // (legends with a scroll bar are not allowed to stretch beyond the extended
@@ -22860,7 +22860,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.14.2-d9';
+exports.version = '1.14.2-d11';
 
 // plot api
 exports.plot = Plotly.plot;

@@ -9,6 +9,12 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.14.2-d11] -- 2016-09-02
+
+### Changed
+- Ale: added fix for legend overlapping plot with small chart widths
+
+
 ## [1.14.2-d9] -- 2016-08-09
 
 ### Changed
