@@ -1507,7 +1507,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 return axside === 'right' ? 'start' : 'end';
             };
         }
-        var maxLabelLength = 20;
+        var maxLabelLength = 15;
         var maxFontSize = 0,
             autoangle = 0,
             labelsReady = [];
@@ -1518,7 +1518,9 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 .attr('text-anchor', 'middle')
                 .each(function(d) {
                     if (d.text.length > maxLabelLength) {
-                        d.text = d.text.substr(0, maxLabelLength-2) + '…';
+                        var firstLen = Math.floor(maxLabelLength / 2);
+                        var lastLen = maxLabelLength - firstLen - 1;
+                        d.text = d.text.substr(0, firstLen) + '…' + d.text.substr(-lastLen);
                     }
                     var thisLabel = d3.select(this),
                         newPromise = gd._promises.length;
