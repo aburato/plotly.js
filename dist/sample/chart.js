@@ -37,16 +37,19 @@ var layout = {
     bargroupgap: 0.02,
     bargap: bargap,
     showlegend: true,
+    xaxis: {
+        title: "foffoytoorteot"
+    }
 };
 
 data = [
     {
-        x: ["D", "A", "C"],
+        x: ["A", "B", "C"],
         y: [40, 10, 30],
         type: "bar"
     },
     {
-        x: ["B", "A", "D"],
+        x: ["A", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "D"],
         y: [-20, -10, -40],
         type: "bar"
     },

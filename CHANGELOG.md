@@ -9,6 +9,13 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.14.2-d13] -- 2016-09-02
+
+### Changed
+- Ale: better label overlapping behavior with small charts heights.
+- Ale: middle ellipsis.
+
+
 ## [1.14.2-d11] -- 2016-09-02
 
 ### Changed

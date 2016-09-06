@@ -1507,7 +1507,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 return axside === 'right' ? 'start' : 'end';
             };
         }
-        var maxLabelLength = 15;
+        var maxLabelLength = 12;
         var maxFontSize = 0,
             autoangle = 0,
             labelsReady = [];
@@ -1680,7 +1680,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                     shiftAmount += (titleBB[shiftDimension] + 2);
                 }
                 
-                var maxAmount = gd._fullLayout[shiftDimension] * 0.4;
+                var maxAmount = gd._fullLayout[shiftDimension] * 0.5;
 
                 shiftAmount = Math.min(shiftAmount, maxAmount);
 
