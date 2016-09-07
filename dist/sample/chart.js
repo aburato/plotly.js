@@ -41,12 +41,12 @@ var layout = {
 
 data = [
     {
-        x: ["D", "A", "C"],
+        x: ["Frankfurt:USD", "London:GBP", "New York:YEN"],
         y: [40, 10, 30],
         type: "bar"
     },
     {
-        x: ["B", "A", "D"],
+        x: ["Frankfurt:USD", "Sidney:AUD", "New York:YEN"],
         y: [-20, -10, -40],
         type: "bar"
     },
@@ -54,7 +54,7 @@ data = [
 
 //Plotly.overrideColorDefaults(["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]);
 
-Plotly.newPlot('myDiv', data, layout, { displayModeBar: true, editable: true, editableMainTitle: false, editableAxisX: false, editableAxisY: false });
+Plotly.newPlot('myDiv', data, layout, { displayModeBar: false, editable: false, editableMainTitle: false, editableAxisX: false, editableAxisY: false });
 
 var annotations = [];
 var delta = (1 - bargap) / data.length;

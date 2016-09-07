@@ -9,6 +9,11 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.16.3-d14] -- 2016-09-07
+
+### Changed
+- Ale: added SVG TITLE attribute to axis labels, rendered as tooltips in modern browsers. Useful when they get ellipsed.
+
 ## [1.16.3-d13] -- 2016-09-06
 
 ### Changed
