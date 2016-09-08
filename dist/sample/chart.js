@@ -37,16 +37,19 @@ var layout = {
     bargroupgap: 0.02,
     bargap: bargap,
     showlegend: true,
+    xaxis: {
+        title: "Yer Olde Axis Title"
+    }
 };
 
 data = [
     {
-        x: ["Frankfurt:USD", "London:GBP", "New York:YEN"],
+        x: ["This is a very very very very long city name:USD", "London:GBP", "New York:YEN"],
         y: [40, 10, 30],
         type: "bar"
     },
     {
-        x: ["Frankfurt:USD", "Sidney:AUD", "New York:YEN"],
+        x: ["This is a very very very very long city name:USD", "Sidney:AUD", "New York:YEN"],
         y: [-20, -10, -40],
         type: "bar"
     },
