@@ -144,7 +144,8 @@ module.exports = function plot(gd, cdpie) {
 
                 function handleClick() {
                     gd._hoverdata = [pt];
-                    gd._hoverdata.trace = cd.trace;
+                    pt.curveNumber = cd[0].trace.index;
+                    gd._hoverdata.trace = cd[0].trace;
                     Fx.click(gd, { target: true });
                 }
 
