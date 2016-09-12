@@ -36,11 +36,11 @@ The main plotly.js bundle includes all the official (non-beta) trace modules.
 
 It be can imported as minified javascript
 - using dist file `dist/plotly.min.js`
-- using CDN URL https://cdn.plot.ly/plotly-plotly-latest.min.js OR https://cdn.plot.ly/plotly-plotly-1.16.3-d15.min.js
+- using CDN URL https://cdn.plot.ly/plotly-plotly-latest.min.js OR https://cdn.plot.ly/plotly-plotly-1.16.3-d16.min.js
 
 or as raw javascript:
 - using dist file `dist/plotly.js`
-- using CDN URL https://cdn.plot.ly/plotly-plotly-latest.js OR https://cdn.plot.ly/plotly-plotly-1.16.3-d15.js
+- using CDN URL https://cdn.plot.ly/plotly-plotly-latest.js OR https://cdn.plot.ly/plotly-plotly-1.16.3-d16.js
 - using CommonJS with `require('plotly.js')`
 
 If you would like to have access to the attribute meta information (including attribute descriptions as on the [schema reference page](https://plot.ly/javascript/reference/)), use dist file `dist/plotly-with-meta.js`
@@ -49,7 +49,7 @@ The main plotly.js bundle weights in at:
 
 | plotly.js | plotly.min.js | plotly.min.js + gzip | plotly-with-meta.js |
 |-----------|---------------|----------------------|---------------------|
-| 3.9 MB | 1.6 MB | 499.8 kB | 4 MB |
+| 3.9 MB | 1.6 MB | 499.9 kB | 4 MB |
 
 ## Partial bundles
 
@@ -67,13 +67,13 @@ The `cartesian` partial bundle contains the `scatter`, `bar`, `box`, `heatmap`, 
 | dist bundle (minified) | `dist/plotly-cartesian.min.js` |
 | CDN URL (latest) | https://cdn.plot.ly/plotly-cartesian-latest.js |
 | CDN URL (latest minified) | https://cdn.plot.ly/plotly-cartesian-latest.min.js |
-| CDN URL (tagged) | https://cdn.plot.ly/plotly-cartesian-1.16.3-d15.js |
-| CDN URL (tagged minified) | https://cdn.plot.ly/plotly-cartesian-1.16.3-d15.min.js |
+| CDN URL (tagged) | https://cdn.plot.ly/plotly-cartesian-1.16.3-d16.js |
+| CDN URL (tagged minified) | https://cdn.plot.ly/plotly-cartesian-1.16.3-d16.min.js |
 | CommonJS | `require('plotly.js/lib/index-cartesian')` |
 
 | Raw size | Minified size | Minified + gzip size |
 |------|-----------------|------------------------|
-| 1.6 MB | 620.2 kB | 202 kB |
+| 1.6 MB | 620.3 kB | 202 kB |
 
 ----------------
 
