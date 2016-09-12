@@ -346,7 +346,7 @@ function updateShape(gd, index, opt, value) {
                 'clip' + gd._fullLayout._uid + clipAxes);
         }
 
-        if(gd._context.editable) setupDragElement(gd, path, options, index);
+        //if(gd._context.editable) setupDragElement(gd, path, options, index);
     }
 }
 

@@ -1042,7 +1042,9 @@ function createHoverText(hoverData, opts) {
         d.tx2width = tx2width;
         d.offset = 0;
 
-        if(rotateLabels) {
+        if(d.trace && d.trace._input && d.trace._input.rect){
+            d.anchor = 'middle';
+        } else if(rotateLabels) {
             d.pos = htx;
             anchorStartOK = hty + dy / 2 + txTotalWidth <= outerHeight;
             anchorEndOK = hty - dy / 2 - txTotalWidth >= 0;
@@ -1322,7 +1324,7 @@ function hoverChanged(gd, evt, oldhoverdata) {
 // on click
 fx.click = function(gd, evt) {
     if(gd._hoverdata && evt && evt.target) {
-        gd.emit('plotly_click', {points: gd._hoverdata});
+        gd.emit('plotly_click', {button: evt.button, points: gd._hoverdata});
         // why do we get a double event without this???
         if(evt.stopImmediatePropagation) evt.stopImmediatePropagation();
     }

@@ -25,6 +25,16 @@ module.exports = function hoverPoints(pointData, xval, yval, hovermode) {
         xpx = xa.c2p(xval),
         ypx = ya.c2p(yval),
         pt = [xpx, ypx];
+        
+    if(pointData.trace._input.rect){
+        var rect = pointData.trace._input.rect;
+        for(var i=0;i<rect.length;i++){
+            if(xval > rect[i].x0 && xval < rect[i].x1 && yval > rect[i].y0 && yval < rect[i].y1){
+                pointData.index = i;
+                pointData.text = pointData.trace.text[i];
+            }
+        }
+    }
 
     // look for points to hover on first, then take fills only if we
     // didn't find a point
