@@ -9,6 +9,12 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.16.3-d16] -- 2016-09-12
+
+### Changed
+- Merged Peter developments for treemaps
+
+
 ## [1.16.3-d16] -- 2016-09-08
 
 ### Changed
