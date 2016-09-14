@@ -9,6 +9,12 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.16.3-d19] -- 2016-09-14
+
+### Changed
+- Support the "classes" property in annotations and shapes. 
+
+
 ## [1.16.3-d18] -- 2016-09-14
 
 ### Changed

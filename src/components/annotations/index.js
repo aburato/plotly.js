@@ -116,6 +116,10 @@ function handleAnnotationDefaults(annIn, fullLayout) {
     // if you have one coordinate you should have both
     Lib.noneOrAll(annIn, annOut, ['x', 'y']);
 
+    if (annIn.classes) {
+        annOut.classes = annIn.classes;
+    }
+
     return annOut;
 }
 
@@ -354,6 +358,10 @@ annotations.draw = function(gd, index, opt, value) {
                 fullAnnotation: options
             });
         });
+
+    if (options.classes) {
+        anngroup.classed(options.classes, true);
+    }
 
     // another group for text+background so that they can rotate together
     var anng = anngroup.append('g')

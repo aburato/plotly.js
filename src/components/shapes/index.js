@@ -79,6 +79,10 @@ function handleShapeDefaults(shapeIn, fullLayout) {
         Lib.noneOrAll(shapeIn, shapeOut, ['x0', 'x1', 'y0', 'y1']);
     }
 
+    if (shapeIn.classes) {
+        shapeOut.classes = shapeIn.classes;
+    }
+
     return shapeOut;
 }
 
@@ -340,6 +344,10 @@ function updateShape(gd, index, opt, value) {
             .call(Color.stroke, lineColor)
             .call(Color.fill, options.fillcolor)
             .call(Drawing.dashLine, options.line.dash, options.line.width);
+        
+        if (options.classes) {
+            path.classed(options.classes, true);
+        }
 
         if(clipAxes) {
             path.call(Drawing.setClipUrl,
