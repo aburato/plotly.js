@@ -9,7 +9,16 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
-## [1.16.3-d16] -- 2016-09-12
+## [1.16.3-d18] -- 2016-09-14
+
+### Changed
+- When applying tooltips in rect mode for treemaps, do not show a tooltip if
+  the cursor is not within any of the rects. This is so no tooltip is shown
+  in header areas.
+- Added Plotly.colorDefaults to the API
+
+
+## [1.16.3-d17] -- 2016-09-12
 
 ### Changed
 - Merged Peter developments for treemaps
@@ -209,7 +218,7 @@ where X.Y.Z is the semver of most recent plotly.js release.
 ## [1.13.0-d6] -- 2016-06-24
 
 ### Changed
-- Added Plotly.overrideColorDefaults(color[]) to API.
+- Added Plotly.colorDefaults(color[]) to API.
 
 
 ## [1.13.0-d5] -- 2016-06-22

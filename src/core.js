@@ -15,7 +15,7 @@
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.16.3-d17';
+exports.version = '1.16.3-d18';
 
 // plot api
 exports.plot = Plotly.plot;
@@ -44,6 +44,9 @@ exports.Fx = Plotly.Fx;
 exports.Snapshot = Plotly.Snapshot;
 exports.PlotSchema = Plotly.PlotSchema;
 exports.Queue = Plotly.Queue;
+
+// Unofficial color defaults override
+ exports.colorDefaults = Plotly.Color.overrideColorDefaults;
 
 // export d3 used in the bundle
 exports.d3 = require('d3');
