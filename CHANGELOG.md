@@ -9,6 +9,12 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.16.3-d20] -- 2016-09-15
+
+### Changed
+- Added support for showing the tooltip at mouse position 
+
+
 ## [1.16.3-d19] -- 2016-09-14
 
 ### Changed
