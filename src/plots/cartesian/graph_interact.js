@@ -1041,6 +1041,12 @@ function createHoverText(hoverData, opts, evt, hoverFollowsMouse) {
         d.tx2width = tx2width;
         d.offset = 0;
 
+        // POSITION HOVER GROUP
+        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.layerX && evt.layerY) {
+            htx = evt.layerX;
+            hty = evt.layerY;
+        }
+
         if(rotateLabels) {
             d.pos = htx;
             anchorStartOK = hty + dy / 2 + txTotalWidth <= outerHeight;
@@ -1068,12 +1074,6 @@ function createHoverText(hoverData, opts, evt, hoverFollowsMouse) {
 
         tx.attr('text-anchor', d.anchor);
         if(tx2width) tx2.attr('text-anchor', d.anchor);
-
-        // POSITION HOVER GROUP
-        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.layerX && evt.layerY) {
-            htx = evt.layerX;
-            hty = evt.layerY;
-        }
 		
 		g.attr('transform', 'translate(' + htx + ',' + hty + ')' +
             (rotateLabels ? 'rotate(' + YANGLE + ')' : ''));
