@@ -355,8 +355,7 @@ function hover(gd, evt, subplot) {
 
     var hovermode = evt.hovermode || fullLayout.hovermode;
 
-    if(['x', 'y', 'closest'].indexOf(hovermode) === -1 || !gd.calcdata ||
-            gd.querySelector('.zoombox') || gd._dragging) {
+    if(['x', 'y', 'closest'].indexOf(hovermode) === -1 || !gd.calcdata || gd._dragged) {
         return dragElement.unhoverRaw(gd, evt);
     }
 
