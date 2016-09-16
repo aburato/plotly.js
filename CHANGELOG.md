@@ -11,6 +11,8 @@ where X.Y.Z is the semver of most recent plotly.js release.
 
 ## [1.16.3-d20] -- 2016-09-15
 
+- test
+
 ### Changed
 - Added support for showing the tooltip at mouse position 
 
