@@ -36,11 +36,11 @@ The main plotly.js bundle includes all the official (non-beta) trace modules.
 
 It be can imported as minified javascript
 - using dist file `dist/plotly.min.js`
-- using CDN URL https://cdn.plot.ly/plotly-plotly-latest.min.js OR https://cdn.plot.ly/plotly-plotly-1.16.3-d20.min.js
+- using CDN URL https://cdn.plot.ly/plotly-plotly-latest.min.js OR https://cdn.plot.ly/plotly-plotly-1.16.3-d21.min.js
 
 or as raw javascript:
 - using dist file `dist/plotly.js`
-- using CDN URL https://cdn.plot.ly/plotly-plotly-latest.js OR https://cdn.plot.ly/plotly-plotly-1.16.3-d20.js
+- using CDN URL https://cdn.plot.ly/plotly-plotly-latest.js OR https://cdn.plot.ly/plotly-plotly-1.16.3-d21.js
 - using CommonJS with `require('plotly.js')`
 
 If you would like to have access to the attribute meta information (including attribute descriptions as on the [schema reference page](https://plot.ly/javascript/reference/)), use dist file `dist/plotly-with-meta.js`
@@ -67,8 +67,8 @@ The `cartesian` partial bundle contains the `scatter`, `bar`, `box`, `heatmap`, 
 | dist bundle (minified) | `dist/plotly-cartesian.min.js` |
 | CDN URL (latest) | https://cdn.plot.ly/plotly-cartesian-latest.js |
 | CDN URL (latest minified) | https://cdn.plot.ly/plotly-cartesian-latest.min.js |
-| CDN URL (tagged) | https://cdn.plot.ly/plotly-cartesian-1.16.3-d20.js |
-| CDN URL (tagged minified) | https://cdn.plot.ly/plotly-cartesian-1.16.3-d20.min.js |
+| CDN URL (tagged) | https://cdn.plot.ly/plotly-cartesian-1.16.3-d21.js |
+| CDN URL (tagged minified) | https://cdn.plot.ly/plotly-cartesian-1.16.3-d21.min.js |
 | CommonJS | `require('plotly.js/lib/index-cartesian')` |
 
 | Raw size | Minified size | Minified + gzip size |
