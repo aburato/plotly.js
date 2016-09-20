@@ -38,7 +38,12 @@ var layout = {
     bargap: bargap,
     showlegend: true,
     xaxis: {
-        title: "Yer Olde Axis Title"
+        title: "Yer Olde X Axis Title",
+        //fixedrange: true
+    },
+    yaxis: {
+        title: "Yer Olde Y Axis Title",
+        //fixedrange: true
     }
 };
 
@@ -100,6 +105,13 @@ myPlot.on('plotly_hover', function (eventData) {
     eventData.points.forEach(function (p) {
         console.log('pixel position', p.xaxis.c2p(p.xaxis.d2c(p.x)), p.yaxis.l2p(p.y));
     });
+});
+
+myPlot.on('plotly_click', function (eventData) {
+    console.log("PLOTLY CLICK");
+    // eventData.points.forEach(function (p) {
+    //     console.log('pixel position', p.xaxis.c2p(p.xaxis.d2c(p.x)), p.yaxis.l2p(p.y));
+    // });
 });
 
 // console.log("Annotations: " + a);
