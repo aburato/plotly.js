@@ -39,11 +39,11 @@ var layout = {
     showlegend: true,
     xaxis: {
         title: "Yer Olde X Axis Title",
-        //fixedrange: true
+        fixedrange: true
     },
     yaxis: {
         title: "Yer Olde Y Axis Title",
-        //fixedrange: true
+        fixedrange: true
     }
 };
 
