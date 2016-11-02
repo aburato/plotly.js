@@ -9,6 +9,10 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.16.3-d22] -- 2016-11-2
+
+- Fixed crash on click in IE
+
 ## [1.16.3-d20] -- 2016-09-15
 
 - test

@@ -25,6 +25,8 @@ var bargap = 0.4;
 //     data.push(trace);
 // }
 
+var catorder = ["A", "B", "C", "D", "E", "F"];
+
 var layout = {
     margin: {
         l: 10,
@@ -39,7 +41,9 @@ var layout = {
     showlegend: true,
     xaxis: {
         title: "Yer Olde X Axis Title",
-        fixedrange: true
+        fixedrange: true,
+        categoryarray: catorder,
+        categoryorder: "array"
     },
     yaxis: {
         title: "Yer Olde Y Axis Title",
@@ -49,14 +53,14 @@ var layout = {
 
 data = [
     {
-        x: ["This is a very very very very long city name:USD", "London:GBP", "New York:YEN"],
-        y: [40, 10, 30],
-        type: "bar"
+        x: ["F", "A", "B", "C"],
+        y: [7, 40, 10, 30],
+        type: "scatter"
     },
     {
-        x: ["This is a very very very very long city name:USD", "Sidney:AUD", "New York:YEN"],
-        y: [-20, -10, -40],
-        type: "bar"
+        x: ["C", "B", "A", "D"],
+        y: [-30, -10, -40, -7],
+        type: "scatter"
     },
 ];
 

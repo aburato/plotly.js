@@ -139,12 +139,20 @@ dragElement.init = function init(options) {
         if (options.doneFn) options.doneFn(gd._dragged, numClicks);
 
         if (!gd._dragged) {
-            var e2 = new MouseEvent('click', {
-                bubbles: e.bubbles,
-                cancelable: e.cancelable,
-                view: e.view,
-                button: e.button
-            });
+            var e2;
+            //This is true only for IE,firefox
+            if (document.createEvent) {
+                e2 = document.createEvent("MouseEvent");
+                e2.initMouseEvent("click", e.bubbles, e.cancelable, e.view, 0, 0, 0, 0, 0, false, false, false, false, e.button, null);
+            } else {
+                e2 = new MouseEvent('click', {
+                    bubbles: e.bubbles,
+                    cancelable: e.cancelable,
+                    view: e.view,
+                    button: e.button
+                });
+            }
+
             initialTarget.dispatchEvent(e2);
         }
 
