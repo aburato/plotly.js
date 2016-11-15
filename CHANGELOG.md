@@ -9,6 +9,12 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+
+## [1.19.2-d24] -- 2016-11-15
+
+- Started from a fresh original (plotly) 1.19.2 tag and re-merged everything BY HAND.
+
+
 ## [1.19.2] -- 2016-11-02
 
 ### Fixed
@@ -159,6 +165,67 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - Do not extend data array on event emission [#842, #866]
 - Make `Plotly.redraw` throw an error when called on non plotly graph div [#907]
 - Make `plotly.min.js` work when injected in Require.js environment [#914]
+
+
+## [1.16.3-d20] -- 2016-09-15
+
+- test
+
+### Changed
+- Added support for showing the tooltip at mouse position 
+
+
+## [1.16.3-d19] -- 2016-09-14
+
+### Changed
+- Support the "classes" property in annotations and shapes. 
+
+
+## [1.16.3-d18] -- 2016-09-14
+
+### Changed
+- When applying tooltips in rect mode for treemaps, do not show a tooltip if
+  the cursor is not within any of the rects. This is so no tooltip is shown
+  in header areas.
+- Added Plotly.colorDefaults to the API
+
+
+## [1.16.3-d17] -- 2016-09-12
+
+### Changed
+- Merged Peter developments for treemaps
+
+
+## [1.16.3-d16] -- 2016-09-08
+
+### Changed
+- Ale: fixed a bug where clicks on pie slices yielded a NULL trace in the event args.
+- Added curveindex to pie click args.
+
+
+## [1.16.3-d15] -- 2016-09-08
+
+### Changed
+- Ale: changed ellipsis algo to take actual space into account.
+
+
+## [1.16.3-d14] -- 2016-09-07
+
+### Changed
+- Ale: added SVG TITLE attribute to axis labels, rendered as tooltips in modern browsers. Useful when they get ellipsed.
+
+
+## [1.16.3-d13] -- 2016-09-06
+
+### Changed
+- Ale: better label overlapping behavior with small charts heights.
+- Ale: middle ellipsis.
+
+
+## [1.16.3-d9] -- 2016-08-31
+
+### Changed
+- Aligned to plotly.js 1.16.3
 
 
 ## [1.16.3] -- 2016-08-23

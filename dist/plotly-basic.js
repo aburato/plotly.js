@@ -1,3 +1,9 @@
+/**
+* plotly.js (basic) v1.19.2-d24
+* Copyright 2012-2016, Plotly, Inc.
+* All rights reserved.
+* Licensed under the MIT license
+*/
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Plotly = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
@@ -25339,7 +25345,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.19.2';
+exports.version = '1.19.2-d24';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -33099,7 +33105,7 @@ exports.drawMainTitle = function(gd) {
             b: 0,
             t: titleBB.height + 2
         };
-        Plotly.Plots.autoMargin(gd, "chart_title", shiftMargins);
+        Plots.autoMargin(gd, "chart_title", shiftMargins);
     }
 };
 
@@ -33950,6 +33956,7 @@ var d3 = require('d3');
 var isNumeric = require('fast-isnumeric');
 
 var Registry = require('../../registry');
+var Plots = require('../../plots/plots');
 var Lib = require('../../lib');
 var svgTextUtils = require('../../lib/svg_text_utils');
 var Titles = require('../../components/titles');
@@ -35694,7 +35701,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                     t: 0
                 };
                 shiftMargins[marginDimension] = shiftAmount;
-                Plotly.Plots.autoMargin(gd, ax._name, shiftMargins);
+                Plots.autoMargin(gd, ax._name, shiftMargins);
             }
         }
 
@@ -36046,7 +36053,7 @@ function swapAxisAttrs(layout, key, xFullAxes, yFullAxes) {
 // rather than built-in % which gives a negative value for negative v
 function mod(v, d) { return ((v % d) + d) % d; }
 
-},{"../../components/color":23,"../../components/drawing":47,"../../components/titles":98,"../../lib":113,"../../lib/svg_text_utils":125,"../../registry":171,"./axis_ids":142,"./layout_attributes":149,"./layout_defaults":150,"./set_convert":154,"d3":7,"fast-isnumeric":10}],140:[function(require,module,exports){
+},{"../../components/color":23,"../../components/drawing":47,"../../components/titles":98,"../../lib":113,"../../lib/svg_text_utils":125,"../../plots/plots":164,"../../registry":171,"./axis_ids":142,"./layout_attributes":149,"./layout_defaults":150,"./set_convert":154,"d3":7,"fast-isnumeric":10}],140:[function(require,module,exports){
 /**
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
