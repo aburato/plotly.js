@@ -203,7 +203,25 @@ Titles.draw = function(gd, titleClass, options) {
             });
     }
 
-    if(gd._context.editable) {
+    // ABURATO: main title-specific edit settings
+    var isEditable = gd._context.editable;
+    
+    if (isEditable) {
+        if (cont === fullLayout) {
+            // MAIN TITLE
+            isEditable = gd._context.editableMainTitle;
+        } else if (cont === fullLayout.xaxis) {
+            isEditable = gd._context.editableAxisXTitle;
+        } else if (cont === fullLayout.yaxis) {
+            isEditable = gd._context.editableAxisYTitle;
+        } else if (cont === fullLayout.yaxis2) {
+            isEditable = gd._context.editableAxisY2Title;
+        } else if (cont === fullLayout.xaxis2) {
+            isEditable = gd._context.editableAxisX2Title;
+        }
+    }
+
+    if(isEditable) {
         if(!txt) setPlaceholder();
 
         el.call(svgTextUtils.makeEditable)
@@ -225,4 +243,7 @@ Titles.draw = function(gd, titleClass, options) {
         el.remove();
     }
     el.classed('js-placeholder', isplaceholder);
+
+    // ABURATO: storing the title element inside its containing axis object
+    cont._titleElement = el;
 };

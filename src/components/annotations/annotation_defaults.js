@@ -99,5 +99,9 @@ module.exports = function handleAnnotationDefaults(annIn, fullLayout) {
     // if you have one coordinate you should have both
     Lib.noneOrAll(annIn, annOut, ['x', 'y']);
 
+    if (annIn.classes) {
+        annOut.classes = annIn.classes;
+    }
+
     return annOut;
 };

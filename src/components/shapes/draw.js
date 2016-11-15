@@ -272,12 +272,16 @@ function updateShape(gd, index, opt, value) {
             .call(Color.fill, options.fillcolor)
             .call(Drawing.dashLine, options.line.dash, options.line.width);
 
+        if (options.classes) {
+            path.classed(options.classes, true);
+        }    
+
         if(clipAxes) {
             path.call(Drawing.setClipUrl,
                 'clip' + gd._fullLayout._uid + clipAxes);
         }
 
-        if(gd._context.editable) setupDragElement(gd, path, options, index);
+        // if(gd._context.editable) setupDragElement(gd, path, options, index);
     }
 }
 

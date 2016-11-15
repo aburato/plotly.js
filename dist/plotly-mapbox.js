@@ -1,9 +1,3 @@
-/**
-* plotly.js (mapbox) v1.19.2
-* Copyright 2012-2016, Plotly, Inc.
-* All rights reserved.
-* Licensed under the MIT license
-*/
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Plotly = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
@@ -40227,7 +40221,7 @@ module.exports={
         "spec": ">=0.22.0 <0.23.0",
         "type": "range"
       },
-      "/home/etienne/Documents/plotly/plotly.js"
+      "C:\\DEV\\plotly.js"
     ]
   ],
   "_from": "mapbox-gl@>=0.22.0 <0.23.0",
@@ -40261,7 +40255,7 @@ module.exports={
   "_shasum": "92a965547d4c2f24c22cbc487eeda48694cb627a",
   "_shrinkwrap": null,
   "_spec": "mapbox-gl@^0.22.0",
-  "_where": "/home/etienne/Documents/plotly/plotly.js",
+  "_where": "C:\\DEV\\plotly.js",
   "browser": {
     "./js/util/ajax.js": "./js/util/browser/ajax.js",
     "./js/util/browser.js": "./js/util/browser/browser.js",
@@ -46605,6 +46599,10 @@ module.exports = function handleAnnotationDefaults(annIn, fullLayout) {
     // if you have one coordinate you should have both
     Lib.noneOrAll(annIn, annOut, ['x', 'y']);
 
+    if (annIn.classes) {
+        annOut.classes = annIn.classes;
+    }
+
     return annOut;
 };
 
@@ -47243,6 +47241,10 @@ function drawOne(gd, index, opt, value) {
                 fullAnnotation: options
             });
         });
+
+    if (options.classes) {
+        anngroup.classed(options.classes, true);
+    }
 
     // another group for text+background so that they can rotate together
     var anng = anngroup.append('g')
@@ -47951,6 +47953,15 @@ color.defaults = colorAttrs.defaults;
 color.defaultLine = colorAttrs.defaultLine;
 color.lightLine = colorAttrs.lightLine;
 color.background = colorAttrs.background;
+
+
+color.overrideColorDefaults = function(ca) {
+    if (typeof ca === 'undefined') {
+        return color.defaults;
+    } else {
+        color.defaults = ca;        
+    }
+}
 
 color.tinyRGB = function(tc) {
     var c = tc.toRgb();
@@ -49907,7 +49918,7 @@ dragElement.init = function init(options) {
 
         if(!gd._dragged) {
             var e2 = document.createEvent('MouseEvents');
-            e2.initEvent('click', true, true);
+            e2.initMouseEvent("click", e.bubbles, e.cancelable, e.view, 0, 0, 0, 0, 0, false, false, false, false, e.button, null);
             initialTarget.dispatchEvent(e2);
         }
 
@@ -52487,15 +52498,16 @@ module.exports = function draw(gd) {
     var legendWidth = opts.width,
         legendWidthMax = gs.w;
 
-    if(legendWidth > legendWidthMax) {
-        lx = gs.l;
-        legendWidth = legendWidthMax;
-    }
-    else {
+    // aburato: temp fix 
+    // if(legendWidth > legendWidthMax) {
+    //     lx = gs.l;
+    //     legendWidth = legendWidthMax;
+    // }
+    // else {
         if(lx + legendWidth > lxMax) lx = lxMax - legendWidth;
         if(lx < lxMin) lx = lxMin;
         legendWidth = Math.min(lxMax - lx, opts.width);
-    }
+    // }
 
     // Make sure the legend top and bottom are visible
     // (legends with a scroll bar are not allowed to stretch beyond the extended
@@ -52760,6 +52772,8 @@ function setupTraceToggle(g, gd) {
 
             newVisible = trace.visible === true ? 'legendonly' : true;
             Plotly.restyle(gd, 'visible', newVisible, traceIndicesInGroup);
+
+            gd.emit('plotly_legend_toggleVisible', {traceIndices: traceIndicesInGroup, visible: newVisible});
         }
     });
 }
@@ -56312,12 +56326,16 @@ function updateShape(gd, index, opt, value) {
             .call(Color.fill, options.fillcolor)
             .call(Drawing.dashLine, options.line.dash, options.line.width);
 
+        if (options.classes) {
+            path.classed(options.classes, true);
+        }    
+
         if(clipAxes) {
             path.call(Drawing.setClipUrl,
                 'clip' + gd._fullLayout._uid + clipAxes);
         }
 
-        if(gd._context.editable) setupDragElement(gd, path, options, index);
+        // if(gd._context.editable) setupDragElement(gd, path, options, index);
     }
 }
 
@@ -56773,6 +56791,10 @@ module.exports = function handleShapeDefaults(shapeIn, fullLayout) {
         coerce('path');
     } else {
         Lib.noneOrAll(shapeIn, shapeOut, ['x0', 'x1', 'y0', 'y1']);
+    }
+
+    if (shapeIn.classes) {
+        shapeOut.classes = shapeIn.classes;
     }
 
     return shapeOut;
@@ -58018,7 +58040,25 @@ Titles.draw = function(gd, titleClass, options) {
             });
     }
 
-    if(gd._context.editable) {
+    // ABURATO: main title-specific edit settings
+    var isEditable = gd._context.editable;
+    
+    if (isEditable) {
+        if (cont === fullLayout) {
+            // MAIN TITLE
+            isEditable = gd._context.editableMainTitle;
+        } else if (cont === fullLayout.xaxis) {
+            isEditable = gd._context.editableAxisXTitle;
+        } else if (cont === fullLayout.yaxis) {
+            isEditable = gd._context.editableAxisYTitle;
+        } else if (cont === fullLayout.yaxis2) {
+            isEditable = gd._context.editableAxisY2Title;
+        } else if (cont === fullLayout.xaxis2) {
+            isEditable = gd._context.editableAxisX2Title;
+        }
+    }
+
+    if(isEditable) {
         if(!txt) setPlaceholder();
 
         el.call(svgTextUtils.makeEditable)
@@ -58040,6 +58080,9 @@ Titles.draw = function(gd, titleClass, options) {
         el.remove();
     }
     el.classed('js-placeholder', isplaceholder);
+
+    // ABURATO: storing the title element inside its containing axis object
+    cont._titleElement = el;
 };
 
 },{"../../lib":314,"../../lib/svg_text_utils":326,"../../plotly":336,"../../plots/plots":372,"../color":223,"../drawing":247,"d3":8,"fast-isnumeric":12}],299:[function(require,module,exports){
@@ -59109,6 +59152,9 @@ exports.Fx = Plotly.Fx;
 exports.Snapshot = require('./snapshot');
 exports.PlotSchema = require('./plot_api/plot_schema');
 exports.Queue = require('./lib/queue');
+
+// Unofficial color defaults override
+ exports.colorDefaults = Plotly.Color.overrideColorDefaults;
 
 // export d3 used in the bundle
 exports.d3 = require('d3');
@@ -66149,6 +66195,21 @@ module.exports = {
     // we can edit titles, move annotations, etc
     editable: false,
 
+    // if editable is set to true, this can be used to deactivate main title editing ONLY. 
+    editableMainTitle: true,
+
+    // if editable is set to true, this can be used to deactivate X axis title editing ONLY. 
+    editableAxisXTitle: true,
+
+    // if editable is set to true, this can be used to deactivate X2 axis title editing ONLY. 
+    editableAxisX2Title: true,
+
+    // if editable is set to true, this can be used to deactivate Y axis title editing ONLY. 
+    editableAxisYTitle: true,
+
+    // if editable is set to true, this can be used to deactivate Y2 axis title editing ONLY. 
+    editableAxisY2Title: true,
+
     // DO autosize once regardless of layout.autosize
     // (use default width or height values otherwise)
     autosizable: false,
@@ -66915,6 +66976,19 @@ exports.drawMainTitle = function(gd) {
             'text-anchor': 'middle'
         }
     });
+
+    if (fullLayout._titleElement) {
+        var titleBB = fullLayout._titleElement.node().getBoundingClientRect();        
+        var shiftMargins = {
+            x: 0,
+            y: 1,
+            l: 0,
+            r: 0,
+            b: 0,
+            t: titleBB.height + 2
+        };
+        Plotly.Plots.autoMargin(gd, "chart_title", shiftMargins);
+    }
 };
 
 // First, see if we need to do arraysToCalcdata
@@ -69256,6 +69330,10 @@ axes.doTicks = function(gd, axid, skipTitle) {
     function drawLabels(container, position) {
         // tick labels - for now just the main labels.
         // TODO: mirror labels, esp for subplots
+
+        // aburato: restore pointer events otherwise title tooltips won't work
+        container.style('pointer-events', 'all');      
+        
         var tickLabels = container.selectAll('g.' + tcls).data(vals, datafn);
         if(!ax.showticklabels || !isNumeric(position)) {
             tickLabels.remove();
@@ -69296,34 +69374,37 @@ axes.doTicks = function(gd, axid, skipTitle) {
         var maxFontSize = 0,
             autoangle = 0,
             labelsReady = [];
-        tickLabels.enter().append('g').classed(tcls, 1)
-            .append('text')
-                // only so tex has predictable alignment that we can
-                // alter later
-                .attr('text-anchor', 'middle')
-                .each(function(d) {
-                    var thisLabel = d3.select(this),
-                        newPromise = gd._promises.length;
-                    thisLabel
-                        .call(Drawing.setPosition, labelx(d), labely(d))
-                        .call(Drawing.font, d.font, d.fontSize, d.fontColor)
-                        .text(d.text)
-                        .call(svgTextUtils.convertToTspans);
-                    newPromise = gd._promises[newPromise];
-                    if(newPromise) {
-                        // if we have an async label, we'll deal with that
-                        // all here so take it out of gd._promises and
-                        // instead position the label and promise this in
-                        // labelsReady
-                        labelsReady.push(gd._promises.pop().then(function() {
-                            positionLabels(thisLabel, ax.tickangle);
-                        }));
-                    }
-                    else {
-                        // sync label: just position it now.
+        
+        // aburato: store this for later reference
+        var theG = tickLabels.enter().append('g').classed(tcls, 1);
+        
+        theG.append('text')
+            // only so tex has predictable alignment that we can
+            // alter later
+            .attr('text-anchor', 'middle')
+            .each(function(d) {
+                var thisLabel = d3.select(this),
+                    newPromise = gd._promises.length;
+                thisLabel
+                    .call(Drawing.setPosition, labelx(d), labely(d))
+                    .call(Drawing.font, d.font, d.fontSize, d.fontColor)
+                    .text(d.text)
+                    .call(svgTextUtils.convertToTspans);
+                newPromise = gd._promises[newPromise];
+                if(newPromise) {
+                    // if we have an async label, we'll deal with that
+                    // all here so take it out of gd._promises and
+                    // instead position the label and promise this in
+                    // labelsReady
+                    labelsReady.push(gd._promises.pop().then(function() {
                         positionLabels(thisLabel, ax.tickangle);
-                    }
-                });
+                    }));
+                }
+                else {
+                    // sync label: just position it now.
+                    positionLabels(thisLabel, ax.tickangle);
+                }
+            });
         tickLabels.exit().remove();
 
         tickLabels.each(function(d) {
@@ -69421,12 +69502,88 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 ax._lastangle = autoangle;
             }
 
+            performLabelEllipsis();
+
             // update the axis title
             // (so it can move out of the way if needed)
             // TODO: separate out scoot so we don't need to do
             // a full redraw of the title (mostly relevant for MathJax)
             drawAxTitle(axid);
             return axid + ' done';
+        }
+
+        function performLabelEllipsis() {
+            var maxLengthtPct = 0.25; // the max percent of the total chart w/h after which labels get the ellipsis.
+            var maxLengthCap = 200; // we still won't give labels more than this amount of space.
+            var maxLength = (axletter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
+            maxLength = Math.min(maxLength, maxLengthCap);
+
+            // ellipsis
+            tickLabels.each(function(d) {
+                var thisG = d3.select(this);
+                var bb = Drawing.bBox(thisG.node());
+                var labelLength = (axletter === "x" ? bb["height"] : bb["width"]);
+
+                // aburato: if the label is too long perform a middle ellipsis
+                if (labelLength > maxLength) {
+                    var drawnText = d.text;
+                    var maxCharLength = Math.round(maxLength / (labelLength / drawnText.length));                    
+                    var firstLen = Math.floor(maxCharLength / 2);
+                    var lastLen = maxCharLength - firstLen - 1;
+                    drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+                    var thisText = thisG.select('text');                    
+                    thisText.text(drawnText);
+                    // aburato: use a title element for a free tooltip.
+                    thisG.insert("title", "text").text(d.text);
+                }
+            });
+        }
+
+        function adjustAutoMarginForLabels() {
+            var axBB = ax._boundingBox;
+            var shiftDimension;
+            var marginDimension;
+            var x = 0, y = 0;
+
+            if (ax._id.charAt(0) === "x") {
+                shiftDimension = "height";
+                if (ax._id.charAt(1) === "2") {
+                    y = 1;
+                    marginDimension = "t";
+                } else {
+                    marginDimension = "b";
+                }
+            } else if (ax._id.charAt(0) === "y") {
+                shiftDimension = "width";
+                if (ax._id.charAt(1) === "2") {
+                    x = 1;
+                    marginDimension = "r";
+                } else {
+                    marginDimension = "l";
+                }
+            }
+
+            if (shiftDimension && marginDimension) {
+                var shiftAmount = axBB[shiftDimension];
+                if (ax._titleElement) {
+                    var titleBB = ax._titleElement.node().getBoundingClientRect();
+                    shiftAmount += (titleBB[shiftDimension] + 2);
+                }
+
+                var maxAmount = gd._fullLayout[shiftDimension] * 0.5;
+                shiftAmount = Math.min(shiftAmount, maxAmount);
+
+                var shiftMargins = {
+                    x: x,
+                    y: y,
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 0
+                };
+                shiftMargins[marginDimension] = shiftAmount;
+                Plotly.Plots.autoMargin(gd, ax._name, shiftMargins);
+            }
         }
 
         function calcBoundingBox() {
@@ -69436,7 +69593,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
         var done = Lib.syncOrAsync([
             allLabelsReady,
             fixLabelOverlaps,
-            calcBoundingBox
+            calcBoundingBox,
+            adjustAutoMarginForLabels
         ]);
         if(done && done.then) gd._promises.push(done);
         return done;
@@ -70658,7 +70816,9 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             axi,
             axRange;
 
-        for(i = 0; i < axList.length; i++) {
+        var zoomInfo = [];
+
+        for (i = 0; i < axList.length; i++) {
             axi = axList[i];
             if(axi.fixedrange) continue;
 
@@ -70667,7 +70827,16 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 axRange[0] + (axRange[1] - axRange[0]) * r0Fraction,
                 axRange[0] + (axRange[1] - axRange[0]) * r1Fraction
             ];
+
+            zoomInfo.push({
+                oldRange: axRange.slice(0),
+                newRange: axi.range.slice(0),
+                name: axi._name,
+                fractionalRange: [r0Fraction, r1Fraction]
+            });
         }
+
+        return zoomInfo;
     }
 
     function zoomDone(dragged, numClicks) {
@@ -70677,15 +70846,31 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             return removeZoombox(gd);
         }
 
-        if(zoomMode === 'xy' || zoomMode === 'x') zoomAxRanges(xa, box.l / pw, box.r / pw);
-        if(zoomMode === 'xy' || zoomMode === 'y') zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph);
+        var axesZoomInfo = [];
+
+        if (zoomMode === 'xy' || zoomMode === 'x') {
+            var xZoomInfo = zoomAxRanges(xa, box.l / pw, box.r / pw);
+            axesZoomInfo = axesZoomInfo.concat(xZoomInfo);
+        }
+        if (zoomMode === 'xy' || zoomMode === 'y') {
+            var yZoomInfo = zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph);
+            axesZoomInfo = axesZoomInfo.concat(yZoomInfo);
+        }
 
         removeZoombox(gd);
-        dragTail(zoomMode);
 
-        if(SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
-            Lib.notifier('Double-click to<br>zoom back out', 'long');
-            SHOWZOOMOUTTIP = false;
+        // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
+        var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
+        gd.emit('plotly_zoom', args);
+
+        if (!args.userHandled) {
+            dragTail(zoomMode);
+            if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+                Lib.notifier('Double-click to<br>zoom back out', 'long');
+                SHOWZOOMOUTTIP = false;
+            }
+            args.pre = false;
+            gd.emit('plotly_zoom', args);
         }
     }
 
@@ -70928,6 +71113,12 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     function doubleClick() {
         if(gd._transitioningWithDuration) return;
 
+        // Emit pre-zoom reset
+        var args = { zoomMode: "reset", pre: true, userHandled: false };
+        gd.emit('plotly_zoom', args);
+
+        if (args.userHandled) return;
+
         var doubleClickConfig = gd._context.doubleClick,
             axList = (xActive ? xa : []).concat(yActive ? ya : []),
             attrs = {};
@@ -70975,6 +71166,9 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         gd.emit('plotly_doubleclick', null);
         Plotly.relayout(gd, attrs);
+
+        args.pre = false;
+        gd.emit('plotly_zoom', args);
     }
 
     // dragTail - finish a drag event with a redraw
@@ -71460,7 +71654,7 @@ function hover(gd, evt, subplot) {
     var hovermode = evt.hovermode || fullLayout.hovermode;
 
     if(['x', 'y', 'closest'].indexOf(hovermode) === -1 || !gd.calcdata ||
-            gd.querySelector('.zoombox') || gd._dragging) {
+            gd._dragged) {
         return dragElement.unhoverRaw(gd, evt);
     }
 
@@ -71679,7 +71873,8 @@ function hover(gd, evt, subplot) {
         container: fullLayout._hoverlayer,
         outerContainer: fullLayout._paperdiv
     };
-    var hoverLabels = createHoverText(hoverData, labelOpts);
+
+    var hoverLabels = createHoverText(hoverData, labelOpts, evt, gd.layout.hoverFollowsMouse);
 
     hoverAvoidOverlaps(hoverData, rotateLabels ? 'xa' : 'ya');
 
@@ -71908,7 +72103,7 @@ fx.loneUnhover = function(containerOrSelection) {
     selection.selectAll('g.hovertext').remove();
 };
 
-function createHoverText(hoverData, opts) {
+function createHoverText(hoverData, opts, evt, hoverFollowsMouse) {
     var hovermode = opts.hovermode,
         rotateLabels = opts.rotateLabels,
         bgColor = opts.bgColor,
@@ -72159,6 +72354,12 @@ function createHoverText(hoverData, opts) {
         d.tx2width = tx2width;
         d.offset = 0;
 
+        // POSITION HOVER GROUP
+        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.layerX && evt.layerY) {
+            htx = evt.layerX;
+            hty = evt.layerY;
+        }
+
         if(rotateLabels) {
             d.pos = htx;
             anchorStartOK = hty + dy / 2 + txTotalWidth <= outerHeight;
@@ -72186,6 +72387,7 @@ function createHoverText(hoverData, opts) {
 
         tx.attr('text-anchor', d.anchor);
         if(tx2width) tx2.attr('text-anchor', d.anchor);
+
         g.attr('transform', 'translate(' + htx + ',' + hty + ')' +
             (rotateLabels ? 'rotate(' + YANGLE + ')' : ''));
     });
@@ -72439,7 +72641,7 @@ function hoverChanged(gd, evt, oldhoverdata) {
 // on click
 fx.click = function(gd, evt) {
     if(gd._hoverdata && evt && evt.target) {
-        gd.emit('plotly_click', {points: gd._hoverdata});
+        gd.emit('plotly_click', {button: evt.button, points: gd._hoverdata});
         // why do we get a double event without this???
         if(evt.stopImmediatePropagation) evt.stopImmediatePropagation();
     }
@@ -81724,6 +81926,20 @@ module.exports = function hoverPoints(pointData, xval, yval, hovermode) {
         xpx = xa.c2p(xval),
         ypx = ya.c2p(yval),
         pt = [xpx, ypx];
+
+    if(pointData.trace._input.rect){
+        var found = false;
+        var rect = pointData.trace._input.rect;
+        for(var i=0;i<rect.length;i++){
+            if(xval > rect[i].x0 && xval < rect[i].x1 && yval > rect[i].y0 && yval < rect[i].y1){
+                pointData.index = i;
+                pointData.text = pointData.trace.text[i];
+                found = true;
+            }
+        }
+        
+        if(!found) return;
+    }
 
     // look for points to hover on first, then take fills only if we
     // didn't find a point

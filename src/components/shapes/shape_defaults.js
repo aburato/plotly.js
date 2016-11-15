@@ -65,5 +65,9 @@ module.exports = function handleShapeDefaults(shapeIn, fullLayout) {
         Lib.noneOrAll(shapeIn, shapeOut, ['x0', 'x1', 'y0', 'y1']);
     }
 
+    if (shapeIn.classes) {
+        shapeOut.classes = shapeIn.classes;
+    }
+
     return shapeOut;
 };

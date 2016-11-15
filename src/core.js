@@ -73,5 +73,8 @@ exports.Snapshot = require('./snapshot');
 exports.PlotSchema = require('./plot_api/plot_schema');
 exports.Queue = require('./lib/queue');
 
+// Unofficial color defaults override
+ exports.colorDefaults = Plotly.Color.overrideColorDefaults;
+
 // export d3 used in the bundle
 exports.d3 = require('d3');

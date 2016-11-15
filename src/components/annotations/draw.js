@@ -264,6 +264,10 @@ function drawOne(gd, index, opt, value) {
             });
         });
 
+    if (options.classes) {
+        anngroup.classed(options.classes, true);
+    }
+
     // another group for text+background so that they can rotate together
     var anng = anngroup.append('g')
         .classed('annotation-text-g', true)

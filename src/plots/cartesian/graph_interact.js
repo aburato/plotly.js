@@ -356,7 +356,7 @@ function hover(gd, evt, subplot) {
     var hovermode = evt.hovermode || fullLayout.hovermode;
 
     if(['x', 'y', 'closest'].indexOf(hovermode) === -1 || !gd.calcdata ||
-            gd.querySelector('.zoombox') || gd._dragging) {
+            gd._dragged) {
         return dragElement.unhoverRaw(gd, evt);
     }
 
@@ -575,7 +575,8 @@ function hover(gd, evt, subplot) {
         container: fullLayout._hoverlayer,
         outerContainer: fullLayout._paperdiv
     };
-    var hoverLabels = createHoverText(hoverData, labelOpts);
+
+    var hoverLabels = createHoverText(hoverData, labelOpts, evt, gd.layout.hoverFollowsMouse);
 
     hoverAvoidOverlaps(hoverData, rotateLabels ? 'xa' : 'ya');
 
@@ -804,7 +805,7 @@ fx.loneUnhover = function(containerOrSelection) {
     selection.selectAll('g.hovertext').remove();
 };
 
-function createHoverText(hoverData, opts) {
+function createHoverText(hoverData, opts, evt, hoverFollowsMouse) {
     var hovermode = opts.hovermode,
         rotateLabels = opts.rotateLabels,
         bgColor = opts.bgColor,
@@ -1055,6 +1056,12 @@ function createHoverText(hoverData, opts) {
         d.tx2width = tx2width;
         d.offset = 0;
 
+        // POSITION HOVER GROUP
+        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.layerX && evt.layerY) {
+            htx = evt.layerX;
+            hty = evt.layerY;
+        }
+
         if(rotateLabels) {
             d.pos = htx;
             anchorStartOK = hty + dy / 2 + txTotalWidth <= outerHeight;
@@ -1082,6 +1089,7 @@ function createHoverText(hoverData, opts) {
 
         tx.attr('text-anchor', d.anchor);
         if(tx2width) tx2.attr('text-anchor', d.anchor);
+
         g.attr('transform', 'translate(' + htx + ',' + hty + ')' +
             (rotateLabels ? 'rotate(' + YANGLE + ')' : ''));
     });
@@ -1335,7 +1343,7 @@ function hoverChanged(gd, evt, oldhoverdata) {
 // on click
 fx.click = function(gd, evt) {
     if(gd._hoverdata && evt && evt.target) {
-        gd.emit('plotly_click', {points: gd._hoverdata});
+        gd.emit('plotly_click', {button: evt.button, points: gd._hoverdata});
         // why do we get a double event without this???
         if(evt.stopImmediatePropagation) evt.stopImmediatePropagation();
     }
