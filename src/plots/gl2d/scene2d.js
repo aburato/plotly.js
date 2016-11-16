@@ -15,6 +15,7 @@ var Fx = require('../../plots/cartesian/graph_interact');
 var createPlot2D = require('gl-plot2d');
 var createSpikes = require('gl-spikes2d');
 var createSelectBox = require('gl-select-box');
+var getContext = require('webgl-context');
 
 var createOptions = require('./convert');
 var createCamera = require('./camera');
@@ -33,6 +34,7 @@ function Scene2D(options, fullLayout) {
     this.staticPlot = !!options.staticPlot;
 
     this.fullLayout = fullLayout;
+    this.fullData = null;
     this.updateAxes(fullLayout);
 
     this.makeFramework();
@@ -49,6 +51,7 @@ function Scene2D(options, fullLayout) {
 
     // trace set
     this.traces = {};
+    this._inputs = {};
 
     // create axes spikes
     this.spikes = createSpikes(this.glplot);
@@ -57,6 +60,9 @@ function Scene2D(options, fullLayout) {
         innerFill: false,
         outerFill: true
     });
+
+    // last button state
+    this.lastButtonState = 0;
 
     // last pick result
     this.pickResult = null;
@@ -82,16 +88,15 @@ proto.makeFramework = function() {
         if(!STATIC_CONTEXT) {
             STATIC_CANVAS = document.createElement('canvas');
 
-            try {
-                STATIC_CONTEXT = STATIC_CANVAS.getContext('webgl', {
-                    preserveDrawingBuffer: true,
-                    premultipliedAlpha: true,
-                    antialias: true
-                });
-            } catch(e) {
-                throw new Error([
-                    'Error creating static canvas/context for image server'
-                ].join(' '));
+            STATIC_CONTEXT = getContext({
+                canvas: STATIC_CANVAS,
+                preserveDrawingBuffer: false,
+                premultipliedAlpha: true,
+                antialias: true
+            });
+
+            if(!STATIC_CONTEXT) {
+                throw new Error('Error creating static canvas/context for image server');
             }
         }
 
@@ -99,23 +104,12 @@ proto.makeFramework = function() {
         this.gl = STATIC_CONTEXT;
     }
     else {
-        var liveCanvas = document.createElement('canvas'),
-            glOpts = { premultipliedAlpha: true };
-        var gl;
+        var liveCanvas = document.createElement('canvas');
 
-        try {
-            gl = liveCanvas.getContext('webgl', glOpts);
-        } catch(e) {
-            //
-        }
-
-        if(!gl) {
-            try {
-                gl = liveCanvas.getContext('experimental-webgl', glOpts);
-            } catch(e) {
-                //
-            }
-        }
+        var gl = getContext({
+            canvas: liveCanvas,
+            premultipliedAlpha: true
+        });
 
         if(!gl) showNoWebGlMsg(this);
 
@@ -124,18 +118,21 @@ proto.makeFramework = function() {
     }
 
     // position the canvas
-    var canvas = this.canvas,
-        pixelRatio = this.pixelRatio,
-        fullLayout = this.fullLayout;
+    var canvas = this.canvas;
 
-    canvas.width = Math.ceil(pixelRatio * fullLayout.width) |0;
-    canvas.height = Math.ceil(pixelRatio * fullLayout.height) |0;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     canvas.style.position = 'absolute';
     canvas.style.top = '0px';
     canvas.style.left = '0px';
     canvas.style['pointer-events'] = 'none';
+
+    this.updateSize(canvas);
+
+    // disabling user select on the canvas
+    // sanitizes double-clicks interactions
+    // ref: https://github.com/plotly/plotly.js/issues/744
+    canvas.className += 'user-select-none';
 
     // create SVG container for hover text
     var svgContainer = this.svgContainer = document.createElementNS(
@@ -163,6 +160,9 @@ proto.toImage = function(format) {
 
     this.stopped = true;
     if(this.staticPlot) this.container.appendChild(STATIC_CANVAS);
+
+    // update canvas size
+    this.updateSize(this.canvas);
 
     // force redraw
     this.glplot.setDirty();
@@ -216,6 +216,26 @@ proto.toImage = function(format) {
     return dataURL;
 };
 
+proto.updateSize = function(canvas) {
+    if(!canvas) canvas = this.canvas;
+
+    var pixelRatio = this.pixelRatio,
+        fullLayout = this.fullLayout;
+
+    var width = fullLayout.width,
+        height = fullLayout.height,
+        pixelWidth = Math.ceil(pixelRatio * width) |0,
+        pixelHeight = Math.ceil(pixelRatio * height) |0;
+
+    // check for resize
+    if(canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+        canvas.width = pixelWidth;
+        canvas.height = pixelHeight;
+    }
+
+    return canvas;
+};
+
 proto.computeTickMarks = function() {
     this.xaxis._length =
         this.glplot.viewBox[2] - this.glplot.viewBox[0];
@@ -229,9 +249,8 @@ proto.computeTickMarks = function() {
 
     for(var j = 0; j < 2; ++j) {
         for(var i = 0; i < nextTicks[j].length; ++i) {
-            // TODO add support for '\n' in gl-plot2d,
-            // For now, replace '\n' with ' '
-            nextTicks[j][i].text = convertHTMLToUnicode(nextTicks[j][i].text + '').replace(/\n/g, ' ');
+            // coercing tick value (may not be a string) to a string
+            nextTicks[j][i].text = convertHTMLToUnicode(nextTicks[j][i].text + '');
         }
     }
 
@@ -327,29 +346,23 @@ proto.destroy = function() {
     this.container.removeChild(this.svgContainer);
     this.container.removeChild(this.mouseContainer);
 
+    this.fullData = null;
+    this._inputs = null;
     this.glplot = null;
     this.stopped = true;
 };
 
 proto.plot = function(fullData, calcData, fullLayout) {
-    var glplot = this.glplot,
-        pixelRatio = this.pixelRatio;
+    var glplot = this.glplot;
 
     this.fullLayout = fullLayout;
     this.updateAxes(fullLayout);
     this.updateTraces(fullData, calcData);
 
     var width = fullLayout.width,
-        height = fullLayout.height,
-        pixelWidth = Math.ceil(pixelRatio * width) |0,
-        pixelHeight = Math.ceil(pixelRatio * height) |0;
+        height = fullLayout.height;
 
-    // check for resize
-    var canvas = this.canvas;
-    if(canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
-        canvas.width = pixelWidth;
-        canvas.height = pixelHeight;
-    }
+    this.updateSize(this.canvas);
 
     var options = this.glplotOptions;
     options.merge(fullLayout);
@@ -417,6 +430,8 @@ proto.updateTraces = function(fullData, calcData) {
     var traceIds = Object.keys(this.traces);
     var i, j, fullTrace;
 
+    this.fullData = fullData;
+
     // remove empty traces
     trace_id_loop:
     for(i = 0; i < traceIds.length; i++) {
@@ -438,7 +453,7 @@ proto.updateTraces = function(fullData, calcData) {
     // update / create trace objects
     for(i = 0; i < fullData.length; i++) {
         fullTrace = fullData[i];
-
+        this._inputs[fullTrace.uid] = i;
         var calcTrace = calcData[i],
             traceObj = this.traces[fullTrace.uid];
 
@@ -450,6 +465,24 @@ proto.updateTraces = function(fullData, calcData) {
     }
 };
 
+proto.emitPointAction = function(nextSelection, eventType) {
+
+    var curveIndex = this._inputs[nextSelection.trace.uid];
+
+    this.graphDiv.emit(eventType, {
+        points: [{
+            x: nextSelection.traceCoord[0],
+            y: nextSelection.traceCoord[1],
+            curveNumber: curveIndex,
+            pointNumber: nextSelection.pointIndex,
+            data: this.fullData[curveIndex]._input,
+            fullData: this.fullData,
+            xaxis: this.xaxis,
+            yaxis: this.yaxis
+        }]
+    });
+};
+
 proto.draw = function() {
     if(this.stopped) return;
 
@@ -458,7 +491,10 @@ proto.draw = function() {
     var glplot = this.glplot,
         camera = this.camera,
         mouseListener = camera.mouseListener,
+        mouseUp = this.lastButtonState === 1 && mouseListener.buttons === 0,
         fullLayout = this.fullLayout;
+
+    this.lastButtonState = mouseListener.buttons;
 
     this.cameraChanged();
 
@@ -489,8 +525,13 @@ proto.draw = function() {
             (y / glplot.pixelRatio) - (size.t + (1 - domainY[1]) * size.h)
         );
 
-        if(result && fullLayout.hovermode) {
-            var nextSelection = result.object._trace.handlePick(result);
+        var nextSelection = result && result.object._trace.handlePick(result);
+
+        if(nextSelection && mouseUp) {
+            this.emitPointAction(nextSelection, 'plotly_click');
+        }
+
+        if(result && result.object._trace.hoverinfo !== 'skip' && fullLayout.hovermode) {
 
             if(nextSelection && (
                 !this.lastPickResult ||
@@ -499,6 +540,7 @@ proto.draw = function() {
                 this.lastPickResult.dataCoord[1] !== nextSelection.dataCoord[1])
             ) {
                 var selection = nextSelection;
+
                 this.lastPickResult = {
                     traceUid: nextSelection.trace ? nextSelection.trace.uid : null,
                     dataCoord: nextSelection.dataCoord.slice()
@@ -515,6 +557,10 @@ proto.draw = function() {
                         (glplot.dataBox[3] - glplot.dataBox[1]) - glplot.viewBox[1]) /
                             glplot.pixelRatio
                 ];
+
+                // this needs to happen before the next block that deletes traceCoord data
+                // also it's important to copy, otherwise data is lost by the time event data is read
+                this.emitPointAction(nextSelection, 'plotly_hover');
 
                 var hoverinfo = selection.hoverinfo;
                 if(hoverinfo !== 'all') {
@@ -543,6 +589,7 @@ proto.draw = function() {
         else if(!result && this.lastPickResult) {
             this.spikes.update({});
             this.lastPickResult = null;
+            this.graphDiv.emit('plotly_unhover');
             Fx.loneUnhover(this.svgContainer);
         }
     }

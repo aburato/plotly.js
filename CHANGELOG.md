@@ -9,9 +9,163 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
-## [1.16.3-d22] -- 2016-11-2
 
-- Fixed crash on click in IE
+## [1.19.2-d24] -- 2016-11-15
+
+- Started from a fresh original (plotly) 1.19.2 tag and re-merged everything BY HAND.
+
+
+## [1.19.2] -- 2016-11-02
+
+### Fixed
+- Fix hover label positioning on bar traces [#1107]
+
+
+## [1.19.1] -- 2016-10-27
+
+### Fixed
+- Fix dist bundles [#1094]
+
+
+## [1.19.0] -- 2016-10-27
+
+**Unpublished on npm and CDN** due to broken dist bundles.
+
+### Added
+- Add two-argument `Plotly.plot` call signature [#1014]
+- Add two-way binding functionality to updatemenus and sliders [#1016]
+- Add `width`, `base` and `offset` attribute to bar trace [#1075]
+- Add `fromcurrent` and `direction` animation options [#1087]
+- Add ability to filter by arbitrary array [#1062]
+
+### Changed
+- Rename `filtersrc` filter transform attribute `target` (with
+  backward-compatible map) [#1062]
+- Bump `sane-topojson` requirement to 2.0.0. New topojson dist files fix
+  the Michigan state border [#1077]
+- scattergl now handles higher resolution dates [#1033]
+- Improve error messages in `Plotly.animate` [#1088]
+
+### Fixed
+- `Plotly.newPlot` now respect user-defined layout `height` and `width` [#537]
+- Fix dendrogram cartesian axis layers [#1063]
+- Fix RGBA colorscale handler for contour [#1090]
+- Fix gl2d axis title positioning [#1067]
+- Fix gl2d multi-line axis tick labels display [#1087]
+- Fix performance deficit of scattergl trace type with date coordinates [#1021]
+- Fix ohlc trace offset computation [#1066]
+- Fix ohlc and candlestick default trace names [#1073]
+- Make `Plotly.animate` work with frames container array containers (e.g
+  annotations) [#1081]
+- Make `restyle` and `relayout` consistently remove items in array containers
+  when called with value argument `null` [#1086]
+
+
+## [1.18.1] -- 2016-10-18
+
+### Fixed
+- Fix cartesian subplot resize [#1049]
+- Fix cartesian interactivity after click [#1049]
+- Fix `scattergeo` traces with not-found country names [#1046]
+- Honor `'name'` hoverinfo flag in `ohlc` traces [#1050]
+- Fix animation merging for frames including array containers [#1041. #1048]
+- Fix `requestAnimationFrame` polyfill for script-tag imports [#1039]
+
+
+## [1.18.0] -- 2016-10-13
+
+### Added
+- Add `ohlc` and `candlestick` trace types [#1020]
+- Add slider layout component [#986, #1029]
+- Add filter and groupby transforms [#936, #978]
+- Add support for all cartesian trace types and subplot configuration in
+  range slider range plots [#946, #1017]
+- Add update menus `'buttons'` type, `direction` and `showactive` options [#974]
+- Add `pad` attributes to update menus for more intuitive positioning [#989]
+- Add `plotly_hover`, `plotly_click` and `plotly_unhover` event emitters
+  on gl2d subplot [#994]
+- Make `'text'` mode  scatter traces animatable [#1011]
+- Add picking for `'line'` mode scattergeo traces [#1004]
+- Add support for `fill: 'toself'` in scattergeo traces [#1004]
+
+### Changed
+- Allow null / undefined frames in `Plotly.addFrames`[#1013]
+
+### Fixed
+- Allow range sliders to properly relayout [#962]
+- Fix handling of `NaN` gaps in range slider range plots [#946, #1017]
+- Properly skip over `NaN`s in scattergeo data arrays [#1004]
+- Fix handling graph div with style `visibility: inherit` [#990]
+- Fix `Plotly.update` for updates that require a full data + layout replot [#971]
+- Let update menus use `Plotly.update` method value [#972]
+- Fix tickfont relayout call on 3D subplot [#982]
+
+
+## [1.17.3] -- 2016-09-21
+
+### Fixed
+- Fix scatter text node translations on range relayout [#956]
+- Fix `Plotly.restyle` for scatter trace `mode` [#956]
+- Fix color mapping discontinuity in `surface` trace with circular colorscale
+  [#959]
+- Fix `Plotly.redraw` when scatter traces are added to the graph [#947]
+- Fix double click side-effects in gl2d plots [#958]
+- Emit event animatingframe frame during animations [#953]
+
+
+## [1.17.2] -- 2016-09-12
+
+### Fixed
+- 3D colored axis backgrounds and axis labels are rendered again (bug introduced
+  in 1.17.0) [#931]
+
+
+## [1.17.1] -- 2016-09-09
+
+### Fixed
+- Restyling `visible` to `false` on all scatter traces present on a graph
+  is now working again (bug introduced in 1.17.0) [#920]
+- Relayouting `paper_bgcolor` now properly propagate to legend
+  and updatemenu `bgcolor [#921]
+- Mapbox plot routine no longer make request to public Mapbox server
+  when linked to a Mapbox Atlas instance [#919]
+
+
+## [1.17.0] -- 2016-09-07
+
+### Added
+- Add support for animations for scatter trace [#802]
+- Add frames and animate API -> `Plotly.animate`, `Plotly.addFrames` and
+  `Plotly.deleteFrames` [#802]
+- Add `Plotly.update` method which can perform data and layout update in one
+  call [#875]
+- Add `pointcloud` gl2d trace type [#850, #869]
+- Add `xgap` and `ygap` to heatmap traces to define space between heatmap bricks
+  [#868]
+- Add `separatethousands` axis attribute which determines whether four-digit
+  numbers are separated or not [#848]
+- Add `'skip'` value to trace `hoverinfo` corresponding to traces transparent to
+  the hover picking routine [#851]
+- Add support for trace opacity in `toself` filled trace [#896]
+- Add global transform config option [#852]
+- Add `requestAnimationFrame` to `dist/`[#904]
+
+### Changed
+- Explicitly skip undefined props on `restyle` and `relayout` [#844]
+- Removed a few circular dependency patterns [#833, #837, #845, #878]
+
+### Fixed
+- Fix legend trace toggle background attributes on restyle [#909]
+- Make 'yanchor' default be its intended value of `'top'` [#894]
+- Fix box plot jitter algorithm when IQR = 0 [#915]
+- Fix box plot jitter algorithm when data range is 0 [#915]
+- Fix mapbox event firing duplicates [#901]
+- Fix mapbox visible false traces handling on first draw [#900]
+- Avoid draw buffer to display buffer copy in gl2d plots [#843]
+- Do not extend data array on event emission [#842, #866]
+- Make `Plotly.redraw` throw an error when called on non plotly graph div [#907]
+- Make `plotly.min.js` work when injected in Require.js environment [#914]
+
 
 ## [1.16.3-d20] -- 2016-09-15
 
@@ -152,24 +306,6 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - Fix Chrome 50 bug where tester svg blocked other DOM nodes [#745]
 
 
-## [1.14.2-d9] -- 2016-08-09
-
-### Changed
-- Peter: added right click detection in PIEs
-
-
-## [1.14.2-d7] -- 2016-07-15
-
-### Changed
-- Can enable title editing independently for main Title, X, X2, Y, Y2 axes.
-
-
-## [1.14.2-d6] -- 2016-07-15
-
-### Changed
-- Aligned to plotly.js 1.14.2
-
-
 ## [1.14.2] -- 2016-07-11
 
 ### Fixed
@@ -233,25 +369,6 @@ where X.Y.Z is the semver of most recent plotly.js release.
   describe their behavior [#662]
 
 
-## [1.13.0-d6] -- 2016-06-24
-
-### Changed
-- Added Plotly.colorDefaults(color[]) to API.
-
-
-## [1.13.0-d5] -- 2016-06-22
-
-### Changed
-- Automargins takes into account axes labels and titles
-- Fixed regression, reintroduced plotly_legend_toggleVisible
-
-
-## [1.13.0-d3] -- 2016-06-15
-
-### Changed
-- Aligned to plotly.js 1.13.0
-
-
 ## [1.13.0] -- 2016-06-13
 
 ### Added
@@ -306,12 +423,6 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - Heatmap `zsmooth` value `'fast'` is now functional for arbitrary layout widths
   [#548]
 - Range sliders now respond to all axis range relayout calls [#568]
-
-
-## [1.11.0-d3] -- 2016-05-24
-
-### Changed
-- Aligned to plotly.js 1.11.0
 
 
 ## [1.11.0] -- 2016-05-17
@@ -425,12 +536,6 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - Better grammar in `scatter` attribute descriptions [#406]
 
 
-## [1.8.0-d3] -- 2016-04-06
-
-### Changed
-- Aligned to plotly.js 1.8.0
-
-
 ## [1.8.0] -- 2016-04-04
 
 ### Added
@@ -443,11 +548,6 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - IE / Edge handling of getComputedTextLength is now functional [#376]
 - improved marker color attribute description [#366]
 
-
-## [1.7.1-d3] -- 2016-03-31
-
-### Changed
-- Aligned to plotly.js 1.7.1
 
 ## [1.7.1] -- 2016-03-30
 
@@ -473,11 +573,6 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - Geo traces nodes now update properly on streaming plot calls [#324]
 - jQuery check in event module is made more robust [#328]
 
-
-## [1.6.3-d2] -- 2016-03-23
-
-### Added
-- Plotly now emits a "plotly_legend_toggleVisible"
 
 ## [1.6.3] -- 2016-03-07
 

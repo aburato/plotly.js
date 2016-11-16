@@ -8,6 +8,7 @@ var Lib = require('@src/lib');
 var createGraphDiv = require('../assets/create_graph_div');
 var destroyGraphDiv = require('../assets/destroy_graph_div');
 var mouseEvent = require('../assets/mouse_event');
+var click = require('../assets/click');
 var doubleClick = require('../assets/double_click');
 
 describe('hover info', function() {
@@ -300,6 +301,23 @@ describe('hover info', function() {
         });
     });
 
+    describe('hover info skip', function() {
+        var mockCopy = Lib.extendDeep({}, mock);
+
+        mockCopy.data[0].hoverinfo = 'skip';
+
+        beforeEach(function(done) {
+            Plotly.plot(createGraphDiv(), mockCopy.data, mockCopy.layout).then(done);
+        });
+
+        it('does not hover if hover info is set to skip', function() {
+            var gd = document.getElementById('graph');
+            Fx.hover('graph', evt, 'xy');
+
+            expect(gd._hoverdata, undefined);
+        });
+    });
+
     describe('hover info none', function() {
         var mockCopy = Lib.extendDeep({}, mock);
 
@@ -507,11 +525,11 @@ describe('hover info on stacked subplots', function() {
                     y: 1000
                 }));
 
-            //There should be a single label on the x-axis with the shared x value, 3.
+            // There should be a single label on the x-axis with the shared x value, 3.
             expect(d3.selectAll('g.axistext').size()).toEqual(1);
             expect(d3.selectAll('g.axistext').select('text').html()).toEqual('3');
 
-            //There should be two points being hovered over, in two different traces, one in each plot.
+            // There should be two points being hovered over, in two different traces, one in each plot.
             expect(d3.selectAll('g.hovertext').size()).toEqual(2);
             var textNodes = d3.selectAll('g.hovertext').selectAll('text');
 
@@ -559,11 +577,11 @@ describe('hover info on stacked subplots', function() {
                     y: 0
                 }));
 
-            //There should be a single label on the y-axis with the shared y value, 0.
+            // There should be a single label on the y-axis with the shared y value, 0.
             expect(d3.selectAll('g.axistext').size()).toEqual(1);
             expect(d3.selectAll('g.axistext').select('text').html()).toEqual('0');
 
-            //There should be three points being hovered over, in three different traces, one in each plot.
+            // There should be three points being hovered over, in three different traces, one in each plot.
             expect(d3.selectAll('g.hovertext').size()).toEqual(3);
             var textNodes = d3.selectAll('g.hovertext').selectAll('text');
 
@@ -613,6 +631,16 @@ describe('hover after resizing', function() {
 
     afterEach(destroyGraphDiv);
 
+    function _click(pos) {
+        return new Promise(function(resolve) {
+            click(pos[0], pos[1]);
+
+            setTimeout(function() {
+                resolve();
+            }, constants.HOVERMINTIME);
+        });
+    }
+
     function assertLabelCount(pos, cnt, msg) {
         return new Promise(function(resolve) {
             mouseEvent('mousemove', pos[0], pos[1]);
@@ -635,22 +663,36 @@ describe('hover after resizing', function() {
             pos1 = [401, 122];
 
         Plotly.plot(gd, data, layout).then(function() {
+
+            // to test https://github.com/plotly/plotly.js/issues/1044
+
+            return _click(pos0);
+        })
+        .then(function() {
             return assertLabelCount(pos0, 1, 'before resize, showing pt label');
-        }).then(function() {
+        })
+        .then(function() {
             return assertLabelCount(pos1, 0, 'before resize, not showing blank spot');
-        }).then(function() {
+        })
+        .then(function() {
             return Plotly.relayout(gd, 'width', 500);
-        }).then(function() {
+        })
+        .then(function() {
             return assertLabelCount(pos0, 0, 'after resize, not showing blank spot');
-        }).then(function() {
+        })
+        .then(function() {
             return assertLabelCount(pos1, 1, 'after resize, showing pt label');
-        }).then(function() {
+        })
+        .then(function() {
             return Plotly.relayout(gd, 'width', 600);
-        }).then(function() {
+        })
+        .then(function() {
             return assertLabelCount(pos0, 1, 'back to initial, showing pt label');
-        }).then(function() {
+        })
+        .then(function() {
             return assertLabelCount(pos1, 0, 'back to initial, not showing blank spot');
-        }).then(done);
+        })
+        .then(done);
     });
 });
 

@@ -9,12 +9,11 @@
 
 'use strict';
 
-var d3 = require('d3');
 var tinycolor = require('tinycolor2');
 
+var Registry = require('../../registry');
 var Lib = require('../../lib');
-var Plots = require('../../plots/plots');
-var getColorscale = require('../../components/colorscale/get_scale');
+var Colorscale = require('../../components/colorscale');
 var xmlnsNamespaces = require('../../constants/xmlns_namespaces');
 
 var maxRowLength = require('./max_row_length');
@@ -30,8 +29,8 @@ module.exports = function(gd, plotinfo, cdheatmaps) {
 function plotOne(gd, plotinfo, cd) {
     var trace = cd[0].trace,
         uid = trace.uid,
-        xa = plotinfo.x(),
-        ya = plotinfo.y(),
+        xa = plotinfo.xaxis,
+        ya = plotinfo.yaxis,
         fullLayout = gd._fullLayout,
         id = 'hm' + uid;
 
@@ -45,12 +44,9 @@ function plotOne(gd, plotinfo, cd) {
     }
 
     var z = cd[0].z,
-        min = trace.zmin,
-        max = trace.zmax,
-        scl = getColorscale(trace.colorscale),
         x = cd[0].x,
         y = cd[0].y,
-        isContour = Plots.traceIs(trace, 'contour'),
+        isContour = Registry.traceIs(trace, 'contour'),
         zsmooth = isContour ? 'best' : trace.zsmooth,
 
         // get z dims
@@ -170,15 +166,14 @@ function plotOne(gd, plotinfo, cd) {
     canvas.height = canvasH;
     var context = canvas.getContext('2d');
 
-    // interpolate for color scale
-    // use an array instead of color strings, so we preserve alpha
-    var s = d3.scale.linear()
-        .domain(scl.map(function(si) { return si[0]; }))
-        .range(scl.map(function(si) {
-            var c = tinycolor(si[1]).toRgb();
-            return [c.r, c.g, c.b, c.a];
-        }))
-        .clamp(true);
+    var sclFunc = Colorscale.makeColorScaleFunc(
+        Colorscale.extractScale(
+            trace.colorscale,
+            trace.zmin,
+            trace.zmax
+        ),
+        { noNumericCheck: true, returnArray: true }
+    );
 
     // map brick boundaries to image pixels
     var xpx,
@@ -238,6 +233,7 @@ function plotOne(gd, plotinfo, cd) {
         rcount = 0,
         gcount = 0,
         bcount = 0,
+        brickWithPadding,
         xb,
         j,
         xi,
@@ -245,9 +241,50 @@ function plotOne(gd, plotinfo, cd) {
         row,
         c;
 
+    function applyBrickPadding(trace, x0, x1, y0, y1, xIndex, xLength, yIndex, yLength) {
+        var padding = {
+                x0: x0,
+                x1: x1,
+                y0: y0,
+                y1: y1
+            },
+            xEdgeGap = trace.xgap * 2 / 3,
+            yEdgeGap = trace.ygap * 2 / 3,
+            xCenterGap = trace.xgap / 3,
+            yCenterGap = trace.ygap / 3;
+
+        if(yIndex === yLength - 1) { // top edge brick
+            padding.y1 = y1 - yEdgeGap;
+        }
+
+        if(xIndex === xLength - 1) { // right edge brick
+            padding.x0 = x0 + xEdgeGap;
+        }
+
+        if(yIndex === 0) { // bottom edge brick
+            padding.y0 = y0 + yEdgeGap;
+        }
+
+        if(xIndex === 0) { // left edge brick
+            padding.x1 = x1 - xEdgeGap;
+        }
+
+        if(xIndex > 0 && xIndex < xLength - 1) { // brick in the center along x
+            padding.x0 = x0 + xCenterGap;
+            padding.x1 = x1 - xCenterGap;
+        }
+
+        if(yIndex > 0 && yIndex < yLength - 1) { // brick in the center along y
+            padding.y0 = y0 + yCenterGap;
+            padding.y1 = y1 - yCenterGap;
+        }
+
+        return padding;
+    }
+
     function setColor(v, pixsize) {
         if(v !== undefined) {
-            var c = s((v - min) / (max - min));
+            var c = sclFunc(v);
             c[0] = Math.round(c[0]);
             c[1] = Math.round(c[1]);
             c[2] = Math.round(c[2]);
@@ -364,7 +401,21 @@ function plotOne(gd, plotinfo, cd) {
                 v = row[i];
                 c = setColor(v, (xb[1] - xb[0]) * (yb[1] - yb[0]));
                 context.fillStyle = 'rgba(' + c.join(',') + ')';
-                context.fillRect(xb[0], yb[0], (xb[1] - xb[0]), (yb[1] - yb[0]));
+
+                brickWithPadding = applyBrickPadding(trace,
+                                                     xb[0],
+                                                     xb[1],
+                                                     yb[0],
+                                                     yb[1],
+                                                     i,
+                                                     n,
+                                                     j,
+                                                     m);
+
+                context.fillRect(brickWithPadding.x0,
+                                 brickWithPadding.y0,
+                                (brickWithPadding.x1 - brickWithPadding.x0),
+                                (brickWithPadding.y1 - brickWithPadding.y0));
             }
         }
     }

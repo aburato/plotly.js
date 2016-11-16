@@ -7,7 +7,7 @@ var PlotlyInternal = require('@src/plotly');
 var createGraphDiv = require('../assets/create_graph_div');
 var destroyGraphDiv = require('../assets/destroy_graph_div');
 var Plots = PlotlyInternal.Plots;
-
+var customMatchers = require('../assets/custom_matchers');
 
 describe('Test lib.js:', function() {
     'use strict';
@@ -474,6 +474,157 @@ describe('Test lib.js:', function() {
 
             expect(obj).toEqual({ test: { type: [42] }});
         });
+    });
+
+    describe('expandObjectPaths', function() {
+        beforeAll(function() {
+            jasmine.addMatchers(customMatchers);
+        });
+
+        it('returns the original object', function() {
+            var x = {};
+            expect(Lib.expandObjectPaths(x)).toBe(x);
+        });
+
+        it('unpacks top-level paths', function() {
+            var input = {'marker.color': 'red', 'marker.size': [1, 2, 3]};
+            var expected = {marker: {color: 'red', size: [1, 2, 3]}};
+            expect(Lib.expandObjectPaths(input)).toLooseDeepEqual(expected);
+        });
+
+        it('unpacks recursively', function() {
+            var input = {'marker.color': {'red.certainty': 'definitely'}};
+            var expected = {marker: {color: {red: {certainty: 'definitely'}}}};
+            expect(Lib.expandObjectPaths(input)).toLooseDeepEqual(expected);
+        });
+
+        it('unpacks deep paths', function() {
+            var input = {'foo.bar.baz': 'red'};
+            var expected = {foo: {bar: {baz: 'red'}}};
+            expect(Lib.expandObjectPaths(input)).toLooseDeepEqual(expected);
+        });
+
+        it('unpacks non-top-level deep paths', function() {
+            var input = {color: {'foo.bar.baz': 'red'}};
+            var expected = {color: {foo: {bar: {baz: 'red'}}}};
+            expect(Lib.expandObjectPaths(input)).toLooseDeepEqual(expected);
+        });
+
+        it('merges dotted properties into objects', function() {
+            var input = {marker: {color: 'red'}, 'marker.size': 8};
+            var expected = {marker: {color: 'red', size: 8}};
+            expect(Lib.expandObjectPaths(input)).toLooseDeepEqual(expected);
+        });
+
+        it('merges objects into dotted properties', function() {
+            var input = {'marker.size': 8, marker: {color: 'red'}};
+            var expected = {marker: {color: 'red', size: 8}};
+            expect(Lib.expandObjectPaths(input)).toLooseDeepEqual(expected);
+        });
+
+        it('retains the identity of nested objects', function() {
+            var input = {marker: {size: 8}};
+            var origNested = input.marker;
+            var expanded = Lib.expandObjectPaths(input);
+            var newNested = expanded.marker;
+
+            expect(input).toBe(expanded);
+            expect(origNested).toBe(newNested);
+        });
+
+        it('retains the identity of nested arrays', function() {
+            var input = {'marker.size': [1, 2, 3]};
+            var origArray = input['marker.size'];
+            var expanded = Lib.expandObjectPaths(input);
+            var newArray = expanded.marker.size;
+
+            expect(input).toBe(expanded);
+            expect(origArray).toBe(newArray);
+        });
+
+        it('expands bracketed array notation', function() {
+            var input = {'marker[1]': {color: 'red'}};
+            var expected = {marker: [undefined, {color: 'red'}]};
+            expect(Lib.expandObjectPaths(input)).toLooseDeepEqual(expected);
+        });
+
+        it('expands nested arrays', function() {
+            var input = {'marker[1].range[1]': 5};
+            var expected = {marker: [undefined, {range: [undefined, 5]}]};
+            var computed = Lib.expandObjectPaths(input);
+            expect(computed).toLooseDeepEqual(expected);
+        });
+
+        it('expands bracketed array with more nested attributes', function() {
+            var input = {'marker[1]': {'color.alpha': 2}};
+            var expected = {marker: [undefined, {color: {alpha: 2}}]};
+            var computed = Lib.expandObjectPaths(input);
+            expect(computed).toLooseDeepEqual(expected);
+        });
+
+        it('expands bracketed array notation without further nesting', function() {
+            var input = {'marker[1]': 8};
+            var expected = {marker: [undefined, 8]};
+            var computed = Lib.expandObjectPaths(input);
+            expect(computed).toLooseDeepEqual(expected);
+        });
+
+        it('expands bracketed array notation with further nesting', function() {
+            var input = {'marker[1].size': 8};
+            var expected = {marker: [undefined, {size: 8}]};
+            var computed = Lib.expandObjectPaths(input);
+            expect(computed).toLooseDeepEqual(expected);
+        });
+
+        it('expands bracketed array notation with further nesting', function() {
+            var input = {'marker[1].size.magnitude': 8};
+            var expected = {marker: [undefined, {size: {magnitude: 8}}]};
+            var computed = Lib.expandObjectPaths(input);
+            expect(computed).toLooseDeepEqual(expected);
+        });
+
+        it('combines changes with single array nesting', function() {
+            var input = {'marker[1].foo': 5, 'marker[0].foo': 4};
+            var expected = {marker: [{foo: 4}, {foo: 5}]};
+            var computed = Lib.expandObjectPaths(input);
+            expect(computed).toLooseDeepEqual(expected);
+        });
+
+        // TODO: This test is unimplemented since it's a currently-unused corner case.
+        // Getting the test to pass requires some extension (pun?) to extendDeepNoArrays
+        // that's intelligent enough to only selectively merge *some* arrays, in particular
+        // not data arrays but yes on arrays that were previously expanded. This is a bit
+        // tricky to get to work just right and currently doesn't have any known use since
+        // container arrays are not multiply nested.
+        //
+        // Additional notes on what works or what doesn't work. This case does *not* work
+        // because the two nested arrays that would result from the expansion need to be
+        // deep merged.
+        //
+        //   Lib.expandObjectPaths({'marker.range[0]': 5, 'marker.range[1]': 2})
+        //
+        //   // => {marker: {range: [null, 2]}}
+        //
+        // This case *does* work becuase the array merging does not require a deep extend:
+        //
+        //   Lib.expandObjectPaths({'range[0]': 5, 'range[1]': 2}
+        //
+        //   // => {range: [5, 2]}
+        //
+        // Finally note that this case works fine becuase there's no merge necessary:
+        //
+        //   Lib.expandObjectPaths({'marker.range[1]': 2})
+        //
+        //   // => {marker: {range: [null, 2]}}
+        //
+        /*
+        it('combines changes', function() {
+            var input = {'marker[1].range[1]': 5, 'marker[1].range[0]': 4};
+            var expected = {marker: [undefined, {range: [4, 5]}]};
+            var computed = Lib.expandObjectPaths(input);
+            expect(computed).toEqual(expected);
+        });
+        */
     });
 
     describe('coerce', function() {
@@ -1304,6 +1455,37 @@ describe('Test lib.js:', function() {
         });
     });
 
+    describe('filterUnique', function() {
+
+        it('should return array containing unique values', function() {
+            expect(
+                Lib.filterUnique(['a', 'a', 'b', 'b'])
+            )
+            .toEqual(['a', 'b']);
+
+            expect(
+                Lib.filterUnique(['1', ['1'], 1])
+            )
+            .toEqual(['1']);
+
+            expect(
+                Lib.filterUnique([1, '1', [1]])
+            )
+            .toEqual([1]);
+
+            expect(
+                Lib.filterUnique([ { a: 1 }, { b: 2 }])
+            )
+            .toEqual([{ a: 1 }]);
+
+            expect(
+                Lib.filterUnique([null, undefined, null, null, undefined])
+            )
+            .toEqual([null, undefined]);
+        });
+
+    });
+
     describe('numSeparate', function() {
 
         it('should work on numbers and strings', function() {
@@ -1313,6 +1495,10 @@ describe('Test lib.js:', function() {
 
         it('should ignore years', function() {
             expect(Lib.numSeparate(2016, '.,')).toBe('2016');
+        });
+
+        it('should work even for 4-digit integer if third argument is true', function() {
+            expect(Lib.numSeparate(3000, '.,', true)).toBe('3,000');
         });
 
         it('should work for multiple thousands', function() {
@@ -1332,6 +1518,12 @@ describe('Test lib.js:', function() {
             expect(function() {
                 Lib.numSeparate(1234, '');
             }).toThrowError('Separator string required for formatting!');
+        });
+    });
+
+    describe('isPlotDiv', function() {
+        it('should work on plain objects', function() {
+            expect(Lib.isPlotDiv({})).toBe(false);
         });
     });
 });
@@ -1375,23 +1567,27 @@ describe('Queue', function() {
 
         Plotly.plot(gd, [{
             y: [2, 1, 2]
-        }]).then(function() {
+        }])
+        .then(function() {
             expect(gd.undoQueue).toBeUndefined();
 
             return Plotly.restyle(gd, 'marker.color', 'red');
-        }).then(function() {
+        })
+        .then(function() {
             expect(gd.undoQueue.index).toEqual(1);
             expect(gd.undoQueue.queue[0].undo.args[0][1]['marker.color']).toEqual([undefined]);
             expect(gd.undoQueue.queue[0].redo.args[0][1]['marker.color']).toEqual('red');
 
             return Plotly.relayout(gd, 'title', 'A title');
-        }).then(function() {
+        })
+        .then(function() {
             expect(gd.undoQueue.index).toEqual(2);
             expect(gd.undoQueue.queue[1].undo.args[0][1].title).toEqual(undefined);
             expect(gd.undoQueue.queue[1].redo.args[0][1].title).toEqual('A title');
 
             return Plotly.restyle(gd, 'mode', 'markers');
-        }).then(function() {
+        })
+        .then(function() {
             expect(gd.undoQueue.index).toEqual(2);
             expect(gd.undoQueue.queue[2]).toBeUndefined();
 
@@ -1400,6 +1596,38 @@ describe('Queue', function() {
 
             expect(gd.undoQueue.queue[0].undo.args[0][1].title).toEqual(undefined);
             expect(gd.undoQueue.queue[0].redo.args[0][1].title).toEqual('A title');
+
+            return Plotly.restyle(gd, 'transforms[0]', { type: 'filter' });
+        })
+        .then(function() {
+            expect(gd.undoQueue.queue[1].undo.args[0][1])
+                .toEqual({ 'transforms[0]': null });
+            expect(gd.undoQueue.queue[1].redo.args[0][1])
+                .toEqual({ 'transforms[0]': { type: 'filter' } });
+
+            return Plotly.relayout(gd, 'updatemenus[0]', { buttons: [] });
+        })
+        .then(function() {
+            expect(gd.undoQueue.queue[1].undo.args[0][1])
+                .toEqual({ 'updatemenus[0]': null });
+            expect(gd.undoQueue.queue[1].redo.args[0][1])
+                .toEqual({ 'updatemenus[0]': { buttons: [] } });
+
+            return Plotly.relayout(gd, 'updatemenus[0]', null);
+        })
+        .then(function() {
+            expect(gd.undoQueue.queue[1].undo.args[0][1])
+                .toEqual({ 'updatemenus[0]': { buttons: []} });
+            expect(gd.undoQueue.queue[1].redo.args[0][1])
+                .toEqual({ 'updatemenus[0]': null });
+
+            return Plotly.restyle(gd, 'transforms[0]', null);
+        })
+        .then(function() {
+            expect(gd.undoQueue.queue[1].undo.args[0][1])
+                .toEqual({ 'transforms[0]': [ { type: 'filter' } ]});
+            expect(gd.undoQueue.queue[1].redo.args[0][1])
+                .toEqual({ 'transforms[0]': null });
 
             done();
         });

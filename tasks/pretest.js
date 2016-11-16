@@ -2,14 +2,12 @@ var fs = require('fs');
 
 var constants = require('./util/constants');
 var common = require('./util/common');
-var containerCommands = require('./util/container_commands');
-var isCI = process.env.CIRCLECI;
 
 // main
 makeCredentialsFile();
 makeSetPlotConfigFile();
 makeTestImageFolders();
-if(isCI) runAndSetupImageTestContainer();
+makeRequireJSFixture();
 
 // Create a credentials json file,
 // to be required in jasmine test suites and test dashboard
@@ -55,28 +53,18 @@ function makeTestImageFolders() {
     makeOne(constants.pathToTestImagesDiff, 'test image diff folder');
 }
 
-// On CircleCI, run and setup image test container once an for all
-function runAndSetupImageTestContainer() {
+// Make script file that define plotly in a RequireJS context
+function makeRequireJSFixture() {
+    var bundle = fs.readFileSync(constants.pathToPlotlyDistMin, 'utf-8');
 
-    function run() {
-        var cmd = containerCommands.dockerRun;
-        common.execCmd(cmd, function() {
-            logger('run docker container');
+    var index = [
+        'define(\'plotly\', function(require, exports, module) {',
+        bundle,
+        '});'
+    ].join('');
 
-            setTimeout(setup, 500);
-        });
-    }
-
-    function setup() {
-        var cmd = containerCommands.getRunCmd(isCI, [
-            containerCommands.setup
-        ]);
-        common.execCmd(cmd, function() {
-            logger('setup docker container');
-        });
-    }
-
-    run();
+    common.writeFile(constants.pathToRequireJSFixture, index);
+    logger('make build/requirejs_fixture.js');
 }
 
 function logger(task) {

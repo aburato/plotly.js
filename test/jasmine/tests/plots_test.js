@@ -9,7 +9,21 @@ describe('Test Plots', function() {
 
     describe('Plots.supplyDefaults', function() {
 
-        var gd;
+        it('should not throw an error when gd is a plain object', function() {
+            var height = 100,
+                gd = {
+                    layout: {
+                        height: height
+                    }
+                };
+
+            Plots.supplyDefaults(gd);
+            expect(gd.layout.height).toBe(height);
+            expect(gd._fullLayout).toBeDefined();
+            expect(gd._fullLayout.height).toBe(height);
+            expect(gd._fullLayout.width).toBe(Plots.layoutAttributes.width.dflt);
+            expect(gd._fullData).toBeDefined();
+        });
 
         it('should relink private keys', function() {
             var oldFullData = [{
@@ -21,7 +35,7 @@ describe('Test Plots', function() {
             }];
 
             var oldFullLayout = {
-                _plots: { xy: {} },
+                _plots: { xy: { plot: {} } },
                 xaxis: { c2p: function() {} },
                 yaxis: { _m: 20 },
                 scene: { _scene: {} },
@@ -41,7 +55,7 @@ describe('Test Plots', function() {
                 annotations: [{}, {}, {}]
             };
 
-            gd = {
+            var gd = {
                 _fullData: oldFullData,
                 _fullLayout: oldFullLayout,
                 data: newData,
@@ -54,7 +68,7 @@ describe('Test Plots', function() {
             expect(gd._fullData[1].z).toBe(newData[1].z);
             expect(gd._fullData[1]._empties).toBe(oldFullData[1]._empties);
             expect(gd._fullLayout.scene._scene).toBe(oldFullLayout.scene._scene);
-            expect(gd._fullLayout._plots).toBe(oldFullLayout._plots);
+            expect(gd._fullLayout._plots.plot).toBe(oldFullLayout._plots.plot);
             expect(gd._fullLayout.annotations[0]._min).toBe(oldFullLayout.annotations[0]._min);
             expect(gd._fullLayout.annotations[1]._max).toBe(oldFullLayout.annotations[1]._max);
             expect(gd._fullLayout.someFunc).toBe(oldFullLayout.someFunc);
@@ -63,6 +77,72 @@ describe('Test Plots', function() {
                 .not.toBe(oldFullLayout.xaxis.c2p, '(set during ax.setScale');
             expect(gd._fullLayout.yaxis._m)
                 .not.toBe(oldFullLayout.yaxis._m, '(set during ax.setScale');
+        });
+
+        it('should include the correct reference to user data', function() {
+            var trace0 = { y: [1, 2, 3] };
+            var trace1 = { y: [5, 2, 3] };
+
+            var data = [trace0, trace1];
+            var gd = { data: data };
+
+            Plots.supplyDefaults(gd);
+
+            expect(gd.data).toBe(data);
+
+            expect(gd._fullData[0].index).toEqual(0);
+            expect(gd._fullData[1].index).toEqual(1);
+
+            expect(gd._fullData[0]._expandedIndex).toEqual(0);
+            expect(gd._fullData[1]._expandedIndex).toEqual(1);
+
+            expect(gd._fullData[0]._input).toBe(trace0);
+            expect(gd._fullData[1]._input).toBe(trace1);
+
+            expect(gd._fullData[0]._fullInput).toBe(gd._fullData[0]);
+            expect(gd._fullData[1]._fullInput).toBe(gd._fullData[1]);
+
+            expect(gd._fullData[0]._expandedInput).toBe(gd._fullData[0]);
+            expect(gd._fullData[1]._expandedInput).toBe(gd._fullData[1]);
+        });
+
+        function testSanitizeMarginsHasBeenCalledOnlyOnce(gd) {
+            spyOn(Plots, 'sanitizeMargins').and.callThrough();
+            Plots.supplyDefaults(gd);
+            expect(Plots.sanitizeMargins).toHaveBeenCalledTimes(1);
+        }
+
+        it('should call sanitizeMargins only once when both width and height are defined', function() {
+            var gd = {
+                layout: {
+                    width: 100,
+                    height: 100
+                }
+            };
+
+            testSanitizeMarginsHasBeenCalledOnlyOnce(gd);
+        });
+
+        it('should call sanitizeMargins only once when autosize is false', function() {
+            var gd = {
+                layout: {
+                    autosize: false,
+                    height: 100
+                }
+            };
+
+            testSanitizeMarginsHasBeenCalledOnlyOnce(gd);
+        });
+
+        it('should call sanitizeMargins only once when autosize is true', function() {
+            var gd = {
+                layout: {
+                    autosize: true,
+                    height: 100
+                }
+            };
+
+            testSanitizeMarginsHasBeenCalledOnlyOnce(gd);
         });
     });
 
@@ -245,147 +325,13 @@ describe('Test Plots', function() {
         });
     });
 
-    describe('Plots.register, getModule, and traceIs', function() {
-        beforeEach(function() {
-            this.modulesKeys = Object.keys(Plots.modules);
-            this.allTypesKeys = Object.keys(Plots.allTypes);
-            this.allCategoriesKeys = Object.keys(Plots.allCategories);
-
-            this.fakeModule = {
-                calc: function() { return 42; },
-                plot: function() { return 1000000; }
-            };
-            this.fakeModule2 = {
-                plot: function() { throw new Error('nope!'); }
-            };
-
-            Plots.register(this.fakeModule, 'newtype', ['red', 'green']);
-
-            spyOn(console, 'warn');
-        });
-
-        afterEach(function() {
-            function revertObj(obj, initialKeys) {
-                Object.keys(obj).forEach(function(k) {
-                    if(initialKeys.indexOf(k) === -1) delete obj[k];
-                });
-            }
-
-            revertObj(Plots.modules, this.modulesKeys);
-            revertObj(Plots.allTypes, this.allTypesKeys);
-            revertObj(Plots.allCategories, this.allCategoriesKeys);
-        });
-
-        it('should not reregister a type', function() {
-            Plots.register(this.fakeModule2, 'newtype', ['yellow', 'blue']);
-            expect(Plots.allCategories.yellow).toBeUndefined();
-        });
-
-        it('should find the module for a type', function() {
-            expect(Plots.getModule('newtype')).toBe(this.fakeModule);
-            expect(Plots.getModule({type: 'newtype'})).toBe(this.fakeModule);
-        });
-
-        it('should return false for types it doesn\'t know', function() {
-            expect(Plots.getModule('notatype')).toBe(false);
-            expect(Plots.getModule({type: 'notatype'})).toBe(false);
-            expect(Plots.getModule({type: 'newtype', r: 'this is polar'})).toBe(false);
-        });
-
-        it('should find the categories for this type', function() {
-            expect(Plots.traceIs('newtype', 'red')).toBe(true);
-            expect(Plots.traceIs({type: 'newtype'}, 'red')).toBe(true);
-        });
-
-        it('should not find other real categories', function() {
-            expect(Plots.traceIs('newtype', 'cartesian')).toBe(false);
-            expect(Plots.traceIs({type: 'newtype'}, 'cartesian')).toBe(false);
-            expect(console.warn).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('Plots.registerSubplot', function() {
-        var fake = {
-            name: 'fake',
-            attr: 'abc',
-            idRoot: 'cba',
-            attrRegex: /^abc([2-9]|[1-9][0-9]+)?$/,
-            idRegex: /^cba([2-9]|[1-9][0-9]+)?$/,
-            attributes: { stuff: { 'more stuff': 102102 } }
-        };
-
-        Plots.registerSubplot(fake);
-
-        var subplotsRegistry = Plots.subplotsRegistry;
-
-        it('should register attr, idRoot and attributes', function() {
-            expect(subplotsRegistry.fake.attr).toEqual('abc');
-            expect(subplotsRegistry.fake.idRoot).toEqual('cba');
-            expect(subplotsRegistry.fake.attributes)
-                .toEqual({stuff: { 'more stuff': 102102 }});
-        });
-
-        describe('registered subplot type attribute regex', function() {
-            it('should compile to correct attribute regex string', function() {
-                expect(subplotsRegistry.fake.attrRegex.toString())
-                    .toEqual('/^abc([2-9]|[1-9][0-9]+)?$/');
-            });
-
-            var shouldPass = [
-                'abc', 'abc2', 'abc3', 'abc10', 'abc9', 'abc100', 'abc2002'
-            ];
-            var shouldFail = [
-                '0abc', 'abc0', 'abc1', 'abc021321', 'abc00021321'
-            ];
-
-            shouldPass.forEach(function(s) {
-                it('considers ' + JSON.stringify(s) + 'as a correct attribute name', function() {
-                    expect(subplotsRegistry.fake.attrRegex.test(s)).toBe(true);
-                });
-            });
-
-            shouldFail.forEach(function(s) {
-                it('considers ' + JSON.stringify(s) + 'as an incorrect attribute name', function() {
-                    expect(subplotsRegistry.fake.attrRegex.test(s)).toBe(false);
-                });
-            });
-        });
-
-        describe('registered subplot type id regex', function() {
-            it('should compile to correct id regular expression', function() {
-                expect(subplotsRegistry.fake.idRegex.toString())
-                    .toEqual('/^cba([2-9]|[1-9][0-9]+)?$/');
-            });
-
-            var shouldPass = [
-                'cba', 'cba2', 'cba3', 'cba10', 'cba9', 'cba100', 'cba2002'
-            ];
-            var shouldFail = [
-                '0cba', 'cba0', 'cba1', 'cba021321', 'cba00021321'
-            ];
-
-            shouldPass.forEach(function(s) {
-                it('considers ' + JSON.stringify(s) + 'as a correct attribute name', function() {
-                    expect(subplotsRegistry.fake.idRegex.test(s)).toBe(true);
-                });
-            });
-
-            shouldFail.forEach(function(s) {
-                it('considers ' + JSON.stringify(s) + 'as an incorrect attribute name', function() {
-                    expect(subplotsRegistry.fake.idRegex.test(s)).toBe(false);
-                });
-            });
-        });
-
-    });
-
     describe('Plots.resize', function() {
         var gd;
 
-        beforeEach(function(done) {
+        beforeAll(function(done) {
             gd = createGraphDiv();
 
-            Plotly.plot(gd, [{ x: [1, 2, 3], y: [2, 3, 4] }], {})
+            Plotly.plot(gd, [{ x: [1, 2, 3], y: [2, 3, 4] }])
                 .then(function() {
                     gd.style.width = '400px';
                     gd.style.height = '400px';
@@ -421,6 +367,17 @@ describe('Test Plots', function() {
                 expect(svgHeight).toBe(400);
             }
         });
+
+        it('should update the axis scales', function() {
+            var fullLayout = gd._fullLayout,
+                plotinfo = fullLayout._plots.xy;
+
+            expect(fullLayout.xaxis._length).toEqual(240);
+            expect(fullLayout.yaxis._length).toEqual(220);
+
+            expect(plotinfo.xaxis._length).toEqual(240);
+            expect(plotinfo.yaxis._length).toEqual(220);
+        });
     });
 
     describe('Plots.purge', function() {
@@ -435,9 +392,10 @@ describe('Test Plots', function() {
 
         it('should unset everything in the gd except _context', function() {
             var expectedKeys = [
-                '_ev', 'on', 'once', 'removeListener', 'removeAllListeners',
-                'emit', '_context', '_replotPending', '_mouseDownTime',
-                '_hmpixcount', '_hmlumcount'
+                '_ev', '_internalEv', 'on', 'once', 'removeListener', 'removeAllListeners',
+                '_internalOn', '_internalOnce', '_removeInternalListener',
+                '_removeAllInternalListeners', 'emit', '_context', '_replotPending',
+                '_hmpixcount', '_hmlumcount', '_mouseDownTime'
             ];
 
             Plots.purge(gd);
@@ -465,6 +423,8 @@ describe('Test Plots', function() {
             expect(gd.numboxes).toBeUndefined();
             expect(gd._hoverTimer).toBeUndefined();
             expect(gd._lastHoverTime).toBeUndefined();
+            expect(gd._transitionData).toBeUndefined();
+            expect(gd._transitioning).toBeUndefined();
         });
     });
 });

@@ -17,7 +17,7 @@ We use the following [labels](https://github.com/plotly/plotly.js/labels) to tra
 | `type: bug` | bug report confirmed by a plotly team member |
 | `type: feature` | planned feature additions |
 | `type: performance` | performance related tasks |
-| `type: maintenace` | source code cleanup resulting in no enhancement for users |
+| `type: maintenance` | source code cleanup resulting in no enhancement for users |
 | `type: documentation` | API doc or attribute description improvements |
 | `type: community` | issue left open for community input and pull requests |
 | `type: duplicate` | *self-explanatory* |
@@ -32,7 +32,7 @@ We use the following [labels](https://github.com/plotly/plotly.js/labels) to tra
 #### Perequisites
 
 - git
-- [node.js](https://nodejs.org/en/). We recommend using node.js 4.2.x (LTS).
+- [node.js](https://nodejs.org/en/). We recommend using node.js v6.x or v4.x (both LTS).
   Upgrading and managing node versions can be easily done using
   [`nvm`](https://github.com/creationix/nvm) or its Windows alternatives.
 

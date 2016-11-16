@@ -20,6 +20,7 @@ color.defaultLine = colorAttrs.defaultLine;
 color.lightLine = colorAttrs.lightLine;
 color.background = colorAttrs.background;
 
+
 color.overrideColorDefaults = function(ca) {
     if (typeof ca === 'undefined') {
         return color.defaults;
@@ -82,7 +83,10 @@ color.stroke = function(s, c) {
 
 color.fill = function(s, c) {
     var tc = tinycolor(c);
-    s.style({'fill': color.tinyRGB(tc), 'fill-opacity': tc.getAlpha()});
+    s.style({
+        'fill': color.tinyRGB(tc),
+        'fill-opacity': tc.getAlpha()
+    });
 };
 
 // search container for colors with the deprecated rgb(fractions) format

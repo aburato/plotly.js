@@ -8,7 +8,7 @@
 
 'use strict';
 
-var Lib = require('../lib');
+/* eslint-disable no-console */
 
 /**
  * This will be transferred over to gd and overridden by
@@ -41,11 +41,12 @@ module.exports = {
     // if editable is set to true, this can be used to deactivate Y2 axis title editing ONLY. 
     editableAxisY2Title: true,
 
+    // DO autosize once regardless of layout.autosize
+    // (use default width or height values otherwise)
+    autosizable: false,
+
     // set the length of the undo/redo queue
     queueLength: 0,
-
-    // plot will respect layout.autosize=true and infer its container size
-    autosizable: false,
 
     // if we DO autosize, do we fill the container or the screen?
     fillFrame: false,
@@ -105,18 +106,28 @@ module.exports = {
     topojsonURL: 'https://cdn.plot.ly/',
 
     // Mapbox access token (required to plot mapbox trace types)
+    // If using an Mapbox Atlas server, set this option to '',
+    // so that plotly.js won't attempt to authenticate to the public Mapbox server.
     mapboxAccessToken: null,
 
     // Turn all console logging on or off (errors will be thrown)
     // This should ONLY be set via Plotly.setPlotConfig
-    logging: false
+    logging: false,
+
+    // Set global transform to be applied to all traces with no
+    // specification needed
+    globalTransforms: []
 };
 
 // where and how the background gets set can be overridden by context
-// so we define the default (plotlyjs) behavior here
+// so we define the default (plotly.js) behavior here
 function defaultSetBackground(gd, bgColor) {
     try {
         gd._fullLayout._paper.style('background', bgColor);
     }
-    catch(e) { Lib.error(e); }
+    catch(e) {
+        if(module.exports.logging > 0) {
+            console.error(e);
+        }
+    }
 }

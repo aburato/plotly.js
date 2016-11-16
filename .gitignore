@@ -1,22 +1,15 @@
 node_modules
 
 build/*
-
 !build/plotcss.js
 !build/ploticon.js
 !build/README.md
 
 npm-debug.log*
+*.sublime*
 
 .*
-!/.gitignore
-!/.npmignore
-!/.eslintrc
-!/.eslintignore
-_ReSharper.Caches
-bin
-obj
-*.sln
-*.csproj
-/*.user
-*.suo
+!.gitignore
+!.npmignore
+!.eslintrc
+!.eslintignore

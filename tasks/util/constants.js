@@ -13,12 +13,7 @@ var pathToTopojsonSrc = path.join(
 );
 
 var partialBundleNames = [
-    //'basic',
-    'cartesian',
-    //'geo',
-    //'gl3d',
-    //'gl2d',
-    //'mapbox'
+    'basic', 'cartesian', 'geo', 'gl3d', 'gl2d', 'mapbox', 'finance'
 ];
 
 var partialBundlePaths = partialBundleNames.map(function(name) {
@@ -71,6 +66,8 @@ module.exports = {
 
     pathToJasmineTests: path.join(pathToRoot, 'test/jasmine/tests'),
     pathToJasmineBundleTests: path.join(pathToRoot, 'test/jasmine/bundle_tests'),
+    pathToRequireJS: path.join(pathToRoot, 'node_modules', 'requirejs', 'require.js'),
+    pathToRequireJSFixture: path.join(pathToBuild, 'requirejs_fixture.js'),
 
     // this mapbox access token is 'public', no need to hide it
     // more info: https://www.mapbox.com/help/define-access-token/
@@ -78,6 +75,7 @@ module.exports = {
     pathToCredentials: path.join(pathToBuild, 'credentials.json'),
     pathToSetPlotConfig: path.join(pathToBuild, 'set_plot_config.js'),
 
+    testContainerImage: 'plotly/testbed:latest',
     testContainerName: process.env.PLOTLYJS_TEST_CONTAINER_NAME || 'imagetest',
     testContainerPort: '9010',
     testContainerUrl: 'http://localhost:9010/',

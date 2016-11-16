@@ -13,6 +13,7 @@ var d3 = require('d3');
 var tinycolor = require('tinycolor2');
 
 var Plotly = require('../../plotly');
+var Registry = require('../../registry');
 var Lib = require('../../lib');
 var svgTextUtils = require('../../lib/svg_text_utils');
 var Color = require('../../components/color');
@@ -47,8 +48,8 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     var fullLayout = gd._fullLayout,
         // if we're dragging two axes at once, also drag overlays
         subplots = [plotinfo].concat((ns && ew) ? plotinfo.overlays : []),
-        xa = [plotinfo.x()],
-        ya = [plotinfo.y()],
+        xa = [plotinfo.xaxis],
+        ya = [plotinfo.yaxis],
         pw = xa[0]._length,
         ph = ya[0]._length,
         MINDRAG = constants.MINDRAG,
@@ -56,8 +57,8 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         isMainDrag = (ns + ew === 'nsew');
 
     for(var i = 1; i < subplots.length; i++) {
-        var subplotXa = subplots[i].x(),
-            subplotYa = subplots[i].y();
+        var subplotXa = subplots[i].xaxis,
+            subplotYa = subplots[i].yaxis;
         if(xa.indexOf(subplotXa) === -1) xa.push(subplotXa);
         if(ya.indexOf(subplotYa) === -1) ya.push(subplotYa);
     }
@@ -145,8 +146,8 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     dragElement.init(dragOptions);
 
     var zoomlayer = gd._fullLayout._zoomlayer,
-        xs = plotinfo.x()._offset,
-        ys = plotinfo.y()._offset,
+        xs = plotinfo.xaxis._offset,
+        ys = plotinfo.yaxis._offset,
         x0,
         y0,
         box,
@@ -156,6 +157,28 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         zoomMode,
         zb,
         corners;
+
+    function recomputeAxisLists() {
+        xa = [plotinfo.xaxis];
+        ya = [plotinfo.yaxis];
+        pw = xa[0]._length;
+        ph = ya[0]._length;
+
+        for(var i = 1; i < subplots.length; i++) {
+            var subplotXa = subplots[i].xaxis,
+                subplotYa = subplots[i].yaxis;
+            if(xa.indexOf(subplotXa) === -1) xa.push(subplotXa);
+            if(ya.indexOf(subplotYa) === -1) ya.push(subplotYa);
+        }
+        allaxes = xa.concat(ya);
+        xActive = isDirectionActive(xa, ew);
+        yActive = isDirectionActive(ya, ns);
+        cursor = getDragCursor(yActive + xActive, fullLayout.dragmode);
+        xs = plotinfo.xaxis._offset;
+        ys = plotinfo.yaxis._offset;
+        dragOptions.xa = xa;
+        dragOptions.ya = ya;
+    }
 
     function zoomPrep(e, startX, startY) {
         var dragBBox = dragger.getBoundingClientRect();
@@ -201,6 +224,10 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     }
 
     function zoomMove(dx0, dy0) {
+        if(gd._transitioningWithDuration) {
+            return false;
+        }
+
         var x1 = Math.max(0, Math.min(pw, dx0 + x0)),
             y1 = Math.max(0, Math.min(ph, dy0 + y0)),
             dx = Math.abs(x1 - x0),
@@ -281,7 +308,7 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         var zoomInfo = [];
 
-        for(i = 0; i < axList.length; i++) {
+        for (i = 0; i < axList.length; i++) {
             axi = axList[i];
             if(axi.fixedrange) continue;
 
@@ -311,27 +338,27 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         var axesZoomInfo = [];
 
-        if(zoomMode === 'xy' || zoomMode === 'x') {
+        if (zoomMode === 'xy' || zoomMode === 'x') {
             var xZoomInfo = zoomAxRanges(xa, box.l / pw, box.r / pw);
             axesZoomInfo = axesZoomInfo.concat(xZoomInfo);
         }
-        if(zoomMode === 'xy' || zoomMode === 'y') {
+        if (zoomMode === 'xy' || zoomMode === 'y') {
             var yZoomInfo = zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph);
             axesZoomInfo = axesZoomInfo.concat(yZoomInfo);
         }
 
         removeZoombox(gd);
+
         // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
         var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
         gd.emit('plotly_zoom', args);
 
-        if(!args.userHandled) {
-        dragTail(zoomMode);
-
-        if(SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
-            Lib.notifier('Double-click to<br>zoom back out', 'long');
-            SHOWZOOMOUTTIP = false;
-        }
+        if (!args.userHandled) {
+            dragTail(zoomMode);
+            if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+                Lib.notifier('Double-click to<br>zoom back out', 'long');
+                SHOWZOOMOUTTIP = false;
+            }
             args.pre = false;
             gd.emit('plotly_zoom', args);
         }
@@ -390,7 +417,15 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         if(!gd._context.scrollZoom && !fullLayout._enablescrollzoom) {
             return;
         }
+
+        // If a transition is in progress, then disable any behavior:
+        if(gd._transitioningWithDuration) {
+            return Lib.pauseEvent(e);
+        }
+
         var pc = gd.querySelector('.plotly');
+
+        recomputeAxisLists();
 
         // if the plot has scrollbars (more than a tiny excess)
         // disable scrollzoom too.
@@ -459,6 +494,13 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
     // plotDrag: move the plot in response to a drag
     function plotDrag(dx, dy) {
+        // If a transition is in progress, then disable any behavior:
+        if(gd._transitioningWithDuration) {
+            return;
+        }
+
+        recomputeAxisLists();
+
         function dragAxList(axList, pix) {
             for(var i = 0; i < axList.length; i++) {
                 var axi = axList[i];
@@ -539,31 +581,36 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             Axes.doTicks(gd, activeAxIds[i], true);
         }
 
-        function redrawObjs(objArray, module) {
-            var obji;
+        function redrawObjs(objArray, method) {
             for(i = 0; i < objArray.length; i++) {
-                obji = objArray[i];
+                var obji = objArray[i];
+
                 if((ew && activeAxIds.indexOf(obji.xref) !== -1) ||
                     (ns && activeAxIds.indexOf(obji.yref) !== -1)) {
-                    module.draw(gd, i);
+                    method(gd, i);
                 }
             }
         }
 
-        redrawObjs(fullLayout.annotations || [], Plotly.Annotations);
-        redrawObjs(fullLayout.shapes || [], Plotly.Shapes);
-        redrawObjs(fullLayout.images || [], Plotly.Images);
+        // annotations and shapes 'draw' method is slow,
+        // use the finer-grained 'drawOne' method instead
+
+        redrawObjs(fullLayout.annotations || [], Registry.getComponentMethod('annotations', 'drawOne'));
+        redrawObjs(fullLayout.shapes || [], Registry.getComponentMethod('shapes', 'drawOne'));
+        redrawObjs(fullLayout.images || [], Registry.getComponentMethod('images', 'draw'));
     }
 
     function doubleClick() {
-        var doubleClickConfig = gd._context.doubleClick;
-        
+        if(gd._transitioningWithDuration) return;
+
         // Emit pre-zoom reset
         var args = { zoomMode: "reset", pre: true, userHandled: false };
         gd.emit('plotly_zoom', args);
 
-        if (!args.userHandled) {
-            var axList = (xActive ? xa : []).concat(yActive ? ya : []),
+        if (args.userHandled) return;
+
+        var doubleClickConfig = gd._context.doubleClick,
+            axList = (xActive ? xa : []).concat(yActive ? ya : []),
             attrs = {};
 
         var ax, i, rangeInitial;
@@ -609,10 +656,9 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         gd.emit('plotly_doubleclick', null);
         Plotly.relayout(gd, attrs);
-            
-            args.pre = false;
-            gd.emit('plotly_zoom', args);
-        }
+
+        args.pre = false;
+        gd.emit('plotly_zoom', args);
     }
 
     // dragTail - finish a drag event with a redraw
@@ -639,17 +685,39 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     // affected by this drag, and update them. look for all plots
     // sharing an affected axis (including the one being dragged)
     function updateSubplots(viewBox) {
+        var j;
         var plotinfos = fullLayout._plots,
             subplots = Object.keys(plotinfos);
 
         for(var i = 0; i < subplots.length; i++) {
 
             var subplot = plotinfos[subplots[i]],
-                xa2 = subplot.x(),
-                ya2 = subplot.y(),
-                editX = ew && xa.indexOf(xa2) !== -1 && !xa2.fixedrange,
-                editY = ns && ya.indexOf(ya2) !== -1 && !ya2.fixedrange;
+                xa2 = subplot.xaxis,
+                ya2 = subplot.yaxis,
+                editX = ew && !xa2.fixedrange,
+                editY = ns && !ya2.fixedrange;
 
+            if(editX) {
+                var isInX = false;
+                for(j = 0; j < xa.length; j++) {
+                    if(xa[j]._id === xa2._id) {
+                        isInX = true;
+                        break;
+                    }
+                }
+                editX = editX && isInX;
+            }
+
+            if(editY) {
+                var isInY = false;
+                for(j = 0; j < ya.length; j++) {
+                    if(ya[j]._id === ya2._id) {
+                        isInY = true;
+                        break;
+                    }
+                }
+                editY = editY && isInY;
+            }
 
             var xScaleFactor = editX ? xa2._length / viewBox[2] : 1,
                 yScaleFactor = editY ? ya2._length / viewBox[3] : 1;
@@ -662,7 +730,6 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
             var plotDx = xa2._offset - fracDx,
                 plotDy = ya2._offset - fracDy;
-
 
             fullLayout._defs.selectAll('#' + subplot.clipId)
                 .call(Lib.setTranslate, clipDx, clipDy)

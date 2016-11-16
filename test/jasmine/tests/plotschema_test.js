@@ -1,11 +1,6 @@
 var Plotly = require('@lib/index');
 var Lib = require('@src/lib');
 
-Plotly.register([
-    // until they become official
-    require('../assets/transforms/filter')
-]);
-
 describe('plot schema', function() {
     'use strict';
 
@@ -181,6 +176,8 @@ describe('plot schema', function() {
         var valObjects = plotSchema.transforms.filter.attributes,
             attrNames = Object.keys(valObjects);
 
-        expect(attrNames).toEqual(['operation', 'value', 'filtersrc']);
+        ['operation', 'value', 'target'].forEach(function(k) {
+            expect(attrNames).toContain(k);
+        });
     });
 });

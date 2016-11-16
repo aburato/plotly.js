@@ -8,15 +8,15 @@
 
 'use strict';
 
-var Plots = require('../../plots/plots');
+var Registry = require('../../registry');
 var Axes = require('../../plots/cartesian/axes');
 var Lib = require('../../lib');
 
 
 module.exports = function setPositions(gd, plotinfo) {
     var fullLayout = gd._fullLayout,
-        xa = plotinfo.x(),
-        ya = plotinfo.y(),
+        xa = plotinfo.xaxis,
+        ya = plotinfo.yaxis,
         orientations = ['v', 'h'];
     var posAxis, i, j, k;
 
@@ -40,7 +40,7 @@ module.exports = function setPositions(gd, plotinfo) {
             t = cd[0].t;
             trace = cd[0].trace;
 
-            if(trace.visible === true && Plots.traceIs(trace, 'box') &&
+            if(trace.visible === true && Registry.traceIs(trace, 'box') &&
                     !t.emptybox &&
                     trace.orientation === orientation &&
                     trace.xaxis === xa._id &&
@@ -74,8 +74,9 @@ module.exports = function setPositions(gd, plotinfo) {
         Axes.minDtick(posAxis, boxdv.minDiff, boxdv.vals[0], true);
 
         // set the width of all boxes
-        for(i = 0; i < boxlist.length; ++i) {
-            gd.calcdata[i][0].t.dPos = dPos;
+        for(i = 0; i < boxlist.length; i++) {
+            var boxListIndex = boxlist[i];
+            gd.calcdata[boxListIndex][0].t.dPos = dPos;
         }
 
         // autoscale the x axis - including space for points if they're off the side
