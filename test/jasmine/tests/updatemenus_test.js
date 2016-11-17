@@ -21,6 +21,38 @@ describe('update menus defaults', function() {
         layoutOut = {};
     });
 
+    it('should skip non-array containers', function() {
+        [null, undefined, {}, 'str', 0, false, true].forEach(function(cont) {
+            var msg = '- ' + JSON.stringify(cont);
+
+            layoutIn = { updatemenus: cont };
+            layoutOut = {};
+            supply(layoutIn, layoutOut);
+
+            expect(layoutIn.updatemenus).toBe(cont, msg);
+            expect(layoutOut.updatemenus).toEqual([], msg);
+        });
+    });
+
+    it('should make non-object item visible: false', function() {
+        var updatemenus = [null, undefined, [], 'str', 0, false, true];
+
+        layoutIn = { updatemenus: updatemenus };
+        layoutOut = {};
+        supply(layoutIn, layoutOut);
+
+        expect(layoutIn.updatemenus).toEqual(updatemenus);
+
+        layoutOut.updatemenus.forEach(function(item, i) {
+            expect(item).toEqual({
+                visible: false,
+                buttons: [],
+                _input: {},
+                _index: i
+            });
+        });
+    });
+
     it('should set \'visible\' to false when no buttons are present', function() {
         layoutIn.updatemenus = [{
             buttons: [{
@@ -378,6 +410,31 @@ describe('update menus interactions', function() {
             assertMenus([3, 0]);
             done();
         });
+    });
+
+    it('should emit an event on button click', function(done) {
+        var clickCnt = 0;
+        var data = [];
+        gd.on('plotly_buttonclicked', function(datum) {
+            data.push(datum);
+            clickCnt++;
+        });
+
+        click(selectHeader(0)).then(function() {
+            expect(clickCnt).toEqual(0);
+
+            return click(selectButton(2));
+        }).then(function() {
+            expect(clickCnt).toEqual(1);
+            expect(data.length).toEqual(1);
+            expect(data[0].active).toEqual(2);
+
+            return click(selectButton(1));
+        }).then(function() {
+            expect(clickCnt).toEqual(2);
+            expect(data.length).toEqual(2);
+            expect(data[1].active).toEqual(1);
+        }).catch(fail).then(done);
     });
 
     it('should apply update on button click', function(done) {

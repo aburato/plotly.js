@@ -88,6 +88,14 @@ describe('Test animate API', function() {
 
         mockCopy = Lib.extendDeep({}, mock);
 
+        // ------------------------------------------------------------
+        // NB: TRANSITION IS FAKED
+        //
+        // This means that you should not expect `.animate` to actually
+        // modify the plot in any way in the tests below. For tests
+        // involvingnon-faked transitions, see the bottom of this file.
+        // ------------------------------------------------------------
+
         spyOn(Plots, 'transition').and.callFake(function() {
             // Transition's fake behavior is just to delay by the duration
             // and resolve:
@@ -577,5 +585,187 @@ describe('Test animate API', function() {
 
             }).catch(fail).then(done);
         });
+    });
+});
+
+describe('Animate API details', function() {
+    'use strict';
+
+    var gd;
+    var dur = 30;
+    var mockCopy;
+
+    beforeEach(function(done) {
+        gd = createGraphDiv();
+        mockCopy = Lib.extendDeep({}, mock);
+        Plotly.plot(gd, mockCopy.data, mockCopy.layout).then(done);
+    });
+
+    afterEach(function() {
+        Plotly.purge(gd);
+        destroyGraphDiv();
+    });
+
+    it('redraws after a layout animation', function(done) {
+        var redraws = 0;
+        gd.on('plotly_redraw', function() {redraws++;});
+
+        Plotly.animate(gd,
+            {layout: {'xaxis.range': [0, 1]}},
+            {frame: {redraw: true, duration: dur}, transition: {duration: dur}}
+        ).then(function() {
+            expect(redraws).toBe(1);
+        }).catch(fail).then(done);
+    });
+
+    it('forces a relayout after layout animations', function(done) {
+        var relayouts = 0;
+        var restyles = 0;
+        var redraws = 0;
+        gd.on('plotly_relayout', function() {relayouts++;});
+        gd.on('plotly_restyle', function() {restyles++;});
+        gd.on('plotly_redraw', function() {redraws++;});
+
+        Plotly.animate(gd,
+            {layout: {'xaxis.range': [0, 1]}},
+            {frame: {redraw: false, duration: dur}, transition: {duration: dur}}
+        ).then(function() {
+            expect(relayouts).toBe(1);
+            expect(restyles).toBe(0);
+            expect(redraws).toBe(0);
+        }).catch(fail).then(done);
+    });
+
+    it('triggers plotly_animated after a single layout animation', function(done) {
+        var animateds = 0;
+        gd.on('plotly_animated', function() {animateds++;});
+
+        Plotly.animate(gd, [
+            {layout: {'xaxis.range': [0, 1]}},
+        ], {frame: {redraw: false, duration: dur}, transition: {duration: dur}}
+        ).then(function() {
+            // Wait a bit just to be sure:
+            setTimeout(function() {
+                expect(animateds).toBe(1);
+                done();
+            }, dur);
+        });
+    });
+
+    it('triggers plotly_animated after a multi-step layout animation', function(done) {
+        var animateds = 0;
+        gd.on('plotly_animated', function() {animateds++;});
+
+        Plotly.animate(gd, [
+            {layout: {'xaxis.range': [0, 1]}},
+            {layout: {'xaxis.range': [2, 4]}},
+        ], {frame: {redraw: false, duration: dur}, transition: {duration: dur}}
+        ).then(function() {
+            // Wait a bit just to be sure:
+            setTimeout(function() {
+                expect(animateds).toBe(1);
+                done();
+            }, dur);
+        });
+    });
+
+    it('does not fail if strings are not used', function(done) {
+        Plotly.addFrames(gd, [{name: 8, data: [{x: [8, 7, 6]}]}]).then(function() {
+            // Verify it was added as a string name:
+            expect(gd._transitionData._frameHash['8']).not.toBeUndefined();
+
+            // Transition using a number:
+            return Plotly.animate(gd, [8], {transition: {duration: 0}, frame: {duration: 0}});
+        }).then(function() {
+            // Confirm the result:
+            expect(gd.data[0].x).toEqual([8, 7, 6]);
+        }).catch(fail).then(done);
+    });
+
+    it('ignores null and undefined frames', function(done) {
+        var cnt = 0;
+        gd.on('plotly_animatingframe', function() {cnt++;});
+
+        Plotly.addFrames(gd, mockCopy.frames).then(function() {
+            return Plotly.animate(gd, ['frame0', null, undefined], {transition: {duration: 0}, frame: {duration: 0}});
+        }).then(function() {
+            // Check only one animating was fired:
+            expect(cnt).toEqual(1);
+
+            // Check unused frames did not affect the current frame:
+            expect(gd._fullLayout._currentFrame).toEqual('frame0');
+        }).catch(fail).then(done);
+    });
+
+    it('null frames should not break everything', function(done) {
+        gd._transitionData._frames.push(null);
+
+        Plotly.animate(gd, null, {
+            frame: {duration: 0},
+            transition: {duration: 0}
+        }).catch(fail).then(done);
+    });
+});
+
+describe('non-animatable fallback', function() {
+    'use strict';
+    var gd;
+
+    beforeEach(function() {
+        gd = createGraphDiv();
+    });
+
+    afterEach(function() {
+        Plotly.purge(gd);
+        destroyGraphDiv();
+    });
+
+    it('falls back to a simple update for bar graphs', function(done) {
+        Plotly.plot(gd, [{
+            x: [1, 2, 3],
+            y: [4, 5, 6],
+            type: 'bar'
+        }]).then(function() {
+            expect(gd.data[0].y).toEqual([4, 5, 6]);
+
+            return Plotly.animate(gd, [{
+                data: [{y: [6, 4, 5]}]
+            }], {frame: {duration: 0}});
+        }).then(function() {
+            expect(gd.data[0].y).toEqual([6, 4, 5]);
+        }).catch(fail).then(done);
+
+    });
+});
+
+describe('animating scatter traces', function() {
+    'use strict';
+    var gd;
+
+    beforeEach(function() {
+        gd = createGraphDiv();
+    });
+
+    afterEach(function() {
+        Plotly.purge(gd);
+        destroyGraphDiv();
+    });
+
+    it('animates trace opacity', function(done) {
+        var trace;
+        Plotly.plot(gd, [{
+            x: [1, 2, 3],
+            y: [4, 5, 6],
+            opacity: 1
+        }]).then(function() {
+            trace = Plotly.d3.selectAll('g.scatter.trace');
+            expect(trace.style('opacity')).toEqual('1');
+
+            return Plotly.animate(gd, [{
+                data: [{opacity: 0.1}]
+            }], {transition: {duration: 0}, frame: {duration: 0, redraw: false}});
+        }).then(function() {
+            expect(trace.style('opacity')).toEqual('0.1');
+        }).catch(fail).then(done);
     });
 });

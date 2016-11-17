@@ -1,15 +1,105 @@
+var Shapes = require('@src/components/shapes');
 var helpers = require('@src/components/shapes/helpers');
 var constants = require('@src/components/shapes/constants');
 
 var Plotly = require('@lib/index');
 var PlotlyInternal = require('@src/plotly');
 var Lib = require('@src/lib');
+
+var Plots = PlotlyInternal.Plots;
 var Axes = PlotlyInternal.Axes;
 
 var d3 = require('d3');
+var customMatchers = require('../assets/custom_matchers');
 var createGraphDiv = require('../assets/create_graph_div');
 var destroyGraphDiv = require('../assets/destroy_graph_div');
 
+
+describe('Test shapes defaults:', function() {
+    'use strict';
+
+    beforeAll(function() {
+        jasmine.addMatchers(customMatchers);
+    });
+
+    function _supply(layoutIn, layoutOut) {
+        layoutOut = layoutOut || {};
+        layoutOut._has = Plots._hasPlotType.bind(layoutOut);
+
+        Shapes.supplyLayoutDefaults(layoutIn, layoutOut);
+
+        return layoutOut.shapes;
+    }
+
+    it('should skip non-array containers', function() {
+        [null, undefined, {}, 'str', 0, false, true].forEach(function(cont) {
+            var msg = '- ' + JSON.stringify(cont);
+            var layoutIn = { shapes: cont };
+            var out = _supply(layoutIn);
+
+            expect(layoutIn.shapes).toBe(cont, msg);
+            expect(out).toEqual([], msg);
+        });
+    });
+
+    it('should make non-object item visible: false', function() {
+        var shapes = [null, undefined, [], 'str', 0, false, true];
+        var layoutIn = { shapes: shapes };
+        var out = _supply(layoutIn);
+
+        expect(layoutIn.shapes).toEqual(shapes);
+
+        out.forEach(function(item, i) {
+            expect(item).toEqual({
+                visible: false,
+                _input: {},
+                _index: i
+            });
+        });
+    });
+
+    it('should provide the right defaults on all axis types', function() {
+        var fullLayout = {
+            xaxis: {type: 'linear', range: [0, 20]},
+            yaxis: {type: 'log', range: [1, 5]},
+            xaxis2: {type: 'date', range: ['2006-06-05', '2006-06-09']},
+            yaxis2: {type: 'category', range: [-0.5, 7.5]}
+        };
+
+        Axes.setConvert(fullLayout.xaxis);
+        Axes.setConvert(fullLayout.yaxis);
+        Axes.setConvert(fullLayout.xaxis2);
+        Axes.setConvert(fullLayout.yaxis2);
+
+        var shape1In = {type: 'rect'},
+            shape2In = {type: 'circle', xref: 'x2', yref: 'y2'};
+
+        var layoutIn = {
+            shapes: [shape1In, shape2In]
+        };
+
+        _supply(layoutIn, fullLayout);
+
+        var shape1Out = fullLayout.shapes[0],
+            shape2Out = fullLayout.shapes[1];
+
+        // default positions are 1/4 and 3/4 of the full range of that axis
+        expect(shape1Out.x0).toBe(5);
+        expect(shape1Out.x1).toBe(15);
+
+        // shapes use data values for log axes (like everyone will in V2.0)
+        expect(shape1Out.y0).toBeWithin(100, 0.001);
+        expect(shape1Out.y1).toBeWithin(10000, 0.001);
+
+        // date strings also interpolate
+        expect(shape2Out.x0).toBe('2006-06-06');
+        expect(shape2Out.x1).toBe('2006-06-08');
+
+        // categories must use serial numbers to get continuous values
+        expect(shape2Out.y0).toBeWithin(1.5, 0.001);
+        expect(shape2Out.y1).toBeWithin(5.5, 0.001);
+    });
+});
 
 describe('Test shapes:', function() {
     'use strict';
@@ -183,18 +273,23 @@ describe('Test shapes:', function() {
                 expect(countShapePathsInUpperLayer()).toEqual(pathCount + 1);
                 expect(getLastShape(gd)).toEqual(shape);
                 expect(countShapes(gd)).toEqual(index + 1);
-            })
-            .then(function() {
+
                 return Plotly.relayout(gd, 'shapes[' + index + ']', 'remove');
             })
             .then(function() {
                 expect(countShapePathsInUpperLayer()).toEqual(pathCount);
                 expect(countShapes(gd)).toEqual(index);
 
-                return Plotly.relayout(gd, 'shapes[' + 1 + ']', null);
+                return Plotly.relayout(gd, 'shapes[2].visible', false);
             })
             .then(function() {
                 expect(countShapePathsInUpperLayer()).toEqual(pathCount - 1);
+                expect(countShapes(gd)).toEqual(index);
+
+                return Plotly.relayout(gd, 'shapes[1]', null);
+            })
+            .then(function() {
+                expect(countShapePathsInUpperLayer()).toEqual(pathCount - 2);
                 expect(countShapes(gd)).toEqual(index - 1);
             })
             .then(done);
@@ -247,6 +342,69 @@ describe('Test shapes:', function() {
                 expect(countShapes(gd)).toEqual(index + 1);
             }).then(done);
         });
+    });
+});
+
+describe('shapes autosize', function() {
+    'use strict';
+
+    var gd;
+
+    beforeAll(function() {
+        jasmine.addMatchers(customMatchers);
+    });
+
+    afterEach(destroyGraphDiv);
+
+    it('should adapt to relayout calls', function(done) {
+        gd = createGraphDiv();
+
+        var mock = {
+            data: [{}],
+            layout: {
+                shapes: [{
+                    type: 'line',
+                    x0: 0,
+                    y0: 0,
+                    x1: 1,
+                    y1: 1
+                }, {
+                    type: 'line',
+                    x0: 0,
+                    y0: 0,
+                    x1: 2,
+                    y1: 2
+                }]
+            }
+        };
+
+        function assertRanges(x, y) {
+            var fullLayout = gd._fullLayout;
+            var PREC = 1;
+
+            expect(fullLayout.xaxis.range).toBeCloseToArray(x, PREC, '- xaxis');
+            expect(fullLayout.yaxis.range).toBeCloseToArray(y, PREC, '- yaxis');
+        }
+
+        Plotly.plot(gd, mock).then(function() {
+            assertRanges([0, 2], [0, 2]);
+
+            return Plotly.relayout(gd, { 'shapes[1].visible': false });
+        })
+        .then(function() {
+            assertRanges([0, 1], [0, 1]);
+
+            return Plotly.relayout(gd, { 'shapes[1].visible': true });
+        })
+        .then(function() {
+            assertRanges([0, 2], [0, 2]);
+
+            return Plotly.relayout(gd, { 'shapes[0].x1': 3 });
+        })
+        .then(function() {
+            assertRanges([0, 3], [0, 2]);
+        })
+        .then(done);
     });
 });
 

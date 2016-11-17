@@ -16,6 +16,12 @@ var partialBundleNames = [
     'basic', 'cartesian', 'geo', 'gl3d', 'gl2d', 'mapbox', 'finance'
 ];
 
+// aburato no need to build the whole stuff
+partialBundleNames = [
+    'cartesian'
+];
+
+
 var partialBundlePaths = partialBundleNames.map(function(name) {
     return {
         name: name,

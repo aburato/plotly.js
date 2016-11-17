@@ -148,6 +148,21 @@ describe('Test plot api', function() {
                 })
                 .then(done);
         });
+
+        it('can set items in array objects', function(done) {
+            Plotly.plot(gd, [{ x: [1, 2, 3], y: [1, 2, 3] }])
+                .then(function() {
+                    return Plotly.relayout(gd, {rando: [1, 2, 3]});
+                })
+                .then(function() {
+                    expect(gd.layout.rando).toEqual([1, 2, 3]);
+                    return Plotly.relayout(gd, {'rando[1]': 45});
+                })
+                .then(function() {
+                    expect(gd.layout.rando).toEqual([1, 45, 3]);
+                })
+                .then(done);
+        });
     });
 
     describe('Plotly.restyle', function() {
@@ -881,7 +896,7 @@ describe('Test plot api', function() {
         });
     });
 
-    describe('cleanData', function() {
+    describe('cleanData & cleanLayout', function() {
         var gd;
 
         beforeEach(function() {
@@ -1023,6 +1038,36 @@ describe('Test plot api', function() {
 
             expect(trace1.transforms.length).toEqual(1);
             expect(trace1.transforms[0].target).toEqual('y');
+        });
+
+        it('should cleanup annotations / shapes refs', function() {
+            var data = [{}];
+
+            var layout = {
+                annotations: [
+                    { ref: 'paper' },
+                    null,
+                    { xref: 'x02', yref: 'y1' }
+                ],
+                shapes: [
+                    { xref: 'y', yref: 'x' },
+                    null,
+                    { xref: 'x03', yref: 'y1' }
+                ]
+            };
+
+            Plotly.plot(gd, data, layout);
+
+            expect(gd.layout.annotations[0]).toEqual({ xref: 'paper', yref: 'paper' });
+            expect(gd.layout.annotations[1]).toEqual(null);
+            expect(gd.layout.annotations[2]).toEqual({ xref: 'x2', yref: 'y' });
+
+            expect(gd.layout.shapes[0].xref).toBeUndefined();
+            expect(gd.layout.shapes[0].yref).toBeUndefined();
+            expect(gd.layout.shapes[1]).toEqual(null);
+            expect(gd.layout.shapes[2].xref).toEqual('x3');
+            expect(gd.layout.shapes[2].yref).toEqual('y');
+
         });
     });
 
