@@ -9,6 +9,13 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+
+## [1.20.2-d26] -- 2016-11-25
+
+### Fixed
+
+- Fix pie plots not propagating original click event
+
 ## [1.20.2] -- 2016-11-17
 
 ### Fixed

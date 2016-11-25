@@ -146,7 +146,7 @@ module.exports = function plot(gd, cdpie) {
                     gd._hoverdata = [pt];
                     pt.curveNumber = cd[0].trace.index;
                     gd._hoverdata.trace = cd[0].trace;
-                    Fx.click(gd, { target: true });
+                    Fx.click(gd, window.event || { target: true });
                 }
 
                 slicePath.enter().append('path')
