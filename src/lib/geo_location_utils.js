@@ -47,6 +47,7 @@ function getLocationId(locationmode, location) {
 }
 
 function countryNameToISO3(countryName) {
+    if(countryName == undefined) return false;
     for(var i = 0; i < countryIds.length; i++) {
         var iso3 = countryIds[i],
             regex = new RegExp(countryRegex[iso3]);
