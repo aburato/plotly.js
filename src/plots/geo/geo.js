@@ -358,9 +358,9 @@ proto.adjustLayout = function(geoLayout, graphSize) {
     this.framework.select('.bglayer').select('rect')
         .attr({
             width: geoLayout._width,
-            height: geoLayout._height
-        })
-        .call(Color.fill, geoLayout.bgcolor);
+            height: geoLayout._height,
+            style: 'fill-opacity: 0'
+        });
 
     this.xaxis._offset = left;
     this.xaxis._length = geoLayout._width;
