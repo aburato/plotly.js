@@ -115,7 +115,7 @@ proto.plot = function(geoCalcData, fullLayout, promises) {
         Fx.loneUnhover(fullLayout._toppaper);
     });
 
-    _this.framework.on('click', function() {
+    _this.framework.on('mousedown', function() {
         Fx.click(_this.graphDiv, window.event || { target: true });
     });
 
