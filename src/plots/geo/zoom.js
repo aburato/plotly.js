@@ -112,8 +112,7 @@ function zoomNonClipped(geo, projLayout) {
 
         projection.scale(Math.max(defaultScale, d3.event.scale));
 
-        // we don't want zoom affecting translation
-        //projection.translate([translate0[0], d3.event.translate[1]]);
+        projection.translate([translate0[0], d3.event.translate[1]]);
 
         if(!zoomPoint) {
             mouse0 = mouse1;
