@@ -116,7 +116,7 @@ proto.plot = function(geoCalcData, fullLayout, promises) {
     });
 
     _this.framework.on('click', function() {
-        Fx.click(_this.graphDiv, { target: true });
+        Fx.click(_this.graphDiv, window.event || { target: true });
     });
 
     topojsonNameNew = topojsonUtils.getTopojsonName(geoLayout);
