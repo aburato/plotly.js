@@ -112,7 +112,12 @@ function zoomNonClipped(geo, projLayout) {
 
         projection.scale(Math.max(defaultScale, d3.event.scale));
 
-        projection.translate([translate0[0], d3.event.translate[1]]);
+        var availableSpace = (projection.scale()*Math.PI);
+        var min = translate0[0]-availableSpace/2;
+        var max = availableSpace/2;
+        var translateTo = Math.min(Math.max(d3.event.translate[1], min), max);
+        projection.translate([translate0[0], translateTo]);
+        zoom.translate([translate0[0], translateTo]);
 
         if(!zoomPoint) {
             mouse0 = mouse1;
