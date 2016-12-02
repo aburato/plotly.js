@@ -300,6 +300,14 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             axi,
             axRangeLinear;
 
+        try{
+            //Zooms on an empty chart fail due this variable throwing
+            //an 'undefined' error, can't even check if it equals undefined
+            axRange;
+        } catch(e) {
+            return [];
+        }
+
         var zoomInfo = [];
 
         for (i = 0; i < axList.length; i++) {
@@ -345,16 +353,20 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
         var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
-        gd.emit('plotly_zoom', args);
-
-        if (!args.userHandled) {
-            dragTail(zoomMode);
-            if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
-                Lib.notifier('Double-click to<br>zoom back out', 'long');
-                SHOWZOOMOUTTIP = false;
-            }
-            args.pre = false;
+        //No reason to show the zoom notifier etc. if no actual zoom occured
+        if(azesZoomInfo.length > 0)
+        {
             gd.emit('plotly_zoom', args);
+
+            if (!args.userHandled) {
+                dragTail(zoomMode);
+                if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+                    Lib.notifier('Double-click to<br>zoom back out', 'long');
+                    SHOWZOOMOUTTIP = false;
+                }
+                args.pre = false;
+                gd.emit('plotly_zoom', args);
+            }
         }
     }
 
