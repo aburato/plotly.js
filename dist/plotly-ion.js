@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.20.2-d27
+* plotly.js (ion) v1.20.2-d28
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -26164,7 +26164,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.20.2-d27';
+exports.version = '1.20.2-d28';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -27276,6 +27276,7 @@ function getLocationId(locationmode, location) {
 }
 
 function countryNameToISO3(countryName) {
+    if(countryName == undefined) return false;
     for(var i = 0; i < countryIds.length; i++) {
         var iso3 = countryIds[i],
             regex = new RegExp(countryRegex[iso3]);
@@ -42774,8 +42775,8 @@ proto.plot = function(geoCalcData, fullLayout, promises) {
         Fx.loneUnhover(fullLayout._toppaper);
     });
 
-    _this.framework.on('click', function() {
-        Fx.click(_this.graphDiv, { target: true });
+    _this.framework.on('mousedown', function() {
+        Fx.click(_this.graphDiv, window.event || { target: true });
     });
 
     topojsonNameNew = topojsonUtils.getTopojsonName(geoLayout);
@@ -43017,9 +43018,9 @@ proto.adjustLayout = function(geoLayout, graphSize) {
     this.framework.select('.bglayer').select('rect')
         .attr({
             width: geoLayout._width,
-            height: geoLayout._height
-        })
-        .call(Color.fill, geoLayout.bgcolor);
+            height: geoLayout._height,
+            style: 'fill-opacity: 0'
+        });
 
     this.xaxis._offset = left;
     this.xaxis._length = geoLayout._width;
@@ -44485,13 +44486,15 @@ function zoomScoped(geo, projLayout) {
     var projection = geo.projection,
         zoom = initZoom(projection, projLayout);
 
+    var defaultScale = projection.scale();
     function handleZoomstart() {
         d3.select(this).style(zoomstartStyle);
     }
 
     function handleZoom() {
+        zoom.scale(Math.max(defaultScale, d3.event.scale));
         projection
-            .scale(d3.event.scale)
+            .scale(Math.max(defaultScale, d3.event.scale))
             .translate(d3.event.translate);
 
         geo.render();
@@ -44514,6 +44517,7 @@ function zoomNonClipped(geo, projLayout) {
     var projection = geo.projection,
         zoom = initZoom(projection, projLayout);
 
+    var defaultScale = projection.scale();
     var INSIDETOLORANCEPXS = 2;
 
     var mouse0, rotate0, translate0, lastRotate, zoomPoint,
@@ -44546,9 +44550,14 @@ function zoomNonClipped(geo, projLayout) {
             return;
         }
 
-        projection.scale(d3.event.scale);
+        projection.scale(Math.max(defaultScale, d3.event.scale));
 
-        projection.translate([translate0[0], d3.event.translate[1]]);
+        var availableSpace = (projection.scale()*Math.PI);
+        var min = translate0[0]-availableSpace/2;
+        var max = availableSpace/2;
+        var translateTo = Math.min(Math.max(d3.event.translate[1], min), max);
+        projection.translate([translate0[0], translateTo]);
+        zoom.translate([translate0[0], translateTo]);
 
         if(!zoomPoint) {
             mouse0 = mouse1;
@@ -52329,8 +52338,7 @@ module.exports = function plot(gd, cdpie) {
                 sliceTop
                     .on('mouseover', handleMouseOver)
                     .on('mouseout', handleMouseOut)
-                    .on('click', handleClick)
-                    .on('contextmenu', handleClick);
+                    .on('mousedown', handleClick);
 
                 if(trace.pull) {
                     var pull = +(Array.isArray(trace.pull) ? trace.pull[pt.i] : trace.pull) || 0;
