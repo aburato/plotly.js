@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.20.2-d28
+* plotly.js (ion) v1.20.2-d29
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -26164,7 +26164,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.20.2-d28';
+exports.version = '1.20.2-d29';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -38065,7 +38065,7 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             ];
 
             zoomInfo.push({
-                oldRange: axRange.slice(0),
+                oldRange: axRangeLinear.slice(0),
                 newRange: axi.range.slice(0),
                 name: axi._name,
                 fractionalRange: [r0Fraction, r1Fraction]
@@ -38097,16 +38097,20 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
         var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
-        gd.emit('plotly_zoom', args);
-
-        if (!args.userHandled) {
-            dragTail(zoomMode);
-            if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
-                Lib.notifier('Double-click to<br>zoom back out', 'long');
-                SHOWZOOMOUTTIP = false;
-            }
-            args.pre = false;
+        //No reason to show the zoom notifier etc. if no actual zoom occured
+        if(axesZoomInfo.length > 0)
+        {
             gd.emit('plotly_zoom', args);
+
+            if (!args.userHandled) {
+                dragTail(zoomMode);
+                if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+                    Lib.notifier('Double-click to<br>zoom back out', 'long');
+                    SHOWZOOMOUTTIP = false;
+                }
+                args.pre = false;
+                gd.emit('plotly_zoom', args);
+            }
         }
     }
 
