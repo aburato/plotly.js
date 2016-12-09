@@ -94,7 +94,9 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     // and stop there
     if(!yActive && !xActive && !isSelectOrLasso(fullLayout.dragmode)) {
         //Pass on mousedown's through to on click so that we still receive RMB events
-        dragger.onmousedown = (evt) =>{dragger.onclick(evt);}
+        hoverLayer.onmousedown = function(evt) {
+            dragger.onclick(evt);
+        };
         dragger.style.pointerEvents = isMainDrag ? 'all' : 'none';
         return dragger;
     }
