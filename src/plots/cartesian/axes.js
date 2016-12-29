@@ -1845,10 +1845,17 @@ axes.doTicks = function(gd, axid, skipTitle) {
             var maxLength = (axletter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
             maxLength = Math.min(maxLength, maxLengthCap);
 
+            // cache?
+            ax.ellipsisCache = ax.ellipsisCache || {};
+
             // ellipsis
             tickLabels.each(function(d) {
                 var thisG = d3.select(this);
-                var bb = Drawing.bBox(thisG.node());
+                var bb = ax.ellipsisCache[d.text];
+                if (typeof bb === 'undefined') {
+                    bb = Drawing.bBox(thisG.node());
+                    ax.ellipsisCache[d.text] = bb;
+                }
                 var labelLength = (axletter === "x" ? bb["height"] : bb["width"]);
 
                 // aburato: if the label is too long perform a middle ellipsis

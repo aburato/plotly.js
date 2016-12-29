@@ -1,3 +1,9 @@
+/**
+* plotly.js (ion) v1.20.2-d29
+* Copyright 2012-2016, Plotly, Inc.
+* All rights reserved.
+* Licensed under the MIT license
+*/
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Plotly = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
@@ -34060,6 +34066,18 @@ exports.lsInner = function(gd) {
 exports.drawMainTitle = function(gd) {
     var fullLayout = gd._fullLayout;
 
+    // ABURATO: main title-specific edit settings
+    var isEditable = gd._context.editable && gd._context.editableMainTitle;
+    var txt = fullLayout.title;
+    var titleWillShow = true;
+    if(txt === '' || txt.match(/Click to enter .+ title/)) {
+        titleWillShow = isEditable;
+    }
+
+    if (!titleWillShow) {
+        return;
+    }
+    
     Titles.draw(gd, 'gtitle', {
         propContainer: fullLayout,
         propName: 'title',
@@ -36495,7 +36513,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
             return Lib.syncOrAsync(axes.list(gd, '', true).map(function(ax) {
                 return function() {
                     if(!ax._id) return;
-                    var axDone = axes.doTicks(gd, ax._id);
+                    var axDone = axes.doTicks(gd, ax._id, skipTitle);
                     if(axid === 'redraw') {
                         ax._r = ax.range.slice();
                         ax._rl = ax._r.map(ax.r2l);
@@ -36504,6 +36522,29 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 };
             }));
         }
+    }
+
+    // ABURATO: avoid losing lots of time for titles which will NOT be drawn
+    var titleTxt = ax.title && ax.title.trim();
+    if (typeof skipTitle === 'undefined' && (titleTxt === '' || titleTxt.match(/Click to enter .+ title/))) {
+        
+        var isEditable = gd._context.editable;
+        
+        if (isEditable) {
+            if (ax === fullLayout) {
+                isEditable = gd._context.editableMainTitle;
+            } else if (ax === fullLayout.xaxis) {
+                isEditable = gd._context.editableAxisXTitle;
+            } else if (ax === fullLayout.yaxis) {
+                isEditable = gd._context.editableAxisYTitle;
+            } else if (ax === fullLayout.yaxis2) {
+                isEditable = gd._context.editableAxisY2Title;
+            } else if (ax === fullLayout.xaxis2) {
+                isEditable = gd._context.editableAxisX2Title;
+            }
+        }
+
+        skipTitle = !isEditable;
     }
 
     // make sure we only have allowed options for exponents
@@ -36797,10 +36838,17 @@ axes.doTicks = function(gd, axid, skipTitle) {
             var maxLength = (axletter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
             maxLength = Math.min(maxLength, maxLengthCap);
 
+            // cache?
+            ax.ellipsisCache = ax.ellipsisCache || {};
+
             // ellipsis
             tickLabels.each(function(d) {
                 var thisG = d3.select(this);
-                var bb = Drawing.bBox(thisG.node());
+                var bb = ax.ellipsisCache[d.text];
+                if (typeof bb === 'undefined') {
+                    bb = Drawing.bBox(thisG.node());
+                    ax.ellipsisCache[d.text] = bb;
+                }
                 var labelLength = (axletter === "x" ? bb["height"] : bb["width"]);
 
                 // aburato: if the label is too long perform a middle ellipsis
@@ -37839,7 +37887,10 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     // but nuke its events (except for maindrag which needs them for hover)
     // and stop there
     if(!yActive && !xActive && !isSelectOrLasso(fullLayout.dragmode)) {
-        dragger.onmousedown = null;
+        //Pass on mousedown's through to on click so that we still receive RMB events
+        hoverLayer.onmousedown = function(evt) {
+            dragger.onclick(evt);
+        };
         dragger.style.pointerEvents = isMainDrag ? 'all' : 'none';
         return dragger;
     }
