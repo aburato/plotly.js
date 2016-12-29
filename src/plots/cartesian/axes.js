@@ -1520,7 +1520,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
             return Lib.syncOrAsync(axes.list(gd, '', true).map(function(ax) {
                 return function() {
                     if(!ax._id) return;
-                    var axDone = axes.doTicks(gd, ax._id);
+                    var axDone = axes.doTicks(gd, ax._id, skipTitle);
                     if(axid === 'redraw') {
                         ax._r = ax.range.slice();
                         ax._rl = ax._r.map(ax.r2l);
@@ -1529,6 +1529,29 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 };
             }));
         }
+    }
+
+    // ABURATO: avoid losing lots of time for titles which will NOT be drawn
+    var titleTxt = ax.title && ax.title.trim();
+    if (typeof skipTitle === 'undefined' && (titleTxt === '' || titleTxt.match(/Click to enter .+ title/))) {
+        
+        var isEditable = gd._context.editable;
+        
+        if (isEditable) {
+            if (ax === fullLayout) {
+                isEditable = gd._context.editableMainTitle;
+            } else if (ax === fullLayout.xaxis) {
+                isEditable = gd._context.editableAxisXTitle;
+            } else if (ax === fullLayout.yaxis) {
+                isEditable = gd._context.editableAxisYTitle;
+            } else if (ax === fullLayout.yaxis2) {
+                isEditable = gd._context.editableAxisY2Title;
+            } else if (ax === fullLayout.xaxis2) {
+                isEditable = gd._context.editableAxisX2Title;
+            }
+        }
+
+        skipTitle = !isEditable;
     }
 
     // make sure we only have allowed options for exponents

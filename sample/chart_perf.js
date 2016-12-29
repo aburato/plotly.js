@@ -1,16 +1,24 @@
-var numTraces = 10;
-var numCats = 15;
+var numTraces = 10; // 10
+var numCats = 15; // 15
+var initialUpdates = 5; // 5
+
+var catBaseName = "THIS_IS_A_VERY_VERY_VERY_VERY_VERY_VERY_LONG_CATEGORY_BASE_NAME";
 var yMin = -100;
 var yMax = 100;
 var plotDiv;
+var timesUpdated = 0;
+var interval = 1000;
+var clearHandle;
+
+// Categories and indices are the same for everyone
+var categories = [];
+for (var c = 1; c <= numCats; c++) {
+  categories.push(c + "_" + catBaseName + "_" + c);
+}
 var updatedIndices = [];
 for (var t = 0; t < numTraces; t++) {
   updatedIndices.push(t);
 };
-var timesUpdated = 0;
-var initialUpdates = 5;
-var interval = 1000;
-var clearHandle;
 
 function updateData() {
   var updatedData = {
@@ -32,18 +40,11 @@ function updateData() {
 }
 
 function generateChart() {
-
   var traces = [];
-  var cats = [];
-  // Categories are the same for everyone
-  for (var c = 1; c <= numCats; c++) {
-    cats.push("CAT_" + c);
-  }
-
   for (var t = 1; t <= numTraces; t++) {
     var trace = {
       type: 'bar',
-      x: cats,
+      x: categories,
       y: [],
       name: "Trace " + t
     }
@@ -59,18 +60,18 @@ function generateChart() {
   };
   plotDiv = document.getElementById('myDiv');
 
-  Plotly.newPlot(plotDiv, traces, layout);
+  Plotly.newPlot(plotDiv, traces, layout, {displayModeBar: false});
   updateData();
 
-  plotDiv.addEventListener('plotly_click', function () {
+  plotDiv.addEventListener('click', function () {
     updateData();
-  }, false);
+  }, true);
 }
 
 
 function handleTheClick() {
   generateChart();
-  clearHandle = window.setInterval(function() {
+  clearHandle = window.setInterval(function () {
     if (timesUpdated < initialUpdates) {
       updateData();
     } else {

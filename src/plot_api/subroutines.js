@@ -214,6 +214,18 @@ exports.lsInner = function(gd) {
 exports.drawMainTitle = function(gd) {
     var fullLayout = gd._fullLayout;
 
+    // ABURATO: main title-specific edit settings
+    var isEditable = gd._context.editable && gd._context.editableMainTitle;
+    var txt = fullLayout.title;
+    var titleWillShow = true;
+    if(txt === '' || txt.match(/Click to enter .+ title/)) {
+        titleWillShow = isEditable;
+    }
+
+    if (!titleWillShow) {
+        return;
+    }
+    
     Titles.draw(gd, 'gtitle', {
         propContainer: fullLayout,
         propName: 'title',
