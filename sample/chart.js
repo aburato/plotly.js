@@ -11,17 +11,11 @@ var trace2 = {
 var trace3 = {
   x: ['A', 'B', 'C'],
   y: [0.5, 3.5, 1],
-  type: 'bar',
-  marker: {
-    line: {
-      color: ['red', 'green', 'purple'],
-      width: [1, 4, 10]
-    }
-  }
+  type: 'bar'
 };
 
 var barLayout = {
-  barmode: 'relative',
+  barmode: 'group',
   hovermode: 'closest',
   width: 600,
 };
