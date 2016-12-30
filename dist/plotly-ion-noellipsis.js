@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.20.2-d30
+* plotly.js (ion) v1.20.2-d29
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -26164,7 +26164,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.20.2-d30';
+exports.version = '1.20.2-d29';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -36822,7 +36822,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 ax._lastangle = autoangle;
             }
 
-            performLabelEllipsis();
+			// performLabelEllipsis();
 
             // update the axis title
             // (so it can move out of the way if needed)

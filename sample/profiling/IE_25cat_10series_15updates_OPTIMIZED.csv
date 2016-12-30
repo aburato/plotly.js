@@ -1,0 +1,608 @@
+﻿Function,Count,Inclusive time (ms),Inclusive time %,Exclusive time (ms),Exclusive time %,Avg time (ms),Max time (ms),Min time (ms),Function type,URL,Line number,Worker Id
+Plotly.plot,16,"5,900.30",99.56,0.00,0.00,368.77,387.94,345.24,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,484",0
+lib.syncOrAsync,223,"5,878.29",99.19,2.00,0.03,26.36,387.94,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,685",0
+updateData,15,"5,568.06",93.96,1.00,0.02,371.20,388.94,345.24,User,file:///C:/DEV/plotly.js/sample/chart_perf.js,23,0
+restyle,15,"5,567.06",93.94,1.00,0.02,371.14,388.94,345.24,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"31,610",0
+Anonymous function,15,"5,230.83",88.27,0.00,0.00,348.72,388.94,8.01,User,file:///C:/DEV/plotly.js/sample/chart_perf.js,75,0
+d3_selection_each,"86,933","5,118.77",86.37,40.03,0.68,0.06,44.03,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,506",0
+d3_selectionPrototype.each,"27,531","4,040.15",68.17,6.00,0.10,0.15,44.03,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,501",0
+drawAxes,32,"3,179.45",53.65,1.00,0.02,99.36,132.09,46.04,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,705",0
+axes.doTicks,96,"3,178.45",53.63,2.00,0.03,33.11,132.09,9.01,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,481",0
+Array.map,"9,235","3,001.44",50.65,5.01,0.08,0.33,99.07,0.00,Built-in,,0,0
+Anonymous function,64,"2,979.43",50.28,1.00,0.02,46.55,99.07,9.01,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,514",0
+Anonymous function,64,"2,962.42",49.99,0.00,0.00,46.29,99.07,9.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,068",0
+drawLabels,64,"2,901.38",48.96,3.00,0.05,45.33,98.07,7.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,650",0
+Function.apply,"15,088","2,220.27",37.47,5.00,0.08,0.15,13.01,0.00,Built-in,,0,0
+drawFramework,16,"1,993.62",33.64,0.00,0.00,124.60,144.77,60.04,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,610",0
+fixLabelOverlaps,64,"1,682.83",28.40,0.00,0.00,26.29,63.04,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,778",0
+drawing.bBox,"1,599","1,584.75",26.74,53.04,0.90,0.99,10.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,550",0
+exports.convertToTspans,"1,273","1,331.65",22.47,56.04,0.95,1.05,5.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,458",0
+draw,33,"1,200.82",20.26,1.00,0.02,36.39,45.03,34.02,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,354",0
+showText,"1,273","1,074.49",18.13,24.02,0.41,0.84,5.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,478",0
+getBoundingClientRect,"3,262","1,064.38",17.96,"1,064.38",17.96,0.33,10.01,0.00,DOM,,0,0
+Anonymous function,943,942.37,15.90,13.00,0.22,1.00,3.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,705",0
+drawData,16,919.62,15.52,1.00,0.02,57.48,75.05,34.02,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,710",0
+Anonymous function,330,856.58,14.45,2.00,0.03,2.60,6.00,2.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,442",0
+drawTexts,330,805.55,13.59,10.01,0.17,2.44,6.00,2.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,662",0
+Anonymous function,782,784.54,13.24,6.00,0.10,1.00,11.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,787",0
+Anonymous function,943,714.17,12.05,15.01,0.25,0.76,16.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,845",0
+performLabelEllipsis,64,714.17,12.05,0.00,0.00,11.16,34.02,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,835",0
+handleTheClick,1,694.47,11.72,1.00,0.02,694.47,694.47,694.47,User,file:///C:/DEV/plotly.js/sample/chart_perf.js,72,0
+onclick,1,694.47,11.72,0.00,0.00,694.47,694.47,694.47,User,file:///C:/DEV/plotly.js/sample/index_perf.html,10,0
+generateChart,1,693.47,11.70,0.00,0.00,693.47,693.47,693.47,User,file:///C:/DEV/plotly.js/sample/chart_perf.js,42,0
+textLayout,330,666.45,11.25,0.00,0.00,2.02,5.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,683",0
+marginPushers,17,633.43,10.69,0.00,0.00,37.26,46.03,35.02,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,628",0
+d3_selectionPrototype.attr,"33,524",615.38,10.38,73.04,1.23,0.02,19.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,183",0
+finalDraw,16,591.40,9.98,0.00,0.00,36.96,40.03,35.02,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,764",0
+d3_selectionPrototype.call,"2,726",555.38,9.37,6.01,0.10,0.20,13.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,514",0
+exports.plot,16,512.35,8.65,2.00,0.03,32.02,48.03,26.02,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"39,986",0
+plotOne,16,510.35,8.61,0.00,0.00,31.90,48.03,26.02,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,042",0
+plot,16,475.31,8.02,0.00,0.00,29.71,45.03,24.01,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,311",0
+Anonymous function,160,458.31,7.73,2.00,0.03,2.86,23.02,2.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,324",0
+d3.selection.prototype.appendSVG,"1,273",454.05,7.66,17.01,0.29,0.36,2.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,413",0
+removeChild,"3,096",404.17,6.82,263.21,4.44,0.13,16.90,0.00,DOM,,0,0
+setAttribute,"27,250",403.24,6.80,403.24,6.80,0.02,19.01,0.00,DOM,,0,0
+attrConstant,"22,909",393.24,6.64,37.02,0.63,0.02,19.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,203",0
+d3_selectionPrototype.style,"18,393",391.30,6.60,24.02,0.41,0.02,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,271",0
+Anonymous function,330,388.26,6.55,1.00,0.02,1.18,4.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,684",0
+computeTextDimensions,330,374.25,6.32,2.00,0.03,1.13,4.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,775",0
+d3_selectionPrototype.text,"5,415",367.25,6.20,16.01,0.27,0.07,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,321",0
+Anonymous function,"4,126",350.23,5.91,3.00,0.05,0.09,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,327",0
+Plotly.newPlot,1,348.24,5.88,0.00,0.00,348.24,348.24,348.24,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,959",0
+textContent,"5,415",347.23,5.86,326.22,5.51,0.06,1.01,0.00,DOM,,0,0
+appendChild,"9,440",344.24,5.81,344.24,5.81,0.04,2.00,0.00,DOM,,0,0
+Anonymous function,"3,611",335.22,5.66,52.04,0.88,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,735",0
+Anonymous function,"4,000",308.21,5.20,42.03,0.71,0.08,19.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,337",0
+d3_selectionPrototype.select,"17,891",304.21,5.13,126.09,2.13,0.02,16.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,124",0
+styleConstant,"21,773",291.23,4.91,30.02,0.51,0.01,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,291",0
+style,16,290.20,4.90,0.00,0.00,18.14,20.02,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"51,126",0
+plots.style,16,290.20,4.90,0.00,0.00,18.14,20.02,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,310",0
+Anonymous function,160,271.19,4.58,1.00,0.02,1.70,3.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"51,147",0
+Anonymous function,"3,750",265.18,4.48,23.02,0.39,0.07,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"51,154",0
+style,33,264.18,4.46,2.00,0.03,8.01,13.01,7.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,226",0
+color.fill,"5,782",258.18,4.36,9.01,0.15,0.05,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"15,067",0
+d3_selectionPrototype.selectAll,"13,855",245.16,4.14,82.06,1.39,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,146",0
+d3_selectionRemove,"1,497",228.05,3.85,1.00,0.02,0.15,16.90,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,367",0
+plots.supplyDefaults,16,224.17,3.78,3.00,0.05,14.01,16.01,9.01,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,524",0
+d3_selectionPrototype.remove,"1,397",218.05,3.68,0.00,0.00,0.16,21.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,364",0
+setProperty,"22,263",213.17,3.60,213.17,3.60,0.01,1.01,0.00,DOM,,0,0
+d3_selection_enterPrototype.select,"5,927",209.16,3.53,38.04,0.64,0.04,17.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,550",0
+Anonymous function,"6,568",208.14,3.51,8.01,0.14,0.03,17.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,343",0
+d3.select,"23,483",204.14,3.45,159.11,2.69,0.01,13.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,581",0
+parseFromString,"1,273",198.87,3.36,198.87,3.36,0.16,2.01,0.00,DOM,,0,0
+positionLabels,154,190.13,3.21,0.00,0.00,1.24,4.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,734",0
+Anonymous function,32,183.00,3.09,1.00,0.02,5.72,22.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,496",0
+tinycolor,"21,726",180.13,3.04,16.01,0.27,0.01,4.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,859",0
+Array.forEach,"2,203",165.10,2.79,2.00,0.03,0.08,7.00,0.00,Built-in,,0,0
+inputToRGB,"10,863",164.12,2.77,56.05,0.95,0.02,4.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,149",0
+__BROWSERTOOLS_CONSOLE_SAFEFUNC,"5,478",161.98,2.73,110.94,1.87,0.03,16.01,0.00,User,eval code (2),2,0
+Anonymous function,"14,015",131.08,2.21,25.01,0.42,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,160",0
+d3_selectionPrototype.classed,"8,133",124.08,2.09,26.02,0.44,0.02,2.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,222",0
+Anonymous function,32,121.08,2.04,1.00,0.02,3.78,7.00,3.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"38,691",0
+fx.init,32,121.08,2.04,0.00,0.00,3.78,7.00,3.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"38,673",0
+dragBox,352,118.07,1.99,4.00,0.07,0.34,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,835",0
+drawing.font,"1,273",107.08,1.81,10.01,0.17,0.08,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,075",0
+plots.addLinks,16,107.08,1.81,1.00,0.02,6.69,8.01,2.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,386",0
+querySelectorAll,"14,016",106.07,1.79,106.07,1.79,0.01,1.00,0.00,DOM,,0,0
+d3_selectionPrototype.append,"2,025",105.07,1.77,2.00,0.03,0.05,2.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,341",0
+Anonymous function,"17,344",101.07,1.71,23.02,0.39,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,142",0
+exports.coerce,"5,436",101.07,1.71,10.00,0.17,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,553",0
+exports.lsInner,33,101.06,1.71,1.00,0.02,3.06,26.01,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"33,879",0
+exports.layoutStyles,33,101.06,1.71,0.00,0.00,3.06,26.01,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"33,875",0
+getComputedTextLength,16,100.07,1.69,100.07,1.69,6.25,8.01,1.00,DOM,,0,0
+marginPushersAgain,16,97.07,1.64,0.00,0.00,6.07,45.03,3.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,651",0
+querySelector,"20,298",93.07,1.57,93.07,1.57,0.01,1.00,0.00,DOM,,0,0
+d3_selectionPrototype.data,"6,651",93.05,1.57,70.04,1.18,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,371",0
+create,"7,348",84.05,1.42,14.01,0.24,0.01,16.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,348",0
+importNode,"1,273",81.06,1.37,81.06,1.37,0.06,1.01,0.00,DOM,,0,0
+plots.supplyDataDefaults,16,80.05,1.35,0.00,0.00,5.00,6.00,3.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,798",0
+plots.supplyTraceDefaults,160,79.05,1.33,1.00,0.02,0.49,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,936",0
+drawing.setPosition,"1,668",77.05,1.30,3.00,0.05,0.05,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,087",0
+d3_selection_attr,"34,172",75.06,1.27,46.03,0.78,0.00,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,195",0
+cloneNode,"1,599",75.05,1.27,75.05,1.27,0.05,2.00,0.00,DOM,,0,0
+isPlainObject,"8,076",74.05,1.25,37.03,0.63,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,183",0
+Anonymous function,330,73.05,1.23,5.00,0.08,0.22,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,227",0
+calcBoundingBox,64,69.05,1.17,0.00,0.00,1.08,4.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,916",0
+relinkPrivateKeys,931,67.06,1.13,5.01,0.09,0.07,2.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,731",0
+Anonymous function,33,61.04,1.03,24.01,0.41,1.85,24.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"33,899",0
+styleNull,"1,273",61.04,1.03,0.00,0.00,0.05,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,288",0
+exports.drawFramework,16,60.04,1.01,0.00,0.00,3.75,5.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,124",0
+style,"23,888",58.05,0.98,58.05,0.98,0.00,1.00,0.00,DOM,,0,0
+Anonymous function,16,58.04,0.98,0.00,0.00,3.63,5.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,139",0
+stringInputToObject,"10,831",57.04,0.96,45.03,0.76,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,937",0
+drawing.setRect,725,57.04,0.96,1.00,0.02,0.08,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,089",0
+nestedProperty,"18,063",56.04,0.95,38.02,0.64,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,405",0
+makeSubplotLayer,16,56.04,0.95,1.00,0.02,3.50,5.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,226",0
+removeProperty,"1,273",55.04,0.93,55.04,0.93,0.04,1.00,0.00,DOM,,0,0
+drawGrid,64,55.03,0.93,4.00,0.07,0.86,2.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,009",0
+getAttribute,"13,199",54.04,0.91,54.04,0.91,0.00,1.00,0.00,DOM,,0,0
+styleBars,330,54.04,0.91,5.01,0.08,0.16,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,365",0
+plots.supplyLayoutModuleDefaults,16,53.05,0.90,1.00,0.02,3.32,4.01,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,193",0
+d3_selection_classed,"7,061",50.03,0.84,17.01,0.29,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,245",0
+joinLayer,352,49.03,0.83,7.00,0.12,0.14,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,316",0
+styleLines,330,48.03,0.81,5.01,0.08,0.15,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,261",0
+computeLegendDimensions,34,48.03,0.81,1.00,0.02,1.41,2.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,817",0
+setupTraceToggle,330,47.03,0.79,4.00,0.07,0.14,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,722",0
+d3.ns.qualify,"51,729",46.04,0.78,31.03,0.52,0.00,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,174",0
+supplyLayoutDefaults,16,42.03,0.71,1.00,0.02,2.63,3.01,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,693",0
+stylePoints,330,42.02,0.71,5.00,0.08,0.13,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,281",0
+Anonymous function,"2,582",41.02,0.69,15.01,0.25,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,260",0
+classedConstant,"2,582",41.02,0.69,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,248",0
+supplyDefaults,160,40.03,0.68,1.00,0.02,0.25,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,034",0
+rgbToRgb,"9,887",39.03,0.66,4.00,0.07,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,213",0
+Anonymous function,32,38.03,0.64,1.00,0.02,1.19,2.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,787",0
+createElementNS,"7,349",37.02,0.63,37.02,0.63,0.01,1.00,0.00,DOM,,0,0
+window,"16,156",36.03,0.61,36.03,0.61,0.00,1.00,0.00,DOM,,0,0
+Anonymous function,340,35.03,0.59,0.00,0.00,0.10,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,857",0
+drawing.setSize,758,35.03,0.59,0.00,0.00,0.05,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,088",0
+Array.slice,"29,390",35.02,0.59,30.02,0.51,0.00,1.00,0.00,Built-in,,0,0
+bound01,"29,661",35.02,0.59,20.01,0.34,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,831",0
+handleAxisDefaults,32,34.03,0.57,3.00,0.05,1.06,2.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,383",0
+getElementsByTagName,"3,097",33.03,0.56,33.03,0.56,0.01,1.00,0.00,DOM,,0,0
+Anonymous function,785,33.02,0.56,2.00,0.03,0.04,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,360",0
+init,352,33.02,0.56,2.00,0.03,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"16,857",0
+Function.call,510,30.02,0.51,0.00,0.00,0.06,3.00,0.00,Built-in,,0,0
+d3_selection_classedName,"7,061",29.02,0.49,13.01,0.22,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,258",0
+Anonymous function,330,29.02,0.49,3.00,0.05,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,376",0
+ownerDocument,"33,252",28.02,0.47,28.02,0.47,0.00,1.00,0.00,DOM,,0,0
+namespaceURI,"7,352",28.02,0.47,28.02,0.47,0.00,16.01,0.00,DOM,,0,0
+coerce,"1,280",28.02,0.47,1.00,0.02,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,940",0
+plots.doCalcdata,16,28.02,0.47,1.00,0.02,1.75,2.01,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"47,042",0
+calc,160,27.02,0.46,5.01,0.08,0.17,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"49,936",0
+setCursor,352,26.02,0.44,3.00,0.05,0.07,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,287",0
+exports.list,291,24.01,0.41,12.01,0.20,0.08,12.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,643",0
+convertToSVG,"1,273",23.01,0.39,15.01,0.25,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,668",0
+styleBoxes,330,23.01,0.39,1.00,0.02,0.07,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,389",0
+documentElement,"27,585",22.02,0.37,22.02,0.37,0.00,1.00,0.00,DOM,,0,0
+bind,"5,990",22.01,0.37,21.01,0.35,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,382",0
+lib.getPlotDiv,352,21.01,0.36,13.01,0.22,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,813",0
+stylePies,330,21.01,0.36,3.00,0.05,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,412",0
+color.stroke,547,21.01,0.36,1.00,0.02,0.04,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"15,062",0
+positionAndAutorange,16,21.01,0.35,0.00,0.00,1.31,2.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,663",0
+removeAttribute,"14,333",20.01,0.34,20.01,0.34,0.00,1.00,0.00,DOM,,0,0
+module.exports,"53,454",20.01,0.34,20.01,0.34,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,601",0
+setPositions,16,20.01,0.34,0.00,0.00,1.25,2.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,435",0
+setGroupPositions,32,20.01,0.34,0.00,0.00,0.63,2.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,466",0
+setGroupPositionsInGroupMode,16,20.01,0.34,0.00,0.00,1.25,2.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,552",0
+handleStyleDefaults,160,20.01,0.34,0.00,0.00,0.13,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"51,202",0
+lib.setTranslate,439,18.01,0.30,4.00,0.07,0.04,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,872",0
+axes.makeClipPaths,33,18.00,0.30,0.00,0.00,0.55,2.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,425",0
+hasColorscale,640,17.01,0.29,0.00,0.00,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"16,389",0
+Anonymous function,"5,586",16.02,0.27,11.01,0.19,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,506",0
+RegExp,"7,125",16.01,0.27,16.01,0.27,0.00,1.00,0.00,Built-in,,0,0
+_extend,"1,630",15.02,0.25,12.02,0.20,0.01,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,095",0
+insertBefore,785,15.01,0.25,15.01,0.25,0.02,1.00,0.00,DOM,,0,0
+Object.hasOwnProperty,"61,616",15.01,0.25,15.01,0.25,0.00,1.00,0.00,Built-in,,0,0
+Anonymous function,"18,063",14.01,0.24,14.01,0.24,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,454",0
+num,"25,312",14.01,0.24,9.01,0.15,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,261",0
+Anonymous function,160,14.01,0.24,3.00,0.05,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,671",0
+Anonymous function,"1,045",14.01,0.24,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,288",0
+style,16,14.01,0.24,0.00,0.00,0.88,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,670",0
+d3_selectionPrototype.on,330,14.01,0.24,0.00,0.00,0.04,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,603",0
+coerce,732,14.01,0.24,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,808",0
+plots.supplyLayoutGlobalDefaults,16,13.01,0.22,0.00,0.00,0.81,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,056",0
+exports.coerceFont,112,13.01,0.22,0.00,0.00,0.12,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,596",0
+onAdd,330,12.01,0.20,4.00,0.07,0.04,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,628",0
+joinPlotLayers,16,12.01,0.20,1.00,0.02,0.75,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,237",0
+Anonymous function,340,12.01,0.20,0.00,0.00,0.04,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,833",0
+_restyle,15,11.99,0.20,3.00,0.05,0.80,2.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"31,663",0
+firstChild,"1,273",11.01,0.19,11.01,0.19,0.01,1.00,0.00,DOM,,0,0
+parseInt,"28,206",11.01,0.19,11.01,0.19,0.00,1.00,0.00,Built-in,,0,0
+Math.min,"70,780",10.01,0.17,10.01,0.17,0.00,1.00,0.00,Built-in,,0,0
+ax.makeCalcdata,320,10.01,0.17,2.00,0.03,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,519",0
+exports.valObjects.color.coerceFunction,656,10.01,0.17,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,414",0
+parseFloat,"69,014",10.00,0.17,10.00,0.17,0.00,1.00,0.00,Built-in,,0,0
+Sieve,16,10.00,0.17,2.00,0.03,0.63,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"51,033",0
+parentNode,"19,215",9.01,0.15,9.01,0.15,0.00,1.00,0.00,DOM,,0,0
+d3_selection_selector,"17,922",9.01,0.15,9.01,0.15,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,141",0
+coerceSubplotAttr,800,9.01,0.15,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,944",0
+innerHTML,2,8.01,0.14,8.01,0.14,4.00,8.01,0.00,DOM,,0,0
+length,"17,113",8.01,0.14,8.01,0.14,0.00,1.00,0.00,DOM,,0,0
+Object.keys,"3,687",8.01,0.14,8.01,0.14,0.00,1.00,0.00,Built-in,,0,0
+ax.l2p,"15,891",8.01,0.14,7.01,0.12,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,410",0
+target,"14,054",8.00,0.14,8.00,0.14,0.00,1.00,0.00,DOM,,0,0
+exports.distinctVals,16,8.00,0.14,3.00,0.05,0.50,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,228",0
+setBaseAndTop,16,8.00,0.14,3.00,0.05,0.50,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,844",0
+module.exports,320,8.00,0.14,2.00,0.03,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,372",0
+Anonymous function,99,8.00,0.14,1.00,0.02,0.08,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,463",0
+Math.max,"70,521",7.01,0.12,7.01,0.12,0.00,1.00,0.00,Built-in,,0,0
+nodeName,"5,478",7.01,0.12,7.01,0.12,0.00,1.00,0.00,DOM,,0,0
+calcTicks,64,7.01,0.12,2.00,0.03,0.11,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,607",0
+makePlotFramework,2,7.01,0.12,0.00,0.00,3.50,4.00,3.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"33,120",0
+DOMParser,"1,273",7.00,0.12,7.00,0.12,0.01,1.00,0.00,DOM,,0,0
+d3_selectionPrototype.node,"37,992",7.00,0.12,7.00,0.12,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,522",0
+axes.getSubplots,80,7.00,0.12,2.00,0.03,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,326",0
+draw,33,7.00,0.12,1.00,0.02,0.21,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"21,755",0
+listNames,309,7.00,0.12,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,610",0
+addEventListener,331,6.01,0.10,6.01,0.10,0.02,1.00,0.00,DOM,,0,0
+legendDefaults,16,6.01,0.10,2.01,0.03,0.38,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,251",0
+coerce,254,6.01,0.10,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,057",0
+exports.traceIs,"6,376",6.00,0.10,6.00,0.10,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"49,069",0
+ax.d2c,"4,000",6.00,0.10,6.00,0.10,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,485",0
+handleTickLabelDefaults,32,6.00,0.10,0.00,0.00,0.19,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,572",0
+Number,"54,957",5.01,0.08,5.01,0.08,0.00,1.00,0.00,Built-in,,0,0
+Anonymous function,"1,273",5.00,0.08,5.00,0.08,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,672",0
+onmousedown,384,5.00,0.08,5.00,0.08,0.01,1.00,0.00,DOM,,0,0
+d3_selection_selectorAll,"13,855",5.00,0.08,5.00,0.08,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,159",0
+String,"32,927",5.00,0.08,5.00,0.08,0.00,1.00,0.00,Built-in,,0,0
+filterAxis,309,5.00,0.08,3.00,0.05,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,614",0
+Array.sort,469,5.00,0.08,3.00,0.05,0.01,1.00,0.00,Built-in,,0,0
+coerce,413,5.00,0.08,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,035",0
+colorbar,170,5.00,0.08,0.00,0.00,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"53,471",0
+defaultSetBackground,33,5.00,0.08,0.00,0.00,0.15,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"33,344",0
+drawTicks,64,5.00,0.08,0.00,0.00,0.08,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,635",0
+coerce2,192,5.00,0.08,0.00,0.00,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,390",0
+exports.valObjects.string.coerceFunction,912,5.00,0.08,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,399",0
+tinycolor.mix,32,4.01,0.07,0.00,0.00,0.13,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,545",0
+exports.getFromId,"1,106",4.00,0.07,3.00,0.05,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,658",0
+getLegendData,33,4.00,0.07,2.00,0.03,0.12,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,059",0
+exports.valObjects.enumerated.coerceFunction,880,4.00,0.07,2.00,0.03,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,353",0
+plots.doAutoMargin,82,4.00,0.07,1.00,0.02,0.05,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,380",0
+Anonymous function,517,4.00,0.07,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,645",0
+drawing.makeTester,16,4.00,0.07,0.00,0.00,0.25,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,507",0
+exports.valObjects.any.coerceFunction,220,3.01,0.05,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,496",0
+pruneContainers,482,3.01,0.05,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,586",0
+String.replace,"1,311",3.00,0.05,3.00,0.05,0.00,1.00,0.00,Built-in,,0,0
+lastChild,"1,273",3.00,0.05,3.00,0.05,0.00,1.00,0.00,DOM,,0,0
+attributes,"1,599",3.00,0.05,3.00,0.05,0.00,1.00,0.00,DOM,,0,0
+top,"4,797",3.00,0.05,3.00,0.05,0.00,1.00,0.00,DOM,,0,0
+cleanNumber,"4,210",3.00,0.05,3.00,0.05,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,307",0
+handlePositionDefaults,32,3.00,0.05,2.00,0.03,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,939",0
+axes.expand,32,3.00,0.05,1.00,0.02,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,373",0
+draw,33,3.00,0.05,1.00,0.02,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"25,483",0
+Anonymous function,155,3.00,0.05,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,020",0
+color.combine,16,3.00,0.05,0.00,0.00,0.19,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"15,034",0
+exports.valObjects.number.coerceFunction,"1,104",3.00,0.05,0.00,0.00,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,372",0
+exports.extendDeepNoArrays,15,3.00,0.05,0.00,0.00,0.20,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,074",0
+drawing.setClipUrl,66,3.00,0.05,0.00,0.00,0.05,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,606",0
+emptyObj,"9,974",2.01,0.03,2.01,0.03,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,616",0
+supplyLayoutDefaults,16,2.01,0.03,1.00,0.02,0.13,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"14,025",0
+removeEventListener,326,2.00,0.03,2.00,0.03,0.01,1.00,0.00,DOM,,0,0
+Math.round,"32,563",2.00,0.03,2.00,0.03,0.00,1.00,0.00,Built-in,,0,0
+height,"1,632",2.00,0.03,2.00,0.03,0.00,1.00,0.00,DOM,,0,0
+replaceFromMapObject,"1,273",2.00,0.03,2.00,0.03,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,649",0
+nextSibling,"1,273",2.00,0.03,2.00,0.03,0.00,1.00,0.00,DOM,,0,0
+pointerEvents,352,2.00,0.03,2.00,0.03,0.01,1.00,0.00,DOM,,0,0
+getSubplotIds,114,2.00,0.03,2.00,0.03,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,244",0
+d3_selection_style,"9,092",2.00,0.03,2.00,0.03,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,287",0
+addItem,192,2.00,0.03,2.00,0.03,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,402",0
+isValidScale,640,2.00,0.03,2.00,0.03,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"16,466",0
+Array.isArray,"20,310",2.00,0.03,2.00,0.03,0.00,1.00,0.00,Built-in,,0,0
+d3.round,"3,942",2.00,0.03,2.00,0.03,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"2,728",0
+exports.getComponentMethod,292,2.00,0.03,2.00,0.03,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"49,097",0
+exports.sorterAsc,"28,064",2.00,0.03,2.00,0.03,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,220",0
+attrFunction,191,2.00,0.03,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,209",0
+handleXYDefaults,160,2.00,0.03,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"55,045",0
+plots.autoMargin,268,2.00,0.03,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,353",0
+autoTickRound,64,2.00,0.03,1.00,0.02,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,837",0
+exports.valObjects.info_array.coerceFunction,64,2.00,0.03,1.00,0.02,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,505",0
+drawing.textPointStyle,330,2.00,0.03,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,360",0
+ax.setScale,162,2.00,0.03,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,364",0
+handleTickValueDefaults,32,2.00,0.03,1.00,0.02,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,688",0
+setOffsetAndWidthInGroupMode,16,2.00,0.03,0.00,0.00,0.13,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,637",0
+coerce,159,2.00,0.03,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,283",0
+expandMargin,34,2.00,0.03,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,989",0
+styleFunction,490,2.00,0.03,0.00,0.00,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,294",0
+plots.linkSubplots,16,2.00,0.03,0.00,0.00,0.13,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,769",0
+draw,32,2.00,0.03,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"23,114",0
+d3_selectionPrototype.insert,36,2.00,0.03,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,357",0
+Anonymous function,51,2.00,0.03,0.00,0.00,0.04,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,502",0
+onRemove,330,2.00,0.03,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,621",0
+autoType,2,2.00,0.03,0.00,0.00,1.00,1.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,282",0
+setAutoType,2,2.00,0.03,0.00,0.00,1.00,1.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,487",0
+exports.coerce2,132,2.00,0.03,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,584",0
+handleTickDefaults,32,2.00,0.03,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,658",0
+handleArrayContainerDefaults,80,1.01,0.02,1.01,0.02,0.01,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"34,858",0
+exports.extendFlat,42,1.01,0.02,0.00,0.00,0.02,1.01,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,062",0
+expandToVisible,"15,000",1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,376",0
+Anonymous function,160,1.00,0.02,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,514",0
+String.indexOf,283,1.00,0.02,1.00,0.02,0.00,1.00,0.00,Built-in,,0,0
+getAxisLetter,32,1.00,0.02,1.00,0.02,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"51,002",0
+contains,"1,088",1.00,0.02,1.00,0.02,0.00,1.00,0.00,DOM,,0,0
+width,"1,632",1.00,0.02,1.00,0.02,0.00,1.00,0.00,DOM,,0,0
+left,"4,797",1.00,0.02,1.00,0.02,0.00,1.00,0.00,DOM,,0,0
+bottom,"1,599",1.00,0.02,1.00,0.02,0.00,1.00,0.00,DOM,,0,0
+onmousemove,416,1.00,0.02,1.00,0.02,0.00,1.00,0.00,DOM,,0,0
+JSON.stringify,145,1.00,0.02,1.00,0.02,0.01,1.00,0.00,Built-in,,0,0
+onclick,64,1.00,0.02,1.00,0.02,0.02,1.00,0.00,DOM,,0,0
+data,15,1.00,0.02,1.00,0.02,0.07,1.00,0.00,DOM,,0,0
+exports.getGraphDiv,32,1.00,0.02,1.00,0.02,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,979",0
+Array.push,"7,223",1.00,0.02,1.00,0.02,0.00,1.00,0.00,Built-in,,0,0
+fulfill,67,1.00,0.02,1.00,0.02,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,435",0
+addOneItem,330,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,068",0
+isNaN,"10,863",1.00,0.02,1.00,0.02,0.00,1.00,0.00,Built-in,,0,0
+get,292,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,858,0
+d3_selection,391,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,098",0
+d3_selectAll,41,1.00,0.02,1.00,0.02,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,104",0
+d3_collapse,102,1.00,0.02,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,219",0
+plots.cleanPlot,17,1.00,0.02,1.00,0.02,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,677",0
+parseIntFromHex,42,1.00,0.02,1.00,0.02,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,857",0
+d3_selection_creator,950,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,347",0
+update.exit,819,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,447",0
+Anonymous function,"1,282",1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,414",0
+Anonymous function,150,1.00,0.02,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,132",0
+axes.doAutoRange,32,1.00,0.02,1.00,0.02,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,313",0
+d3_selectionPrototype.empty,497,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,519",0
+axes.autoTicks,64,1.00,0.02,1.00,0.02,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,745",0
+axes.tickFirst,64,1.00,0.02,1.00,0.02,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,934",0
+numFormat,161,1.00,0.02,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,209",0
+datafn,"2,041",1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,567",0
+clipEnds,943,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,629",0
+Anonymous function,943,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,730",0
+adjustAutoMarginForLabels,64,1.00,0.02,1.00,0.02,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,869",0
+traceHasBarsOrFill,352,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,003",0
+Anonymous function,192,1.00,0.02,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,100",0
+exports.valObjects.boolean.coerceFunction,720,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,363",0
+Array.indexOf,"3,246",1.00,0.02,1.00,0.02,0.00,1.00,0.00,Built-in,,0,0
+exports.dateTime2ms,50,1.00,0.02,1.00,0.02,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,697",0
+Array.unshift,30,1.00,0.02,1.00,0.02,0.03,1.00,0.00,Built-in,,0,0
+Object.toString,"8,076",1.00,0.02,1.00,0.02,0.00,1.00,0.00,Built-in,,0,0
+lib.bBoxIntersect,21,1.00,0.02,1.00,0.02,0.05,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,547",0
+Array.splice,443,1.00,0.02,1.00,0.02,0.00,1.00,0.00,Built-in,,0,0
+lib.identity,224,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,556",0
+lib.pushUnique,80,1.00,0.02,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,752",0
+drawing.crispRound,258,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,122",0
+lib.isPlotDiv,212,1.00,0.02,1.00,0.02,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,819",0
+orderedCategories,16,1.00,0.02,1.00,0.02,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,911",0
+drawing.tryColorscale,320,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,344",0
+setConvert,32,1.00,0.02,1.00,0.02,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,236",0
+ax.c2p,312,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,419",0
+isDataArray,486,1.00,0.02,1.00,0.02,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,497",0
+coerce,46,1.00,0.02,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,377",0
+plot,16,1.00,0.02,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,506",0
+setBarCenter,16,1.00,0.02,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,771",0
+updatePositionAxis,16,1.00,0.02,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,794",0
+asap,56,1.00,0.02,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,135",0
+Anonymous function,8,1.00,0.02,0.00,0.00,0.13,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,189",0
+flush,15,1.00,0.02,0.00,0.00,0.07,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,213",0
+then,61,1.00,0.02,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,252",0
+Anonymous function,11,1.00,0.02,0.00,0.00,0.09,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,266",0
+publish,45,1.00,0.02,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,473",0
+doAutoRange,16,1.00,0.02,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,695",0
+invokeCallback,61,1.00,0.02,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,514",0
+isReversed,260,1.00,0.02,0.00,0.00,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,175",0
+Anonymous function,15,1.00,0.02,0.00,0.00,0.07,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"31,777",0
+makeSelectorData,33,1.00,0.02,0.00,0.00,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"21,820",0
+module.exports,16,1.00,0.02,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"22,289",0
+d3_selection_classedRe,105,1.00,0.02,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,239",0
+pushModule,160,1.00,0.02,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,805",0
+plotAutoSize,1,1.00,0.02,0.00,0.00,1.00,1.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,100",0
+Anonymous function,322,1.00,0.02,0.00,0.00,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,407",0
+axes.clearTypes,15,1.00,0.02,0.00,0.00,0.07,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,128",0
+d3.selectAll,1,1.00,0.02,0.00,0.00,1.00,1.00,1.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,592",0
+d3_selection_on,330,1.00,0.02,0.00,0.00,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,616",0
+axes.tickText,943,1.00,0.02,0.00,0.00,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,022",0
+formatLinear,161,1.00,0.02,0.00,0.00,0.01,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,193",0
+draw,33,1.00,0.02,0.00,0.00,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"24,320",0
+draw,16,1.00,0.02,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"14,078",0
+moreDates,2,1.00,0.02,0.00,0.00,0.50,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,306",0
+category,2,1.00,0.02,0.00,0.00,0.50,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,324",0
+Array.filter,193,1.00,0.02,0.00,0.00,0.01,1.00,0.00,Built-in,,0,0
+fx.supplyLayoutDefaults,16,1.00,0.02,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"38,638",0
+coerce,32,1.00,0.02,0.00,0.00,0.03,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"38,640",0
+exports.isDateTime,50,1.00,0.02,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,796",0
+drawing.lineGroupStyle,330,1.00,0.02,0.00,0.00,0.00,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,145",0
+ax.c2d,64,1.00,0.02,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,481",0
+queue.add,15,1.00,0.02,0.00,0.00,0.07,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,011",0
+module.exports,16,1.00,0.02,0.00,0.00,0.06,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,250",0
+coerce,64,1.00,0.02,0.00,0.00,0.02,1.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,251",0
+Math.log,190,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+defaultView,2,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+exports.roundUp,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,255",0
+removeListener,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+Math.pow,137,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+roundWithLine,56,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,370",0
+Math.random,370,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+event,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+document,17,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+getElementById,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+classList,"1,093",0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+Number.toString,126,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+add,21,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+applyAttributes,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"50,687",0
+exports.xml_entity_encode,41,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,448",0
+String.slice,2,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+setAttributeNS,10,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+String.charAt,"1,081",0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+supplyLayoutDefaults,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,830",0
+String.match,373,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+String.split,658,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+getComputedStyle,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+String.substr,661,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+Anonymous function,160,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"51,132",0
+isView,"1,446",0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+draw,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,888",0
+createElement,4,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+Anonymous function,160,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"51,137",0
+String.toLowerCase,81,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+convertEntities,37,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,660",0
+String.toUpperCase,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+String.trim,270,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+objectOrFunction,31,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,112",0
+isRightAnchor,67,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,094",0
+isFunction,41,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,116",0
+isCenterAnchor,67,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,101",0
+isBottomAnchor,67,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,108",0
+isMiddleAnchor,67,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,115",0
+right,"1,599",0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+RegExp.exec,527,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+RegExp.test,"16,691",0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+Anonymous function,330,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"19,434",0
+onmouseout,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+body,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+Anonymous function,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,268",0
+setInterval,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+clearInterval,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,DOM,,0,0
+exports.clearPromiseQueue,15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"29,999",0
+getThen,31,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,341",0
+exports.cleanLayout,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,010",0
+exports.cleanData,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,171",0
+Anonymous function,10,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,176",0
+Array.join,110,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+emptyContainer,10,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,341",0
+exports.coerceTraceIndices,15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,376",0
+handleMaybeThenable,31,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,401",0
+_resolve,46,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,417",0
+addFrames,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,510",0
+subscribe,30,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,458",0
+tryCatch,46,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,505",0
+d3_array,103,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,546,0
+d3_documentElement,30,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,550,0
+legendGetsTrace,420,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,163",0
+isGrouped,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,167",0
+cleanUp,2,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,775",0
+isVertical,34,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,171",0
+nextId,37,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,567",0
+Anonymous function,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,796",0
+Enumerator,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,578",0
+setPlotContext,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,807",0
+Anonymous function,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"30,812",0
+all,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,721",0
+Promise,77,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"10,961",0
+isFinite,324,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+EventEmitter,2,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,275",0
+Array.shift,15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+EventEmitter.prototype.emit,68,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,300",0
+manageModeBar,33,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"20,984",0
+Anonymous function,15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"31,657",0
+a0,15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"31,782",0
+isUndefined,44,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,553",0
+Anonymous function,150,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"31,782",0
+d3_Map,6,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,852,0
+set,256,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,861,0
+Anonymous function,30,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"32,058",0
+d3_map_escape,99,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,885,0
+d3_map_has,111,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,891,0
+tinycolor.prototype.isValid,58,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,902",0
+tinycolor.prototype.getAlpha,95,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,911",0
+tinycolor.prototype.toRgb,113,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,971",0
+tinycolor.prototype.toRgbString,48,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"11,974",0
+d3.requote,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,089",0
+Anonymous function,75,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,093",0
+d3_select,33,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,102",0
+handleDefaults,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"22,212",0
+makeRangeSliderData,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"22,411",0
+attrConstantNS,10,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,206",0
+exports.drawMainTitle,33,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"34,066",0
+plots.previousPromises,65,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,373",0
+d3_selection_classes,38,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,242",0
+Anonymous function,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,400",0
+module.exports.hasLines,100,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"54,990",0
+module.exports.hasMarkers,100,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"54,995",0
+module.exports.hasText,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"55,000",0
+plots.createTransitionData,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,640",0
+plots._hasPlotType,334,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"45,665",0
+calcAutorange,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"22,924",0
+supplyLayoutDefaults,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"23,062",0
+boundAlpha,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,820",0
+isOnePointZero,48,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,863",0
+isPercentage,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,868",0
+supplyTransformDefaults,160,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,001",0
+createNS,5,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,352",0
+isValidCSSUnit,27,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"12,930",0
+plots.purge,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,249",0
+plots.sanitizeMargins,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"46,320",0
+update.enter,"1,461",0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,444",0
+d3_selection_dataNode,69,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,452",0
+d3_selectionPrototype.order,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,479",0
+axes.counterLetter,27,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,141",0
+axes.minDtick,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,151",0
+axes.getAutoRange,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,196",0
+axes.saveRangeInitial,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,337",0
+getPad,128,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,386",0
+Anonymous function,80,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,392",0
+d3_selectionPrototype.size,309,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,531",0
+Anonymous function,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,533",0
+goodNumber,128,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,425",0
+d3_selection_enter,74,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,538",0
+d3_selection_enterPrototype.insert,2,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,567",0
+roundDTick,20,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,725",0
+axes.tickIncrement,943,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"35,900",0
+isHidden,943,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,041",0
+d3_selection_onListener,36,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"1,655",0
+tickTextObj,943,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,069",0
+formatCategory,782,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,187",0
+slidersDefaults,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"24,204",0
+hasAx2,52,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,350",0
+axes.findSubplotsWithAxis,64,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,410",0
+Anonymous function,195,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,454",0
+Anonymous function,3,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,458",0
+makeSliderData,33,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"24,389",0
+Anonymous function,64,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,513",0
+transfn,31,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,590",0
+tickpathfn,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,593",0
+transfn,205,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,603",0
+tickpathfn,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,606",0
+Anonymous function,96,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,623",0
+labelx,847,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,667",0
+labely,99,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,669",0
+labelanchor,31,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,673",0
+labely,11,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,682",0
+labelx,161,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,683",0
+labelanchor,18,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,687",0
+allLabelsReady,64,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,774",0
+drawAxTitle,64,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"36,930",0
+calcAutorange,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"13,940",0
+Anonymous function,64,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,111",0
+updateMenusDefaults,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"25,387",0
+linearOK,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,291",0
+getBoxPosLetter,4,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,533",0
+isBoxWithoutPositionCoords,4,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,537",0
+makeMenuData,33,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"25,595",0
+getFirstNonEmptyTrace,2,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,548",0
+id2name,352,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,584",0
+name2id,64,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,591",0
+color.tinyRGB,67,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"15,015",0
+color.opacity,28,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"15,023",0
+handleCategoryOrderDefaults,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,697",0
+isDirectionActive,704,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"37,860",0
+color.clean,11,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"15,077",0
+exports.valObjects.data_array.coerceFunction,320,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,344",0
+exports.valObjects.integer.coerceFunction,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,385",0
+exports.valObjects.angle.coerceFunction,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,431",0
+getDragCursor,352,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"38,579",0
+exports.valObjects.subplotid.coerceFunction,320,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,444",0
+exports.valObjects.flaglist.coerceFunction,176,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,470",0
+fx.isHoriz,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"38,658",0
+exports.isJSDate,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,652",0
+Events.init,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,885",0
+plotObj.emit,34,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,942",0
+Events.triggerHandler,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"26,964",0
+primitivesLoopSplice,15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,048",0
+isValidScaleArray,640,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"16,486",0
+filterVisible,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,217",0
+lib.constrain,64,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,537",0
+exports.clean,15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,078",0
+lib.noop,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,559",0
+Anonymous function,1,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,132",0
+randstr,21,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,562",0
+makeSubplotData,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,169",0
+Object.getPrototypeOf,"2,230",0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+continueAsync,15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,688",0
+purgeSubplotLayers,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,300",0
+lib.noneOrAll,48,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,715",0
+lib.mergeArray,800,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"27,758",0
+Object.create,290,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+drawing.fillGroupStyle,330,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,179",0
+Anonymous function,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,803",0
+Array.every,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+Anonymous function,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"40,829",0
+drawing.pointStyle,330,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"17,330",0
+lib.numSeparate,129,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,123",0
+isArray,151,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,166",0
+Array.concat,201,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+exports.getModule,160,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"49,046",0
+getTraceType,71,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"49,104",0
+ax.cleanRange,194,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,281",0
+npGet,364,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,453",0
+npSet,364,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,505",0
+checkNewContainer,77,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"28,576",0
+getShowAttrDflt,32,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,622",0
+Anonymous function,96,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"41,626",0
+arraysToCalcdata,160,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"49,806",0
+Function.bind,24,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+Math.abs,697,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+calc,16,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,214",0
+Math.ceil,183,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0
+calcOneAxis,320,0.00,0.00,0.00,0.00,0.00,0.00,0.00,User,file:///C:/DEV/plotly.js/dist/plotly-ion.js,"18,231",0
+Math.floor,527,0.00,0.00,0.00,0.00,0.00,0.00,0.00,Built-in,,0,0

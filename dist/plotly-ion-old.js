@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.20.2-d30
+* plotly.js (ion) v1.20.2-d29
 * Copyright 2012-2016, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -26164,7 +26164,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.20.2-d30';
+exports.version = '1.20.2-d29';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -34066,18 +34066,6 @@ exports.lsInner = function(gd) {
 exports.drawMainTitle = function(gd) {
     var fullLayout = gd._fullLayout;
 
-    // ABURATO: main title-specific edit settings
-    var isEditable = gd._context.editable && gd._context.editableMainTitle;
-    var txt = fullLayout.title;
-    var titleWillShow = true;
-    if(txt === '' || txt.match(/Click to enter .+ title/)) {
-        titleWillShow = isEditable;
-    }
-
-    if (!titleWillShow) {
-        return;
-    }
-    
     Titles.draw(gd, 'gtitle', {
         propContainer: fullLayout,
         propName: 'title',
@@ -36513,7 +36501,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
             return Lib.syncOrAsync(axes.list(gd, '', true).map(function(ax) {
                 return function() {
                     if(!ax._id) return;
-                    var axDone = axes.doTicks(gd, ax._id, skipTitle);
+                    var axDone = axes.doTicks(gd, ax._id);
                     if(axid === 'redraw') {
                         ax._r = ax.range.slice();
                         ax._rl = ax._r.map(ax.r2l);
@@ -36522,29 +36510,6 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 };
             }));
         }
-    }
-
-    // ABURATO: avoid losing lots of time for titles which will NOT be drawn
-    var titleTxt = ax.title && ax.title.trim();
-    if (typeof skipTitle === 'undefined' && (titleTxt === '' || titleTxt.match(/Click to enter .+ title/))) {
-        
-        var isEditable = gd._context.editable;
-        
-        if (isEditable) {
-            if (ax === fullLayout) {
-                isEditable = gd._context.editableMainTitle;
-            } else if (ax === fullLayout.xaxis) {
-                isEditable = gd._context.editableAxisXTitle;
-            } else if (ax === fullLayout.yaxis) {
-                isEditable = gd._context.editableAxisYTitle;
-            } else if (ax === fullLayout.yaxis2) {
-                isEditable = gd._context.editableAxisY2Title;
-            } else if (ax === fullLayout.xaxis2) {
-                isEditable = gd._context.editableAxisX2Title;
-            }
-        }
-
-        skipTitle = !isEditable;
     }
 
     // make sure we only have allowed options for exponents
@@ -36838,17 +36803,10 @@ axes.doTicks = function(gd, axid, skipTitle) {
             var maxLength = (axletter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
             maxLength = Math.min(maxLength, maxLengthCap);
 
-            // cache?
-            ax.ellipsisCache = ax.ellipsisCache || {};
-
             // ellipsis
             tickLabels.each(function(d) {
                 var thisG = d3.select(this);
-                var bb = ax.ellipsisCache[d.text];
-                if (typeof bb === 'undefined') {
-                    bb = Drawing.bBox(thisG.node());
-                    ax.ellipsisCache[d.text] = bb;
-                }
+                var bb = Drawing.bBox(thisG.node());
                 var labelLength = (axletter === "x" ? bb["height"] : bb["width"]);
 
                 // aburato: if the label is too long perform a middle ellipsis

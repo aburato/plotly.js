@@ -1,6 +1,6 @@
-var numTraces = 10; // 10
-var numCats = 15; // 15
-var initialUpdates = 5; // 5
+var numTraces = 20; // 10
+var numCats = 25; // 15
+var initialUpdates = 15; // 5
 
 var catBaseName = "THIS_IS_A_VERY_VERY_VERY_VERY_VERY_VERY_LONG_CATEGORY_BASE_NAME";
 var yMin = -100;
@@ -70,12 +70,14 @@ function generateChart() {
 
 
 function handleTheClick() {
+  window.event.target.innerHTML = "";
   generateChart();
   clearHandle = window.setInterval(function () {
     if (timesUpdated < initialUpdates) {
       updateData();
     } else {
       window.clearInterval(clearHandle);
+      plotDiv.innerHTML = "<h1 style='position: absolute; top: 50%; left: 50%; font-size: 100px; transform: translate(-50%, -50%);'>COMPLETED</h1>";
     }
   }, interval);
 }
