@@ -9,9 +9,17 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.20.2-d30] -- 2017-01-03
+
+### Changed
+
+- Tweak to avoid useless and time consuming label redraws in automargin.
+  This boosts the resize performance by about 2x.
+
+
 ## [1.20.2-d30] -- 2016-12-30
 
-### Added
+### Changed
 
 - Optimizations for IE performance.
 

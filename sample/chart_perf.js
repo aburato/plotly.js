@@ -56,7 +56,13 @@ function generateChart() {
 
   var layout = {
     barmode: 'group',
-    hovermode: 'closest'
+    hovermode: 'closest',
+    // xaxis: {
+    //   showticklabels: false
+    // },
+    // yaxis: {
+    //   showticklabels: false
+    // }
   };
   plotDiv = document.getElementById('myDiv');
 

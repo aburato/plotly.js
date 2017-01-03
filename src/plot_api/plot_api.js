@@ -1,5 +1,5 @@
 /**
-* Copyright 2012-2016, Plotly, Inc.
+* Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
 *
 * This source code is licensed under the MIT license found in the
@@ -129,14 +129,16 @@ Plotly.plot = function(gd, data, layout, config) {
         gd._replotPending = false;
     }
 
+    // ABURATO: moved this one up to optimize redraw code.
+    
+    // so we don't try to re-call Plotly.plot from inside
+    // legend and colorbar, if margins changed
+    gd._replotting = true;
+
     Plots.supplyDefaults(gd);
 
     // Polar plots
     if(data && data[0] && data[0].r) return plotPolar(gd, data, layout);
-
-    // so we don't try to re-call Plotly.plot from inside
-    // legend and colorbar, if margins changed
-    gd._replotting = true;
 
     // make or remake the framework if we need to
     if(graphWasEmpty) makePlotFramework(gd);
