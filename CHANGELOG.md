@@ -9,6 +9,69 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+
+## [1.21.2-d32] -- 2017-01-05
+- Synced to plotly 1.21.2
+
+
+## [1.21.2] -- 2016-12-14
+- Fix handling of calendar in `filter` transforms where distinct calendars can
+  now be set for both the `target` and `value` [#1253]
+- Make `Plotly.addFrames` skip over non-plain-objects inputs [#1254]
+- Make `Plots.graphJson` aware of `frames` [#1255]
+
+
+## [1.21.1] -- 2016-12-14
+
+### Fixed
+- Fix `ms2datetime` routine for Chinese calendar [#1252]
+- Fix `tickformat` for world calendars [#1252]
+
+
+## [1.21.0] -- 2016-12-12
+
+### Added
+- Bar labels via `text` and `textposition` [#1159]
+- Add support for 16 non-gregorian calendars for date inputs and display [#1220,
+  #1230, #1237]
+- Add support for ISO-8601 timestamps [#1194]
+- Extend histogram bin auto-shifting algorithm to date axes [#1201]
+- Trace type `heatmapgl` is now included in the main plotly.js bundle [#1197]
+
+### Changed
+- Linearize date coordinates using UTC rather than local milliseconds [#1194]
+
+### Fixed
+- Fix wrongly computed date positions around daylight savings time [#1194]
+- Fix erroneous traces in multi-subplot layout containing fill-to scatter
+  traces (and plotly.py violin plots) [#1198]
+- Fix clip path URL on pages with query hashes [#1203]
+- Ensure that numeric frame name are handle correctly [#1236]
+- Fallback for manual manipulation of slider/frames [#1233]
+
+
+## [1.20.5] -- 2016-11-23
+
+### Fixed
+- Fix 1.20.0 regression in handling numerical strings including commas and spaces
+  [#1185]
+- Fix 1.20.0 regression involving date histograms [#1186]
+- Fix numerous  tickvals` and `ticktext` edge cases [#1191]
+
+
+## [1.20.4] -- 2016-11-21
+
+### Fixed
+- Fix metaKeys field `PlotSchema.get()` output
+
+## [1.20.3] -- 2016-11-21
+
+### Fixed
+- Remove infinite loop when plotting 1-pt `scattergl` traces [#1168]
+- Fix updatemenu bug where the wrong button was set to active [#1176]
+- Fix `addTraces` when called with existing traces as input [#1175]
+
+
 ## [1.20.2-d30] -- 2017-01-03
 
 ### Changed
@@ -43,6 +106,7 @@ where X.Y.Z is the semver of most recent plotly.js release.
 ### Fixed
 
 - Fix pie plots not propagating original click event
+
 
 ## [1.20.2] -- 2016-11-17
 

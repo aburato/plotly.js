@@ -145,11 +145,12 @@ exports.manageCommandObserver = function(gd, container, commandList, onchange) {
  *   3. the same property must be affected by all commands
  */
 exports.hasSimpleAPICommandBindings = function(gd, commandList, bindingsByValue) {
+    var i;
     var n = commandList.length;
 
     var refBinding;
 
-    for(var i = 0; i < n; i++) {
+    for(i = 0; i < n; i++) {
         var binding;
         var command = commandList[i];
         var method = command.method;
@@ -200,7 +201,11 @@ exports.hasSimpleAPICommandBindings = function(gd, commandList, bindingsByValue)
         binding = bindings[0];
         var value = binding.value;
         if(Array.isArray(value)) {
-            value = value[0];
+            if(value.length === 1) {
+                value = value[0];
+            } else {
+                return false;
+            }
         }
         if(bindingsByValue) {
             bindingsByValue[value] = i;
@@ -296,8 +301,8 @@ exports.computeAPICommandBindings = function(gd, method, args) {
 function computeAnimateBindings(gd, args) {
     // We'll assume that the only relevant modification an animation
     // makes that's meaningfully tracked is the frame:
-    if(Array.isArray(args[0]) && args[0].length === 1 && typeof args[0][0] === 'string') {
-        return [{type: 'layout', prop: '_currentFrame', value: args[0][0]}];
+    if(Array.isArray(args[0]) && args[0].length === 1 && ['string', 'number'].indexOf(typeof args[0][0]) !== -1) {
+        return [{type: 'layout', prop: '_currentFrame', value: args[0][0].toString()}];
     } else {
         return [];
     }

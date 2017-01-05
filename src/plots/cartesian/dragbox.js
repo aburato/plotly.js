@@ -301,7 +301,8 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     function zoomAxRanges(axList, r0Fraction, r1Fraction) {
         var i,
             axi,
-            axRangeLinear;
+            axRangeLinear0,
+            axRangeLinearSpan;
 
         var zoomInfo = [];
 
@@ -309,10 +310,11 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             axi = axList[i];
             if(axi.fixedrange) continue;
 
-            axRangeLinear = axi.range.map(axi.r2l);
+            axRangeLinear0 = axi._rl[0];
+            axRangeLinearSpan = axi._rl[1] - axRangeLinear0;
             axi.range = [
-                axi.l2r(axRangeLinear[0] + (axRangeLinear[1] - axRangeLinear[0]) * r0Fraction),
-                axi.l2r(axRangeLinear[0] + (axRangeLinear[1] - axRangeLinear[0]) * r1Fraction)
+                axi.l2r(axRangeLinear0 + axRangeLinearSpan * r0Fraction),
+                axi.l2r(axRangeLinear0 + axRangeLinearSpan * r1Fraction)
             ];
 
             zoomInfo.push({
@@ -456,7 +458,7 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         function zoomWheelOneAxis(ax, centerFraction, zoom) {
             if(ax.fixedrange) return;
 
-            var axRange = ax.range.map(ax.r2l),
+            var axRange = Lib.simpleMap(ax.range, ax.r2l),
                 v0 = axRange[0] + (axRange[1] - axRange[0]) * centerFraction;
             function doZoom(v) { return ax.l2r(v0 + (v - v0) * zoom); }
             ax.range = axRange.map(doZoom);

@@ -155,12 +155,17 @@ describe('Plots.hasSimpleAPICommandBindings', function() {
             args: [{'marker.color': 20}, [2, 1]]
         }]);
 
-        expect(isSimple).toEqual({
+        // See https://github.com/plotly/plotly.js/issues/1169 for an example of where
+        // this logic was a little too sophisticated. It's better to bail out and omit
+        // functionality than to get it wrong.
+        expect(isSimple).toEqual(false);
+
+        /* expect(isSimple).toEqual({
             type: 'data',
             prop: 'marker.color',
             traces: [ 1, 2 ],
             value: [ 10, 10 ]
-        });
+        });*/
     });
 });
 
@@ -439,6 +444,12 @@ describe('Plots.computeAPICommandBindings', function() {
             expect(result).toEqual([{type: 'layout', prop: '_currentFrame', value: 'framename'}]);
         });
 
+        it('treats numeric frame names as strings', function() {
+            var result = Plots.computeAPICommandBindings(gd, 'animate', [[8]]);
+
+            expect(result).toEqual([{type: 'layout', prop: '_currentFrame', value: '8'}]);
+        });
+
         it('binds to nothing for a multi-frame animate command', function() {
             var result = Plots.computeAPICommandBindings(gd, 'animate', [['frame1', 'frame2']]);
 
@@ -505,6 +516,14 @@ describe('component bindings', function() {
 
         Plotly.restyle(gd, 'marker.color', 'blue').then(function() {
             expect(gd.layout.sliders[0].active).toBe(4);
+        }).catch(fail).then(done);
+    });
+
+    it('does not update the component if the value is not present', function(done) {
+        expect(gd.layout.sliders[0].active).toBe(0);
+
+        Plotly.restyle(gd, 'marker.color', 'black').then(function() {
+            expect(gd.layout.sliders[0].active).toBe(0);
         }).catch(fail).then(done);
     });
 
