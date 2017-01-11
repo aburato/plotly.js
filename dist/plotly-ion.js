@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.21.2-d32
+* plotly.js (ion) v1.21.2-d33
 * Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -26218,7 +26218,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.21.2-d32';
+exports.version = '1.21.2-d33';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
