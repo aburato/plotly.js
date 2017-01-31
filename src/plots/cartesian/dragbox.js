@@ -302,13 +302,16 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         var i,
             axi,
             axRangeLinear0,
-            axRangeLinearSpan;
+            axRangeLinearSpan,
+            oldRange;
 
         var zoomInfo = [];
 
         for (i = 0; i < axList.length; i++) {
             axi = axList[i];
             if(axi.fixedrange) continue;
+
+            oldRange = axi.range.slice(0);
 
             axRangeLinear0 = axi._rl[0];
             axRangeLinearSpan = axi._rl[1] - axRangeLinear0;
@@ -318,7 +321,7 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             ];
 
             zoomInfo.push({
-                oldRange: axRangeLinear.slice(0),
+                oldRange: oldRange,
                 newRange: axi.range.slice(0),
                 name: axi._name,
                 fractionalRange: [r0Fraction, r1Fraction]

@@ -9,6 +9,10 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.21.2-d34] -- 2017-01-31
+- Fixed zoom crash regression
+
+
 ## [1.21.2-d33] -- 2017-01-11
 - Enhanced grouped bar plots with trace on mixed secondary axes
 
