@@ -20,8 +20,6 @@ var Color = require('../../components/color');
 var Drawing = require('../../components/drawing');
 var ErrorBars = require('../../components/errorbars');
 
-var arraysToCalcdata = require('./arrays_to_calcdata');
-
 var attributes = require('./attributes'),
     attributeText = attributes.text,
     attributeTextPosition = attributes.textposition,
@@ -39,8 +37,9 @@ module.exports = function plot(gd, plotinfo, cdbar) {
 
     var bartraces = plotinfo.plot.select('.barlayer')
         .selectAll('g.trace.bars')
-            .data(cdbar)
-      .enter().append('g')
+        .data(cdbar);
+
+    bartraces.enter().append('g')
         .attr('class', 'trace bars');
 
     bartraces.append('g')
@@ -52,8 +51,6 @@ module.exports = function plot(gd, plotinfo, cdbar) {
                 poffsetIsArray = Array.isArray(poffset),
                 barwidth = t.barwidth,
                 barwidthIsArray = Array.isArray(barwidth);
-
-            arraysToCalcdata(d);
 
             d3.select(this).selectAll('g.point')
                 .data(Lib.identity)

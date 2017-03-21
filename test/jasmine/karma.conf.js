@@ -17,9 +17,11 @@ var constants = require('../../tasks/util/constants');
 
 var arg = process.argv[4];
 
+var isCI = !!process.env.CIRCLECI;
 var testFileGlob = arg ? arg : 'tests/*_test.js';
 var isSingleSuiteRun = (arg && arg.indexOf('bundle_tests/') === -1);
 var isRequireJSTest = (arg && arg.indexOf('bundle_tests/requirejs') !== -1);
+var isIE9Test = (arg && arg.indexOf('bundle_tests/ie9') !== -1);
 
 var pathToMain = '../../lib/index.js';
 var pathToJQuery = 'assets/jquery-1.8.3.min.js';
@@ -34,6 +36,14 @@ function func(config) {
     //     See CONTRIBUTING.md for additional notes on reporting.
     func.defaultConfig.logLevel = config.LOG_INFO;
 
+    // without this, console logs in the plotly.js code don't print to
+    // the terminal since karma v1.5.0
+    //
+    // See https://github.com/karma-runner/karma/commit/89a7a1c#commitcomment-21009216
+    func.defaultConfig.browserConsoleLogOptions = {
+        level: 'log'
+    };
+
     config.set(func.defaultConfig);
 }
 
@@ -44,13 +54,14 @@ func.defaultConfig = {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine', 'browserify'],
+    frameworks: ['jasmine', 'jasmine-spec-tags', 'browserify'],
 
     // list of files / patterns to load in the browser
     //
     // N.B. this field is filled below
     files: [],
 
+    // list of files / pattern to exclude
     exclude: [],
 
     // preprocess matching files before serving them to the browser
@@ -66,7 +77,7 @@ func.defaultConfig = {
     // See note in CONTRIBUTING.md about more verbose reporting via karma-verbose-reporter:
     // https://www.npmjs.com/package/karma-verbose-reporter ('verbose')
     //
-    reporters: ['progress'],
+    reporters: isSingleSuiteRun ? ['progress'] : ['dots', 'spec'],
 
     // web server port
     port: 9876,
@@ -75,14 +86,23 @@ func.defaultConfig = {
     colors: true,
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    autoWatch: !isCI,
+
+    // if true, Karma captures browsers, runs the tests and exits
+    singleRun: isCI,
+
+    // how long will Karma wait for a message from a browser before disconnecting (30 ms)
+    browserNoActivityTimeout: 30000,
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: ['Chrome_WindowSized'],
 
     // custom browser options
+    //
     // window-size values came from observing default size
+    //
+    // '--ignore-gpu-blacklist' allow to test WebGL on CI (!!!)
     customLaunchers: {
         Chrome_WindowSized: {
             base: 'Chrome',
@@ -94,28 +114,40 @@ func.defaultConfig = {
         }
     },
 
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
-
     browserify: {
         transform: ['../../tasks/util/shortcut_paths.js'],
         extensions: ['.js'],
-        watch: true,
+        watch: !isCI,
         debug: true
+    },
+
+    // unfortunately a few tests don't behave well on CI
+    // using `karma-jasmine-spec-tags`
+    // add @noCI to the spec description to skip a spec on CI
+    client: {
+        tagPrefix: '@',
+        skipTags: isCI ? 'noCI' : null
+    },
+
+    // use 'karma-spec-reporter' to log info about skipped specs
+    specReporter: {
+        suppressErrorSummary: true,
+        suppressFailed: true,
+        suppressPassed: true,
+        suppressSkipped: false,
+        showSpecTiming: false,
+        failFast: false
     }
 };
-
 
 // Add lib/index.js to single-suite runs,
 // to avoid import conflicts due to plotly.js
 // circular dependencies.
 if(isSingleSuiteRun) {
-    func.defaultConfig.files = [
+    func.defaultConfig.files.push(
         pathToJQuery,
-        pathToMain,
-        testFileGlob
-    ];
+        pathToMain
+    );
 
     func.defaultConfig.preprocessors[pathToMain] = ['browserify'];
     func.defaultConfig.preprocessors[testFileGlob] = ['browserify'];
@@ -123,17 +155,23 @@ if(isSingleSuiteRun) {
 else if(isRequireJSTest) {
     func.defaultConfig.files = [
         constants.pathToRequireJS,
-        constants.pathToRequireJSFixture,
-        testFileGlob
+        constants.pathToRequireJSFixture
     ];
 }
-else {
-    func.defaultConfig.files = [
-        pathToJQuery,
-        testFileGlob
-    ];
+else if(isIE9Test) {
+    // load ie9_mock.js before plotly.js+test bundle
+    // to catch reference errors that could occur
+    // when plotly.js is first loaded.
 
+    func.defaultConfig.files.push('./assets/ie9_mock.js');
     func.defaultConfig.preprocessors[testFileGlob] = ['browserify'];
 }
+else {
+    func.defaultConfig.files.push(pathToJQuery);
+    func.defaultConfig.preprocessors[testFileGlob] = ['browserify'];
+}
+
+// lastly, load test file glob
+func.defaultConfig.files.push(testFileGlob);
 
 module.exports = func;

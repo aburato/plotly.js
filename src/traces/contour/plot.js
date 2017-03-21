@@ -17,6 +17,7 @@ var Drawing = require('../../components/drawing');
 var heatmapPlot = require('../heatmap/plot');
 var makeCrossings = require('./make_crossings');
 var findAllPaths = require('./find_all_paths');
+var endPlus = require('./end_plus');
 
 
 module.exports = function plot(gd, plotinfo, cdcontours) {
@@ -55,7 +56,11 @@ function plotOne(gd, plotinfo, cd) {
         heatmapPlot(gd, plotinfo, [cd]);
     }
     // in case this used to be a heatmap (or have heatmap fill)
-    else fullLayout._paper.selectAll('.hm' + uid).remove();
+    else {
+        fullLayout._paper.selectAll('.hm' + uid).remove();
+        fullLayout._infolayer.selectAll('g.rangeslider-container')
+            .selectAll('.hm' + uid).remove();
+    }
 
     makeCrossings(pathinfo);
     findAllPaths(pathinfo);
@@ -80,9 +85,11 @@ function plotOne(gd, plotinfo, cd) {
 }
 
 function emptyPathinfo(contours, plotinfo, cd0) {
-    var cs = contours.size || 1,
-        pathinfo = [];
-    for(var ci = contours.start; ci < contours.end + cs / 10; ci += cs) {
+    var cs = contours.size,
+        pathinfo = [],
+        end = endPlus(contours);
+
+    for(var ci = contours.start; ci < end; ci += cs) {
         pathinfo.push({
             level: ci,
             // all the cells with nontrivial marching index
@@ -103,6 +110,11 @@ function emptyPathinfo(contours, plotinfo, cd0) {
             z: cd0.z,
             smoothing: cd0.trace.line.smoothing
         });
+
+        if(pathinfo.length > 1000) {
+            Lib.warn('Too many contours, clipping at 1000', contours);
+            break;
+        }
     }
     return pathinfo;
 }
@@ -157,7 +169,8 @@ function makeFills(plotgroup, pathinfo, perimeter, contours) {
 }
 
 function joinAllPaths(pi, perimeter) {
-    var fullpath = (pi.edgepaths.length || pi.z[0][0] < pi.level) ?
+    var edgeVal2 = Math.min(pi.z[0][0], pi.z[0][1]),
+        fullpath = (pi.edgepaths.length || edgeVal2 <= pi.level) ?
             '' : ('M' + perimeter.join('L') + 'Z'),
         i = 0,
         startsleft = pi.edgepaths.map(function(v, i) { return i; }),
