@@ -113,7 +113,7 @@ fx.init = function(gd) {
             var maindrag = dragBox(gd, plotinfo, 0, 0,
                 xa._length, ya._length, 'ns', 'ew');
 
-            maindrag.onmousemove = function(evt) {
+             maindrag.onmousemove = function(evt) {
                 // This is on `gd._fullLayout`, *not* fullLayout because the reference
                 // changes by the time this is called again.
                 gd._fullLayout._rehover = function() {
@@ -1358,7 +1358,7 @@ function hoverChanged(gd, evt, oldhoverdata) {
 fx.click = function(gd, evt) {
     var annotationsDone = Registry.getComponentMethod('annotations', 'onClick')(gd, gd._hoverdata);
 
-    function emitClick() { gd.emit('plotly_click', {points: gd._hoverdata}); }
+    function emitClick() { gd.emit('plotly_click', {button: evt.button, points: gd._hoverdata}); }
 
     if(gd._hoverdata && evt && evt.target) {
         if(annotationsDone && annotationsDone.then) {
