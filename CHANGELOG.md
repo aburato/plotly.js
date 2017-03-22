@@ -9,16 +9,9 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
-## [1.21.2-d34] -- 2017-01-31
-- Fixed zoom crash regression
 
-
-## [1.21.2-d33] -- 2017-01-11
-- Enhanced grouped bar plots with trace on mixed secondary axes
-
-
-## [1.21.2-d32] -- 2017-01-05
-- Synced to plotly 1.21.2
+## [1.25.0-d35] -- 2017-03-22
+- Synced to plotly 1.25.0
 
 
 ## [1.25.0] -- 2017-03-20
@@ -190,6 +183,18 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - Fix `scattermapbox` and `scattergeo` handling of blank strings `text` [#1283]
 - Lock `mouse-change@1.3.0` fixing 3D hover labels on fresh `npm install`
   [#1281]
+
+
+  ## [1.21.2-d34] -- 2017-01-31
+- Fixed zoom crash regression
+
+
+## [1.21.2-d33] -- 2017-01-11
+- Enhanced grouped bar plots with trace on mixed secondary axes
+
+
+## [1.21.2-d32] -- 2017-01-05
+- Synced to plotly 1.21.2
 
 
 ## [1.21.2] -- 2016-12-14
