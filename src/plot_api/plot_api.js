@@ -131,6 +131,12 @@ Plotly.plot = function(gd, data, layout, config) {
         gd._replotPending = false;
     }
 
+    // ABURATO: moved this one up to optimize redraw code.
+    
+    // so we don't try to re-call Plotly.plot from inside
+    // legend and colorbar, if margins changed
+    gd._replotting = true;
+
     Plots.supplyDefaults(gd);
 
     var fullLayout = gd._fullLayout;

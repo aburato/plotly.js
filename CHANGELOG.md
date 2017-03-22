@@ -10,6 +10,10 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 where X.Y.Z is the semver of most recent plotly.js release.
 
 
+## [1.25.0-d35] -- 2017-03-22
+- Synced to plotly 1.25.0
+
+
 ## [1.25.0] -- 2017-03-20
 
 ### Added
@@ -181,6 +185,18 @@ where X.Y.Z is the semver of most recent plotly.js release.
   [#1281]
 
 
+  ## [1.21.2-d34] -- 2017-01-31
+- Fixed zoom crash regression
+
+
+## [1.21.2-d33] -- 2017-01-11
+- Enhanced grouped bar plots with trace on mixed secondary axes
+
+
+## [1.21.2-d32] -- 2017-01-05
+- Synced to plotly 1.21.2
+
+
 ## [1.21.2] -- 2016-12-14
 
 ### Fixed
@@ -241,11 +257,53 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - Fix `addTraces` when called with existing traces as input [#1175]
 
 
+## [1.20.2-d30] -- 2017-01-03
+
+### Changed
+
+- Tweak to avoid useless and time consuming label redraws in automargin.
+  This boosts the resize performance by about 2x.
+
+
+## [1.20.2-d30] -- 2016-12-30
+
+### Changed
+
+- Optimizations for IE performance.
+
+
+## [1.20.2-d29] -- 2016-12-6
+
+### Added
+
+- misc fixes
+
+
+## [1.20.2-d26] -- 2016-11-25
+
+### Added
+
+- ion custom bundle
+
+
+## [1.20.2-d26] -- 2016-11-25
+
+### Fixed
+
+- Fix pie plots not propagating original click event
+
+
 ## [1.20.2] -- 2016-11-17
 
 ### Fixed
 - Fix hover labels in stacked bar charts [#1163]
 - Fix mode bar zoom buttons on date axes [#1162]
+
+
+## [1.20.1-d25] -- 2016-11-17
+
+### Fixed
+- overrideColorDefaults relied on Plotly.Color which is no longer exported.
 
 
 ## [1.20.1] -- 2016-11-16
@@ -289,6 +347,12 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - `Plotly.PlotSchema.get` now correctly list rangeslider and rangeselector under
   `xaxis` only [#1144]
 - `Plotly.relayout` correctly updates arbitrary layout attributes [#1133]
+
+
+
+## [1.19.2-d24] -- 2016-11-15
+
+- Started from a fresh original (plotly) 1.19.2 tag and re-merged everything BY HAND.
 
 
 ## [1.19.2] -- 2016-11-02
@@ -441,6 +505,67 @@ where X.Y.Z is the semver of most recent plotly.js release.
 - Do not extend data array on event emission [#842, #866]
 - Make `Plotly.redraw` throw an error when called on non plotly graph div [#907]
 - Make `plotly.min.js` work when injected in Require.js environment [#914]
+
+
+## [1.16.3-d20] -- 2016-09-15
+
+- test
+
+### Changed
+- Added support for showing the tooltip at mouse position 
+
+
+## [1.16.3-d19] -- 2016-09-14
+
+### Changed
+- Support the "classes" property in annotations and shapes. 
+
+
+## [1.16.3-d18] -- 2016-09-14
+
+### Changed
+- When applying tooltips in rect mode for treemaps, do not show a tooltip if
+  the cursor is not within any of the rects. This is so no tooltip is shown
+  in header areas.
+- Added Plotly.colorDefaults to the API
+
+
+## [1.16.3-d17] -- 2016-09-12
+
+### Changed
+- Merged Peter developments for treemaps
+
+
+## [1.16.3-d16] -- 2016-09-08
+
+### Changed
+- Ale: fixed a bug where clicks on pie slices yielded a NULL trace in the event args.
+- Added curveindex to pie click args.
+
+
+## [1.16.3-d15] -- 2016-09-08
+
+### Changed
+- Ale: changed ellipsis algo to take actual space into account.
+
+
+## [1.16.3-d14] -- 2016-09-07
+
+### Changed
+- Ale: added SVG TITLE attribute to axis labels, rendered as tooltips in modern browsers. Useful when they get ellipsed.
+
+
+## [1.16.3-d13] -- 2016-09-06
+
+### Changed
+- Ale: better label overlapping behavior with small charts heights.
+- Ale: middle ellipsis.
+
+
+## [1.16.3-d9] -- 2016-08-31
+
+### Changed
+- Aligned to plotly.js 1.16.3
 
 
 ## [1.16.3] -- 2016-08-23

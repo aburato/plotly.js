@@ -93,7 +93,10 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     // but nuke its events (except for maindrag which needs them for hover)
     // and stop there
     if(!yActive && !xActive && !isSelectOrLasso(fullLayout.dragmode)) {
-        dragger.onmousedown = null;
+        //Pass on mousedown's through to on click so that we still receive RMB events
+        dragger.onmousedown = function(evt) {
+            dragger.onclick(evt);
+        };
         dragger.style.pointerEvents = isMainDrag ? 'all' : 'none';
         return dragger;
     }
@@ -299,11 +302,16 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         var i,
             axi,
             axRangeLinear0,
-            axRangeLinearSpan;
+            axRangeLinearSpan,
+            oldRange;
 
-        for(i = 0; i < axList.length; i++) {
+        var zoomInfo = [];
+
+        for (i = 0; i < axList.length; i++) {
             axi = axList[i];
             if(axi.fixedrange) continue;
+
+            oldRange = axi.range.slice(0);
 
             axRangeLinear0 = axi._rl[0];
             axRangeLinearSpan = axi._rl[1] - axRangeLinear0;
@@ -311,7 +319,16 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 axi.l2r(axRangeLinear0 + axRangeLinearSpan * r0Fraction),
                 axi.l2r(axRangeLinear0 + axRangeLinearSpan * r1Fraction)
             ];
+
+            zoomInfo.push({
+                oldRange: oldRange,
+                newRange: axi.range.slice(0),
+                name: axi._name,
+                fractionalRange: [r0Fraction, r1Fraction]
+            });
         }
+
+        return zoomInfo;
     }
 
     function zoomDone(dragged, numClicks) {
@@ -321,15 +338,35 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             return removeZoombox(gd);
         }
 
-        if(zoomMode === 'xy' || zoomMode === 'x') zoomAxRanges(xa, box.l / pw, box.r / pw);
-        if(zoomMode === 'xy' || zoomMode === 'y') zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph);
+        var axesZoomInfo = [];
+
+        if (zoomMode === 'xy' || zoomMode === 'x') {
+            var xZoomInfo = zoomAxRanges(xa, box.l / pw, box.r / pw);
+            axesZoomInfo = axesZoomInfo.concat(xZoomInfo);
+        }
+        if (zoomMode === 'xy' || zoomMode === 'y') {
+            var yZoomInfo = zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph);
+            axesZoomInfo = axesZoomInfo.concat(yZoomInfo);
+        }
 
         removeZoombox(gd);
-        dragTail(zoomMode);
 
-        if(SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
-            Lib.notifier('Double-click to<br>zoom back out', 'long');
-            SHOWZOOMOUTTIP = false;
+        // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
+        var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
+        //No reason to show the zoom notifier etc. if no actual zoom occured
+        if(axesZoomInfo.length > 0)
+        {
+            gd.emit('plotly_zoom', args);
+
+            if (!args.userHandled) {
+                dragTail(zoomMode);
+                if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+                    Lib.notifier('Double-click to<br>zoom back out', 'long');
+                    SHOWZOOMOUTTIP = false;
+                }
+                args.pre = false;
+                gd.emit('plotly_zoom', args);
+            }
         }
     }
 
@@ -584,6 +621,12 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     function doubleClick() {
         if(gd._transitioningWithDuration) return;
 
+        // Emit pre-zoom reset
+        var args = { zoomMode: "reset", pre: true, userHandled: false };
+        gd.emit('plotly_zoom', args);
+
+        if (args.userHandled) return;
+
         var doubleClickConfig = gd._context.doubleClick,
             axList = (xActive ? xa : []).concat(yActive ? ya : []),
             attrs = {};
@@ -631,6 +674,9 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
         gd.emit('plotly_doubleclick', null);
         Plotly.relayout(gd, attrs);
+
+        args.pre = false;
+        gd.emit('plotly_zoom', args);
     }
 
     // dragTail - finish a drag event with a redraw

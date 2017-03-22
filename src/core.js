@@ -15,7 +15,7 @@
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.25.0';
+exports.version = '1.25.0-d35';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -72,6 +72,11 @@ exports.Fx = Plotly.Fx;
 exports.Snapshot = require('./snapshot');
 exports.PlotSchema = require('./plot_api/plot_schema');
 exports.Queue = require('./lib/queue');
+
+var color = require('./components/color');
+
+// Unofficial color defaults override
+exports.colorDefaults = color.overrideColorDefaults;
 
 // export d3 used in the bundle
 exports.d3 = require('d3');

@@ -68,12 +68,12 @@ module.exports = function handleAnnotationDefaults(annIn, annOut, fullLayout, op
             // but that would require updates to drawing & autorange code and maybe more
             if(aaxRef !== 'pixel' && aaxRef !== axRef) {
                 aaxRef = annOut[arrowPosAttr] = 'pixel';
-            }
+                    }
 
             // ax, ay
             var aDflt = (aaxRef === 'pixel') ? arrowPosDflt[i] : 0.4;
             Axes.coercePosition(annOut, gdMock, coerce, aaxRef, arrowPosAttr, aDflt);
-        }
+                }
 
         // xanchor, yanchor
         coerce(axLetter + 'anchor');
@@ -91,6 +91,10 @@ module.exports = function handleAnnotationDefaults(annIn, annOut, fullLayout, op
 
         // if you have one part of arrow length you should have both
         Lib.noneOrAll(annIn, annOut, ['ax', 'ay']);
+    }
+
+    if (annIn.classes) {
+        annOut.classes = annIn.classes;
     }
 
     if(clickToShow) {

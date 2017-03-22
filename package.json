@@ -1,6 +1,6 @@
 {
   "name": "plotly.js",
-  "version": "1.25.0",
+  "version": "1.25.0-d35",
   "description": "The open source javascript graphing library that powers plotly",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -26,6 +26,7 @@
     "header": "node tasks/header.js",
     "stats": "node tasks/stats.js",
     "build": "npm run preprocess && npm run bundle && npm run header && npm run stats",
+    "ionbuild": "npm run preprocess && npm run bundle && npm run header",
     "cibuild": "npm run preprocess && node tasks/cibundle.js",
     "watch": "node tasks/watch.js",
     "lint": "eslint --version && eslint .",

@@ -16,6 +16,11 @@ var partialBundleNames = [
     'basic', 'cartesian', 'geo', 'gl3d', 'gl2d', 'mapbox', 'finance'
 ];
 
+// aburato: no need to build the whole stuff, just our custom ION build
+partialBundleNames = [ 
+    'ion'
+];
+
 var partialBundlePaths = partialBundleNames.map(function(name) {
     return {
         name: name,

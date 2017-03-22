@@ -46,13 +46,15 @@ function zoomScoped(geo, projLayout) {
     var projection = geo.projection,
         zoom = initZoom(projection, projLayout);
 
+    var defaultScale = projection.scale();
     function handleZoomstart() {
         d3.select(this).style(zoomstartStyle);
     }
 
     function handleZoom() {
+        zoom.scale(Math.max(defaultScale, d3.event.scale));
         projection
-            .scale(d3.event.scale)
+            .scale(Math.max(defaultScale, d3.event.scale))
             .translate(d3.event.translate);
 
         geo.render();
@@ -75,6 +77,7 @@ function zoomNonClipped(geo, projLayout) {
     var projection = geo.projection,
         zoom = initZoom(projection, projLayout);
 
+    var defaultScale = projection.scale();
     var INSIDETOLORANCEPXS = 2;
 
     var mouse0, rotate0, translate0, lastRotate, zoomPoint,
@@ -107,9 +110,14 @@ function zoomNonClipped(geo, projLayout) {
             return;
         }
 
-        projection.scale(d3.event.scale);
+        projection.scale(Math.max(defaultScale, d3.event.scale));
 
-        projection.translate([translate0[0], d3.event.translate[1]]);
+        var availableSpace = (projection.scale()*Math.PI);
+        var min = translate0[0]-availableSpace/2;
+        var max = availableSpace/2;
+        var translateTo = Math.min(Math.max(d3.event.translate[1], min), max);
+        projection.translate([translate0[0], translateTo]);
+        zoom.translate([translate0[0], translateTo]);
 
         if(!zoomPoint) {
             mouse0 = mouse1;

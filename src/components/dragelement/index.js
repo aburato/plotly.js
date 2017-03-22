@@ -141,7 +141,7 @@ dragElement.init = function init(options) {
 
         if(!gd._dragged) {
             var e2 = document.createEvent('MouseEvents');
-            e2.initEvent('click', true, true);
+            e2.initMouseEvent("click", e.bubbles, e.cancelable, e.view, 0, 0, 0, 0, 0, false, false, false, false, e.button, null);
             initialTarget.dispatchEvent(e2);
         }
 
