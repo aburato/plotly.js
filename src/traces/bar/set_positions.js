@@ -23,7 +23,7 @@ var Sieve = require('./sieve.js');
  */
 
 module.exports = function setPositions(gd, plotinfo) {
-    var xa = plotinfo.xaxis,
+     var xa = plotinfo.xaxis,
         ya = plotinfo.yaxis;
 
     var fullTraces = gd._fullData,
@@ -35,19 +35,13 @@ module.exports = function setPositions(gd, plotinfo) {
         i;
     for(i = 0; i < fullTraces.length; i++) {
         var fullTrace = fullTraces[i];
-        if(
-            fullTrace.visible === true &&
-            Registry.traceIs(fullTrace, 'bar') &&
-            fullTrace.xaxis === xa._id &&
-            fullTrace.yaxis === ya._id &&
-            !calcTraces[i][0].placeholder
-        ) {
-            if(fullTrace.orientation === 'h') {
-                calcTracesHorizontal.push(calcTraces[i]);
-            }
-            else {
-                calcTracesVertical.push(calcTraces[i]);
-            }
+        var calcTrace = calcTraces[i];
+
+        if (!fullTrace.visible || !Registry.traceIs(fullTrace, 'bar') ||
+            calcTraces[i][0].placeholder) continue;
+    
+        if(fullTrace.orientation === 'h') {
+            calcTracesHorizontalMap[fullTrace.xaxis].push(calcTrace);
         }
         else {
             calcTracesVerticalMap[fullTrace.yaxis].push(calcTrace);
