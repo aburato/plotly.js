@@ -9,6 +9,12 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.25.0-d36] -- 2017-03-23
+
+### Added
+- Now autosize takes into account slanted labels on X axis.
+
+
 ## [1.21.2-d34] -- 2017-01-31
 - Fixed zoom crash regression
 
