@@ -1927,12 +1927,22 @@ axes.doTicks = function(gd, axid, skipTitle) {
 
         function adjustAutoMarginForLabels() {
             var axBB = ax._boundingBox;
+
+            // Handle extra space on this axis
             var shiftDimension;
             var marginDimension;
+            var shiftAmount;
+            
+            // Handle extra space on perpendicular axis 
+            // (tipycally needed when you use slanted labels which are otherwise cut off)
+            var perpMarginDimension;
+            var perpShiftAmount;
+
             var x = 0, y = 0;
 
             if (ax._id.charAt(0) === "x") {
                 shiftDimension = "height";
+                perpMarginDimension = "r";
                 if (ax._id.charAt(1) === "2") {
                     y = 1;
                     marginDimension = "t";
@@ -1950,7 +1960,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
             }
 
             if (shiftDimension && marginDimension) {
-                var shiftAmount = axBB[shiftDimension];
+                shiftAmount = axBB[shiftDimension];
                 if (ax._titleElement) {
                     var titleBB = ax._titleElement.node().getBoundingClientRect();
                     shiftAmount += (titleBB[shiftDimension] + 2);
@@ -1958,7 +1968,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
 
                 var maxAmount = gd._fullLayout[shiftDimension] * 0.5;
                 shiftAmount = Math.min(shiftAmount, maxAmount);
-
+                
                 var shiftMargins = {
                     x: x,
                     y: y,
@@ -1968,6 +1978,23 @@ axes.doTicks = function(gd, axid, skipTitle) {
                     t: 0
                 };
                 shiftMargins[marginDimension] = shiftAmount;
+
+                if (perpMarginDimension === "r") {
+                    perpShiftAmount = axBB.width - ax._length;
+                    if (perpShiftAmount > 0) {
+                        var perpShiftMargins = {
+                            x: 1.1,
+                            y: 0,
+                            l: 0,
+                            r: perpShiftAmount,
+                            b: 0,
+                            t: 0
+                        };
+
+                        Plots.autoMargin(gd, "xaxis_on_r", perpShiftMargins);
+                    };
+                }
+                
                 Plots.autoMargin(gd, ax._name, shiftMargins);
             }
         }
