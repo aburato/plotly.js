@@ -102,7 +102,7 @@ function drawOne(gd, index) {
         });
 
     if (options.classes) {
-        anngroup.classed(options.classes, true);
+        annGroup.classed(options.classes, true);
     }
 
     // another group for text+background so that they can rotate together
