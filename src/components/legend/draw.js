@@ -365,9 +365,19 @@ function drawTexts(g, gd) {
         traceIndex = trace.index,
         name = isPie ? legendItem.label : trace.name;
 
+    var maxCharLength = 20;                    
+    var drawnText = name;
+    if (name.length > maxCharLength) {
+        var firstLen = Math.floor(maxCharLength / 2);
+        var lastLen = maxCharLength - firstLen - 1;
+        drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+    }
+
     var text = g.selectAll('text.legendtext')
         .data([0]);
-    text.enter().append('text').classed('legendtext', true);
+    var thisG = text.enter();
+    thisG.append("title").text(name);
+    thisG.append('text').classed('legendtext', true);
     text.attr({
         x: 40,
         y: 0,
@@ -376,7 +386,7 @@ function drawTexts(g, gd) {
     .style('text-anchor', 'start')
     .classed('user-select-none', true)
     .call(Drawing.font, fullLayout.legend.font)
-    .text(name);
+    .text(drawnText);
 
     function textLayout(s) {
         svgTextUtils.convertToTspans(s, function() {
