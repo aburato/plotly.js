@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.25.0-d36
+* plotly.js (ion) v1.25.0-d37
 * Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -14371,7 +14371,7 @@ function drawOne(gd, index) {
         });
 
     if (options.classes) {
-        anngroup.classed(options.classes, true);
+        annGroup.classed(options.classes, true);
     }
 
     // another group for text+background so that they can rotate together
@@ -19813,6 +19813,17 @@ module.exports = function draw(gd) {
 
     computeLegendDimensions(gd, groups, traces);
 
+    // aburato: HIDE the legend if it's too big and would
+    // result in covering the chart
+
+    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45) || (opts.orientation === "h" && opts.height > fullLayout.height * 0.45)) {
+        fullLayout._infolayer.selectAll('.legend').remove();
+        fullLayout._topdefs.select('#' + clipId).remove();
+
+        //Plots.autoMargin(gd, 'legend');
+        return;
+    }
+
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
@@ -20038,9 +20049,19 @@ function drawTexts(g, gd) {
         traceIndex = trace.index,
         name = isPie ? legendItem.label : trace.name;
 
+        var maxCharLength = 20;                    
+    var drawnText = name;
+    if (name.length > maxCharLength) {
+        var firstLen = Math.floor(maxCharLength / 2);
+        var lastLen = maxCharLength - firstLen - 1;
+        drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+    }
+
     var text = g.selectAll('text.legendtext')
         .data([0]);
-    text.enter().append('text').classed('legendtext', true);
+    var thisG = text.enter();
+    thisG.append("title").text(name);
+    thisG.append('text').classed('legendtext', true);
     text.attr({
         x: 40,
         y: 0,
@@ -20049,7 +20070,7 @@ function drawTexts(g, gd) {
     .style('text-anchor', 'start')
     .classed('user-select-none', true)
     .call(Drawing.font, fullLayout.legend.font)
-    .text(name);
+    .text(drawnText);
 
     function textLayout(s) {
         svgTextUtils.convertToTspans(s, function() {
@@ -27133,7 +27154,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.25.0-d36';
+exports.version = '1.25.0-d37';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -48657,8 +48678,8 @@ plots.autoMargin = function(gd, id, o) {
 
             // if the item is too big, just give it enough automargin to
             // make sure you can still grab it and bring it back
-            if(o.l + o.r > fullLayout.width * 0.5) o.l = o.r = 0;
-            if(o.b + o.t > fullLayout.height * 0.5) o.b = o.t = 0;
+            if(o.l + o.r > fullLayout.width * 0.45) o.l = o.r = 0;
+            if(o.b + o.t > fullLayout.height * 0.45) o.b = o.t = 0;
 
             fullLayout._pushmargin[id] = {
                 l: {val: o.x, size: o.l + pad},

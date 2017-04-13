@@ -10,6 +10,13 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 where X.Y.Z is the semver of most recent plotly.js release.
 
 
+## [1.25.0-d37] -- 2017-04-13
+
+### Added
+- Legend labels now have a basic ellipsis (> 20 chars).
+- Legend is automatically hidden when it overlaps drawing
+
+
 ## [1.25.0-d36] -- 2017-03-23
 
 ### Added
