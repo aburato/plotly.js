@@ -1,6 +1,6 @@
 var data = [{
-  values: [16, 15, 12, 6, 5, 4, 42],
-  labels: ['US', 'China', 'European Union', 'Russian Federation', 'Brazil', 'India', 'Rest of World' ],
+  values: [16, 2],
+  labels: ['R sdfgsdfgsdfgsdf gdfsgdfgsdfgsdfgdfgsdfg', 'D'],
   name: 'GHG Emissions',
   hoverinfo: 'label+percent+name',
   hole: .4,

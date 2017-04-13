@@ -140,6 +140,17 @@ module.exports = function draw(gd) {
 
     computeLegendDimensions(gd, groups, traces);
 
+    // aburato: HIDE the legend if it's too big and would
+    // result in covering the chart
+
+    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45) || (opts.orientation === "h" && opts.height > fullLayout.height * 0.45)) {
+        fullLayout._infolayer.selectAll('.legend').remove();
+        fullLayout._topdefs.select('#' + clipId).remove();
+
+        //Plots.autoMargin(gd, 'legend');
+        return;
+    }
+
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
@@ -365,7 +376,7 @@ function drawTexts(g, gd) {
         traceIndex = trace.index,
         name = isPie ? legendItem.label : trace.name;
 
-    var maxCharLength = 20;                    
+        var maxCharLength = 20;                    
     var drawnText = name;
     if (name.length > maxCharLength) {
         var firstLen = Math.floor(maxCharLength / 2);
