@@ -9,6 +9,11 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.25.0-d38] -- 2017-04-27
+
+### Added
+- manual merge of plotly.js category index optimization
+
 
 ## [1.25.0-d37] -- 2017-04-13
 
