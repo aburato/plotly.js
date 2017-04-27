@@ -16,9 +16,9 @@ var color = module.exports = {};
 
 var colorAttrs = require('./attributes');
 color.defaults = colorAttrs.defaults;
-color.defaultLine = colorAttrs.defaultLine;
+var defaultLine = color.defaultLine = colorAttrs.defaultLine;
 color.lightLine = colorAttrs.lightLine;
-color.background = colorAttrs.background;
+var background = color.background = colorAttrs.background;
 
 
 color.overrideColorDefaults = function(ca) {
@@ -29,6 +29,10 @@ color.overrideColorDefaults = function(ca) {
     }
 }
 
+/*
+ * tinyRGB: turn a tinycolor into an rgb string, but
+ * unlike the built-in tinycolor.toRgbString this never includes alpha
+ */
 color.tinyRGB = function(tc) {
     var c = tc.toRgb();
     return 'rgb(' + Math.round(c.r) + ', ' +
@@ -52,7 +56,7 @@ color.combine = function(front, back) {
     var fc = tinycolor(front).toRgb();
     if(fc.a === 1) return tinycolor(front).toRgbString();
 
-    var bc = tinycolor(back || color.background).toRgb(),
+    var bc = tinycolor(back || background).toRgb(),
         bcflat = bc.a === 1 ? bc : {
             r: 255 * (1 - bc.a) + bc.r * bc.a,
             g: 255 * (1 - bc.a) + bc.g * bc.a,
@@ -66,12 +70,22 @@ color.combine = function(front, back) {
     return tinycolor(fcflat).toRgbString();
 };
 
+/*
+ * Create a color that contrasts with cstr.
+ *
+ * If cstr is a dark color, we lighten it; if it's light, we darken.
+ *
+ * If lightAmount / darkAmount are used, we adjust by these percentages,
+ * otherwise we go all the way to white or black.
+ */
 color.contrast = function(cstr, lightAmount, darkAmount) {
     var tc = tinycolor(cstr);
 
-    var newColor = tc.isLight() ?
-        tc.darken(darkAmount) :
-        tc.lighten(lightAmount);
+    if(tc.getAlpha() !== 1) tc = tinycolor(color.combine(cstr, background));
+
+    var newColor = tc.isDark() ?
+        (lightAmount ? tc.lighten(lightAmount) : background) :
+        (darkAmount ? tc.darken(darkAmount) : defaultLine);
 
     return newColor.toString();
 };

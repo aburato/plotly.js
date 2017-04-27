@@ -86,6 +86,8 @@ module.exports = function plot(gd, cdpie) {
                     hasHoverData = false;
 
                 function handleMouseOver(evt) {
+                    evt.originalEvent = d3.event;
+
                     // in case fullLayout or fullData has changed without a replot
                     var fullLayout2 = gd._fullLayout,
                         trace2 = gd._fullData[trace.index],
@@ -97,6 +99,7 @@ module.exports = function plot(gd, cdpie) {
                     // or if hover is turned off
                     if(gd._dragging || fullLayout2.hovermode === false ||
                             hoverinfo === 'none' || hoverinfo === 'skip' || !hoverinfo) {
+                        Fx.hover(gd, evt, 'pie');
                         return;
                     }
 
@@ -107,8 +110,16 @@ module.exports = function plot(gd, cdpie) {
                         thisText = [];
 
                     if(hoverinfo.indexOf('label') !== -1) thisText.push(pt.label);
-                    if(trace2.text && trace2.text[pt.i] && hoverinfo.indexOf('text') !== -1) {
-                        thisText.push(trace2.text[pt.i]);
+                    if(hoverinfo.indexOf('text') !== -1) {
+                        if(trace2.hovertext) {
+                            thisText.push(
+                                Array.isArray(trace2.hovertext) ?
+                                    trace2.hovertext[pt.i] :
+                                    trace2.hovertext
+                            );
+                        } else if(trace2.text && trace2.text[pt.i]) {
+                            thisText.push(trace2.text[pt.i]);
+                        }
                     }
                     if(hoverinfo.indexOf('value') !== -1) thisText.push(helpers.formatPieValue(pt.v, separators));
                     if(hoverinfo.indexOf('percent') !== -1) thisText.push(helpers.formatPiePercent(pt.v / cd0.vTotal, separators));
@@ -132,7 +143,9 @@ module.exports = function plot(gd, cdpie) {
                 }
 
                 function handleMouseOut(evt) {
+                    evt.originalEvent = d3.event;
                     gd.emit('plotly_unhover', {
+                        event: d3.event,
                         points: [evt]
                     });
 
@@ -146,7 +159,7 @@ module.exports = function plot(gd, cdpie) {
                     gd._hoverdata = [pt];
                     pt.curveNumber = cd[0].trace.index;
                     gd._hoverdata.trace = cd[0].trace;
-                    Fx.click(gd, window.event || { target: true });
+                    Fx.click(gd, d3.event || { target: true });
                 }
 
                 slicePath.enter().append('path')

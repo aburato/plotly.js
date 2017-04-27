@@ -9,7 +9,9 @@ var Axes = PlotlyInternal.Axes;
 
 var createGraphDiv = require('../assets/create_graph_div');
 var destroyGraphDiv = require('../assets/destroy_graph_div');
+var fail = require('../assets/fail_test');
 var customMatchers = require('../assets/custom_matchers');
+var failTest = require('../assets/fail_test');
 
 describe('Bar.supplyDefaults', function() {
     'use strict';
@@ -282,6 +284,39 @@ describe('Bar.calc', function() {
 
         var cd = gd.calcdata;
         assertPointField(cd, 'b', [[0, 1, 2], [0, 1, 0], [0, 0]]);
+    });
+
+    it('should not exclude items with non-numeric x/y from calcdata', function() {
+        var gd = mockBarPlot([{
+            x: [5, NaN, 15, 20, null, 21],
+            y: [20, NaN, 23, 25, null, 26]
+        }]);
+
+        var cd = gd.calcdata;
+        assertPointField(cd, 'x', [[5, NaN, 15, 20, NaN, 21]]);
+        assertPointField(cd, 'y', [[20, NaN, 23, 25, NaN, 26]]);
+    });
+
+    it('should not exclude items with non-numeric y from calcdata (to plots gaps correctly)', function() {
+        var gd = mockBarPlot([{
+            x: ['a', 'b', 'c', 'd'],
+            y: [1, null, 'nonsense', 15]
+        }]);
+
+        var cd = gd.calcdata;
+        assertPointField(cd, 'x', [[0, 1, 2, 3]]);
+        assertPointField(cd, 'y', [[1, NaN, NaN, 15]]);
+    });
+
+    it('should not exclude items with non-numeric x from calcdata (to plots gaps correctly)', function() {
+        var gd = mockBarPlot([{
+            x: [1, null, 'nonsense', 15],
+            y: [1, 2, 10, 30]
+        }]);
+
+        var cd = gd.calcdata;
+        assertPointField(cd, 'x', [[1, NaN, NaN, 15]]);
+        assertPointField(cd, 'y', [[1, 2, 10, 30]]);
     });
 });
 
@@ -679,23 +714,6 @@ describe('Bar.setPositions', function() {
             ya = gd._fullLayout.yaxis;
         expect(Axes.getAutoRange(xa)).toBeCloseToArray([-0.5, 2.5], undefined, '(xa.range)');
         expect(Axes.getAutoRange(ya)).toBeCloseToArray([-1.11, 1.11], undefined, '(ya.range)');
-    });
-
-    it('should skip placeholder trace in position computations', function() {
-        var gd = mockBarPlot([{
-            x: [1, 2, 3],
-            y: [2, 1, 2]
-        }, {
-            x: [null],
-            y: [null]
-        }]);
-
-        expect(gd.calcdata[0][0].t.barwidth).toEqual(0.8);
-
-        expect(gd.calcdata[1][0].x).toBe(false);
-        expect(gd.calcdata[1][0].y).toBe(false);
-        expect(gd.calcdata[1][0].placeholder).toBe(true);
-        expect(gd.calcdata[1][0].t.barwidth).toBeUndefined();
     });
 
     it('works with log axes (grouped bars)', function() {
@@ -1191,13 +1209,17 @@ describe('bar hover', function() {
         };
     }
 
-    function _hover(gd, xval, yval, closest) {
+    function _hover(gd, xval, yval, hovermode) {
         var pointData = getPointData(gd);
-        var pt = Bar.hoverPoints(pointData, xval, yval, closest)[0];
+        var pts = Bar.hoverPoints(pointData, xval, yval, hovermode);
+        if(!pts) return false;
+
+        var pt = pts[0];
 
         return {
             style: [pt.index, pt.color, pt.xLabelVal, pt.yLabelVal],
-            pos: [pt.x0, pt.x1, pt.y0, pt.y1]
+            pos: [pt.x0, pt.x1, pt.y0, pt.y1],
+            text: pt.text
         };
     }
 
@@ -1274,6 +1296,128 @@ describe('bar hover', function() {
         });
     });
 
+    describe('text labels', function() {
+
+        it('should show \'hovertext\' items when present, \'text\' if not', function(done) {
+            gd = createGraphDiv();
+
+            var mock = Lib.extendDeep({}, require('@mocks/text_chart_arrays'));
+            mock.data.forEach(function(t) { t.type = 'bar'; });
+
+            Plotly.plot(gd, mock).then(function() {
+                var out = _hover(gd, -0.25, 0.5, 'closest');
+                expect(out.text).toEqual('Hover text\nA', 'hover text');
+
+                return Plotly.restyle(gd, 'hovertext', null);
+            })
+            .then(function() {
+                var out = _hover(gd, -0.25, 0.5, 'closest');
+                expect(out.text).toEqual('Text\nA', 'hover text');
+
+                return Plotly.restyle(gd, 'text', ['APPLE', 'BANANA', 'ORANGE']);
+            })
+            .then(function() {
+                var out = _hover(gd, -0.25, 0.5, 'closest');
+                expect(out.text).toEqual('APPLE', 'hover text');
+
+                return Plotly.restyle(gd, 'hovertext', ['apple', 'banana', 'orange']);
+            })
+            .then(function() {
+                var out = _hover(gd, -0.25, 0.5, 'closest');
+                expect(out.text).toEqual('apple', 'hover text');
+            })
+            .catch(fail)
+            .then(done);
+        });
+    });
+
+    describe('with special width/offset combinations', function() {
+
+        beforeEach(function() {
+            gd = createGraphDiv();
+        });
+
+        it('should return correct hover data (single bar, trace width)', function(done) {
+            Plotly.plot(gd, [{
+                type: 'bar',
+                x: [1],
+                y: [2],
+                width: 10,
+                marker: { color: 'red' }
+            }], {
+                xaxis: { range: [-200, 200] }
+            })
+            .then(function() {
+                // all these x, y, hovermode should give the same (the only!) hover label
+                [
+                    [0, 0, 'closest'],
+                    [-3.9, 1, 'closest'],
+                    [5.9, 1.9, 'closest'],
+                    [-3.9, -10, 'x'],
+                    [5.9, 19, 'x']
+                ].forEach(function(hoverSpec) {
+                    var out = _hover(gd, hoverSpec[0], hoverSpec[1], hoverSpec[2]);
+
+                    expect(out.style).toEqual([0, 'red', 1, 2], hoverSpec);
+                    assertPos(out.pos, [264, 278, 14, 14], hoverSpec);
+                });
+
+                // then a few that are off the edge so yield nothing
+                [
+                    [1, -0.1, 'closest'],
+                    [1, 2.1, 'closest'],
+                    [-4.1, 1, 'closest'],
+                    [6.1, 1, 'closest'],
+                    [-4.1, 1, 'x'],
+                    [6.1, 1, 'x']
+                ].forEach(function(hoverSpec) {
+                    var out = _hover(gd, hoverSpec[0], hoverSpec[1], hoverSpec[2]);
+
+                    expect(out).toBe(false, hoverSpec);
+                });
+            })
+            .catch(failTest)
+            .then(done);
+        });
+
+        it('should return correct hover data (two bars, array width)', function(done) {
+            Plotly.plot(gd, [{
+                type: 'bar',
+                x: [1, 200],
+                y: [2, 1],
+                width: [10, 20],
+                marker: { color: 'red' }
+            }, {
+                type: 'bar',
+                x: [1, 200],
+                y: [1, 2],
+                width: [20, 10],
+                marker: { color: 'green' }
+            }], {
+                xaxis: { range: [-200, 300] },
+                width: 500,
+                height: 500
+            })
+            .then(function() {
+                var out = _hover(gd, -36, 1.5, 'closest');
+
+                expect(out.style).toEqual([0, 'red', 1, 2]);
+                assertPos(out.pos, [99, 106, 13, 13]);
+
+                out = _hover(gd, 164, 0.8, 'closest');
+
+                expect(out.style).toEqual([1, 'red', 200, 1]);
+                assertPos(out.pos, [222, 235, 168, 168]);
+
+                out = _hover(gd, 125, 0.8, 'x');
+
+                expect(out.style).toEqual([1, 'red', 200, 1]);
+                assertPos(out.pos, [203, 304, 168, 168]);
+            })
+            .catch(failTest)
+            .then(done);
+        });
+    });
 });
 
 function mockBarPlot(dataWithoutTraceType, layout) {
@@ -1285,7 +1429,7 @@ function mockBarPlot(dataWithoutTraceType, layout) {
 
     var gd = {
         data: dataWithTraceType,
-        layout: layout,
+        layout: layout || {},
         calcdata: []
     };
 
