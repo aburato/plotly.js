@@ -9,6 +9,11 @@ https://github.com/plotly/plotly.js/compare/vX.Y.Z...master
 
 where X.Y.Z is the semver of most recent plotly.js release.
 
+## [1.26.1-d38] -- 2017-06-20
+
+### Fixed
+- Label auto spacing endless loop
+
 ## [1.26.1-d37] -- 2017-04-21
 
 ### Merged
