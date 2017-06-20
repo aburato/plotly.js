@@ -151,7 +151,7 @@ module.exports = function setConvert(ax, fullLayout) {
             var index = ax._categoriesMap[v];
             if(index !== undefined) return index;
         }
- 
+
         if(typeof v === 'number') { return v; }
     }
 
