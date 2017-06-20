@@ -1905,7 +1905,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
         function performLabelEllipsis() {
             var maxLengthtPct = 0.3; // the max percent of the total chart w/h after which labels get the ellipsis.
             var maxLengthCap = 220; // we still won't give labels more than this amount of space.
-            var maxLength = (axLetter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
+            var maxLength = (axletter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
             maxLength = Math.min(maxLength, maxLengthCap);
 
             // cache?
@@ -1919,7 +1919,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                     bb = Drawing.bBox(thisG.node());
                     ax.ellipsisCache[d.text] = bb;
                 }
-                var labelLength = (axLetter === "x" ? bb["height"] : bb["width"]);
+                var labelLength = (axletter === "x" ? bb["height"] : bb["width"]);
 
                 // aburato: if the label is too long perform a middle ellipsis
                 if (labelLength > maxLength + 1) {

@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.25.0-d37
+* plotly.js (ion) v1.25.0-d38
 * Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -27154,7 +27154,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.25.0-d37';
+exports.version = '1.25.0-d38';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -39055,21 +39055,22 @@ axes.doTicks = function(gd, axid, skipTitle) {
                         right: x + bb.width / 2 + 2,
                         width: bb.width + 2
                     });
+                    ax._lastLabelWidth = bb.width;
                 });
                 for(i = 0; i < lbbArray.length - 1; i++) {
                     if(Lib.bBoxIntersect(lbbArray[i], lbbArray[i + 1])) {
                         // any overlap at all - set 30 degrees
-                        autoangle = 30;
+                        autoangle = 90;
                         break;
                     }
                 }
                 if(autoangle) {
-                    var tickspacing = Math.abs(
-                            (vals[vals.length - 1].x - vals[0].x) * ax._m
-                        ) / (vals.length - 1);
-                    if(tickspacing < maxFontSize * 2.5) {
-                        autoangle = 90;
-                    }
+                    // var tickspacing = Math.abs(
+                    //         (vals[vals.length - 1].x - vals[0].x) * ax._m
+                    //     ) / (vals.length - 1);
+                    // if(tickspacing < maxFontSize * 2.5) {
+                    //     autoangle = 90;
+                    // }
                     positionLabels(tickLabels, autoangle);
                 }
                 ax._lastangle = autoangle;
@@ -39089,8 +39090,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
         }
 
         function performLabelEllipsis() {
-            var maxLengthtPct = 0.25; // the max percent of the total chart w/h after which labels get the ellipsis.
-            var maxLengthCap = 200; // we still won't give labels more than this amount of space.
+            var maxLengthtPct = 0.3; // the max percent of the total chart w/h after which labels get the ellipsis.
+            var maxLengthCap = 220; // we still won't give labels more than this amount of space.
             var maxLength = (axletter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
             maxLength = Math.min(maxLength, maxLengthCap);
 
@@ -39108,7 +39109,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 var labelLength = (axletter === "x" ? bb["height"] : bb["width"]);
 
                 // aburato: if the label is too long perform a middle ellipsis
-                if (labelLength > maxLength) {
+                if (labelLength > maxLength + 1) {
                     var drawnText = d.text;
                     var maxCharLength = Math.round(maxLength / (labelLength / drawnText.length));                    
                     var firstLen = Math.floor(maxCharLength / 2);
@@ -39177,10 +39178,12 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 shiftMargins[marginDimension] = shiftAmount;
 
                 if (perpMarginDimension === "r") {
-                    perpShiftAmount = axBB.width - ax._length;
+                    if (ax._lastangle === 0) {
+                        perpShiftAmount = ax._lastLabelWidth / 2;
+                    }
                     if (perpShiftAmount > 0) {
                         var perpShiftMargins = {
-                            x: 1.1,
+                            x: 1.01,
                             y: 0,
                             l: 0,
                             r: perpShiftAmount,
