@@ -5,7 +5,7 @@ var pathToRoot = path.join(__dirname, '../../');
 var pathToSrc = path.join(pathToRoot, 'src/');
 var pathToLib = path.join(pathToRoot, 'lib/');
 var pathToImageTest = path.join(pathToRoot, 'test/image');
-var pathToDist = path.join(pathToRoot, 'dist/');
+var pathToDist = path.join(pathToRoot, 'dist_ion/');
 var pathToBuild = path.join(pathToRoot, 'build/');
 
 var pathToTopojsonSrc = path.join(
@@ -14,6 +14,11 @@ var pathToTopojsonSrc = path.join(
 
 var partialBundleNames = [
     'basic', 'cartesian', 'geo', 'gl3d', 'gl2d', 'mapbox', 'finance'
+];
+
+// aburato: no need to build the whole stuff, just our custom ION build
+partialBundleNames = [ 
+    'ion'
 ];
 
 var partialBundlePaths = partialBundleNames.map(function(name) {
