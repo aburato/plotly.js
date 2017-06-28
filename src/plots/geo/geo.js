@@ -107,8 +107,9 @@ proto.plot = function(geoCalcData, fullLayout, promises) {
         Fx.loneUnhover(fullLayout._toppaper);
     });
 
-    _this.framework.on('click', function() {
-        Fx.click(_this.graphDiv, d3.event);
+    // ion: peter fix
+    _this.framework.on('mousedown', function() {
+        Fx.click(_this.graphDiv, d3.event || { target: true });
     });
 
     topojsonNameNew = topojsonUtils.getTopojsonName(geoLayout);

@@ -162,8 +162,9 @@ module.exports = function plot(gd, cdpie) {
 
                 function handleClick() {
                     gd._hoverdata = [pt];
+                    pt.curveNumber = cd0.trace.index;
                     gd._hoverdata.trace = cd0.trace;
-                    Fx.click(gd, d3.event);
+                    Fx.click(gd, d3.event || { target: true });
                 }
 
                 slicePath.enter().append('path')
@@ -175,7 +176,7 @@ module.exports = function plot(gd, cdpie) {
                 sliceTop
                     .on('mouseover', handleMouseOver)
                     .on('mouseout', handleMouseOut)
-                    .on('click', handleClick);
+                    .on('mousedown', handleClick);
 
                 if(trace.pull) {
                     var pull = +(Array.isArray(trace.pull) ? trace.pull[pt.i] : trace.pull) || 0;

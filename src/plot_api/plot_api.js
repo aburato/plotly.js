@@ -1672,7 +1672,8 @@ function _restyle(gd, aobj, _traces) {
                 newVal !== false) {
             flags.dostyle = true;
         }
-        if(['colorbar', 'line'].indexOf(param.parts[0]) !== -1 ||
+        // ion: avoid crash on null or undef param
+        if(param && param.parts && ['colorbar', 'line'].indexOf(param.parts[0]) !== -1 ||
             param.parts[0] === 'marker' && param.parts[1] === 'colorbar') {
             flags.docolorbars = true;
         }

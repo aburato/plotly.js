@@ -72,6 +72,22 @@ Titles.draw = function(gd, titleClass, options) {
     var txt = cont.title.trim();
     var editable = gd._context.editable;
 
+    // ion: selective title editing hack
+    if (editable) {
+        if (cont === fullLayout) {
+            // MAIN TITLE
+            editable = gd._context.editableMainTitle;
+        } else if (cont === fullLayout.xaxis) {
+            editable = gd._context.editableAxisXTitle;
+        } else if (cont === fullLayout.yaxis) {
+            editable = gd._context.editableAxisYTitle;
+        } else if (cont === fullLayout.yaxis2) {
+            editable = gd._context.editableAxisY2Title;
+        } else if (cont === fullLayout.xaxis2) {
+            editable = gd._context.editableAxisX2Title;
+        }
+    }
+
     if(txt === '') opacity = 0;
     if(txt.match(PLACEHOLDER_RE)) {
         opacity = 0.2;
@@ -228,4 +244,7 @@ Titles.draw = function(gd, titleClass, options) {
             });
     }
     el.classed('js-placeholder', isplaceholder);
+
+    // ion: storing the title element inside its containing axis object
+    cont._titleElement = el;
 };

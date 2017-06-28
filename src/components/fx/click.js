@@ -22,7 +22,7 @@ module.exports = function click(gd, evt, subplot) {
         hover(gd, evt, subplot, true);
     }
 
-    function emitClick() { gd.emit('plotly_click', {points: gd._hoverdata, event: evt}); }
+    function emitClick() { gd.emit('plotly_click', {points: gd._hoverdata, event: evt, button: evt.button}); }
 
     if(gd._hoverdata && evt && evt.target) {
         if(annotationsDone && annotationsDone.then) {

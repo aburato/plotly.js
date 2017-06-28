@@ -104,6 +104,11 @@ function drawOne(gd, index) {
             .call(Color.fill, options.fillcolor)
             .call(Drawing.dashLine, options.line.dash, options.line.width);
 
+        // ion: custom class hack
+        if (options.classes) {
+            path.classed(options.classes, true);
+        } 
+
         // note that for layer="below" the clipAxes can be different from the
         // subplot we're drawing this in. This could cause problems if the shape
         // spans two subplots. See https://github.com/plotly/plotly.js/issues/1452
@@ -114,7 +119,8 @@ function drawOne(gd, index) {
             null
         );
 
-        if(gd._context.editable) setupDragElement(gd, path, options, index);
+        // ion: disable drag
+        // if(gd._context.editable) setupDragElement(gd, path, options, index);
     }
 }
 

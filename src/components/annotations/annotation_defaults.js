@@ -77,6 +77,11 @@ module.exports = function handleAnnotationDefaults(annIn, annOut, fullLayout, op
         Lib.noneOrAll(annIn, annOut, ['ax', 'ay']);
     }
 
+    // ion: custom classes
+    if (annIn.classes) {
+        annOut.classes = annIn.classes;
+    }
+
     if(clickToShow) {
         var xClick = coerce('xclick');
         var yClick = coerce('yclick');
