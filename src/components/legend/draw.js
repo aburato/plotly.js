@@ -141,6 +141,17 @@ module.exports = function draw(gd) {
 
     computeLegendDimensions(gd, groups, traces);
 
+    // ion: HIDE the legend if it's too big and would
+    // result in covering the chart
+    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45) ||
+       (opts.orientation === "h" && opts.height > fullLayout.height * 0.45)) {
+        fullLayout._infolayer.selectAll('.legend').remove();
+        fullLayout._topdefs.select('#' + clipId).remove();
+
+        Plots.autoMargin(gd, 'legend');
+        return;
+    }
+
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
@@ -174,15 +185,20 @@ module.exports = function draw(gd) {
     var legendWidth = opts.width,
         legendWidthMax = gs.w;
 
+    // ion: temp fix
+    /*
     if(legendWidth > legendWidthMax) {
         lx = gs.l;
         legendWidth = legendWidthMax;
     }
     else {
+    */
         if(lx + legendWidth > lxMax) lx = lxMax - legendWidth;
         if(lx < lxMin) lx = lxMin;
         legendWidth = Math.min(lxMax - lx, opts.width);
+    /*
     }
+    */
 
     // Make sure the legend top and bottom are visible
     // (legends with a scroll bar are not allowed to stretch beyond the extended
@@ -370,16 +386,30 @@ function drawTexts(g, gd) {
         isPie = Registry.traceIs(trace, 'pie'),
         traceIndex = trace.index,
         name = isPie ? legendItem.label : trace.name;
+        
+        // ion: legend label ellipsis
+        var maxCharLength = 20;                    
+        var drawnText = name;
+        if (name.length > maxCharLength) {
+            var firstLen = Math.floor(maxCharLength / 2);
+            var lastLen = maxCharLength - firstLen - 1;
+            drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+        }
 
     var text = g.selectAll('text.legendtext')
         .data([0]);
-
-    text.enter().append('text').classed('legendtext', true);
+    // ion
+    // text.enter().append('text').classed('legendtext', true);
+    var thisG = text.enter();
+    thisG.append("title").text(name);
+    thisG.append('text').classed('legendtext', true);
 
     text.attr('text-anchor', 'start')
         .classed('user-select-none', true)
         .call(Drawing.font, fullLayout.legend.font)
-        .text(name);
+        // ion
+        //.text(name);
+        .text(drawnText);
 
     function textLayout(s) {
         svgTextUtils.convertToTspans(s, gd, function() {

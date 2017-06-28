@@ -12,6 +12,8 @@
 var d3 = require('d3');
 var isNumeric = require('fast-isnumeric');
 
+// ion: we need Plots
+var Plots = require('../../plots/plots');
 var Registry = require('../../registry');
 var Lib = require('../../lib');
 var svgTextUtils = require('../../lib/svg_text_utils');
@@ -1806,7 +1808,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
             return Lib.syncOrAsync(axes.list(gd, '', true).map(function(ax) {
                 return function() {
                     if(!ax._id) return;
-                    var axDone = axes.doTicks(gd, ax._id);
+                    // ion: pass skipTitle as an optimization
+                    var axDone = axes.doTicks(gd, ax._id, skipTitle);
                     if(axid === 'redraw') {
                         ax._r = ax.range.slice();
                         ax._rl = Lib.simpleMap(ax._r, ax.r2l);
@@ -1815,6 +1818,29 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 };
             }));
         }
+    }
+
+    // ion: avoid losing lots of time for titles which will NOT be drawn
+    var titleTxt = ax.title && ax.title.trim();
+    if (typeof skipTitle === 'undefined' && (titleTxt === '' || titleTxt.match(/Click to enter .+ title/))) {
+        
+        var isEditable = gd._context.editable;
+        
+        if (isEditable) {
+            if (ax === fullLayout) {
+                isEditable = gd._context.editableMainTitle;
+            } else if (ax === fullLayout.xaxis) {
+                isEditable = gd._context.editableAxisXTitle;
+            } else if (ax === fullLayout.yaxis) {
+                isEditable = gd._context.editableAxisYTitle;
+            } else if (ax === fullLayout.yaxis2) {
+                isEditable = gd._context.editableAxisY2Title;
+            } else if (ax === fullLayout.xaxis2) {
+                isEditable = gd._context.editableAxisX2Title;
+            }
+        }
+
+        skipTitle = !isEditable;
     }
 
     // make sure we only have allowed options for exponents
@@ -1939,8 +1965,11 @@ axes.doTicks = function(gd, axid, skipTitle) {
     }
 
     function drawLabels(container, position) {
+        // ion: restore pointer events otherwise title tooltips won't work
+        container.style('pointer-events', 'all');      
+
         // tick labels - for now just the main labels.
-        // TODO: mirror labels, esp for subplots
+        // TODO: mirror labels, esp for subplots     
         var tickLabels = container.selectAll('g.' + tcls).data(vals, datafn);
 
         if(!isNumeric(position)) {
@@ -2000,8 +2029,9 @@ axes.doTicks = function(gd, axid, skipTitle) {
         var maxFontSize = 0,
             autoangle = 0,
             labelsReady = [];
-        tickLabels.enter().append('g').classed(tcls, 1)
-            .append('text')
+        // ion: store this for later reference
+        var theG = tickLabels.enter().append('g').classed(tcls, 1);
+        theG.append('text')
                 // only so tex has predictable alignment that we can
                 // alter later
                 .attr('text-anchor', 'middle')
@@ -2105,24 +2135,32 @@ axes.doTicks = function(gd, axid, skipTitle) {
                         right: x + bb.width / 2 + 2,
                         width: bb.width + 2
                     });
+                    // ion: store last label width
+                    ax._lastLabelWidth = bb.width;
                 });
                 for(i = 0; i < lbbArray.length - 1; i++) {
                     if(Lib.bBoxIntersect(lbbArray[i], lbbArray[i + 1])) {
-                        // any overlap at all - set 30 degrees
-                        autoangle = 30;
+                        // any overlap at all - set 90 degrees (ion brute fix for endless loop)
+                        autoangle = 90;
                         break;
                     }
                 }
                 if(autoangle) {
-                    var tickspacing = Math.abs(
-                            (vals[vals.length - 1].x - vals[0].x) * ax._m
-                        ) / (vals.length - 1);
-                    if(tickspacing < maxFontSize * 2.5) {
-                        autoangle = 90;
-                    }
+                    // ion: brute fix
+                    // var tickspacing = Math.abs(
+                    //         (vals[vals.length - 1].x - vals[0].x) * ax._m
+                    //     ) / (vals.length - 1);
+                    // if(tickspacing < maxFontSize * 2.5) {
+                    //     autoangle = 90;
+                    // }
                     positionLabels(tickLabels, autoangle);
                 }
                 ax._lastangle = autoangle;
+            }
+
+            if (ax._lastangle) {
+                // last angle set to 0 means labels do not collide, so no need for ellipsis.
+                performLabelEllipsis();
             }
 
             // update the axis title
@@ -2131,6 +2169,116 @@ axes.doTicks = function(gd, axid, skipTitle) {
             // a full redraw of the title (mostly relevant for MathJax)
             drawAxTitle();
             return axid + ' done';
+        }
+
+        function performLabelEllipsis() {
+            var maxLengthtPct = 0.3; // the max percent of the total chart w/h after which labels get the ellipsis.
+            var maxLengthCap = 220; // we still won't give labels more than this amount of space.
+            var maxLength = (axLetter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
+            maxLength = Math.min(maxLength, maxLengthCap);
+
+            // cache?
+            ax.ellipsisCache = ax.ellipsisCache || {};
+
+            // ellipsis
+            tickLabels.each(function(d) {
+                var thisG = d3.select(this);
+                var bb = ax.ellipsisCache[d.text];
+                if (typeof bb === 'undefined') {
+                    bb = Drawing.bBox(thisG.node());
+                    ax.ellipsisCache[d.text] = bb;
+                }
+                var labelLength = (axLetter === "x" ? bb["height"] : bb["width"]);
+
+                // aburato: if the label is too long perform a middle ellipsis
+                if (labelLength > maxLength + 1) {
+                    var drawnText = d.text;
+                    var maxCharLength = Math.round(maxLength / (labelLength / drawnText.length));                    
+                    var firstLen = Math.floor(maxCharLength / 2);
+                    var lastLen = maxCharLength - firstLen - 1;
+                    drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+                    var thisText = thisG.select('text');                    
+                    thisText.text(drawnText);
+                    // aburato: use a title element for a free tooltip.
+                    thisG.insert("title", "text").text(d.text);
+                }
+            });
+        }
+
+        function adjustAutoMarginForLabels() {
+            var axBB = ax._boundingBox;
+
+            // Handle extra space on this axis
+            var shiftDimension;
+            var marginDimension;
+            var shiftAmount;
+            
+            // Handle extra space on perpendicular axis 
+            // (tipycally needed when you use slanted labels which are otherwise cut off)
+            var perpMarginDimension;
+            var perpShiftAmount;
+
+            var x = 0, y = 0;
+
+            if (ax._id.charAt(0) === "x") {
+                shiftDimension = "height";
+                perpMarginDimension = "r";
+                if (ax._id.charAt(1) === "2") {
+                    y = 1;
+                    marginDimension = "t";
+                } else {
+                    marginDimension = "b";
+                }
+            } else if (ax._id.charAt(0) === "y") {
+                shiftDimension = "width";
+                if (ax._id.charAt(1) === "2") {
+                    x = 1;
+                    marginDimension = "r";
+                } else {
+                    marginDimension = "l";
+                }
+            }
+
+            if (shiftDimension && marginDimension) {
+                shiftAmount = axBB[shiftDimension];
+                if (ax._titleElement) {
+                    var titleBB = ax._titleElement.node().getBoundingClientRect();
+                    shiftAmount += (titleBB[shiftDimension] + 2);
+                }
+
+                var maxAmount = gd._fullLayout[shiftDimension] * 0.5;
+                shiftAmount = Math.min(shiftAmount, maxAmount);
+                
+                var shiftMargins = {
+                    x: x,
+                    y: y,
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 0
+                };
+                shiftMargins[marginDimension] = shiftAmount;
+
+                if (perpMarginDimension === "r") {
+                    if (ax._lastangle === 0) {
+                        perpShiftAmount = ax._lastLabelWidth / 2;
+                    }
+                    if (perpShiftAmount > 0) {
+                        var perpShiftMargins = {
+                            x: 1.01,
+                            y: 0,
+                            l: 0,
+                            r: perpShiftAmount,
+                            b: 0,
+                            t: 0
+                        };
+
+                        Plots.autoMargin(gd, "xaxis_on_r", perpShiftMargins);
+                    };
+                }
+                
+                Plots.autoMargin(gd, ax._name, shiftMargins);
+            }
         }
 
         function calcBoundingBox() {
@@ -2223,7 +2371,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
         var done = Lib.syncOrAsync([
             allLabelsReady,
             fixLabelOverlaps,
-            calcBoundingBox
+            calcBoundingBox,
+            adjustAutoMarginForLabels
         ]);
         if(done && done.then) gd._promises.push(done);
         return done;

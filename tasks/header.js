@@ -86,8 +86,12 @@ function updateHeadersInSrcFiles() {
         });
     });
 
+    // ion
     function isCorrect(header) {
-        return (header.value === licenseStr);
+        var strippedHeader = header.value.replace(/[\r\n]+/g," ");
+        var strippedLicense = licenseStr.replace(/[\r\n]+/g," ");
+
+        return (strippedHeader === strippedLicense);
     }
 
     function hasWrongDate(header) {

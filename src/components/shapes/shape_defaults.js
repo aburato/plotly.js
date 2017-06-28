@@ -93,5 +93,10 @@ module.exports = function handleShapeDefaults(shapeIn, shapeOut, fullLayout, opt
         Lib.noneOrAll(shapeIn, shapeOut, ['x0', 'x1', 'y0', 'y1']);
     }
 
+    // ion: custom classes hack
+    if (shapeIn.classes) {
+        shapeOut.classes = shapeIn.classes;
+    }
+
     return shapeOut;
 };

@@ -13970,6 +13970,11 @@ module.exports = function handleAnnotationDefaults(annIn, annOut, fullLayout, op
         Lib.noneOrAll(annIn, annOut, ['ax', 'ay']);
     }
 
+    // ion: custom classes
+    if (annIn.classes) {
+        annOut.classes = annIn.classes;
+    }
+
     if(clickToShow) {
         var xClick = coerce('xclick');
         var yClick = coerce('yclick');
@@ -14852,6 +14857,11 @@ function drawRaw(gd, options, index, subplotId, xa, ya) {
         .attr('data-index', String(index))
         .style('opacity', options.opacity);
 
+    // ion: custom classes hack 
+    if (options.classes) {
+        annGroup.classed(options.classes, true);
+    }
+
     // another group for text+background so that they can rotate together
     var annTextGroup = annGroup.append('g')
         .classed('annotation-text-g', true);
@@ -15680,6 +15690,16 @@ color.defaults = colorAttrs.defaults;
 var defaultLine = color.defaultLine = colorAttrs.defaultLine;
 color.lightLine = colorAttrs.lightLine;
 var background = color.background = colorAttrs.background;
+
+
+// ion: ovverride color defaults hack
+color.overrideColorDefaults = function(ca) {
+    if (typeof ca === 'undefined') {
+        return color.defaults;
+    } else {
+        color.defaults = ca;        
+    }
+}
 
 /*
  * tinyRGB: turn a tinycolor into an rgb string, but
@@ -19853,7 +19873,7 @@ module.exports = function click(gd, evt, subplot) {
         hover(gd, evt, subplot, true);
     }
 
-    function emitClick() { gd.emit('plotly_click', {points: gd._hoverdata, event: evt}); }
+    function emitClick() { gd.emit('plotly_click', {points: gd._hoverdata, event: evt, button: evt.button}); }
 
     if(gd._hoverdata && evt && evt.target) {
         if(annotationsDone && annotationsDone.then) {
@@ -20533,7 +20553,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
         commonLabelOpts: fullLayout.hoverlabel
     };
 
-    var hoverLabels = createHoverText(hoverData, labelOpts, gd);
+    var hoverLabels = createHoverText(hoverData, labelOpts, gd, evt, gd.layout.hoverFollowsMouse);
 
     hoverAvoidOverlaps(hoverData, rotateLabels ? 'xa' : 'ya');
 
@@ -20566,7 +20586,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
     });
 }
 
-function createHoverText(hoverData, opts, gd) {
+function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
     var hovermode = opts.hovermode;
     var rotateLabels = opts.rotateLabels;
     var bgColor = opts.bgColor;
@@ -20819,6 +20839,12 @@ function createHoverText(hoverData, opts, gd) {
         d.txwidth = tbb.width;
         d.tx2width = tx2width;
         d.offset = 0;
+
+        // ion: position hover group
+        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.layerX && evt.layerY) {
+            htx = evt.layerX;
+            hty = evt.layerY;
+        }
 
         if(rotateLabels) {
             d.pos = htx;
@@ -21319,6 +21345,7 @@ function createSpikelines(hoverData, opts) {
 
 function hoverChanged(gd, evt, oldhoverdata) {
     // don't emit any events if nothing changed
+    if(!evt.target) return false;
     if(!oldhoverdata || oldhoverdata.length !== gd._hoverdata.length) return true;
 
     for(var i = oldhoverdata.length - 1; i >= 0; i--) {
@@ -22460,6 +22487,17 @@ module.exports = function draw(gd) {
 
     computeLegendDimensions(gd, groups, traces);
 
+    // ion: HIDE the legend if it's too big and would
+    // result in covering the chart
+    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45) ||
+       (opts.orientation === "h" && opts.height > fullLayout.height * 0.45)) {
+        fullLayout._infolayer.selectAll('.legend').remove();
+        fullLayout._topdefs.select('#' + clipId).remove();
+
+        Plots.autoMargin(gd, 'legend');
+        return;
+    }
+
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
@@ -22493,15 +22531,20 @@ module.exports = function draw(gd) {
     var legendWidth = opts.width,
         legendWidthMax = gs.w;
 
+    // ion: temp fix
+    /*
     if(legendWidth > legendWidthMax) {
         lx = gs.l;
         legendWidth = legendWidthMax;
     }
     else {
+    */
         if(lx + legendWidth > lxMax) lx = lxMax - legendWidth;
         if(lx < lxMin) lx = lxMin;
         legendWidth = Math.min(lxMax - lx, opts.width);
+    /*
     }
+    */
 
     // Make sure the legend top and bottom are visible
     // (legends with a scroll bar are not allowed to stretch beyond the extended
@@ -22686,16 +22729,30 @@ function drawTexts(g, gd) {
         isPie = Registry.traceIs(trace, 'pie'),
         traceIndex = trace.index,
         name = isPie ? legendItem.label : trace.name;
+        
+        // ion: legend label ellipsis
+        var maxCharLength = 20;                    
+        var drawnText = name;
+        if (name.length > maxCharLength) {
+            var firstLen = Math.floor(maxCharLength / 2);
+            var lastLen = maxCharLength - firstLen - 1;
+            drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+        }
 
     var text = g.selectAll('text.legendtext')
         .data([0]);
-
-    text.enter().append('text').classed('legendtext', true);
+    // ion
+    // text.enter().append('text').classed('legendtext', true);
+    var thisG = text.enter();
+    thisG.append("title").text(name);
+    thisG.append('text').classed('legendtext', true);
 
     text.attr('text-anchor', 'start')
         .classed('user-select-none', true)
         .call(Drawing.font, fullLayout.legend.font)
-        .text(name);
+        // ion
+        //.text(name);
+        .text(drawnText);
 
     function textLayout(s) {
         svgTextUtils.convertToTspans(s, gd, function() {
@@ -22850,6 +22907,8 @@ function handleClick(g, gd, numClicks) {
         if(numClicks === 1) {
             newVisible = trace.visible === true ? 'legendonly' : true;
             Plotly.restyle(gd, 'visible', newVisible, traceIndicesInGroup);
+            // ion: let the sdk detect when plot visibility is toggled.
+            gd.emit('plotly_legend_toggleVisible', {traceIndices: traceIndicesInGroup, visible: newVisible, event: d3.event});
         } else if(numClicks === 2) {
             var sameAsLast = true;
             for(i = 0; i < fullData.length; i++) {
@@ -26414,6 +26473,11 @@ function drawOne(gd, index) {
             .call(Color.fill, options.fillcolor)
             .call(Drawing.dashLine, options.line.dash, options.line.width);
 
+        // ion: custom class hack
+        if (options.classes) {
+            path.classed(options.classes, true);
+        } 
+
         // note that for layer="below" the clipAxes can be different from the
         // subplot we're drawing this in. This could cause problems if the shape
         // spans two subplots. See https://github.com/plotly/plotly.js/issues/1452
@@ -26424,7 +26488,8 @@ function drawOne(gd, index) {
             null
         );
 
-        if(gd._context.editable) setupDragElement(gd, path, options, index);
+        // ion: disable drag
+        // if(gd._context.editable) setupDragElement(gd, path, options, index);
     }
 }
 
@@ -26885,6 +26950,11 @@ module.exports = function handleShapeDefaults(shapeIn, shapeOut, fullLayout, opt
     }
     else {
         Lib.noneOrAll(shapeIn, shapeOut, ['x0', 'x1', 'y0', 'y1']);
+    }
+
+    // ion: custom classes hack
+    if (shapeIn.classes) {
+        shapeOut.classes = shapeIn.classes;
     }
 
     return shapeOut;
@@ -28058,6 +28128,22 @@ Titles.draw = function(gd, titleClass, options) {
     var txt = cont.title.trim();
     var editable = gd._context.editable;
 
+    // ion: selective title editing hack
+    if (editable) {
+        if (cont === fullLayout) {
+            // MAIN TITLE
+            editable = gd._context.editableMainTitle;
+        } else if (cont === fullLayout.xaxis) {
+            editable = gd._context.editableAxisXTitle;
+        } else if (cont === fullLayout.yaxis) {
+            editable = gd._context.editableAxisYTitle;
+        } else if (cont === fullLayout.yaxis2) {
+            editable = gd._context.editableAxisY2Title;
+        } else if (cont === fullLayout.xaxis2) {
+            editable = gd._context.editableAxisX2Title;
+        }
+    }
+
     if(txt === '') opacity = 0;
     if(txt.match(PLACEHOLDER_RE)) {
         opacity = 0.2;
@@ -28214,6 +28300,9 @@ Titles.draw = function(gd, titleClass, options) {
             });
     }
     el.classed('js-placeholder', isplaceholder);
+
+    // ion: storing the title element inside its containing axis object
+    cont._titleElement = el;
 };
 
 },{"../../constants/interactions":133,"../../lib":151,"../../lib/svg_text_utils":168,"../../plotly":182,"../../plots/plots":228,"../color":36,"../drawing":60,"d3":11,"fast-isnumeric":14}],126:[function(require,module,exports){
@@ -29961,7 +30050,11 @@ exports.Queue = require('./lib/queue');
 // export d3 used in the bundle
 exports.d3 = require('d3');
 
-},{"../build/plotcss":1,"../build/ploticon":2,"./components/annotations":34,"./components/annotations3d":23,"./components/fx":77,"./components/images":85,"./components/legend":93,"./components/rangeselector":105,"./components/rangeslider":111,"./components/shapes":118,"./components/sliders":124,"./components/updatemenus":130,"./fonts/mathjax_config":138,"./lib/queue":163,"./plot_api/plot_schema":176,"./plot_api/register":177,"./plot_api/set_plot_config":178,"./plot_api/to_image":180,"./plot_api/validate":181,"./plotly":182,"./snapshot":241,"./snapshot/download":238,"./traces/scatter":298,"d3":11,"es6-promise":12}],138:[function(require,module,exports){
+// ion: export color override hack
+var color = require('./components/color');
+exports.colorDefaults = color.overrideColorDefaults;
+
+},{"../build/plotcss":1,"../build/ploticon":2,"./components/annotations":34,"./components/annotations3d":23,"./components/color":36,"./components/fx":77,"./components/images":85,"./components/legend":93,"./components/rangeselector":105,"./components/rangeslider":111,"./components/shapes":118,"./components/sliders":124,"./components/updatemenus":130,"./fonts/mathjax_config":138,"./lib/queue":163,"./plot_api/plot_schema":176,"./plot_api/register":177,"./plot_api/set_plot_config":178,"./plot_api/to_image":180,"./plot_api/validate":181,"./plotly":182,"./snapshot":241,"./snapshot/download":238,"./traces/scatter":298,"d3":11,"es6-promise":12}],138:[function(require,module,exports){
 /**
 * Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
@@ -31468,6 +31561,9 @@ function getLocationId(locationmode, location) {
 }
 
 function countryNameToISO3(countryName) {
+    // ion: prevent crash with null or undef country names
+    countryName = countryName || "";
+
     for(var i = 0; i < countryIds.length; i++) {
         var iso3 = countryIds[i],
             regex = new RegExp(countryRegex[iso3]);
@@ -37054,7 +37150,8 @@ function _restyle(gd, aobj, _traces) {
                 newVal !== false) {
             flags.dostyle = true;
         }
-        if(['colorbar', 'line'].indexOf(param.parts[0]) !== -1 ||
+        // ion: avoid crash on null or undef param
+        if(param && param.parts && ['colorbar', 'line'].indexOf(param.parts[0]) !== -1 ||
             param.parts[0] === 'marker' && param.parts[1] === 'colorbar') {
             flags.docolorbars = true;
         }
@@ -38469,6 +38566,23 @@ module.exports = {
     // we can edit titles, move annotations, etc
     editable: false,
 
+    // ion: partial editing support
+
+    // if editable is set to true, this can be used to deactivate main title editing ONLY. 
+    editableMainTitle: true,
+
+    // if editable is set to true, this can be used to deactivate X axis title editing ONLY. 
+    editableAxisXTitle: true,
+
+    // if editable is set to true, this can be used to deactivate X2 axis title editing ONLY. 
+    editableAxisX2Title: true,
+
+    // if editable is set to true, this can be used to deactivate Y axis title editing ONLY. 
+    editableAxisYTitle: true,
+
+    // if editable is set to true, this can be used to deactivate Y2 axis title editing ONLY. 
+    editableAxisY2Title: true,
+
     // DO autosize once regardless of layout.autosize
     // (use default width or height values otherwise)
     autosizable: false,
@@ -39402,6 +39516,18 @@ exports.lsInner = function(gd) {
 exports.drawMainTitle = function(gd) {
     var fullLayout = gd._fullLayout;
 
+    // ion: main title-specific edit settings
+    var isEditable = gd._context.editable && gd._context.editableMainTitle;
+    var txt = fullLayout.title;
+    var titleWillShow = true;
+    if(txt === '' || txt.match(/Click to enter .+ title/)) {
+        titleWillShow = isEditable;
+    }
+
+    if (!titleWillShow) {
+        return;
+    }
+
     Titles.draw(gd, 'gtitle', {
         propContainer: fullLayout,
         propName: 'title',
@@ -39412,6 +39538,20 @@ exports.drawMainTitle = function(gd) {
             'text-anchor': 'middle'
         }
     });
+
+    // ion: editable title auto spacing
+    if (fullLayout._titleElement) {
+        var titleBB = fullLayout._titleElement.node().getBoundingClientRect();        
+        var shiftMargins = {
+            x: 0,
+            y: 1,
+            l: 0,
+            r: 0,
+            b: 0,
+            t: titleBB.height + 2
+        };
+        Plots.autoMargin(gd, "chart_title", shiftMargins);
+    }
 };
 
 // First, see if we need to do arraysToCalcdata
@@ -40361,6 +40501,8 @@ module.exports = {
 var d3 = require('d3');
 var isNumeric = require('fast-isnumeric');
 
+// ion: we need Plots
+var Plots = require('../../plots/plots');
 var Registry = require('../../registry');
 var Lib = require('../../lib');
 var svgTextUtils = require('../../lib/svg_text_utils');
@@ -42000,7 +42142,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
             return Lib.syncOrAsync(axes.list(gd, '', true).map(function(ax) {
                 return function() {
                     if(!ax._id) return;
-                    var axDone = axes.doTicks(gd, ax._id);
+                    // ion: pass skipTitle as an optimization
+                    var axDone = axes.doTicks(gd, ax._id, skipTitle);
                     if(axid === 'redraw') {
                         ax._r = ax.range.slice();
                         ax._rl = Lib.simpleMap(ax._r, ax.r2l);
@@ -42009,6 +42152,29 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 };
             }));
         }
+    }
+
+    // ion: avoid losing lots of time for titles which will NOT be drawn
+    var titleTxt = ax.title && ax.title.trim();
+    if (typeof skipTitle === 'undefined' && (titleTxt === '' || titleTxt.match(/Click to enter .+ title/))) {
+        
+        var isEditable = gd._context.editable;
+        
+        if (isEditable) {
+            if (ax === fullLayout) {
+                isEditable = gd._context.editableMainTitle;
+            } else if (ax === fullLayout.xaxis) {
+                isEditable = gd._context.editableAxisXTitle;
+            } else if (ax === fullLayout.yaxis) {
+                isEditable = gd._context.editableAxisYTitle;
+            } else if (ax === fullLayout.yaxis2) {
+                isEditable = gd._context.editableAxisY2Title;
+            } else if (ax === fullLayout.xaxis2) {
+                isEditable = gd._context.editableAxisX2Title;
+            }
+        }
+
+        skipTitle = !isEditable;
     }
 
     // make sure we only have allowed options for exponents
@@ -42114,8 +42280,11 @@ axes.doTicks = function(gd, axid, skipTitle) {
     }
 
     function drawLabels(container, position) {
+        // ion: restore pointer events otherwise title tooltips won't work
+        container.style('pointer-events', 'all');      
+
         // tick labels - for now just the main labels.
-        // TODO: mirror labels, esp for subplots
+        // TODO: mirror labels, esp for subplots     
         var tickLabels = container.selectAll('g.' + tcls).data(vals, datafn);
         if(!ax.showticklabels || !isNumeric(position)) {
             tickLabels.remove();
@@ -42156,8 +42325,9 @@ axes.doTicks = function(gd, axid, skipTitle) {
         var maxFontSize = 0,
             autoangle = 0,
             labelsReady = [];
-        tickLabels.enter().append('g').classed(tcls, 1)
-            .append('text')
+        // ion: store this for later reference
+        var theG = tickLabels.enter().append('g').classed(tcls, 1);
+        theG.append('text')
                 // only so tex has predictable alignment that we can
                 // alter later
                 .attr('text-anchor', 'middle')
@@ -42254,24 +42424,32 @@ axes.doTicks = function(gd, axid, skipTitle) {
                         right: x + bb.width / 2 + 2,
                         width: bb.width + 2
                     });
+                    // ion: store last label width
+                    ax._lastLabelWidth = bb.width;
                 });
                 for(i = 0; i < lbbArray.length - 1; i++) {
                     if(Lib.bBoxIntersect(lbbArray[i], lbbArray[i + 1])) {
-                        // any overlap at all - set 30 degrees
-                        autoangle = 30;
+                        // any overlap at all - set 90 degrees (ion brute fix for endless loop)
+                        autoangle = 90;
                         break;
                     }
                 }
                 if(autoangle) {
-                    var tickspacing = Math.abs(
-                            (vals[vals.length - 1].x - vals[0].x) * ax._m
-                        ) / (vals.length - 1);
-                    if(tickspacing < maxFontSize * 2.5) {
-                        autoangle = 90;
-                    }
+                    // ion: brute fix
+                    // var tickspacing = Math.abs(
+                    //         (vals[vals.length - 1].x - vals[0].x) * ax._m
+                    //     ) / (vals.length - 1);
+                    // if(tickspacing < maxFontSize * 2.5) {
+                    //     autoangle = 90;
+                    // }
                     positionLabels(tickLabels, autoangle);
                 }
                 ax._lastangle = autoangle;
+            }
+
+            if (ax._lastangle) {
+                // last angle set to 0 means labels do not collide, so no need for ellipsis.
+                performLabelEllipsis();
             }
 
             // update the axis title
@@ -42280,6 +42458,116 @@ axes.doTicks = function(gd, axid, skipTitle) {
             // a full redraw of the title (mostly relevant for MathJax)
             drawAxTitle();
             return axid + ' done';
+        }
+
+        function performLabelEllipsis() {
+            var maxLengthtPct = 0.3; // the max percent of the total chart w/h after which labels get the ellipsis.
+            var maxLengthCap = 220; // we still won't give labels more than this amount of space.
+            var maxLength = (axLetter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
+            maxLength = Math.min(maxLength, maxLengthCap);
+
+            // cache?
+            ax.ellipsisCache = ax.ellipsisCache || {};
+
+            // ellipsis
+            tickLabels.each(function(d) {
+                var thisG = d3.select(this);
+                var bb = ax.ellipsisCache[d.text];
+                if (typeof bb === 'undefined') {
+                    bb = Drawing.bBox(thisG.node());
+                    ax.ellipsisCache[d.text] = bb;
+                }
+                var labelLength = (axLetter === "x" ? bb["height"] : bb["width"]);
+
+                // aburato: if the label is too long perform a middle ellipsis
+                if (labelLength > maxLength + 1) {
+                    var drawnText = d.text;
+                    var maxCharLength = Math.round(maxLength / (labelLength / drawnText.length));                    
+                    var firstLen = Math.floor(maxCharLength / 2);
+                    var lastLen = maxCharLength - firstLen - 1;
+                    drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+                    var thisText = thisG.select('text');                    
+                    thisText.text(drawnText);
+                    // aburato: use a title element for a free tooltip.
+                    thisG.insert("title", "text").text(d.text);
+                }
+            });
+        }
+
+        function adjustAutoMarginForLabels() {
+            var axBB = ax._boundingBox;
+
+            // Handle extra space on this axis
+            var shiftDimension;
+            var marginDimension;
+            var shiftAmount;
+            
+            // Handle extra space on perpendicular axis 
+            // (tipycally needed when you use slanted labels which are otherwise cut off)
+            var perpMarginDimension;
+            var perpShiftAmount;
+
+            var x = 0, y = 0;
+
+            if (ax._id.charAt(0) === "x") {
+                shiftDimension = "height";
+                perpMarginDimension = "r";
+                if (ax._id.charAt(1) === "2") {
+                    y = 1;
+                    marginDimension = "t";
+                } else {
+                    marginDimension = "b";
+                }
+            } else if (ax._id.charAt(0) === "y") {
+                shiftDimension = "width";
+                if (ax._id.charAt(1) === "2") {
+                    x = 1;
+                    marginDimension = "r";
+                } else {
+                    marginDimension = "l";
+                }
+            }
+
+            if (shiftDimension && marginDimension) {
+                shiftAmount = axBB[shiftDimension];
+                if (ax._titleElement) {
+                    var titleBB = ax._titleElement.node().getBoundingClientRect();
+                    shiftAmount += (titleBB[shiftDimension] + 2);
+                }
+
+                var maxAmount = gd._fullLayout[shiftDimension] * 0.5;
+                shiftAmount = Math.min(shiftAmount, maxAmount);
+                
+                var shiftMargins = {
+                    x: x,
+                    y: y,
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 0
+                };
+                shiftMargins[marginDimension] = shiftAmount;
+
+                if (perpMarginDimension === "r") {
+                    if (ax._lastangle === 0) {
+                        perpShiftAmount = ax._lastLabelWidth / 2;
+                    }
+                    if (perpShiftAmount > 0) {
+                        var perpShiftMargins = {
+                            x: 1.01,
+                            y: 0,
+                            l: 0,
+                            r: perpShiftAmount,
+                            b: 0,
+                            t: 0
+                        };
+
+                        Plots.autoMargin(gd, "xaxis_on_r", perpShiftMargins);
+                    };
+                }
+                
+                Plots.autoMargin(gd, ax._name, shiftMargins);
+            }
         }
 
         function calcBoundingBox() {
@@ -42336,7 +42624,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
         var done = Lib.syncOrAsync([
             allLabelsReady,
             fixLabelOverlaps,
-            calcBoundingBox
+            calcBoundingBox,
+            adjustAutoMarginForLabels
         ]);
         if(done && done.then) gd._promises.push(done);
         return done;
@@ -42670,7 +42959,7 @@ function swapAxisAttrs(layout, key, xFullAxes, yFullAxes) {
     }
 }
 
-},{"../../components/color":36,"../../components/drawing":60,"../../components/titles":125,"../../constants/numerical":134,"../../lib":151,"../../lib/svg_text_utils":168,"../../registry":236,"./axis_autotype":188,"./axis_ids":190,"./layout_attributes":198,"./layout_defaults":199,"./set_convert":204,"d3":11,"fast-isnumeric":14}],188:[function(require,module,exports){
+},{"../../components/color":36,"../../components/drawing":60,"../../components/titles":125,"../../constants/numerical":134,"../../lib":151,"../../lib/svg_text_utils":168,"../../plots/plots":228,"../../registry":236,"./axis_autotype":188,"./axis_ids":190,"./layout_attributes":198,"./layout_defaults":199,"./set_convert":204,"d3":11,"fast-isnumeric":14}],188:[function(require,module,exports){
 /**
 * Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
@@ -43726,17 +44015,50 @@ module.exports = function dragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             return removeZoombox(gd);
         }
 
+        /*
         // TODO: edit linked axes in zoomAxRanges and in dragTail
         if(zoomMode === 'xy' || zoomMode === 'x') zoomAxRanges(xa, box.l / pw, box.r / pw, updates, xaLinked);
         if(zoomMode === 'xy' || zoomMode === 'y') zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph, updates, yaLinked);
+        */
 
+        // ion: zoom events
+        var axesZoomInfo = [];
+        if(zoomMode === 'xy' || zoomMode === 'x') {
+            var xZoomInfo = zoomAxRanges(xa, box.l / pw, box.r / pw, updates, xaLinked);
+            axesZoomInfo = axesZoomInfo.concat(xZoomInfo);
+        }
+        if(zoomMode === 'xy' || zoomMode === 'y') {
+            var yZoomInfo = zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph, updates, yaLinked);
+            axesZoomInfo = axesZoomInfo.concat(yZoomInfo);
+        }
         removeZoombox(gd);
+
+        // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
+        var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
+        //No reason to show the zoom notifier etc. if no actual zoom occured
+        if(axesZoomInfo.length > 0)
+        {
+            gd.emit('plotly_zoom', args);
+
+            if (!args.userHandled) {
+                dragTail(zoomMode);
+                if (SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
+                    Lib.notifier('Double-click to<br>zoom back out', 'long');
+                    SHOWZOOMOUTTIP = false;
+                }
+                args.pre = false;
+                gd.emit('plotly_zoom', args);
+            }
+        }
+
+        /*
         dragTail(zoomMode);
 
         if(SHOWZOOMOUTTIP && gd.data && gd._context.showTips) {
             Lib.notifier('Double-click to<br>zoom back out', 'long');
             SHOWZOOMOUTTIP = false;
         }
+        */
     }
 
     function dragDone(dragged, numClicks) {
@@ -44254,11 +44576,16 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
     var i,
         axi,
         axRangeLinear0,
-        axRangeLinearSpan;
+        axRangeLinearSpan,
+        oldRange;
+
+    var zoomInfo = [];
 
     for(i = 0; i < axList.length; i++) {
         axi = axList[i];
         if(axi.fixedrange) continue;
+
+        oldRange = axi.range.slice(0);
 
         axRangeLinear0 = axi._rl[0];
         axRangeLinearSpan = axi._rl[1] - axRangeLinear0;
@@ -44268,6 +44595,13 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
         ];
         updates[axi._name + '.range[0]'] = axi.range[0];
         updates[axi._name + '.range[1]'] = axi.range[1];
+
+        zoomInfo.push({
+            oldRange: oldRange,
+            newRange: axi.range.slice(0),
+            name: axi._name,
+            fractionalRange: [r0Fraction, r1Fraction]
+        });
     }
 
     // zoom linked axes about their centers
@@ -44276,6 +44610,8 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
 
         zoomAxRanges(linkedAxes, linkedR0Fraction, 1 - linkedR0Fraction, updates);
     }
+
+    return zoomInfo;
 }
 
 function dragAxList(axList, pix) {
@@ -47947,8 +48283,9 @@ proto.plot = function(geoCalcData, fullLayout, promises) {
         Fx.loneUnhover(fullLayout._toppaper);
     });
 
-    _this.framework.on('click', function() {
-        Fx.click(_this.graphDiv, d3.event);
+    // ion: peter fix
+    _this.framework.on('mousedown', function() {
+        Fx.click(_this.graphDiv, d3.event || { target: true });
     });
 
     topojsonNameNew = topojsonUtils.getTopojsonName(geoLayout);
@@ -49537,14 +49874,17 @@ function initZoom(projection, projLayout) {
 function zoomScoped(geo, projLayout) {
     var projection = geo.projection,
         zoom = initZoom(projection, projLayout);
+    var defaultScale = projection.scale();
 
     function handleZoomstart() {
         d3.select(this).style(zoomstartStyle);
     }
 
     function handleZoom() {
+        var maxScale = Math.max(defaultScale, d3.event.scale);
+        zoom.scale(maxScale);
         projection
-            .scale(d3.event.scale)
+            .scale(maxScale)
             .translate(d3.event.translate);
 
         geo.render();
@@ -49566,6 +49906,8 @@ function zoomScoped(geo, projLayout) {
 function zoomNonClipped(geo, projLayout) {
     var projection = geo.projection,
         zoom = initZoom(projection, projLayout);
+
+    var defaultScale = projection.scale();
 
     var INSIDETOLORANCEPXS = 2;
 
@@ -49599,9 +49941,15 @@ function zoomNonClipped(geo, projLayout) {
             return;
         }
 
-        projection.scale(d3.event.scale);
+        // ion
+        projection.scale(Math.max(defaultScale, d3.event.scale));
 
-        projection.translate([translate0[0], d3.event.translate[1]]);
+        var availableSpace = (projection.scale()*Math.PI);
+        var min = translate0[0]-availableSpace/2;
+        var max = availableSpace/2;
+        var translateTo = Math.min(Math.max(d3.event.translate[1], min), max);
+        projection.translate([translate0[0], translateTo]);
+        zoom.translate([translate0[0], translateTo]);
 
         if(!zoomPoint) {
             mouse0 = mouse1;
@@ -51437,8 +51785,8 @@ plots.autoMargin = function(gd, id, o) {
 
             // if the item is too big, just give it enough automargin to
             // make sure you can still grab it and bring it back
-            if(o.l + o.r > fullLayout.width * 0.5) o.l = o.r = 0;
-            if(o.b + o.t > fullLayout.height * 0.5) o.b = o.t = 0;
+            if(o.l + o.r > fullLayout.width * 0.45) o.l = o.r = 0;
+            if(o.b + o.t > fullLayout.height * 0.45) o.b = o.t = 0;
 
             fullLayout._pushmargin[id] = {
                 l: {val: o.x, size: o.l + pad},
@@ -56186,22 +56534,36 @@ module.exports = function setPositions(gd, plotinfo) {
         calcTraces = gd.calcdata,
         calcTracesHorizontal = [],
         calcTracesVertical = [],
+        calcTracesHorizontalMap = { x: [], x2: [] }, // map x: [], x2: []
+        calcTracesVerticalMap = { y: [], y2: [] }, // map y: [], y2: []
         i;
+    
+    // ion
     for(i = 0; i < fullTraces.length; i++) {
         var fullTrace = fullTraces[i];
-        if(
-            fullTrace.visible === true &&
-            Registry.traceIs(fullTrace, 'bar') &&
-            fullTrace.xaxis === xa._id &&
-            fullTrace.yaxis === ya._id
-        ) {
-            if(fullTrace.orientation === 'h') {
-                calcTracesHorizontal.push(calcTraces[i]);
-            }
-            else {
-                calcTracesVertical.push(calcTraces[i]);
-            }
+        var calcTrace = calcTraces[i];
+
+        if (!fullTrace.visible || !Registry.traceIs(fullTrace, 'bar') ||
+            calcTraces[i][0].placeholder) continue;
+    
+        if(fullTrace.orientation === 'h') {
+            calcTracesHorizontalMap[fullTrace.xaxis].push(calcTrace);
         }
+        else {
+            calcTracesVerticalMap[fullTrace.yaxis].push(calcTrace);
+        }
+    }
+
+    // Detect multi-axes
+    var group = (gd._fullLayout.barmode === 'group');
+    if (!group) {
+        // standard case
+        calcTracesHorizontal = calcTracesHorizontalMap[xa._id].filter(function(t) { return t[0].trace.yaxis === ya._id });
+        calcTracesVertical = calcTracesVerticalMap[ya._id].filter(function(t) { return t[0].trace.xaxis === xa._id });
+    } else {
+        // Ok, grouping mode. Are there traces on both x/y and x2/y2 axes?
+        calcTracesHorizontal = calcTracesHorizontalMap.x.concat(calcTracesHorizontalMap.x2);
+        calcTracesVertical = calcTracesVerticalMap.y.concat(calcTracesVerticalMap.y2);
     }
 
     setGroupPositions(gd, xa, ya, calcTracesVertical);
@@ -56627,6 +56989,11 @@ function setBaseAndTop(gd, sa, sieve) {
 
     for(var i = 0; i < traces.length; i++) {
         var trace = traces[i];
+        var traceSa = trace[0].trace[sLetter + "axis"];
+        // when dealing with grouped traces with mixed secondary axes,
+        // we'll have to skip those ones belonging to the other axis.
+        // (they're here because primary axes need them all to avoid overlap).
+        if (traceSa !== sa._id) continue;
 
         for(var j = 0; j < trace.length; j++) {
             var bar = trace[j],
@@ -59077,8 +59444,9 @@ module.exports = function plot(gd, cdpie) {
 
                 function handleClick() {
                     gd._hoverdata = [pt];
+                    pt.curveNumber = cd0.trace.index;
                     gd._hoverdata.trace = cd0.trace;
-                    Fx.click(gd, d3.event);
+                    Fx.click(gd, d3.event || { target: true });
                 }
 
                 slicePath.enter().append('path')
@@ -59090,7 +59458,7 @@ module.exports = function plot(gd, cdpie) {
                 sliceTop
                     .on('mouseover', handleMouseOver)
                     .on('mouseout', handleMouseOut)
-                    .on('click', handleClick);
+                    .on('mousedown', handleClick);
 
                 if(trace.pull) {
                     var pull = +(Array.isArray(trace.pull) ? trace.pull[pt.i] : trace.pull) || 0;
@@ -60473,6 +60841,21 @@ module.exports = function hoverPoints(pointData, xval, yval, hovermode) {
         ypx = ya.c2p(yval),
         pt = [xpx, ypx],
         hoveron = trace.hoveron || '';
+    
+    // ion
+    if(pointData.trace._input.rect){
+        var found = false;
+        var rect = pointData.trace._input.rect;
+        for(var i=0;i<rect.length;i++){
+            if(xval > rect[i].x0 && xval < rect[i].x1 && yval > rect[i].y0 && yval < rect[i].y1){
+                pointData.index = i;
+                pointData.text = pointData.trace.text[i];
+                found = true;
+            }
+        }
+        
+        if(!found) return;
+    }
 
     // look for points to hover on first, then take fills only if we
     // didn't find a point

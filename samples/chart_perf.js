@@ -83,7 +83,7 @@ function handleTheClick() {
       updateData();
     } else {
       window.clearInterval(clearHandle);
-      plotDiv.innerHTML = "<h1 style='position: absolute; top: 50%; left: 50%; font-size: 100px; transform: translate(-50%, -50%);'>COMPLETED</h1>";
+      // plotDiv.innerHTML = "<h1 style='position: absolute; top: 50%; left: 50%; font-size: 100px; transform: translate(-50%, -50%);'>COMPLETED</h1>";
     }
   }, interval);
 }
