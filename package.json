@@ -27,6 +27,7 @@
     "stats": "node tasks/stats.js",
     "find-strings": "node tasks/find_locale_strings.js",
     "build": "npm run preprocess && npm run find-strings && npm run bundle && npm run header && npm run stats",
+    "ionbuild": "npm run preprocess && npm run bundle && npm run header",
     "cibuild": "npm run preprocess && node tasks/cibundle.js",
     "watch": "node tasks/watch.js",
     "lint": "eslint --version && eslint .",
