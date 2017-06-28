@@ -74,3 +74,7 @@ exports.Queue = require('./lib/queue');
 
 // export d3 used in the bundle
 exports.d3 = require('d3');
+
+// ion: export color override hack
+var color = require('./components/color');
+exports.colorDefaults = color.overrideColorDefaults;

@@ -32,22 +32,36 @@ function crossTraceCalc(gd, plotinfo) {
         calcTraces = gd.calcdata,
         calcTracesHorizontal = [],
         calcTracesVertical = [],
+        calcTracesHorizontalMap = { x: [], x2: [] }, // map x: [], x2: []
+        calcTracesVerticalMap = { y: [], y2: [] }, // map y: [], y2: []
         i;
+    
+    // ion
     for(i = 0; i < fullTraces.length; i++) {
         var fullTrace = fullTraces[i];
-        if(
-            fullTrace.visible === true &&
-            Registry.traceIs(fullTrace, 'bar') &&
-            fullTrace.xaxis === xa._id &&
-            fullTrace.yaxis === ya._id
-        ) {
-            if(fullTrace.orientation === 'h') {
-                calcTracesHorizontal.push(calcTraces[i]);
-            }
-            else {
-                calcTracesVertical.push(calcTraces[i]);
-            }
+        var calcTrace = calcTraces[i];
+
+        if (!fullTrace.visible || !Registry.traceIs(fullTrace, 'bar') ||
+            calcTraces[i][0].placeholder) continue;
+    
+        if(fullTrace.orientation === 'h') {
+            calcTracesHorizontalMap[fullTrace.xaxis].push(calcTrace);
         }
+        else {
+            calcTracesVerticalMap[fullTrace.yaxis].push(calcTrace);
+        }
+    }
+
+    // Detect multi-axes
+    var group = (gd._fullLayout.barmode === 'group');
+    if (!group) {
+        // standard case
+        calcTracesHorizontal = calcTracesHorizontalMap[xa._id].filter(function(t) { return t[0].trace.yaxis === ya._id });
+        calcTracesVertical = calcTracesVerticalMap[ya._id].filter(function(t) { return t[0].trace.xaxis === xa._id });
+    } else {
+        // Ok, grouping mode. Are there traces on both x/y and x2/y2 axes?
+        calcTracesHorizontal = calcTracesHorizontalMap.x.concat(calcTracesHorizontalMap.x2);
+        calcTracesVertical = calcTracesVerticalMap.y.concat(calcTracesVerticalMap.y2);
     }
 
     setGroupPositions(gd, xa, ya, calcTracesVertical);
@@ -517,6 +531,11 @@ function setBaseAndTop(gd, sa, sieve) {
 
     for(var i = 0; i < traces.length; i++) {
         var trace = traces[i];
+        var traceSa = trace[0].trace[sLetter + "axis"];
+        // when dealing with grouped traces with mixed secondary axes,
+        // we'll have to skip those ones belonging to the other axis.
+        // (they're here because primary axes need them all to avoid overlap).
+        if (traceSa !== sa._id) continue;
 
         for(var j = 0; j < trace.length; j++) {
             var bar = trace[j],

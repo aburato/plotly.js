@@ -20,6 +20,16 @@ var defaultLine = color.defaultLine = colorAttrs.defaultLine;
 color.lightLine = colorAttrs.lightLine;
 var background = color.background = colorAttrs.background;
 
+
+// ion: ovverride color defaults hack
+color.overrideColorDefaults = function(ca) {
+    if (typeof ca === 'undefined') {
+        return color.defaults;
+    } else {
+        color.defaults = ca;        
+    }
+}
+
 /*
  * tinyRGB: turn a tinycolor into an rgb string, but
  * unlike the built-in tinycolor.toRgbString this never includes alpha

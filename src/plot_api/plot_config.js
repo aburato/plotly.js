@@ -51,6 +51,23 @@ module.exports = {
         titleText: false
     },
 
+    // ion: partial editing support
+
+    // if editable is set to true, this can be used to deactivate main title editing ONLY. 
+    editableMainTitle: true,
+
+    // if editable is set to true, this can be used to deactivate X axis title editing ONLY. 
+    editableAxisXTitle: true,
+
+    // if editable is set to true, this can be used to deactivate X2 axis title editing ONLY. 
+    editableAxisX2Title: true,
+
+    // if editable is set to true, this can be used to deactivate Y axis title editing ONLY. 
+    editableAxisYTitle: true,
+
+    // if editable is set to true, this can be used to deactivate Y2 axis title editing ONLY. 
+    editableAxisY2Title: true,
+
     /*
      * DO autosize once regardless of layout.autosize
      * (use default width or height values otherwise)

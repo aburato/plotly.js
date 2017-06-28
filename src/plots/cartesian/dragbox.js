@@ -111,7 +111,7 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 var ya = overlays[i].yaxis;
                 yaHash[ya._id] = ya;
             }
-        }
+            }
 
         xaxes = hashValues(xaHash);
         yaxes = hashValues(yaHash);
@@ -152,37 +152,37 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
     dragOptions.prepFn = function(e, startX, startY) {
         var dragModePrev = dragOptions.dragmode;
-        var dragModeNow = gd._fullLayout.dragmode;
+            var dragModeNow = gd._fullLayout.dragmode;
         if(dragModeNow !== dragModePrev) {
             dragOptions.dragmode = dragModeNow;
         }
 
         recomputeAxisLists();
 
-        if(!allFixedRanges) {
-            if(isMainDrag) {
-                // main dragger handles all drag modes, and changes
-                // to pan (or to zoom if it already is pan) on shift
-                if(e.shiftKey) {
-                    if(dragModeNow === 'pan') dragModeNow = 'zoom';
-                    else if(!isSelectOrLasso(dragModeNow)) dragModeNow = 'pan';
+            if(!allFixedRanges) {
+                if(isMainDrag) {
+                    // main dragger handles all drag modes, and changes
+                    // to pan (or to zoom if it already is pan) on shift
+                    if(e.shiftKey) {
+                        if(dragModeNow === 'pan') dragModeNow = 'zoom';
+                        else if(!isSelectOrLasso(dragModeNow)) dragModeNow = 'pan';
+                    }
+                    else if(e.ctrlKey) {
+                        dragModeNow = 'pan';
+                    }
                 }
-                else if(e.ctrlKey) {
-                    dragModeNow = 'pan';
-                }
+                // all other draggers just pan
+                else dragModeNow = 'pan';
             }
-            // all other draggers just pan
-            else dragModeNow = 'pan';
-        }
 
-        if(dragModeNow === 'lasso') dragOptions.minDrag = 1;
-        else dragOptions.minDrag = undefined;
+            if(dragModeNow === 'lasso') dragOptions.minDrag = 1;
+            else dragOptions.minDrag = undefined;
 
-        if(isSelectOrLasso(dragModeNow)) {
+            if(isSelectOrLasso(dragModeNow)) {
             dragOptions.xaxes = xaxes;
             dragOptions.yaxes = yaxes;
             // this attaches moveFn, clickFn, doneFn on dragOptions
-            prepSelect(e, startX, startY, dragOptions, dragModeNow);
+                prepSelect(e, startX, startY, dragOptions, dragModeNow);
         } else {
             dragOptions.clickFn = clickFn;
             if(isSelectOrLasso(dragModePrev)) {
@@ -201,18 +201,18 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 
             if(!allFixedRanges) {
                 if(dragModeNow === 'zoom') {
-                    dragOptions.moveFn = zoomMove;
-                    dragOptions.doneFn = zoomDone;
+                dragOptions.moveFn = zoomMove;
+                dragOptions.doneFn = zoomDone;
 
-                    // zoomMove takes care of the threshold, but we need to
-                    // minimize this so that constrained zoom boxes will flip
-                    // orientation at the right place
-                    dragOptions.minDrag = 1;
+                // zoomMove takes care of the threshold, but we need to
+                // minimize this so that constrained zoom boxes will flip
+                // orientation at the right place
+                dragOptions.minDrag = 1;
 
-                    zoomPrep(e, startX, startY);
+                zoomPrep(e, startX, startY);
                 } else if(dragModeNow === 'pan') {
-                    dragOptions.moveFn = plotDrag;
-                    dragOptions.doneFn = dragTail;
+                dragOptions.moveFn = plotDrag;
+                dragOptions.doneFn = dragTail;
                 }
             }
         }
@@ -222,17 +222,17 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         // clear selection polygon cache (if any)
         dragOptions.plotinfo.selection = false;
         // clear selection outlines
-        clearSelect(zoomlayer);
-    }
+                clearSelect(zoomlayer);
+            }
 
     function clickFn(numClicks, evt) {
         var clickmode = gd._fullLayout.clickmode;
 
-        removeZoombox(gd);
+            removeZoombox(gd);
 
-        if(numClicks === 2 && !singleEnd) doubleClick();
+            if(numClicks === 2 && !singleEnd) doubleClick();
 
-        if(isMainDrag) {
+            if(isMainDrag) {
             if(clickmode.indexOf('select') > -1) {
                 selectOnClick(evt, gd, xaxes, yaxes, plotinfo.id, dragOptions);
             }
@@ -241,42 +241,42 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 Fx.click(gd, evt, plotinfo.id);
             }
         }
-        else if(numClicks === 1 && singleEnd) {
+            else if(numClicks === 1 && singleEnd) {
             var ax = ns ? ya0 : xa0,
-                end = (ns === 's' || ew === 'w') ? 0 : 1,
-                attrStr = ax._name + '.range[' + end + ']',
-                initialText = getEndText(ax, end),
-                hAlign = 'left',
-                vAlign = 'middle';
+                    end = (ns === 's' || ew === 'w') ? 0 : 1,
+                    attrStr = ax._name + '.range[' + end + ']',
+                    initialText = getEndText(ax, end),
+                    hAlign = 'left',
+                    vAlign = 'middle';
 
-            if(ax.fixedrange) return;
+                if(ax.fixedrange) return;
 
-            if(ns) {
-                vAlign = (ns === 'n') ? 'top' : 'bottom';
-                if(ax.side === 'right') hAlign = 'right';
-            }
-            else if(ew === 'e') hAlign = 'right';
+                if(ns) {
+                    vAlign = (ns === 'n') ? 'top' : 'bottom';
+                    if(ax.side === 'right') hAlign = 'right';
+                }
+                else if(ew === 'e') hAlign = 'right';
 
-            if(gd._context.showAxisRangeEntryBoxes) {
-                d3.select(dragger)
-                    .call(svgTextUtils.makeEditable, {
-                        gd: gd,
-                        immediate: true,
+                if(gd._context.showAxisRangeEntryBoxes) {
+                    d3.select(dragger)
+                        .call(svgTextUtils.makeEditable, {
+                            gd: gd,
+                            immediate: true,
                         background: gd._fullLayout.paper_bgcolor,
-                        text: String(initialText),
-                        fill: ax.tickfont ? ax.tickfont.color : '#444',
-                        horizontalAlign: hAlign,
-                        verticalAlign: vAlign
-                    })
-                    .on('edit', function(text) {
-                        var v = ax.d2r(text);
-                        if(v !== undefined) {
+                            text: String(initialText),
+                            fill: ax.tickfont ? ax.tickfont.color : '#444',
+                            horizontalAlign: hAlign,
+                            verticalAlign: vAlign
+                        })
+                        .on('edit', function(text) {
+                            var v = ax.d2r(text);
+                            if(v !== undefined) {
                             Registry.call('relayout', gd, attrStr, v);
-                        }
-                    });
+                            }
+                        });
+                }
             }
         }
-    }
 
     dragElement.init(dragOptions);
 
@@ -393,6 +393,7 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             return removeZoombox(gd);
         }
 
+        /*
         // TODO: edit linked axes in zoomAxRanges and in dragTail
         if(zoomMode === 'xy' || zoomMode === 'x') {
             zoomAxRanges(xaxes, box.l / pw, box.r / pw, updates, links.xaxes);
@@ -400,10 +401,34 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
         if(zoomMode === 'xy' || zoomMode === 'y') {
             zoomAxRanges(yaxes, (ph - box.b) / ph, (ph - box.t) / ph, updates, links.yaxes);
         }
+        */
 
+        // ion: zoom events
+        var axesZoomInfo = [];
+        if(zoomMode === 'xy' || zoomMode === 'x') {
+            var xZoomInfo = zoomAxRanges(xa, box.l / pw, box.r / pw, updates, xaLinked);
+            axesZoomInfo = axesZoomInfo.concat(xZoomInfo);
+        }
+        if(zoomMode === 'xy' || zoomMode === 'y') {
+            var yZoomInfo = zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph, updates, yaLinked);
+            axesZoomInfo = axesZoomInfo.concat(yZoomInfo);
+        }
         removeZoombox(gd);
-        dragTail();
-        showDoubleClickNotifier(gd);
+
+		// Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
+        var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
+        //No reason to show the zoom notifier etc. if no actual zoom occured
+        if(axesZoomInfo.length > 0)
+        {
+            gd.emit('plotly_zoom', args);
+
+            if (!args.userHandled) {
+                dragTail();
+        		showDoubleClickNotifier(gd);
+                args.pre = false;
+                gd.emit('plotly_zoom', args);
+            }
+        }
     }
 
     // scroll zoom, on all draggers except corners
@@ -758,20 +783,20 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                     var xrng = Lib.simpleMap(xa.range, xa.r2l);
                     var yrng = Lib.simpleMap(ya.range, ya.r2l);
                     sp._scene.update({range: [xrng[0], yrng[0], xrng[1], yrng[1]]});
-                }
+            }
             }
         }
 
         if(hasSplom || hasScatterGl) {
             clearGlCanvases(gd);
             redrawReglTraces(gd);
-        }
+            }
 
         if(hasSVG) {
             var xScaleFactor = viewBox[2] / xa0._length;
             var yScaleFactor = viewBox[3] / ya0._length;
 
-            for(i = 0; i < subplots.length; i++) {
+        for(i = 0; i < subplots.length; i++) {
                 sp = plotinfos[subplots[i]];
                 xa = sp.xaxis;
                 ya = sp.yaxis;
@@ -782,30 +807,30 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 var xScaleFactor2, yScaleFactor2;
                 var clipDx, clipDy;
 
-                if(editX2) {
-                    xScaleFactor2 = xScaleFactor;
+            if(editX2) {
+                xScaleFactor2 = xScaleFactor;
                     clipDx = ew ? viewBox[0] : getShift(xa, xScaleFactor2);
                 } else {
                     xScaleFactor2 = getLinkedScaleFactor(xa, xScaleFactor, yScaleFactor);
                     clipDx = scaleAndGetShift(xa, xScaleFactor2);
-                }
+            }
 
-                if(editY2) {
-                    yScaleFactor2 = yScaleFactor;
+            if(editY2) {
+                yScaleFactor2 = yScaleFactor;
                     clipDy = ns ? viewBox[1] : getShift(ya, yScaleFactor2);
                 } else {
                     yScaleFactor2 = getLinkedScaleFactor(ya, xScaleFactor, yScaleFactor);
                     clipDy = scaleAndGetShift(ya, yScaleFactor2);
-                }
+            }
 
-                // don't scale at all if neither axis is scalable here
-                if(!xScaleFactor2 && !yScaleFactor2) {
-                    continue;
-                }
+            // don't scale at all if neither axis is scalable here
+            if(!xScaleFactor2 && !yScaleFactor2) {
+                continue;
+            }
 
-                // but if only one is, reset the other axis scaling
-                if(!xScaleFactor2) xScaleFactor2 = 1;
-                if(!yScaleFactor2) yScaleFactor2 = 1;
+            // but if only one is, reset the other axis scaling
+            if(!xScaleFactor2) xScaleFactor2 = 1;
+            if(!yScaleFactor2) yScaleFactor2 = 1;
 
                 var plotDx = xa._offset - clipDx / xScaleFactor2;
                 var plotDy = ya._offset - clipDy / yScaleFactor2;
@@ -815,12 +840,12 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 // when working independently, should perhaps combine
                 // them into a single routine.
                 sp.clipRect
-                    .call(Drawing.setTranslate, clipDx, clipDy)
-                    .call(Drawing.setScale, xScaleFactor2, yScaleFactor2);
+                .call(Drawing.setTranslate, clipDx, clipDy)
+                .call(Drawing.setScale, xScaleFactor2, yScaleFactor2);
 
                 sp.plot
-                    .call(Drawing.setTranslate, plotDx, plotDy)
-                    .call(Drawing.setScale, 1 / xScaleFactor2, 1 / yScaleFactor2);
+                .call(Drawing.setTranslate, plotDx, plotDy)
+                .call(Drawing.setScale, 1 / xScaleFactor2, 1 / yScaleFactor2);
 
                 // apply an inverse scale to individual points to counteract
                 // the scale of the trace group.
@@ -829,14 +854,14 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 if(xScaleFactor2 !== xScaleFactorOld || yScaleFactor2 !== yScaleFactorOld) {
                     Drawing.setPointGroupScale(sp.zoomScalePts, xScaleFactor2, yScaleFactor2);
                     Drawing.setTextPointsScale(sp.zoomScaleTxt, xScaleFactor2, yScaleFactor2);
-                }
+        }
 
                 Drawing.hideOutsideRangePoints(sp.clipOnAxisFalseTraces, sp);
 
                 // update x/y scaleFactor stash
                 xScaleFactorOld = xScaleFactor2;
                 yScaleFactorOld = yScaleFactor2;
-            }
+    }
         }
     }
 
@@ -874,8 +899,8 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
 function makeDragger(plotinfo, nodeName, dragClass, cursor) {
     var dragger3 = Lib.ensureSingle(plotinfo.draglayer, nodeName, dragClass, function(s) {
         s.classed('drag', true)
-            .style({fill: 'transparent', 'stroke-width': 0})
-            .attr('data-subplot', plotinfo.id);
+        .style({fill: 'transparent', 'stroke-width': 0})
+        .attr('data-subplot', plotinfo.id);
     });
 
     dragger3.call(setCursor, cursor);
@@ -921,11 +946,16 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
     var i,
         axi,
         axRangeLinear0,
-        axRangeLinearSpan;
+        axRangeLinearSpan,
+        oldRange;
+
+    var zoomInfo = [];
 
     for(i = 0; i < axList.length; i++) {
         axi = axList[i];
         if(axi.fixedrange) continue;
+
+        oldRange = axi.range.slice(0);
 
         axRangeLinear0 = axi._rl[0];
         axRangeLinearSpan = axi._rl[1] - axRangeLinear0;
@@ -936,6 +966,13 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
 
         updates[axi._name + '.range[0]'] = axi.range[0];
         updates[axi._name + '.range[1]'] = axi.range[1];
+
+        zoomInfo.push({
+            oldRange: oldRange,
+            newRange: axi.range.slice(0),
+            name: axi._name,
+            fractionalRange: [r0Fraction, r1Fraction]
+        });
     }
 
     // zoom linked axes about their centers
@@ -944,6 +981,8 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
 
         zoomAxRanges(linkedAxes, linkedR0Fraction, 1 - linkedR0Fraction, updates);
     }
+
+    return zoomInfo;
 }
 
 function dragAxList(axList, pix) {

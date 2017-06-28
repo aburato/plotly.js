@@ -83,7 +83,20 @@ function draw(gd, titleClass, options) {
     else if(prop.indexOf('axis') !== -1) editAttr = 'axisTitleText';
     else if(prop.indexOf('colorbar' !== -1)) editAttr = 'colorbarTitleText';
     var editable = gd._context.edits[editAttr];
-
+    // ion: selective title editing hack	if (editable) {
+        if (cont === fullLayout) {
+            // MAIN TITLE
+            editable = gd._context.editableMainTitle;
+        } else if (cont === fullLayout.xaxis) {
+            editable = gd._context.editableAxisXTitle;
+        } else if (cont === fullLayout.yaxis) {
+            editable = gd._context.editableAxisYTitle;
+        } else if (cont === fullLayout.yaxis2) {
+            editable = gd._context.editableAxisY2Title;
+        } else if (cont === fullLayout.xaxis2) {
+            editable = gd._context.editableAxisX2Title;
+        }
+    }
     if(txt === '') opacity = 0;
     // look for placeholder text while stripping out numbers from eg X2, Y3
     // this is just for backward compatibility with the old version that had
@@ -252,6 +265,7 @@ function draw(gd, titleClass, options) {
             });
     }
     el.classed('js-placeholder', isplaceholder);
-
-    return group;
-}
+	// ion: storing the title element inside its containing axis object
+    cont._titleElement = el;
+ 	return group;
+};

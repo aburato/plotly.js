@@ -69,7 +69,7 @@ module.exports = function draw(gd) {
     var legend = Lib.ensureSingle(fullLayout._infolayer, 'g', 'legend', function(s) {
         s.attr('pointer-events', 'all');
         firstRender = true;
-    });
+        });
 
     var clipPath = Lib.ensureSingleById(fullLayout._topdefs, 'clipPath', clipId, function(s) {
         s.append('rect');
@@ -126,110 +126,126 @@ module.exports = function draw(gd) {
 
     Lib.syncOrAsync([Plots.previousPromises,
         function() {
-            if(firstRender) {
-                computeLegendDimensions(gd, groups, traces);
-                expandMargin(gd);
-            }
+    if(firstRender) {
+        computeLegendDimensions(gd, groups, traces);
+        expandMargin(gd);
+    }
 
-            // Position and size the legend
-            var lxMin = 0,
-                lxMax = fullLayout.width,
-                lyMin = 0,
-                lyMax = fullLayout.height;
+    // Position and size the legend
+    var lxMin = 0,
+        lxMax = fullLayout.width,
+        lyMin = 0,
+        lyMax = fullLayout.height;
 
-            computeLegendDimensions(gd, groups, traces);
+    computeLegendDimensions(gd, groups, traces);
 
-            if(opts._height > lyMax) {
-                // If the legend doesn't fit in the plot area,
-                // do not expand the vertical margins.
-                expandHorizontalMargin(gd);
-            } else {
-                expandMargin(gd);
-            }
+    if(opts._height > lyMax) {
+    // ion: HIDE the legend if it's too big and would
+    // result in covering the chart
+    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45) ||
+       (opts.orientation === "h" && opts.height > fullLayout.height * 0.45)) {
+        fullLayout._infolayer.selectAll('.legend').remove();
+        fullLayout._topdefs.select('#' + clipId).remove();
 
-            // Scroll section must be executed after repositionLegend.
-            // It requires the legend width, height, x and y to position the scrollbox
-            // and these values are mutated in repositionLegend.
-            var gs = fullLayout._size,
-                lx = gs.l + gs.w * opts.x,
-                ly = gs.t + gs.h * (1 - opts.y);
+        Plots.autoMargin(gd, 'legend');
+        return;
+    }
 
-            if(anchorUtils.isRightAnchor(opts)) {
+    if(opts._height > lyMax) {        // If the legend doesn't fit in the plot area,
+        // do not expand the vertical margins.
+        expandHorizontalMargin(gd);
+    } else {
+        expandMargin(gd);
+    }
+
+    // Scroll section must be executed after repositionLegend.
+    // It requires the legend width, height, x and y to position the scrollbox
+    // and these values are mutated in repositionLegend.
+    var gs = fullLayout._size,
+        lx = gs.l + gs.w * opts.x,
+        ly = gs.t + gs.h * (1 - opts.y);
+
+    if(anchorUtils.isRightAnchor(opts)) {
                 lx -= opts._width;
-            }
-            else if(anchorUtils.isCenterAnchor(opts)) {
+    }
+    else if(anchorUtils.isCenterAnchor(opts)) {
                 lx -= opts._width / 2;
-            }
+    }
 
-            if(anchorUtils.isBottomAnchor(opts)) {
+    if(anchorUtils.isBottomAnchor(opts)) {
                 ly -= opts._height;
-            }
-            else if(anchorUtils.isMiddleAnchor(opts)) {
+    }
+    else if(anchorUtils.isMiddleAnchor(opts)) {
                 ly -= opts._height / 2;
-            }
+    }
 
-            // Make sure the legend left and right sides are visible
+    // Make sure the legend left and right sides are visible
             var legendWidth = opts._width,
-                legendWidthMax = gs.w;
+        legendWidthMax = gs.w;
 
-            if(legendWidth > legendWidthMax) {
-                lx = gs.l;
-                legendWidth = legendWidthMax;
-            }
-            else {
-                if(lx + legendWidth > lxMax) lx = lxMax - legendWidth;
-                if(lx < lxMin) lx = lxMin;
+    // ion: temp fix
+    /*
+    if(legendWidth > legendWidthMax) {
+        lx = gs.l;
+        legendWidth = legendWidthMax;
+    }
+    else {
+    */
+        if(lx + legendWidth > lxMax) lx = lxMax - legendWidth;
+        if(lx < lxMin) lx = lxMin;
                 legendWidth = Math.min(lxMax - lx, opts._width);
-            }
+    /*
+    }
+    */
 
-            // Make sure the legend top and bottom are visible
-            // (legends with a scroll bar are not allowed to stretch beyond the extended
-            // margins)
+    // Make sure the legend top and bottom are visible
+    // (legends with a scroll bar are not allowed to stretch beyond the extended
+    // margins)
             var legendHeight = opts._height,
-                legendHeightMax = gs.h;
+        legendHeightMax = gs.h;
 
-            if(legendHeight > legendHeightMax) {
-                ly = gs.t;
-                legendHeight = legendHeightMax;
-            }
-            else {
-                if(ly + legendHeight > lyMax) ly = lyMax - legendHeight;
-                if(ly < lyMin) ly = lyMin;
+    if(legendHeight > legendHeightMax) {
+        ly = gs.t;
+        legendHeight = legendHeightMax;
+    }
+    else {
+        if(ly + legendHeight > lyMax) ly = lyMax - legendHeight;
+        if(ly < lyMin) ly = lyMin;
                 legendHeight = Math.min(lyMax - ly, opts._height);
-            }
+    }
 
-            // Set size and position of all the elements that make up a legend:
-            // legend, background and border, scroll box and scroll bar
-            Drawing.setTranslate(legend, lx, ly);
+    // Set size and position of all the elements that make up a legend:
+    // legend, background and border, scroll box and scroll bar
+    Drawing.setTranslate(legend, lx, ly);
 
             // to be safe, remove previous listeners
             scrollBar.on('.drag', null);
             legend.on('wheel', null);
 
             if(opts._height <= legendHeight || gd._context.staticPlot) {
-                // if scrollbar should not be shown.
-                bg.attr({
-                    width: legendWidth - opts.borderwidth,
-                    height: legendHeight - opts.borderwidth,
-                    x: opts.borderwidth / 2,
-                    y: opts.borderwidth / 2
-                });
+        // if scrollbar should not be shown.
+        bg.attr({
+            width: legendWidth - opts.borderwidth,
+            height: legendHeight - opts.borderwidth,
+            x: opts.borderwidth / 2,
+            y: opts.borderwidth / 2
+        });
 
-                Drawing.setTranslate(scrollBox, 0, 0);
+        Drawing.setTranslate(scrollBox, 0, 0);
 
-                clipPath.select('rect').attr({
-                    width: legendWidth - 2 * opts.borderwidth,
-                    height: legendHeight - 2 * opts.borderwidth,
-                    x: opts.borderwidth,
-                    y: opts.borderwidth
-                });
+        clipPath.select('rect').attr({
+            width: legendWidth - 2 * opts.borderwidth,
+            height: legendHeight - 2 * opts.borderwidth,
+            x: opts.borderwidth,
+            y: opts.borderwidth
+        });
 
                 Drawing.setClipUrl(scrollBox, clipId);
 
                 Drawing.setRect(scrollBar, 0, 0, 0, 0);
                 delete opts._scrollY;
-            }
-            else {
+    }
+    else {
                 var scrollBarHeight = Math.max(constants.scrollBarMinHeight,
                     legendHeight * legendHeight / opts._height);
                 var scrollBarYMax = legendHeight -
@@ -240,42 +256,42 @@ module.exports = function draw(gd) {
 
                 var scrollBoxY = Math.min(opts._scrollY || 0, scrollBoxYMax);
 
-                // increase the background and clip-path width
-                // by the scrollbar width and margin
-                bg.attr({
-                    width: legendWidth -
-                        2 * opts.borderwidth +
-                        constants.scrollBarWidth +
-                        constants.scrollBarMargin,
-                    height: legendHeight - opts.borderwidth,
-                    x: opts.borderwidth / 2,
-                    y: opts.borderwidth / 2
-                });
+        // increase the background and clip-path width
+        // by the scrollbar width and margin
+        bg.attr({
+            width: legendWidth -
+                2 * opts.borderwidth +
+                constants.scrollBarWidth +
+                constants.scrollBarMargin,
+            height: legendHeight - opts.borderwidth,
+            x: opts.borderwidth / 2,
+            y: opts.borderwidth / 2
+        });
 
-                clipPath.select('rect').attr({
-                    width: legendWidth -
-                        2 * opts.borderwidth +
-                        constants.scrollBarWidth +
-                        constants.scrollBarMargin,
-                    height: legendHeight - 2 * opts.borderwidth,
-                    x: opts.borderwidth,
+        clipPath.select('rect').attr({
+            width: legendWidth -
+                2 * opts.borderwidth +
+                constants.scrollBarWidth +
+                constants.scrollBarMargin,
+            height: legendHeight - 2 * opts.borderwidth,
+            x: opts.borderwidth,
                     y: opts.borderwidth + scrollBoxY
-                });
+        });
 
                 Drawing.setClipUrl(scrollBox, clipId);
 
                 scrollHandler(scrollBoxY, scrollBarHeight, scrollRatio);
 
-                legend.on('wheel', function() {
-                    scrollBoxY = Lib.constrain(
+        legend.on('wheel', function() {
+            scrollBoxY = Lib.constrain(
                         opts._scrollY +
-                            d3.event.deltaY / scrollBarYMax * scrollBoxYMax,
+                    d3.event.deltaY / scrollBarYMax * scrollBoxYMax,
                         0, scrollBoxYMax);
                     scrollHandler(scrollBoxY, scrollBarHeight, scrollRatio);
                     if(scrollBoxY !== 0 && scrollBoxY !== scrollBoxYMax) {
-                        d3.event.preventDefault();
-                    }
-                });
+                d3.event.preventDefault();
+            }
+        });
 
                 var eventY0, scrollBoxY0;
 
@@ -292,10 +308,10 @@ module.exports = function draw(gd) {
                         (e.clientY - eventY0) / scrollRatio + scrollBoxY0,
                         0, scrollBoxYMax);
                     scrollHandler(scrollBoxY, scrollBarHeight, scrollRatio);
-                });
+        });
 
-                scrollBar.call(drag);
-            }
+        scrollBar.call(drag);
+    }
 
 
             function scrollHandler(scrollBoxY, scrollBarHeight, scrollRatio) {
@@ -304,53 +320,53 @@ module.exports = function draw(gd) {
 
                 Drawing.setRect(
                     scrollBar,
-                    legendWidth,
+            legendWidth,
                     constants.scrollBarMargin + scrollBoxY * scrollRatio,
-                    constants.scrollBarWidth,
+            constants.scrollBarWidth,
                     scrollBarHeight
-                );
-                clipPath.select('rect').attr({
+        );
+        clipPath.select('rect').attr({
                     y: opts.borderwidth + scrollBoxY
-                });
-            }
+        });
+    }
 
-            if(gd._context.edits.legendPosition) {
-                var xf, yf, x0, y0;
+    if(gd._context.edits.legendPosition) {
+        var xf, yf, x0, y0;
 
-                legend.classed('cursor-move', true);
+        legend.classed('cursor-move', true);
 
-                dragElement.init({
-                    element: legend.node(),
-                    gd: gd,
-                    prepFn: function() {
-                        var transform = Drawing.getTranslate(legend);
+        dragElement.init({
+            element: legend.node(),
+            gd: gd,
+            prepFn: function() {
+                var transform = Drawing.getTranslate(legend);
 
-                        x0 = transform.x;
-                        y0 = transform.y;
-                    },
-                    moveFn: function(dx, dy) {
-                        var newX = x0 + dx,
-                            newY = y0 + dy;
+                x0 = transform.x;
+                y0 = transform.y;
+            },
+            moveFn: function(dx, dy) {
+                var newX = x0 + dx,
+                    newY = y0 + dy;
 
-                        Drawing.setTranslate(legend, newX, newY);
+                Drawing.setTranslate(legend, newX, newY);
 
-                        xf = dragElement.align(newX, 0, gs.l, gs.l + gs.w, opts.xanchor);
-                        yf = dragElement.align(newY, 0, gs.t + gs.h, gs.t, opts.yanchor);
-                    },
-                    doneFn: function() {
-                        if(xf !== undefined && yf !== undefined) {
+                xf = dragElement.align(newX, 0, gs.l, gs.l + gs.w, opts.xanchor);
+                yf = dragElement.align(newY, 0, gs.t + gs.h, gs.t, opts.yanchor);
+            },
+            doneFn: function() {
+                if(xf !== undefined && yf !== undefined) {
                             Registry.call('relayout', gd, {'legend.x': xf, 'legend.y': yf});
-                        }
-                    },
-                    clickFn: function(numClicks, e) {
+                }
+            },
+            clickFn: function(numClicks, e) {
                         var clickedTrace = fullLayout._infolayer.selectAll('g.traces').filter(function() {
-                            var bbox = this.getBoundingClientRect();
+                        var bbox = this.getBoundingClientRect();
                             return (
                                 e.clientX >= bbox.left && e.clientX <= bbox.right &&
                                 e.clientY >= bbox.top && e.clientY <= bbox.bottom
                             );
-                        });
-                        if(clickedTrace.size() > 0) {
+                    });
+                if(clickedTrace.size() > 0) {
                             clickOrDoubleClick(gd, legend, clickedTrace, numClicks, e);
                         }
                     }
@@ -385,19 +401,19 @@ function clickOrDoubleClick(gd, legend, legendItem, numClicks, evt) {
     var clickVal = Events.triggerHandler(gd, 'plotly_legendclick', evtData);
     if(clickVal === false) return;
 
-    if(numClicks === 1) {
-        legend._clickTimeout = setTimeout(function() {
+                    if(numClicks === 1) {
+                        legend._clickTimeout = setTimeout(function() {
             handleClick(legendItem, gd, numClicks);
-        }, DBLCLICKDELAY);
-    }
+                        }, DBLCLICKDELAY);
+                        }
     else if(numClicks === 2) {
         if(legend._clickTimeout) clearTimeout(legend._clickTimeout);
         gd._legendMouseDownTime = 0;
 
         var dblClickVal = Events.triggerHandler(gd, 'plotly_legenddoubleclick', evtData);
         if(dblClickVal !== false) handleClick(legendItem, gd, numClicks);
-    }
-}
+                    }
+                }
 
 function drawTexts(g, gd, maxLength) {
     var legendItem = g.data()[0][0];
@@ -407,13 +423,32 @@ function drawTexts(g, gd, maxLength) {
     var traceIndex = trace.index;
     var name = isPie ? legendItem.label : trace.name;
     var isEditable = gd._context.edits.legendText && !isPie;
+        
+   var text = g.selectAll('text.legendtext')
+        .data([0]);    
+       // ion: legend label ellipsis
+        var maxCharLength = 20;                    
+        var drawnText = name;
+        if (name.length > maxCharLength) {
+            var firstLen = Math.floor(maxCharLength / 2);
+            var lastLen = maxCharLength - firstLen - 1;
+            drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+        }
 
-    var textEl = Lib.ensureSingle(g, 'text', 'legendtext');
+    var text = g.selectAll('text.legendtext')
+        .data([0]);
+    // ion
+    // text.enter().append('text').classed('legendtext', true);
+    var thisG = text.enter();
+    thisG.append("title").text(name);
+    thisG.append('text').classed('legendtext', true);
 
-    textEl.attr('text-anchor', 'start')
+    text.attr('text-anchor', 'start')
         .classed('user-select-none', true)
         .call(Drawing.font, fullLayout.legend.font)
-        .text(isEditable ? ensureLength(name, maxLength) : name);
+        // ion
+        //.text(name);
+        .text(drawnText);
 
     svgTextUtils.positionText(textEl, constants.textOffsetX, 0);
 
@@ -474,8 +509,8 @@ function setupTraceToggle(g, gd) {
 
     var traceToggle = Lib.ensureSingle(g, 'rect', 'legendtoggle', function(s) {
         s.style('cursor', 'pointer')
-            .attr('pointer-events', 'all')
-            .call(Color.fill, 'rgba(0,0,0,0)');
+        .attr('pointer-events', 'all')
+        .call(Color.fill, 'rgba(0,0,0,0)');
     });
 
     traceToggle.on('mousedown', function() {

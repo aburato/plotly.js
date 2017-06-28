@@ -129,6 +129,11 @@ function drawRaw(gd, options, index, subplotId, xa, ya) {
         .attr('data-index', String(index))
         .style('opacity', options.opacity);
 
+    // ion: custom classes hack 
+    if (options.classes) {
+        annGroup.classed(options.classes, true);
+    }
+
     // another group for text+background so that they can rotate together
     var annTextGroup = annGroup.append('g')
         .classed('annotation-text-g', true);

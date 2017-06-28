@@ -108,22 +108,27 @@ function drawOne(gd, index) {
             .call(Color.fill, options.fillcolor)
             .call(Drawing.dashLine, options.line.dash, options.line.width);
 
-        setClipPath(path, gd, options);
-
-        if(gd._context.edits.shapePosition) setupDragElement(gd, path, options, index, shapeLayer);
+		// ion: custom class hack
+		if (options.classes) {
+			path.classed(options.classes, true);
+		} 
+		setClipPath(path, gd, options);
+		// ION commented out if(gd._context.edits.shapePosition) setupDragElement(gd, path, options, index, shapeLayer);
     }
 }
-
 function setClipPath(shapePath, gd, shapeOptions) {
-    // note that for layer="below" the clipAxes can be different from the
-    // subplot we're drawing this in. This could cause problems if the shape
-    // spans two subplots. See https://github.com/plotly/plotly.js/issues/1452
+        // note that for layer="below" the clipAxes can be different from the
+        // subplot we're drawing this in. This could cause problems if the shape
+        // spans two subplots. See https://github.com/plotly/plotly.js/issues/1452
     var clipAxes = (shapeOptions.xref + shapeOptions.yref).replace(/paper/g, '');
 
     shapePath.call(Drawing.setClipUrl, clipAxes ?
-      ('clip' + gd._fullLayout._uid + clipAxes) :
-      null
-    );
+            ('clip' + gd._fullLayout._uid + clipAxes) :
+            null
+        );
+
+		// ion: disable drag
+        // if(gd._context.edits.shapePosition) setupDragElement(gd, path, options, index);    }
 }
 
 function setupDragElement(gd, shapePath, shapeOptions, index, shapeLayer) {
@@ -229,21 +234,21 @@ function setupDragElement(gd, shapePath, shapeOptions, index, shapeLayer) {
             // so obtain bounding box here
             var dragBBox = dragOptions.element.getBoundingClientRect();
 
-            // choose 'move' or 'resize'
-            // based on initial position of cursor within the drag element
-            var w = dragBBox.right - dragBBox.left,
-                h = dragBBox.bottom - dragBBox.top,
-                x = evt.clientX - dragBBox.left,
-                y = evt.clientY - dragBBox.top,
+        // choose 'move' or 'resize'
+        // based on initial position of cursor within the drag element
+        var w = dragBBox.right - dragBBox.left,
+            h = dragBBox.bottom - dragBBox.top,
+            x = evt.clientX - dragBBox.left,
+            y = evt.clientY - dragBBox.top,
                 cursor = (!isPath && w > MINWIDTH && h > MINHEIGHT && !evt.shiftKey) ?
-                    dragElement.getCursor(x / w, 1 - y / h) :
-                    'move';
+                dragElement.getCursor(x / w, 1 - y / h) :
+                'move';
 
-            setCursor(shapePath, cursor);
+        setCursor(shapePath, cursor);
 
-            // possible values 'move', 'sw', 'w', 'se', 'e', 'ne', 'n', 'nw' and 'w'
-            dragMode = cursor.split('-')[0];
-        }
+        // possible values 'move', 'sw', 'w', 'se', 'e', 'ne', 'n', 'nw' and 'w'
+        dragMode = cursor.split('-')[0];
+    }
     }
 
     function startDrag(evt) {
@@ -323,14 +328,14 @@ function setupDragElement(gd, shapePath, shapeOptions, index, shapeLayer) {
                 modifyItem('xanchor', shapeOptions.xanchor = p2x(xAnchor + dx));
             } else {
                 moveX = function moveX(x) { return p2x(x2p(x) + dx); };
-                if(xa && xa.type === 'date') moveX = helpers.encodeDate(moveX);
+            if(xa && xa.type === 'date') moveX = helpers.encodeDate(moveX);
             }
 
             if(yPixelSized) {
                 modifyItem('yanchor', shapeOptions.yanchor = p2y(yAnchor + dy));
             } else {
                 moveY = function moveY(y) { return p2y(y2p(y) + dy); };
-                if(ya && ya.type === 'date') moveY = helpers.encodeDate(moveY);
+            if(ya && ya.type === 'date') moveY = helpers.encodeDate(moveY);
             }
 
             modifyItem('path', shapeOptions.path = movePath(pathIn, moveX, moveY));
@@ -341,7 +346,7 @@ function setupDragElement(gd, shapePath, shapeOptions, index, shapeLayer) {
             } else {
                 modifyItem('x0', shapeOptions.x0 = p2x(x0 + dx));
                 modifyItem('x1', shapeOptions.x1 = p2x(x1 + dx));
-            }
+        }
 
             if(yPixelSized) {
                 modifyItem('yanchor', shapeOptions.yanchor = p2y(yAnchor + dy));
@@ -366,14 +371,14 @@ function setupDragElement(gd, shapePath, shapeOptions, index, shapeLayer) {
                 modifyItem('xanchor', shapeOptions.xanchor = p2x(xAnchor + dx));
             } else {
                 moveX = function moveX(x) { return p2x(x2p(x) + dx); };
-                if(xa && xa.type === 'date') moveX = helpers.encodeDate(moveX);
+            if(xa && xa.type === 'date') moveX = helpers.encodeDate(moveX);
             }
 
             if(yPixelSized) {
                 modifyItem('yanchor', shapeOptions.yanchor = p2y(yAnchor + dy));
             } else {
                 moveY = function moveY(y) { return p2y(y2p(y) + dy); };
-                if(ya && ya.type === 'date') moveY = helpers.encodeDate(moveY);
+            if(ya && ya.type === 'date') moveY = helpers.encodeDate(moveY);
             }
 
             modifyItem('path', shapeOptions.path = movePath(pathIn, moveX, moveY));
@@ -422,7 +427,7 @@ function setupDragElement(gd, shapePath, shapeOptions, index, shapeLayer) {
     function renderVisualCues(shapeLayer, shapeOptions) {
         if(xPixelSized || yPixelSized) {
             renderAnchor();
-        }
+}
 
         function renderAnchor() {
             var isNotPath = shapeOptions.type !== 'path';
