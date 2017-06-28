@@ -26,6 +26,7 @@
     "header": "node tasks/header.js",
     "stats": "node tasks/stats.js",
     "build": "npm run preprocess && npm run bundle && npm run header && npm run stats",
+    "ionbuild": "npm run preprocess && npm run bundle && npm run header",
     "cibuild": "npm run preprocess && node tasks/cibundle.js",
     "watch": "node tasks/watch.js",
     "lint": "eslint --version && eslint .",
