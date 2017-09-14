@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.28.3-ion40
+* plotly.js (ion) v1.28.3-ion41
 * Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -20841,9 +20841,9 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
         d.offset = 0;
 
         // ion: position hover group
-        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.layerX && evt.layerY) {
-            htx = evt.layerX;
-            hty = evt.layerY;
+        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.offsetX && evt.offsetY) {
+            htx = evt.offsetX;
+            hty = evt.offsetY;
         }
 
         if(rotateLabels) {
@@ -29987,7 +29987,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.28.3-ion40';
+exports.version = '1.28.3-ion41';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
