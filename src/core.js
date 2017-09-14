@@ -11,7 +11,10 @@
 // package version injected by `npm run preprocess`
 exports.version = '1.42.5';
 
-// inject promise polyfill
+exports.version = '1.33.1-ion40';
+
+// package version injected by `npm run preprocess`
+exports.version = '1.42.5-ion41';// inject promise polyfill
 require('es6-promise').polyfill();
 
 // inject plot css

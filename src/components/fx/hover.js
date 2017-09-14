@@ -1003,9 +1003,9 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
         d.offset = 0;
 
         // ion: position hover group
-        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.layerX && evt.layerY) {
-            htx = evt.layerX;
-            hty = evt.layerY;
+        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.offsetX && evt.offsetY) {
+            htx = evt.offsetX;
+            hty = evt.offsetY;
         }
 
         if(rotateLabels) {

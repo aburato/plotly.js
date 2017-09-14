@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion41] -- 2017-09-14
+
+### Fixed
+- hoverinfo labels in treemap charts displaced when browser is zoomed
+
 
 ## [1.28.3-ion40] -- 2017-06-28
 
