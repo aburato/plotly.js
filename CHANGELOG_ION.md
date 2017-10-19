@@ -1,5 +1,11 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion42] -- 2017-10-19
+
+### Fixed
+- Maximum call stack size exceeded while resizing chart to a small area
+
+
 ## [1.28.3-ion41] -- 2017-09-14
 
 ### Fixed
