@@ -147,7 +147,6 @@ module.exports = function draw(gd) {
         fullLayout._infolayer.selectAll('.legend').remove();
         fullLayout._topdefs.select('#' + clipId).remove();
 
-        Plots.autoMargin(gd, 'legend');
         return;
     }
 

@@ -1,8 +1,8 @@
 {
   "name": "plotly.js",
-  "version": "1.42.5-ion41",
-  "description": "The open source javascript graphing library that powers plotly",  "license": "MIT",
-  "main": "./lib/index.js",
+  "version": "1.42.5-ion42",  
+  "description": "The open source javascript graphing library that powers plotly",
+  "license": "MIT",  "main": "./lib/index.js",
   "webpack": "./dist/plotly.js",
   "repository": {
     "type": "git",
