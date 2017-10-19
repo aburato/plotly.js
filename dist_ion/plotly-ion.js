@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.28.3-ion41
+* plotly.js (ion) v1.28.3-ion42
 * Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -22494,7 +22494,6 @@ module.exports = function draw(gd) {
         fullLayout._infolayer.selectAll('.legend').remove();
         fullLayout._topdefs.select('#' + clipId).remove();
 
-        Plots.autoMargin(gd, 'legend');
         return;
     }
 
@@ -29987,7 +29986,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.28.3-ion41';
+exports.version = '1.28.3-ion42';
 
 // inject promise polyfill
 require('es6-promise').polyfill();

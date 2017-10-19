@@ -12,5 +12,5 @@ var saneTopojson = require('sane-topojson');
 
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion41';
+exports.version = '1.33.1-ion42';
 exports.topojson = saneTopojson;
