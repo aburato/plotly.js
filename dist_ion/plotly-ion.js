@@ -22727,16 +22727,10 @@ function drawTexts(g, gd) {
         trace = legendItem.trace,
         isPie = Registry.traceIs(trace, 'pie'),
         traceIndex = trace.index,
-        name = isPie ? legendItem.label : trace.name;
-        
-        // ion: legend label ellipsis
-        var maxCharLength = 20;                    
-        var drawnText = name;
-        if (name.length > maxCharLength) {
-            var firstLen = Math.floor(maxCharLength / 2);
-            var lastLen = maxCharLength - firstLen - 1;
-            drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
-        }
+        name = isPie ? legendItem.label : trace.name;      
+
+    // ion
+    var drawnText = name;        
 
     var text = g.selectAll('text.legendtext')
         .data([0]);

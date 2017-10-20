@@ -422,17 +422,12 @@ function drawTexts(g, gd, maxLength) {
     var traceIndex = trace.index;
     var name = isPie ? legendItem.label : trace.name;
     var isEditable = gd._context.edits.legendText && !isPie;
-        
+
    var text = g.selectAll('text.legendtext')
         .data([0]);    
        // ion: legend label ellipsis
         var maxCharLength = 20;                    
-        var drawnText = name;
-        if (name.length > maxCharLength) {
-            var firstLen = Math.floor(maxCharLength / 2);
-            var lastLen = maxCharLength - firstLen - 1;
-            drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
-        }
+    var drawnText = name;        
 
     var text = g.selectAll('text.legendtext')
         .data([0]);

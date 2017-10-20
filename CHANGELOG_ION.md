@@ -1,5 +1,11 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion43] -- 2017-10-20
+
+### Fix part I
+- Legend labels do not have any more ellipsis
+
+
 ## [1.28.3-ion42] -- 2017-10-19
 
 ### Fixed
