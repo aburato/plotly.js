@@ -1,5 +1,11 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion44] -- 2017-10-20
+
+### Fix
+- Legend labels overlap pie charts when widget resized at a specific small size
+
+
 ## [1.28.3-ion43] -- 2017-10-20
 
 ### Fix part I

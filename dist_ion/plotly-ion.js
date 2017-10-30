@@ -1,5 +1,5 @@
 /**
-* plotly.js (ion) v1.28.3-ion42
+* plotly.js (ion) v1.28.3-ion44
 * Copyright 2012-2017, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -22490,7 +22490,7 @@ module.exports = function draw(gd) {
     // ion: HIDE the legend if it's too big and would
     // result in covering the chart
     if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45) ||
-       (opts.orientation === "h" && opts.height > fullLayout.height * 0.45)) {
+       (opts.orientation === "h" && opts.height > fullLayout.height * 0.4)) {
         fullLayout._infolayer.selectAll('.legend').remove();
         fullLayout._topdefs.select('#' + clipId).remove();
 
@@ -29980,7 +29980,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.28.3-ion42';
+exports.version = '1.28.3-ion44';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -51779,7 +51779,7 @@ plots.autoMargin = function(gd, id, o) {
             // if the item is too big, just give it enough automargin to
             // make sure you can still grab it and bring it back
             if(o.l + o.r > fullLayout.width * 0.45) o.l = o.r = 0;
-            if(o.b + o.t > fullLayout.height * 0.45) o.b = o.t = 0;
+            if(o.b + o.t > fullLayout.height * 0.4) o.b = o.t = 0;
 
             fullLayout._pushmargin[id] = {
                 l: {val: o.x, size: o.l + pad},
