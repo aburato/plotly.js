@@ -14,8 +14,9 @@ exports.version = '1.42.5';
 exports.version = '1.33.1-ion40';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.42.5-ion42';
-// inject promise polyfillrequire('es6-promise').polyfill();
+exports.version = '1.42.5-ion44';
+// inject promise polyfill
+require('es6-promise').polyfill();
 
 // inject plot css
 require('../build/plotcss');
