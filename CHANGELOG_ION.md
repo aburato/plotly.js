@@ -1,5 +1,11 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion45] -- 2017-11-22
+
+### CandleStick
+- Added possibility to render CandleStick charts
+
+
 ## [1.28.3-ion44] -- 2017-10-20
 
 ### Fix
