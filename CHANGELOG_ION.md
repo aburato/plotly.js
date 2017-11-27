@@ -1,5 +1,11 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion46] -- 2017-11-27
+
+### CandleStick with bar chart
+- Disabled code that rescaled multi-bar chart due to negative side effect in candlestick charts
+
+
 ## [1.28.3-ion45] -- 2017-11-22
 
 ### CandleStick
