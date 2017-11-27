@@ -36,12 +36,36 @@ module.exports = function setPositions(gd, plotinfo) {
         i;
     
     // ion
+    var allBarChartFlag = 1;
+
     for(i = 0; i < fullTraces.length; i++) {
         var fullTrace = fullTraces[i];
         var calcTrace = calcTraces[i];
 
-        if (!fullTrace.visible || !Registry.traceIs(fullTrace, 'bar') ||
-            calcTraces[i][0].placeholder) continue;
+        // Plotly original code
+        if(
+            fullTrace.visible === true &&
+            Registry.traceIs(fullTrace, 'bar') &&
+            fullTrace.xaxis === xa._id &&
+            fullTrace.yaxis === ya._id
+        ) {
+            if(fullTrace.orientation === 'h') {
+                calcTracesHorizontal.push(calcTraces[i]);
+            }
+            else {
+                calcTracesVertical.push(calcTraces[i]);
+            }
+        }
+
+        // ION code to rescale an 'all-bar' chart without stacking bars
+        if (fullTrace.visible && !Registry.traceIs(fullTrace, 'bar')) {
+            allBarChartFlag = 0;
+            continue;
+        }
+
+        if (!fullTrace.visible || !Registry.traceIs(fullTrace, 'bar') || calcTraces[i][0].placeholder) {
+            continue;
+        }
     
         if(fullTrace.orientation === 'h') {
             calcTracesHorizontalMap[fullTrace.xaxis].push(calcTrace);
@@ -53,15 +77,16 @@ module.exports = function setPositions(gd, plotinfo) {
 
     // Detect multi-axes
     var group = (gd._fullLayout.barmode === 'group');
-    if (!group) {
+    if (!group && allBarChartFlag === 1) {
         // standard case
         calcTracesHorizontal = calcTracesHorizontalMap[xa._id].filter(function(t) { return t[0].trace.yaxis === ya._id });
         calcTracesVertical = calcTracesVerticalMap[ya._id].filter(function(t) { return t[0].trace.xaxis === xa._id });
-    } else {
+    } else if (allBarChartFlag === 1) {
         // Ok, grouping mode. Are there traces on both x/y and x2/y2 axes?
         calcTracesHorizontal = calcTracesHorizontalMap.x.concat(calcTracesHorizontalMap.x2);
-        calcTracesVertical = calcTracesVerticalMap.y.concat(calcTracesVerticalMap.y2);
+        calcTracesVertical = calcTracesVerticalMap.y.concat(calcTracesVerticalMap.y2);        
     }
+    // end of the ION code to rescale an 'all-bar' chart without stacking bars
 
     setGroupPositions(gd, xa, ya, calcTracesVertical);
     setGroupPositions(gd, ya, xa, calcTracesHorizontal);
