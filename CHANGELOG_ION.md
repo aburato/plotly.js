@@ -1,5 +1,11 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion47] -- 2018-01-02
+
+### Initial drag touch gesture support in charts
+- Now charts supports dragging horizontally to move the X-axis. This a merge of a commit on Plotly 1.29.
+
+
 ## [1.28.3-ion46] -- 2017-11-27
 
 ### CandleStick with bar chart

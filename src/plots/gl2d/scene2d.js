@@ -533,6 +533,17 @@ proto.updateFx = function(dragmode) {
     } else {
         this.mouseContainer.style['pointer-events'] = 'auto';
     }
+
+    // set proper cursor
+    if(dragmode === 'pan') {
+        this.mouseContainer.style.cursor = 'move';
+    }
+    else if(dragmode === 'zoom') {
+        this.mouseContainer.style.cursor = 'crosshair';
+    }
+    else {
+        this.mouseContainer.style.cursor = null;
+    }
 };
 
 proto.emitPointAction = function(nextSelection, eventType) {
