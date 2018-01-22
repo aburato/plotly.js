@@ -123,6 +123,42 @@ dragElement.init = function init(options) {
 
     var clampFn = options.clampFn || _clampFn;
 
+    // Return true if current chart settings require some event to be propagated.
+    // Return false if it is required to stop the event once managed
+    function shouldBubbleEvents() {
+        var fullLayout = gd && gd._fullLayout;
+        // Currently we allow bubbling just events on chart where pan gesture is enabled
+        return fullLayout && fullLayout.dragmode === "pan";
+    }
+
+    // Return true if the event will be managed (most probably) by the chart for the given pan direction (dx, dy)
+    // Return false if the chart is going to ignore the current event
+    function willBeEventManaged(dx, dy) {
+        
+        // Return true if fixed range have been configured for the given axis
+        var isAxisFixed = function(axis) {
+            return axis && axis._input && axis._input.fixedrange;
+        };
+        
+        if (shouldBubbleEvents()) {
+            var plotinfo = options && options.plotinfo;
+
+            if (isAxisFixed(plotinfo.yaxis) && !dx) {
+                // As yAxis is fixed and user haven't moved on horizontal direction, means the event will be ignored by the chart
+                return false;
+            }
+
+            if (isAxisFixed(plotinfo.xaxis) && !dy) {
+                // As xAxis is fixed and user haven't moved on vertical direction, means the event will be ignored by the chart
+                return false;
+            }
+        }
+
+        // The event will be most probably managed by the chart
+        return true;
+
+    }
+
     function onStart(e) {
         e.preventDefault();
 
@@ -172,6 +208,10 @@ dragElement.init = function init(options) {
         document.addEventListener('touchmove', onMove);
         document.addEventListener('touchend', onDone);
 
+        if (!shouldBubbleEvents()) {
+            return Lib.pauseEvent(e);
+        }
+        // Else return undefined to bubble the event
         return;
     }
 
@@ -183,6 +223,11 @@ dragElement.init = function init(options) {
         var dxdy = clampFn(offset[0] - startX, offset[1] - startY, minDrag);
         var dx = dxdy[0];
         var dy = dxdy[1];
+
+
+        if (!willBeEventManaged(dx, dy)) {
+            return;
+        }
 
         if(dx || dy) {
             gd._dragged = true;
@@ -258,6 +303,10 @@ dragElement.init = function init(options) {
 
         gd._dragged = false;
 
+        if (!shouldBubbleEvents()) {
+            return Lib.pauseEvent(e);
+        }
+        // Else return undefined to bubble the event
         return;
     }
 };
