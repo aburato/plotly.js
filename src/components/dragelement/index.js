@@ -200,6 +200,11 @@ dragElement.init = function init(options) {
         document.addEventListener('touchmove', onMove);
         document.addEventListener('touchend', onDone);
 
+        // In the case the e.target will be removed from the DOM, the touchend onDone will be called on touch release
+        e.target && e.target.addEventListener('touchend', onDone);
+
+        gd.emit('plotly_dragstart', e);
+
         if (!shouldBubbleEvents()) {
             return Lib.pauseEvent(e);
         }
@@ -208,23 +213,29 @@ dragElement.init = function init(options) {
     }
 
     function onMove(e) {
-        var offset = pointerOffset(e);
-        var minDrag = options.minDrag || constants.MINDRAG;
-        var dxdy = clampFn(offset[0] - startX, offset[1] - startY, minDrag);
-        var dx = dxdy[0];
-        var dy = dxdy[1];
+
+        // Methods called below assume the chart is drawn and ready on the DOM.
+        // Actually if there are no child element on gd, it means we have no chart and no op should be performed
+        if (gd.childElementCount) {
+
+            var offset = pointerOffset(e);
+            var minDrag = options.minDrag || constants.MINDRAG;
+            var dxdy = clampFn(offset[0] - startX, offset[1] - startY, minDrag);
+            var dx = dxdy[0];
+            var dy = dxdy[1];
 
 
-        if (!willBeEventManaged(dx, dy)) {
-            return;
+            if (!willBeEventManaged(dx, dy)) {
+                return;
+            }
+
+            if(dx || dy) {
+                gd._dragged = true;
+                dragElement.unhover(gd);
+            }
+
+            if(gd._dragged && options.moveFn && !rightClick) options.moveFn(dx, dy);
         }
-
-        if(dx || dy) {
-            gd._dragged = true;
-            dragElement.unhover(gd);
-        }
-
-        if(gd._dragged && options.moveFn && !rightClick) options.moveFn(dx, dy);
 
         return Lib.pauseEvent(e);
     }
@@ -234,7 +245,8 @@ dragElement.init = function init(options) {
         document.removeEventListener('mouseup', onDone);
         document.removeEventListener('touchmove', onMove);
         document.removeEventListener('touchend', onDone);
-
+        e.target && e.target.removeEventListener('touchend', onDone);
+ 
         if(hasHover) {
             Lib.removeElement(dragCover);
         }
@@ -242,6 +254,8 @@ dragElement.init = function init(options) {
             dragCover.documentElement.style.cursor = cursor;
             cursor = null;
         }
+
+        gd.emit('plotly_dragend');
 
         if(!gd._dragging) {
             gd._dragged = false;
@@ -255,35 +269,40 @@ dragElement.init = function init(options) {
             numClicks = Math.max(numClicks - 1, 1);
         }
 
-        if(gd._dragged) {
-            if(options.doneFn) options.doneFn(e);
-        }
-        else {
-            if(options.clickFn) options.clickFn(numClicks, initialEvent);
+        // Invoke callback only if gd has children
+        // We observed several issues (exceptions) when code is performed without children
+        if (gd.childElementCount) {
 
-            // If we haven't dragged, this should be a click. But because of the
-            // coverSlip changing the element, the natural system might not generate one,
-            // so we need to make our own. But right clicks don't normally generate
-            // click events, only contextmenu events, which happen on mousedown.
-            if(!rightClick) {
-                var e2;
+            if (gd._dragged) {
+                if (options.doneFn) options.doneFn(e);
+            }
+            else {
+                if (options.clickFn) options.clickFn(numClicks, initialEvent);
 
-                try {
-                    e2 = new MouseEvent('click', e);
+                // If we haven't dragged, this should be a click. But because of the
+                // coverSlip changing the element, the natural system might not generate one,
+                // so we need to make our own. But right clicks don't normally generate
+                // click events, only contextmenu events, which happen on mousedown.
+                if (!rightClick) {
+                    var e2;
+
+                    try {
+                        e2 = new MouseEvent('click', e);
+                    }
+                    catch (err) {
+                        var offset = pointerOffset(e);
+                        e2 = document.createEvent('MouseEvents');
+                        e2.initMouseEvent('click',
+                            e.bubbles, e.cancelable,
+                            e.view, e.detail,
+                            e.screenX, e.screenY,
+                            offset[0], offset[1],
+                            e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
+                            e.button, e.relatedTarget);
+                    }
+
+                    initialTarget.dispatchEvent(e2);
                 }
-                catch(err) {
-                    var offset = pointerOffset(e);
-                    e2 = document.createEvent('MouseEvents');
-                    e2.initMouseEvent('click',
-                        e.bubbles, e.cancelable,
-                        e.view, e.detail,
-                        e.screenX, e.screenY,
-                        offset[0], offset[1],
-                        e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
-                        e.button, e.relatedTarget);
-                }
-
-                initialTarget.dispatchEvent(e2);
             }
         }
 
