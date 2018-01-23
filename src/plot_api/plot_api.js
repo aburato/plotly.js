@@ -1315,6 +1315,14 @@ exports.moveTraces = function moveTraces(gd, currentIndices, newIndices) {
  */
 exports.restyle = function restyle(gd, astr, val, _traces) {
     gd = Lib.getGraphDiv(gd);
+
+    if(gd._dragging && !gd._transitioning) {
+        // signal to drag handler that after everything else is done
+        // we need to replot, because something has changed
+        gd._replotPending = true;
+        return Promise.reject();
+    }
+    
     helpers.clearPromiseQueue(gd);
 
     var aobj = {};
@@ -1708,6 +1716,14 @@ function _restyle(gd, aobj, traces) {
  */
 exports.relayout = function relayout(gd, astr, val) {
     gd = Lib.getGraphDiv(gd);
+    
+    if(gd._dragging && !gd._transitioning) {
+        // signal to drag handler that after everything else is done
+        // we need to replot, because something has changed
+        gd._replotPending = true;
+        return Promise.reject();
+    }
+
     helpers.clearPromiseQueue(gd);
 
     if(gd.framework && gd.framework.isPolar) {
