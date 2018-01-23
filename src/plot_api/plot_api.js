@@ -1209,6 +1209,14 @@ Plotly.moveTraces = function moveTraces(gd, currentIndices, newIndices) {
  */
 Plotly.restyle = function restyle(gd, astr, val, traces) {
     gd = helpers.getGraphDiv(gd);
+
+    if(gd._dragging && !gd._transitioning) {
+        // signal to drag handler that after everything else is done
+        // we need to replot, because something has changed
+        gd._replotPending = true;
+        return Promise.reject();
+    }
+    
     helpers.clearPromiseQueue(gd);
 
     var aobj = {};
@@ -1783,6 +1791,14 @@ function _restyle(gd, aobj, _traces) {
  */
 Plotly.relayout = function relayout(gd, astr, val) {
     gd = helpers.getGraphDiv(gd);
+    
+    if(gd._dragging && !gd._transitioning) {
+        // signal to drag handler that after everything else is done
+        // we need to replot, because something has changed
+        gd._replotPending = true;
+        return Promise.reject();
+    }
+
     helpers.clearPromiseQueue(gd);
 
     if(gd.framework && gd.framework.isPolar) {

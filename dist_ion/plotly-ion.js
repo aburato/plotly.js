@@ -17668,30 +17668,37 @@ dragElement.init = function init(options) {
     options.element.ontouchstart = onStart;
 
     // Return true if current chart settings require some event to be propagated.
-    // Return true if it is required to stop the event once managed
-    function canBubbleEvents() {
+    // Return false if it is required to stop the event once managed
+    function shouldBubbleEvents() {
         var fullLayout = gd && gd._fullLayout;
         // Currently we allow bubbling just events on chart where pan gesture is enabled
         return fullLayout && fullLayout.dragmode === "pan";
     }
 
-    // Return true if the event will be managed by the chart for the given dx, dy
+    // Return true if the event will be managed (most probably) by the chart for the given pan direction (dx, dy)
     // Return false if the chart is going to ignore the current event
     function willBeEventManaged(dx, dy) {
         
+        // Return true if fixed range have been configured for the given axis
         var isAxisFixed = function(axis) {
             return axis && axis._input && axis._input.fixedrange;
         };
         
-        if (canBubbleEvents()) {
+        if (shouldBubbleEvents()) {
             var plotinfo = options && options.plotinfo;
+
             if (isAxisFixed(plotinfo.yaxis) && !dx) {
+                // As yAxis is fixed and user haven't moved on horizontal direction, means the event will be ignored by the chart
                 return false;
             }
+
             if (isAxisFixed(plotinfo.xaxis) && !dy) {
+                // As xAxis is fixed and user haven't moved on vertical direction, means the event will be ignored by the chart
                 return false;
             }
         }
+
+        // The event will be most probably managed by the chart
         return true;
 
     }
@@ -17736,10 +17743,11 @@ dragElement.init = function init(options) {
         dragCover.addEventListener('touchmove', onMove);
         dragCover.addEventListener('touchend', onDone);
 
-        if (!canBubbleEvents()) {
+        if (!shouldBubbleEvents()) {
             return Lib.pauseEvent(e);
         }
         // Else return undefined to bubble the event
+        return;
     }
 
     function onMove(e) {
@@ -17819,10 +17827,11 @@ dragElement.init = function init(options) {
 
         gd._dragged = false;
 
-        if (!canBubbleEvents()) {
+        if (!shouldBubbleEvents()) {
             return Lib.pauseEvent(e);
         }
         // Else return undefined to bubble the event
+        return;
     }
 
 };
@@ -36823,6 +36832,14 @@ Plotly.moveTraces = function moveTraces(gd, currentIndices, newIndices) {
  */
 Plotly.restyle = function restyle(gd, astr, val, traces) {
     gd = helpers.getGraphDiv(gd);
+
+    if(gd._dragging && !gd._transitioning) {
+        // signal to drag handler that after everything else is done
+        // we need to replot, because something has changed
+        gd._replotPending = true;
+        return Promise.reject();
+    }
+    
     helpers.clearPromiseQueue(gd);
 
     var aobj = {};
@@ -37397,6 +37414,14 @@ function _restyle(gd, aobj, _traces) {
  */
 Plotly.relayout = function relayout(gd, astr, val) {
     gd = helpers.getGraphDiv(gd);
+    
+    if(gd._dragging && !gd._transitioning) {
+        // signal to drag handler that after everything else is done
+        // we need to replot, because something has changed
+        gd._replotPending = true;
+        return Promise.reject();
+    }
+
     helpers.clearPromiseQueue(gd);
 
     if(gd.framework && gd.framework.isPolar) {
