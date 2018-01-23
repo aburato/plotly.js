@@ -151,6 +151,8 @@ dragElement.init = function init(options) {
         dragCover.addEventListener('touchmove', onMove);
         dragCover.addEventListener('touchend', onDone);
 
+        gd.emit('plotly_dragstart');
+
         if (!shouldBubbleEvents()) {
             return Lib.pauseEvent(e);
         }
@@ -195,6 +197,8 @@ dragElement.init = function init(options) {
             dragCover.documentElement.style.cursor = cursor;
             cursor = null;
         }
+
+        gd.emit('plotly_dragend');
 
         if(!gd._dragging) {
             gd._dragged = false;
