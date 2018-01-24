@@ -1,5 +1,12 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion48] -- 2018-01-02
+
+### Disable autoscroll on windowed axes while dragged in the past
+### Fix: "Bad container" exception
+### If vertical tap disabled, scroll outer container on touch devices
+
+
 ## [1.28.3-ion47] -- 2018-01-02
 
 ### Initial drag touch gesture support in charts
