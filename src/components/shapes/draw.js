@@ -120,7 +120,8 @@ function drawOne(gd, index) {
         );
 
 		// ion: disable drag
-        // if(gd._context.edits.shapePosition) setupDragElement(gd, path, options, index);    }
+        // if(gd._context.edits.shapePosition) setupDragElement(gd, path, options, index);    
+    }
 }
 
 function setupDragElement(gd, shapePath, shapeOptions, index) {
