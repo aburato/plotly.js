@@ -15,7 +15,6 @@ exports.version = '1.33.1-ion40';
 
 // package version injected by `npm run preprocess`
 exports.version = '1.42.5-ion48';// inject promise polyfillrequire('es6-promise').polyfill();
-
 // inject plot css
 require('../build/plotcss');
 
@@ -82,5 +81,5 @@ var color = require('./components/color');
 exports.colorDefaults = color.overrideColorDefaults;
 
 // ion: export exports
-var datesModule = require('./dates');
+var datesModule = require('./lib/dates');
 exports.dateTime2ms = datesModule.exports;
