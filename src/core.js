@@ -15,7 +15,7 @@
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.28.3-ion47';
+exports.version = '1.28.3-ion48';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -83,5 +83,5 @@ var color = require('./components/color');
 exports.colorDefaults = color.overrideColorDefaults;
 
 // ion: export exports
-var datesModule = require('./dates');
+var datesModule = require('./lib/dates');
 exports.dateTime2ms = datesModule.exports;
