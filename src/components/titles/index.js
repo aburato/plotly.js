@@ -96,7 +96,7 @@ function draw(gd, titleClass, options) {
         } else if (cont === fullLayout.xaxis2) {
             editable = gd._context.editableAxisX2Title;
         }
-    }
+    //}
     if(txt === '') opacity = 0;
     // look for placeholder text while stripping out numbers from eg X2, Y3
     // this is just for backward compatibility with the old version that had
