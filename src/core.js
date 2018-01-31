@@ -81,3 +81,7 @@ exports.d3 = require('d3');
 // ion: export color override hack
 var color = require('./components/color');
 exports.colorDefaults = color.overrideColorDefaults;
+
+// ion: export exports
+var datesModule = require('./dates');
+exports.dateTime2ms = datesModule.exports;
