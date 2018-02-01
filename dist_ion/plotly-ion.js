@@ -30205,7 +30205,10 @@ exports.colorDefaults = color.overrideColorDefaults;
 
 // ion: export exports
 var datesModule = require('./lib/dates');
-exports.dateTime2ms = datesModule.exports;
+exports.dateTime2ms = datesModule.dateTime2ms;
+
+// ion: export exports
+exports.ms2DateTimeLocal = datesModule.ms2DateTimeLocal;
 
 },{"../build/plotcss":1,"../build/ploticon":2,"./components/annotations":39,"./components/annotations3d":28,"./components/color":41,"./components/fx":82,"./components/images":90,"./components/legend":98,"./components/rangeselector":110,"./components/rangeslider":116,"./components/shapes":123,"./components/sliders":129,"./components/updatemenus":135,"./fonts/mathjax_config":143,"./lib/dates":147,"./lib/queue":168,"./plot_api/plot_schema":181,"./plot_api/register":182,"./plot_api/set_plot_config":183,"./plot_api/to_image":185,"./plot_api/validate":186,"./plotly":187,"./snapshot":246,"./snapshot/download":243,"./traces/scatter":314,"d3":13,"es6-promise":14}],143:[function(require,module,exports){
 /**
