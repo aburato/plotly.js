@@ -82,4 +82,4 @@ exports.colorDefaults = color.overrideColorDefaults;
 
 // ion: export exports
 var datesModule = require('./lib/dates');
-exports.dateTime2ms = datesModule.exports;
+exports.dateTime2ms = datesModule.dateTime2ms;
