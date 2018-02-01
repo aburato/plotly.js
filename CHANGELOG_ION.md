@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion49] -- 2018-02-01
+
+### [ATPWM-898] Support for correct management of dates on mobile devices. Earlier it worked accidentally on desktop envs.
+
+
 ## [1.28.3-ion48] -- 2018-01-02
 
 ### Disable autoscroll on windowed axes while dragged in the past
