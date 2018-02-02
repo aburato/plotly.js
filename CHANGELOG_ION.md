@@ -1,5 +1,9 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion50] -- 2018-02-02
+
+### [ATPWM-928] Fixed several exceptions on mobile devices
+
 ## [1.28.3-ion49] -- 2018-02-01
 
 ### [ATPWM-898] Support for correct management of dates on mobile devices. Earlier it worked accidentally on desktop envs.

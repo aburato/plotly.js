@@ -30140,7 +30140,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.28.3-ion48';
+exports.version = '1.28.3-ion50';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
