@@ -151,6 +151,9 @@ dragElement.init = function init(options) {
         dragCover.addEventListener('touchmove', onMove);
         dragCover.addEventListener('touchend', onDone);
 
+        // In the case the e.target will be removed from the DOM, the touchend onDone will be called on touch release
+        e.target && e.target.addEventListener('touchend', onDone);
+
         gd.emit('plotly_dragstart');
 
         if (!shouldBubbleEvents()) {
@@ -189,6 +192,7 @@ dragElement.init = function init(options) {
         dragCover.removeEventListener('mouseout', onDone);
         dragCover.removeEventListener('touchmove', onMove);
         dragCover.removeEventListener('touchend', onDone);
+        e.target && e.target.removeEventListener('touchend', onDone);
  
         if(hasHover) {
             Lib.removeElement(dragCover);
@@ -212,7 +216,7 @@ dragElement.init = function init(options) {
             numClicks = Math.max(numClicks - 1, 1);
         }
 
-        if(options.doneFn) options.doneFn(gd._dragged, numClicks, e);
+        if(options.doneFn && gd.childElementCount) options.doneFn(gd._dragged, numClicks, e);
 
         if(!gd._dragged) {
             var e2;
