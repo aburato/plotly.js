@@ -208,6 +208,9 @@ dragElement.init = function init(options) {
         document.addEventListener('touchmove', onMove);
         document.addEventListener('touchend', onDone);
 
+        // In the case the e.target will be removed from the DOM, the touchend onDone will be called on touch release
+        e.target && e.target.addEventListener('touchend', onDone);
+
         gd.emit('plotly_dragstart');
 
         if (!shouldBubbleEvents()) {
@@ -242,11 +245,13 @@ dragElement.init = function init(options) {
     }
 
     function onDone(e) {
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onDone);
-        document.removeEventListener('touchmove', onMove);
-        document.removeEventListener('touchend', onDone);
-
+        dragCover.removeEventListener('mousemove', onMove);
+        dragCover.removeEventListener('mouseup', onDone);
+        dragCover.removeEventListener('mouseout', onDone);
+        dragCover.removeEventListener('touchmove', onMove);
+        dragCover.removeEventListener('touchend', onDone);
+        e.target && e.target.removeEventListener('touchend', onDone);
+ 
         e.preventDefault();
 
         if(hasHover) {
@@ -271,35 +276,40 @@ dragElement.init = function init(options) {
             numClicks = Math.max(numClicks - 1, 1);
         }
 
-        if(gd._dragged) {
+        // Invoke callback only if gd has children
+        // We observed several issues (exceptions) when code is performed without children
+        if (gd.childElementCount) {
+
+            if (gd._dragged) {
             if(options.doneFn) options.doneFn();
-        }
-        else {
-            if(options.clickFn) options.clickFn(numClicks, initialEvent);
+            }
+            else {
+                if (options.clickFn) options.clickFn(numClicks, initialEvent);
 
-            // If we haven't dragged, this should be a click. But because of the
-            // coverSlip changing the element, the natural system might not generate one,
-            // so we need to make our own. But right clicks don't normally generate
-            // click events, only contextmenu events, which happen on mousedown.
-            if(!rightClick) {
-                var e2;
+                // If we haven't dragged, this should be a click. But because of the
+                // coverSlip changing the element, the natural system might not generate one,
+                // so we need to make our own. But right clicks don't normally generate
+                // click events, only contextmenu events, which happen on mousedown.
+                if (!rightClick) {
+                    var e2;
 
-                try {
-                    e2 = new MouseEvent('click', e);
+                    try {
+                        e2 = new MouseEvent('click', e);
+                    }
+                    catch (err) {
+                        var offset = pointerOffset(e);
+                        e2 = document.createEvent('MouseEvents');
+                        e2.initMouseEvent('click',
+                            e.bubbles, e.cancelable,
+                            e.view, e.detail,
+                            e.screenX, e.screenY,
+                            offset[0], offset[1],
+                            e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
+                            e.button, e.relatedTarget);
+                    }
+
+                    initialTarget.dispatchEvent(e2);
                 }
-                catch(err) {
-                    var offset = pointerOffset(e);
-                    e2 = document.createEvent('MouseEvents');
-                    e2.initMouseEvent('click',
-                        e.bubbles, e.cancelable,
-                        e.view, e.detail,
-                        e.screenX, e.screenY,
-                        offset[0], offset[1],
-                        e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
-                        e.button, e.relatedTarget);
-                }
-
-                initialTarget.dispatchEvent(e2);
             }
         }
 
