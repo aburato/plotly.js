@@ -89,6 +89,12 @@ proto.plot = function(geoCalcData, fullLayout, promises) {
     } else {
         _this.update(geoCalcData, fullLayout);
     }
+
+    // ion: peter fix
+    _this.framework.on('mousedown', function() {
+        Fx.click(_this.graphDiv, d3.event || { target: true });
+    });
+
 };
 
 proto.fetchTopojson = function() {
@@ -154,10 +160,6 @@ proto.update = function(geoCalcData, fullLayout) {
     this.render();
 };
 
-    // ion: peter fix
-    _this.framework.on('mousedown', function() {
-        Fx.click(_this.graphDiv, d3.event || { target: true });
-    });
 proto.updateProjection = function(fullLayout, geoLayout) {
     var gs = fullLayout._size;
     var domain = geoLayout.domain;

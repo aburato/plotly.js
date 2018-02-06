@@ -1,8 +1,11 @@
 {
   "name": "plotly.js",
-  "version": "1.42.5-ion48",  "description": "The open source javascript graphing library that powers plotly",  "license": "MIT",  "main": "./lib/index.js",
-  "webpack": "./dist/plotly.js",  "repository": {
-    "type": "git",
+  "version": "1.42.5-ion48",
+  "description": "The open source javascript graphing library that powers plotly",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "webpack": "./dist/plotly.js",
+  "repository": {    "type": "git",
     "url": "https://github.com/plotly/plotly.js.git"
   },
   "bugs": {
@@ -84,10 +87,10 @@
     "gl-surface3d": "^1.3.6",
     "gl-text": "^1.1.6",
     "glslify": "^6.3.1",
-    "has-hover": "^1.0.1",
-    "has-passive-events": "^1.0.0",
-    "mapbox-gl": "0.45.0",    "kdgrass": "^1.0.1",    "matrix-camera-controller": "^2.1.3",
-    "mouse-change": "^1.4.0",
+    "has-hover": "^1.0.0",
+    "kdgrass": "^1.0.1",
+    "mapbox-gl": "0.45.0",
+    "matrix-camera-controller": "^2.1.3",    "minify-stream": "^1.1.0",    "mouse-change": "^1.4.0",
     "mouse-event-offset": "^3.0.2",
     "mouse-wheel": "^1.0.2",
     "ndarray": "^1.0.18",
