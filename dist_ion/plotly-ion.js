@@ -17808,27 +17808,34 @@ dragElement.init = function init(options) {
             numClicks = Math.max(numClicks - 1, 1);
         }
 
-        if(options.doneFn && gd.childElementCount) options.doneFn(gd._dragged, numClicks, e);
+        // Invoke callback only if gd has children
+        // We observed several issues (exceptions) when code is performed without children
+        // On the dragStart we observed the chart was correctly already drawn but on the dragEnd we observed chart disappeared
+        // So we suppose that have been disposed/cleaned during the drag operation and we are able to find this condition just observing children of the gd element
+        if (gd.childElementCount) {
 
-        if(!gd._dragged) {
-            var e2;
-
-            try {
-                e2 = new MouseEvent('click', e);
+            if(options.doneFn) options.doneFn(gd._dragged, numClicks, e);
+    
+            if(!gd._dragged) {
+                var e2;
+    
+                try {
+                    e2 = new MouseEvent('click', e);
+                }
+                catch(err) {
+                    var offset = pointerOffset(e);
+                    e2 = document.createEvent('MouseEvents');
+                    e2.initMouseEvent('click',
+                        e.bubbles, e.cancelable,
+                        e.view, e.detail,
+                        e.screenX, e.screenY,
+                        offset[0], offset[1],
+                        e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
+                        e.button, e.relatedTarget);
+                }
+    
+                initialTarget.dispatchEvent(e2);
             }
-            catch(err) {
-                var offset = pointerOffset(e);
-                e2 = document.createEvent('MouseEvents');
-                e2.initMouseEvent('click',
-                    e.bubbles, e.cancelable,
-                    e.view, e.detail,
-                    e.screenX, e.screenY,
-                    offset[0], offset[1],
-                    e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
-                    e.button, e.relatedTarget);
-            }
-
-            initialTarget.dispatchEvent(e2);
         }
 
         finishDrag(gd);
@@ -30140,7 +30147,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.28.3-ion50';
+exports.version = '1.28.3-ion51';
 
 // inject promise polyfill
 require('es6-promise').polyfill();

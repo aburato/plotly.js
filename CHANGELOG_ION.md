@@ -1,5 +1,9 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion51] -- 2018-02-07
+
+### [ATPWM-929] iPhone - Unhandled Exception - Undefined is not an object (evaluating 't._fullLayout.annotations')
+
 ## [1.28.3-ion50] -- 2018-02-02
 
 ### [ATPWM-928] Fixed several exceptions on mobile devices
