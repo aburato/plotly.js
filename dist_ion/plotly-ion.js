@@ -17757,8 +17757,8 @@ dragElement.init = function init(options) {
 
     function onMove(e) {
 
-        // We observed several issues (exceptions) when code is performed without children
-        // So we suppose that have been disposed/cleaned during the drag operation and we are able to find this condition just observing children of the gd element
+        // Methods called below assume the chart is drawn and ready on the DOM.
+        // Actually if there are no child element on gd, it means we have no chart and no op should be performed
         if (gd.childElementCount) {
 
             var offset = pointerOffset(e),
@@ -30153,7 +30153,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.28.3-ion51';
+exports.version = '1.28.3-ion52';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
