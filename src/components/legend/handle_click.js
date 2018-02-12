@@ -152,7 +152,7 @@ module.exports = function handleClick(g, gd, numClicks) {
             }
 
             // ion: let the sdk detect when plot visibility is toggled.
-            gd.emit('plotly_legend_toggleVisible', {traceIndices: traceIndicesInGroup, visible: newVisible, event: d3.event});
+            gd.emit('plotly_legend_toggleVisible', { traceIndices: traceIndicesInGroup, visible: nextVisibility });
             
         } else if(numClicks === 2) {
             // Compute the clicked index. expandedIndex does what we want for expanded traces
