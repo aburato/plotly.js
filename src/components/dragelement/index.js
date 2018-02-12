@@ -164,24 +164,30 @@ dragElement.init = function init(options) {
     }
 
     function onMove(e) {
-        var offset = pointerOffset(e),
-            dx = offset[0] - startX,
-            dy = offset[1] - startY,
-            minDrag = options.minDrag || constants.MINDRAG;
 
-        if(Math.abs(dx) < minDrag) dx = 0;
-        if(Math.abs(dy) < minDrag) dy = 0;
+        // Methods called below assume the chart is drawn and ready on the DOM.
+        // Actually if there are no child element on gd, it means we have no chart and no op should be performed
+        if (gd.childElementCount) {
 
-        if (!willBeEventManaged(dx, dy)) {
-            return;
+            var offset = pointerOffset(e),
+                dx = offset[0] - startX,
+                dy = offset[1] - startY,
+                minDrag = options.minDrag || constants.MINDRAG;
+
+            if(Math.abs(dx) < minDrag) dx = 0;
+            if(Math.abs(dy) < minDrag) dy = 0;
+
+            if (!willBeEventManaged(dx, dy)) {
+                return;
+            }
+
+            if(dx || dy) {
+                gd._dragged = true;
+                dragElement.unhover(gd);
+            }
+
+            if(options.moveFn) options.moveFn(dx, dy, gd._dragged);
         }
-
-        if(dx || dy) {
-            gd._dragged = true;
-            dragElement.unhover(gd);
-        }
-
-        if(options.moveFn) options.moveFn(dx, dy, gd._dragged);
 
         return Lib.pauseEvent(e);
     }

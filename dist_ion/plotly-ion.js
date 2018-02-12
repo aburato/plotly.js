@@ -17756,24 +17756,30 @@ dragElement.init = function init(options) {
     }
 
     function onMove(e) {
-        var offset = pointerOffset(e),
-            dx = offset[0] - startX,
-            dy = offset[1] - startY,
-            minDrag = options.minDrag || constants.MINDRAG;
 
-        if(Math.abs(dx) < minDrag) dx = 0;
-        if(Math.abs(dy) < minDrag) dy = 0;
+        // We observed several issues (exceptions) when code is performed without children
+        // So we suppose that have been disposed/cleaned during the drag operation and we are able to find this condition just observing children of the gd element
+        if (gd.childElementCount) {
 
-        if (!willBeEventManaged(dx, dy)) {
-            return;
+            var offset = pointerOffset(e),
+                dx = offset[0] - startX,
+                dy = offset[1] - startY,
+                minDrag = options.minDrag || constants.MINDRAG;
+
+            if(Math.abs(dx) < minDrag) dx = 0;
+            if(Math.abs(dy) < minDrag) dy = 0;
+
+            if (!willBeEventManaged(dx, dy)) {
+                return;
+            }
+
+            if(dx || dy) {
+                gd._dragged = true;
+                dragElement.unhover(gd);
+            }
+
+            if(options.moveFn) options.moveFn(dx, dy, gd._dragged);
         }
-
-        if(dx || dy) {
-            gd._dragged = true;
-            dragElement.unhover(gd);
-        }
-
-        if(options.moveFn) options.moveFn(dx, dy, gd._dragged);
 
         return Lib.pauseEvent(e);
     }
