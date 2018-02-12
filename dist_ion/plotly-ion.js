@@ -19640,23 +19640,29 @@ dragElement.init = function init(options) {
     }
 
     function onMove(e) {
-        var offset = pointerOffset(e);
-        var minDrag = options.minDrag || constants.MINDRAG;
-        var dxdy = clampFn(offset[0] - startX, offset[1] - startY, minDrag);
-        var dx = dxdy[0];
-        var dy = dxdy[1];
+
+        // Methods called below assume the chart is drawn and ready on the DOM.
+        // Actually if there are no child element on gd, it means we have no chart and no op should be performed
+        if (gd.childElementCount) {
+
+            var offset = pointerOffset(e);
+            var minDrag = options.minDrag || constants.MINDRAG;
+            var dxdy = clampFn(offset[0] - startX, offset[1] - startY, minDrag);
+            var dx = dxdy[0];
+            var dy = dxdy[1];
 
 
-        if (!willBeEventManaged(dx, dy)) {
-            return;
+            if (!willBeEventManaged(dx, dy)) {
+                return;
+            }
+
+            if(dx || dy) {
+                gd._dragged = true;
+                dragElement.unhover(gd);
+            }
+
+            if(gd._dragged && options.moveFn && !rightClick) options.moveFn(dx, dy);
         }
-
-        if(dx || dy) {
-            gd._dragged = true;
-            dragElement.unhover(gd);
-        }
-
-        if(gd._dragged && options.moveFn && !rightClick) options.moveFn(dx, dy);
 
         return Lib.pauseEvent(e);
     }
@@ -25933,7 +25939,7 @@ module.exports = function handleClick(g, gd, numClicks) {
             }
 
             // ion: let the sdk detect when plot visibility is toggled.
-            gd.emit('plotly_legend_toggleVisible', {traceIndices: traceIndicesInGroup, visible: newVisible, event: d3.event});
+            gd.emit('plotly_legend_toggleVisible', { traceIndices: traceIndicesInGroup, visible: nextVisibility });
             
         } else if(numClicks === 2) {
             // Compute the clicked index. expandedIndex does what we want for expanded traces
