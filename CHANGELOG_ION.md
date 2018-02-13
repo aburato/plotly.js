@@ -1,5 +1,12 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion3] -- 2018-02-13
+
+### [IONWEBQA-1375] Charts: pannning and zooming are broken
+### [IONWEBQA-1374] Charts raise exception upon clicking on legend labels
+### [ATPWM-928] Unhandled Exception - Cannot read property '_hoverlayer' of undefined.
+
+
 ## [1.28.3-ion49] -- 2018-02-01
 
 ### [ATPWM-898] Support for correct management of dates on mobile devices. Earlier it worked accidentally on desktop envs.
