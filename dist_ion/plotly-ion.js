@@ -32814,7 +32814,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion3';
+exports.version = '1.33.1-ion4';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -67920,9 +67920,11 @@ var Color = require('../../components/color');
 var castOption = require('./helpers').castOption;
 
 module.exports = function styleOne(s, pt, trace) {
-    var line = trace.marker.line;
-    var lineColor = castOption(line.color, pt.pts) || Color.defaultLine;
-    var lineWidth = castOption(line.width, pt.pts) || 0;
+    var lineColor = trace.marker.line.color;
+    if(Array.isArray(lineColor)) lineColor = lineColor[pt.i] || Color.defaultLine;
+
+    var lineWidth = trace.marker.line.width || 0;
+    if(Array.isArray(lineWidth)) lineWidth = lineWidth[pt.i] || 0;
 
     s.style({'stroke-width': lineWidth})
         .call(Color.fill, pt.color)

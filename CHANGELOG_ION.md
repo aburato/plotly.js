@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion4] -- 2018-02-14
+
+### [IONWEBQA-1381] Charts: donut raises exception on click
+
+
 ## [1.33.1-ion3] -- 2018-02-13
 
 ### [IONWEBQA-1375] Charts: pannning and zooming are broken
