@@ -20,6 +20,13 @@ module.exports = function handleOHLC(traceIn, traceOut, coerce, layout) {
     var close = coerce('close');
 
     coerce('hoverlabel.split');
+    var x = coerce('x'),
+        open = coerce('open'),
+        high = coerce('high'),
+        low = coerce('low'),
+        close = coerce('close'),
+        text = coerce('text'),
+        textbox = coerce('textbox');
 
     var handleCalendarDefaults = Registry.getComponentMethod('calendars', 'handleTraceDefaults');
     handleCalendarDefaults(traceIn, traceOut, ['x'], layout);
@@ -29,6 +36,8 @@ module.exports = function handleOHLC(traceIn, traceOut, coerce, layout) {
     var len = Math.min(open.length, high.length, low.length, close.length);
 
     if(x) len = Math.min(len, x.length);
+    if(len < text.length) traceOut.text = text.slice(0, len);
+    if(len < textbox.length) traceOut.textbox = textbox.slice(0, len);
 
     traceOut._length = len;
 

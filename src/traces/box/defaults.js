@@ -100,6 +100,7 @@ function handlePointsDefaults(traceIn, traceOut, coerce, opts) {
         coerce('unselected.marker.size');
 
         coerce('text');
+        coerce('textbox');
     } else {
         delete traceOut.marker;
     }

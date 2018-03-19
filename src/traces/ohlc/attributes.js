@@ -105,6 +105,17 @@ module.exports = {
         ].join(' ')
     },
 
+    textbox: {
+        valType: 'string',
+        role: 'info',
+        dflt: '',
+        arrayOk: true,
+        editType: 'calc',
+        description: [
+            'ION to support custom tooltips on boxes and candlesticks'
+        ].join(' ')
+    },
+
     tickwidth: {
         valType: 'number',
         min: 0,

@@ -116,6 +116,7 @@ exports.loneHover = function loneHover(hoverItem, opts) {
         yLabel: hoverItem.yLabel,
         zLabel: hoverItem.zLabel,
         text: hoverItem.text,
+        //textbox: hoverItem.textbox,
         name: hoverItem.name,
         idealAlign: hoverItem.idealAlign,
 
@@ -290,27 +291,27 @@ function _hover(gd, evt, subplot, noHoverEvent) {
     var hoverdistance = fullLayout.hoverdistance === -1 ? Infinity : fullLayout.hoverdistance;
     var spikedistance = fullLayout.spikedistance === -1 ? Infinity : fullLayout.spikedistance;
 
-    // hoverData: the set of candidate points we've found to highlight
+        // hoverData: the set of candidate points we've found to highlight
     var hoverData = [];
 
-    // searchData: the data to search in. Mostly this is just a copy of
-    // gd.calcdata, filtered to the subplot and overlays we're on
-    // but if a point array is supplied it will be a mapping
-    // of indicated curves
+        // searchData: the data to search in. Mostly this is just a copy of
+        // gd.calcdata, filtered to the subplot and overlays we're on
+        // but if a point array is supplied it will be a mapping
+        // of indicated curves
     var searchData = [];
 
-    // [x|y]valArray: the axis values of the hover event
-    // mapped onto each of the currently selected overlaid subplots
+        // [x|y]valArray: the axis values of the hover event
+        // mapped onto each of the currently selected overlaid subplots
     var xvalArray, yvalArray;
 
     var itemnum, curvenum, cd, trace, subplotId, subploti, mode,
         xval, yval, pointData, closedataPreviousLength;
 
-    // spikePoints: the set of candidate points we've found to draw spikes to
+        // spikePoints: the set of candidate points we've found to draw spikes to
     var spikePoints = {
-        hLinePoint: null,
-        vLinePoint: null
-    };
+            hLinePoint: null,
+            vLinePoint: null
+        };
 
     // does subplot have one (or more) horizontal traces?
     // This is used to determine whether we rotate the labels or not
@@ -329,9 +330,9 @@ function _hover(gd, evt, subplot, noHoverEvent) {
                 searchData.push(cd);
                 if(trace.orientation === 'h') {
                     hasOneHorizontalTrace = true;
-                }
             }
         }
+    }
     }
     else {
         for(curvenum = 0; curvenum < gd.calcdata.length; curvenum++) {
@@ -341,8 +342,8 @@ function _hover(gd, evt, subplot, noHoverEvent) {
                 searchData.push(cd);
                 if(trace.orientation === 'h') {
                     hasOneHorizontalTrace = true;
-                }
             }
+        }
         }
 
         // [x|y]px: the pixels (from top left) of the mouse location
@@ -418,8 +419,8 @@ function _hover(gd, evt, subplot, noHoverEvent) {
             subploti = 0;
             subplotId = subplots[subploti];
         } else {
-            subplotId = helpers.getSubplot(trace);
-            subploti = subplots.indexOf(subplotId);
+        subplotId = helpers.getSubplot(trace);
+        subploti = subplots.indexOf(subplotId);
         }
 
         // within one trace mode can sometimes be overridden
@@ -465,6 +466,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
             yLabelVal: undefined,
             zLabelVal: undefined,
             text: undefined
+            //textbox: undefined
         };
 
         // add ref to subplot object (non-cartesian case)
@@ -585,7 +587,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
             if(thisSpikeDistance < minDistance && thisSpikeDistance <= spikedistance) {
                 resultPoint = pointsData[i];
                 minDistance = thisSpikeDistance;
-            }
+        }
         }
         return resultPoint;
     }
@@ -758,18 +760,18 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
     // to have common labels
     if(showCommonLabel) {
         var allHaveZ = true;
-        var i, traceHoverinfo;
-        for(i = 0; i < hoverData.length; i++) {
+    var i, traceHoverinfo;
+    for(i = 0; i < hoverData.length; i++) {
             if(allHaveZ && hoverData[i].zLabel === undefined) allHaveZ = false;
 
-            traceHoverinfo = hoverData[i].hoverinfo || hoverData[i].trace.hoverinfo;
-            var parts = Array.isArray(traceHoverinfo) ? traceHoverinfo : traceHoverinfo.split('+');
-            if(parts.indexOf('all') === -1 &&
-                parts.indexOf(hovermode) === -1) {
-                showCommonLabel = false;
-                break;
-            }
+        traceHoverinfo = hoverData[i].hoverinfo || hoverData[i].trace.hoverinfo;
+        var parts = Array.isArray(traceHoverinfo) ? traceHoverinfo : traceHoverinfo.split('+');
+        if(parts.indexOf('all') === -1 &&
+            parts.indexOf(hovermode) === -1) {
+            showCommonLabel = false;
+            break;
         }
+    }
 
         // xyz labels put all info in their main label, so have no need of a common label
         if(allHaveZ) showCommonLabel = false;
@@ -887,7 +889,7 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
         var name = '';
         var text = '';
 
-        // combine possible non-opaque trace color with bgColor
+            // combine possible non-opaque trace color with bgColor
         var color0 = d.bgcolor || d.color;
         // color for 'nums' part of the label
         var numsColor = Color.combine(
@@ -933,7 +935,7 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
 
         if((d.text || d.text === 0) && !Array.isArray(d.text)) {
             text += (text ? '<br>' : '') + d.text;
-        }
+        } 
 
         // used by other modules (initially just ternary) that
         // manage their own hoverinfo independent of cleanPoint
@@ -948,7 +950,7 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
             // if 'name' is also empty, remove entire label
             if(name === '') g.remove();
             text = name;
-        }
+        }       
 
         // main label
         var tx = g.select('text.nums')
@@ -1059,23 +1061,23 @@ function hoverAvoidOverlaps(hoverData, ax, fullLayout) {
 
     var axSign = 1;
 
-    // make groups of touching points
+        // make groups of touching points
     var pointgroups = hoverData.map(function(d, i) {
-        var axis = d[ax];
+                var axis = d[ax];
         var axIsX = axis._id.charAt(0) === 'x';
         var rng = axis.range;
         if(!i && rng && ((rng[0] > rng[1]) !== axIsX)) axSign = -1;
-        return [{
-            i: i,
+                return [{
+                    i: i,
             traceIndex: d.trace.index,
-            dp: 0,
-            pos: d.pos,
-            posref: d.posref,
+                    dp: 0,
+                    pos: d.pos,
+                    posref: d.posref,
             size: d.by * (axIsX ? YFACTOR : 1) / 2,
-            pmin: 0,
+                    pmin: 0,
             pmax: (axIsX ? fullLayout.width : fullLayout.height)
-        }];
-    })
+                }];
+            })
     .sort(function(a, b) {
         return (a[0].posref - b[0].posref) ||
             // for equal positions, sort trace indices increasing or decreasing
@@ -1176,8 +1178,8 @@ function hoverAvoidOverlaps(hoverData, ax, fullLayout) {
             var g0 = pointgroups[i];
             var g1 = pointgroups[i + 1];
 
-            // the lowest point in the higher group (p0)
-            // the highest point in the lower group (p1)
+                // the lowest point in the higher group (p0)
+                // the highest point in the lower group (p1)
             var p0 = g0[g0.length - 1];
             var p1 = g1[0];
             topOverlap = p0.pos + p0.dp + p0.size - p1.pos - p1.dp + p1.size;
@@ -1350,7 +1352,7 @@ function cleanPoint(d, hovermode) {
         else d.yLabel += ' ± ' + yeText;
 
         if(hovermode === 'y') d.distance += 1;
-    }
+    }   
 
     var infomode = d.hoverinfo || d.trace.hoverinfo;
 
@@ -1473,7 +1475,7 @@ function createSpikelines(closestPoints, opts) {
             vLinePointY = ya._offset + vLinePoint.y;
         }
         var dfltVLineColor = tinycolor.readability(vLinePoint.color, contrastColor) < 1.5 ?
-            Color.contrast(contrastColor) : vLinePoint.color;
+        Color.contrast(contrastColor) : vLinePoint.color;
         var xMode = xa.spikemode;
         var xThickness = xa.spikethickness;
         var xColor = xa.spikecolor || dfltVLineColor;

@@ -1,33 +1,29 @@
 var trace1 = {
-  y: [2, 3, 4, 6,7, 8, 9, 10, 11, 12, 13],
-  //y: [-40, 50, 60],
-  // x: ['2017-01-04', '2017-01-05', '2017-01-06'],
+  //y: [2, 3, 4, 6,7, 8, 9, 10, 11, 12, 13],
+  y: [-40, 50, 60],
+  x: ['2017-01-04', '2017-01-05', '2017-01-06'],
   // y: [-40, 50, 60],
-  // close: [116.019997, 116.610001, 117.910004],
+  close: [116.019997, 116.610001, 117.910004],
 
-  // decreasing: {line: {color: '#7F7F7F'}},
+  decreasing: {line: {color: '#7F7F7F'}},
 
-  // high: [116.510002, 116.860001, 118.160004],
+  high: [116.510002, 116.860001, 118.160004],
 
-  // increasing: {line: {color: '#17BECF'}},
+  increasing: {line: {color: '#17BECF'}},
 
-  // line: {color: 'rgba(31,119,180,1)'},
+  line: {color: 'rgba(31,119,180,1)'},
 
-  // low: [115.75, 115.809998, 116.470001],
+  low: [115.75, 115.809998, 116.470001],
 
-  // open: [115.849998, 115.919998, 116.779999],
+  open: [115.849998, 115.919998, 116.779999],
   text: ['ciao1', 'ciao2', 'ciao3', 'ciao3', 'ciao3', 'ciao3', 'ciao3'],
-  textbox: {
-	  q0: 'goofy0',
-	  q1: 'goofy1',
-	  q2: 'goofy2',
-	  q3: 'goofy3'
-  },
+  textbox: [['goofy0', 'goofy1', 'goofy2', 'goofy3', 'goofy4'], ['goofy5', 'goofy6', 'goofy7']],
 
   hoverinfo: 'text',
+
   boxpoints: 'all',
-  type: 'box',
-  name: 'prova MZ',
+  type: 'candlestick',
+  name: 'MZ',
   opacity: 0.5
 };
 

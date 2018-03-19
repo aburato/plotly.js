@@ -240,6 +240,14 @@ module.exports = overrideAll({
                     'Sets the symbol text.'
                 ].join(' ')
             },
+            // textbox: {
+            //     valType: 'string',
+            //     dflt: '',
+            //     role: 'info',
+            //     description: [
+            //         'Sets the box hover text.'
+            //     ].join(' ')
+            // },
             textfont: fontAttr,
             textposition: Lib.extendFlat({}, textposition, { arrayOk: false })
         }
