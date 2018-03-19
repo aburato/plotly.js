@@ -116,6 +116,7 @@ exports.loneHover = function loneHover(hoverItem, opts) {
         yLabel: hoverItem.yLabel,
         zLabel: hoverItem.zLabel,
         text: hoverItem.text,
+        //textbox: hoverItem.textbox,
         name: hoverItem.name,
         idealAlign: hoverItem.idealAlign,
 
@@ -360,6 +361,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
             yLabelVal: undefined,
             zLabelVal: undefined,
             text: undefined
+            //textbox: undefined
         };
 
         // add ref to subplot object (non-cartesian case)
@@ -649,8 +651,8 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
     // show the common label, if any, on the axis
     // never show a common label in array mode,
     // even if sometimes there could be one
-    var showCommonLabel = c0.distance <= opts.hoverdistance &&
-                          (hovermode === 'x' || hovermode === 'y');
+    var showCommonLabel = c0.distance <= opts.hoverdistance && 
+                            (hovermode === 'x' || hovermode === 'y');
 
     // all hover traces hoverinfo must contain the hovermode
     // to have common labels
@@ -820,7 +822,7 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
 
         if(d.text && !Array.isArray(d.text)) {
             text += (text ? '<br>' : '') + d.text;
-        }
+        } 
 
         // if 'text' is empty at this point,
         // put 'name' in main label and don't show secondary label
@@ -828,7 +830,7 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
             // if 'name' is also empty, remove entire label
             if(name === '') g.remove();
             text = name;
-        }
+        }       
 
         // main label
         var tx = g.select('text.nums')
@@ -1218,7 +1220,7 @@ function cleanPoint(d, hovermode) {
         else d.yLabel += ' ± ' + yeText;
 
         if(hovermode === 'y') d.distance += 1;
-    }
+    }   
 
     var infomode = d.hoverinfo || d.trace.hoverinfo;
 

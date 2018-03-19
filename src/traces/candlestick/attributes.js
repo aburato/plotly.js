@@ -53,5 +53,6 @@ module.exports = {
     decreasing: directionAttrs(OHLCattrs.decreasing.line.color.dflt),
 
     text: OHLCattrs.text,
+    textbox: OHLCattrs.textbox,
     whiskerwidth: extendFlat({}, boxAttrs.whiskerwidth, { dflt: 0 })
 };

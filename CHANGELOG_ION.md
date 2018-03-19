@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion5] -- 2018-03-19
+
+### [CORESDK-3299] Charts: tooltip customization for boxes in boxplots and candles in candlestick
+
+
 ## [1.33.1-ion4] -- 2018-02-14
 
 ### [IONWEBQA-1381] Charts: donut raises exception on click

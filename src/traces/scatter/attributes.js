@@ -89,6 +89,16 @@ module.exports = {
             'these elements will be seen in the hover labels.'
         ].join(' ')
     },
+    textbox: {
+        valType: 'string',
+        role: 'info',
+        dflt: '',
+        arrayOk: true,
+        editType: 'calc',
+        description: [
+            'ION to support custom tooltips on boxes and candlesticks'
+        ].join(' ')
+    },
     hovertext: {
         valType: 'string',
         role: 'info',

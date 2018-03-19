@@ -22559,6 +22559,7 @@ exports.loneHover = function loneHover(hoverItem, opts) {
         yLabel: hoverItem.yLabel,
         zLabel: hoverItem.zLabel,
         text: hoverItem.text,
+        //textbox: hoverItem.textbox,
         name: hoverItem.name,
         idealAlign: hoverItem.idealAlign,
 
@@ -22803,6 +22804,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
             yLabelVal: undefined,
             zLabelVal: undefined,
             text: undefined
+            //textbox: undefined
         };
 
         // add ref to subplot object (non-cartesian case)
@@ -23092,8 +23094,8 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
     // show the common label, if any, on the axis
     // never show a common label in array mode,
     // even if sometimes there could be one
-    var showCommonLabel = c0.distance <= opts.hoverdistance &&
-                          (hovermode === 'x' || hovermode === 'y');
+    var showCommonLabel = c0.distance <= opts.hoverdistance && 
+                            (hovermode === 'x' || hovermode === 'y');
 
     // all hover traces hoverinfo must contain the hovermode
     // to have common labels
@@ -23263,7 +23265,7 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
 
         if(d.text && !Array.isArray(d.text)) {
             text += (text ? '<br>' : '') + d.text;
-        }
+        } 
 
         // if 'text' is empty at this point,
         // put 'name' in main label and don't show secondary label
@@ -23271,7 +23273,7 @@ function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
             // if 'name' is also empty, remove entire label
             if(name === '') g.remove();
             text = name;
-        }
+        }       
 
         // main label
         var tx = g.select('text.nums')
@@ -23661,7 +23663,7 @@ function cleanPoint(d, hovermode) {
         else d.yLabel += ' ± ' + yeText;
 
         if(hovermode === 'y') d.distance += 1;
-    }
+    }   
 
     var infomode = d.hoverinfo || d.trace.hoverinfo;
 
@@ -32814,7 +32816,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion4';
+exports.version = '1.33.1-ion5';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -63603,6 +63605,9 @@ module.exports = {
     text: extendFlat({}, scatterAttrs.text, {
         
     }),
+    textbox: extendFlat({}, scatterAttrs.textbox, {
+        
+    }),
     whiskerwidth: {
         valType: 'number',
         min: 0,
@@ -64055,6 +64060,7 @@ function handlePointsDefaults(traceIn, traceOut, coerce, opts) {
         coerce('unselected.marker.size');
 
         coerce('text');
+        coerce('textbox');
     } else {
         delete traceOut.marker;
     }
@@ -64217,8 +64223,8 @@ function hoverOnBoxes(pointData, xval, yval, hovermode) {
     }
     if(trace.boxpoints || trace.points) {
         attrs.push('lf', 'uf');
-    }
-
+    }    
+        
     for(var i = 0; i < attrs.length; i++) {
         var attr = attrs[i];
 
@@ -64231,12 +64237,15 @@ function hoverOnBoxes(pointData, xval, yval, hovermode) {
         var pointData2 = Lib.extendFlat({}, pointData);
 
         pointData2[vLetter + '0'] = pointData2[vLetter + '1'] = valPx;
-        pointData2[vLetter + 'LabelVal'] = val;
-        pointData2[vLetter + 'Label'] = (t.labels ? t.labels[attr] + ' ' : '') + Axes.hoverLabelText(vAxis, val);
-
-        if(attr === 'mean' && ('sd' in di) && trace.boxmean === 'sd') {
-            pointData2[vLetter + 'err'] = di.sd;
-        }
+        
+        // ION to support custom tooltips on boxes and candlesticks
+        if (trace.textbox && trace.textbox[pointData.index] && trace.textbox[pointData.index][i]) {
+            pointData2['text'] = trace.textbox[pointData.index][i];
+        } else {
+            pointData2[vLetter + 'LabelVal'] = val;
+            pointData2[vLetter + 'Label'] = (t.labels ? t.labels[attr] + ' ' : '') + Axes.hoverLabelText(vAxis, val);
+        }                  
+            
         // only keep name on the first item (median)
         pointData.name = '';
 
@@ -65003,6 +65012,7 @@ module.exports = {
     decreasing: directionAttrs(OHLCattrs.decreasing.line.color.dflt),
 
     text: OHLCattrs.text,
+    textbox: OHLCattrs.textbox,
     whiskerwidth: extendFlat({}, boxAttrs.whiskerwidth, { dflt: 0 })
 };
 
@@ -65043,6 +65053,7 @@ module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout
     handleDirection(traceIn, traceOut, coerce, 'decreasing');
 
     coerce('text');
+    coerce('textbox');
     coerce('whiskerwidth');
 };
 
@@ -65964,6 +65975,15 @@ module.exports = {
         
     },
 
+    textbox: {
+        valType: 'string',
+        
+        dflt: '',
+        arrayOk: true,
+        editType: 'calc',
+        
+    },
+
     tickwidth: {
         valType: 'number',
         min: 0,
@@ -66013,6 +66033,7 @@ module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout
     handleDirection(traceIn, traceOut, coerce, 'decreasing');
 
     coerce('text');
+    coerce('textbox');
     coerce('tickwidth');
 };
 
@@ -66122,6 +66143,8 @@ exports.copyOHLC = function(container, traceOut) {
     if(container.high) traceOut.high = container.high;
     if(container.low) traceOut.low = container.low;
     if(container.close) traceOut.close = container.close;
+    if(container.text) traceOut.text = container.text;
+    if(container.textbox) traceOut.textbox = container.textbox;
 };
 
 // This routine gets called during the applyTransform step.
@@ -66143,7 +66166,10 @@ exports.makeTransform = function(traceIn, state, direction) {
         open: traceIn.open,
         high: traceIn.high,
         low: traceIn.low,
-        close: traceIn.close
+        close: traceIn.close,
+
+        text: traceIn.text,
+        textbox: traceIn.textbox
     };
 
     return out;
@@ -66251,7 +66277,9 @@ module.exports = function handleOHLC(traceIn, traceOut, coerce, layout) {
         open = coerce('open'),
         high = coerce('high'),
         low = coerce('low'),
-        close = coerce('close');
+        close = coerce('close'),
+        text = coerce('text'),
+        textbox = coerce('textbox');
 
     var handleCalendarDefaults = Registry.getComponentMethod('calendars', 'handleTraceDefaults');
     handleCalendarDefaults(traceIn, traceOut, ['x'], layout);
@@ -66267,6 +66295,8 @@ module.exports = function handleOHLC(traceIn, traceOut, coerce, layout) {
     if(len < high.length) traceOut.high = high.slice(0, len);
     if(len < low.length) traceOut.low = low.slice(0, len);
     if(len < close.length) traceOut.close = close.slice(0, len);
+    if(len < text.length) traceOut.text = text.slice(0, len);
+    if(len < textbox.length) traceOut.textbox = textbox.slice(0, len);
 
     return len;
 };
@@ -66382,12 +66412,15 @@ function makeHoverInfo(traceIn) {
 
     var parts = hoverinfo.split('+'),
         indexOfY = parts.indexOf('y'),
-        indexOfText = parts.indexOf('text');
+        indexOfText = parts.indexOf('text'),
+        indexOfTextbox = parts.indexOf('textbox');
 
     if(indexOfY !== -1) {
         parts.splice(indexOfY, 1);
 
         if(indexOfText === -1) parts.push('text');
+
+        if(indexOfTextbox === -1) parts.push('textbox');
     }
 
     return parts.join('+');
@@ -68044,6 +68077,14 @@ module.exports = {
         
     },
     text: {
+        valType: 'string',
+        
+        dflt: '',
+        arrayOk: true,
+        editType: 'calc',
+        
+    },
+    textbox: {
         valType: 'string',
         
         dflt: '',

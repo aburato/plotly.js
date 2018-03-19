@@ -72,6 +72,11 @@ module.exports = {
             'To be seen, trace `hoverinfo` must contain a *text* flag.'
         ].join(' ')
     }),
+    textbox: extendFlat({}, scatterAttrs.textbox, {
+        description: [
+            ''
+        ].join(' ')
+    }),
     whiskerwidth: {
         valType: 'number',
         min: 0,
