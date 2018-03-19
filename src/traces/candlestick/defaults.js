@@ -34,6 +34,7 @@ module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout
     handleDirection(traceIn, traceOut, coerce, 'decreasing');
 
     coerce('text');
+    coerce('textbox');
     coerce('whiskerwidth');
 };
 

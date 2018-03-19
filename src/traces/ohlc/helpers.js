@@ -69,6 +69,8 @@ exports.copyOHLC = function(container, traceOut) {
     if(container.high) traceOut.high = container.high;
     if(container.low) traceOut.low = container.low;
     if(container.close) traceOut.close = container.close;
+    if(container.text) traceOut.text = container.text;
+    if(container.textbox) traceOut.textbox = container.textbox;
 };
 
 // This routine gets called during the applyTransform step.
@@ -90,7 +92,10 @@ exports.makeTransform = function(traceIn, state, direction) {
         open: traceIn.open,
         high: traceIn.high,
         low: traceIn.low,
-        close: traceIn.close
+        close: traceIn.close,
+
+        text: traceIn.text,
+        textbox: traceIn.textbox
     };
 
     return out;

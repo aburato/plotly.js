@@ -108,12 +108,15 @@ function makeHoverInfo(traceIn) {
 
     var parts = hoverinfo.split('+'),
         indexOfY = parts.indexOf('y'),
-        indexOfText = parts.indexOf('text');
+        indexOfText = parts.indexOf('text'),
+        indexOfTextbox = parts.indexOf('textbox');
 
     if(indexOfY !== -1) {
         parts.splice(indexOfY, 1);
 
         if(indexOfText === -1) parts.push('text');
+
+        if(indexOfTextbox === -1) parts.push('textbox');
     }
 
     return parts.join('+');
@@ -207,7 +210,7 @@ exports.calcTransform = function calcTransform(gd, trace, opts) {
             appendX(i);
             appendY(open[i], high[i], low[i], close[i]);
             appendText(i, open[i], high[i], low[i], close[i]);
-        }
+        }        
     }
 
     trace.x = x;

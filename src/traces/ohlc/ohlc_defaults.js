@@ -19,7 +19,9 @@ module.exports = function handleOHLC(traceIn, traceOut, coerce, layout) {
         open = coerce('open'),
         high = coerce('high'),
         low = coerce('low'),
-        close = coerce('close');
+        close = coerce('close'),
+        text = coerce('text'),
+        textbox = coerce('textbox');
 
     var handleCalendarDefaults = Registry.getComponentMethod('calendars', 'handleTraceDefaults');
     handleCalendarDefaults(traceIn, traceOut, ['x'], layout);
@@ -35,6 +37,8 @@ module.exports = function handleOHLC(traceIn, traceOut, coerce, layout) {
     if(len < high.length) traceOut.high = high.slice(0, len);
     if(len < low.length) traceOut.low = low.slice(0, len);
     if(len < close.length) traceOut.close = close.slice(0, len);
+    if(len < text.length) traceOut.text = text.slice(0, len);
+    if(len < textbox.length) traceOut.textbox = textbox.slice(0, len);
 
     return len;
 };

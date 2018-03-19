@@ -37,7 +37,7 @@ exports.transform = function transform(dataIn, state) {
             dataOut.push(traceIn);
             continue;
         }
-
+        
         dataOut.push(
             makeTrace(traceIn, state, 'increasing'),
             makeTrace(traceIn, state, 'decreasing')
@@ -59,6 +59,7 @@ function makeTrace(traceIn, state, direction) {
         opacity: traceIn.opacity,
         xaxis: traceIn.xaxis,
         yaxis: traceIn.yaxis,
+        textbox: traceIn.textbox,
 
         transforms: helpers.makeTransform(traceIn, state, direction)
     };
@@ -79,7 +80,7 @@ function makeTrace(traceIn, state, direction) {
 
             whiskerwidth: traceIn.whiskerwidth,
             text: traceIn.text,
-
+            textbox: traceIn.textbox,
             name: directionOpts.name,
             showlegend: directionOpts.showlegend,
             line: directionOpts.line,
@@ -97,11 +98,13 @@ exports.calcTransform = function calcTransform(gd, trace, opts) {
     var open = trace.open,
         high = trace.high,
         low = trace.low,
-        close = trace.close;
+        close = trace.close,
+        textboxIn = trace.textbox;
 
     var len = open.length,
         x = [],
-        y = [];
+        y = [],
+        textbox = [];
 
     var appendX = trace._fullInput.x ?
         function(i) {
@@ -120,9 +123,13 @@ exports.calcTransform = function calcTransform(gd, trace, opts) {
         if(filterFn(open[i], close[i]) && isNumeric(high[i]) && isNumeric(low[i])) {
             appendX(i);
             appendY(open[i], high[i], low[i], close[i]);
+            if (textboxIn && textboxIn.length>0) {
+                textbox.push(textboxIn[i]);
+            }            
         }
     }
 
     trace.x = x;
     trace.y = y;
+    trace.textbox = textbox;
 };

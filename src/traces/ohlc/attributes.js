@@ -115,7 +115,7 @@ module.exports = {
     decreasing: directionAttrs(DECREASING_COLOR),
 
     text: {
-        valType: 'string',
+        valType: 'info_array',
         role: 'info',
         dflt: '',
         arrayOk: true,
@@ -126,6 +126,17 @@ module.exports = {
             'all the data points.',
             'If an array of string, the items are mapped in order to',
             'this trace\'s sample points.'
+        ].join(' ')
+    },
+
+    textbox: {
+        valType: 'info_array',
+        role: 'info',
+        dflt: '',
+        arrayOk: true,
+        editType: 'calc',
+        description: [
+            'ION to support custom tooltips on boxes and candlesticks'
         ].join(' ')
     },
 

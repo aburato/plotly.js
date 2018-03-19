@@ -144,8 +144,8 @@ function hoverOnBoxes(pointData, xval, yval, hovermode) {
     }
     if(trace.boxpoints || trace.points) {
         attrs.push('lf', 'uf');
-    }
-
+    }    
+        
     for(var i = 0; i < attrs.length; i++) {
         var attr = attrs[i];
 
@@ -158,12 +158,15 @@ function hoverOnBoxes(pointData, xval, yval, hovermode) {
         var pointData2 = Lib.extendFlat({}, pointData);
 
         pointData2[vLetter + '0'] = pointData2[vLetter + '1'] = valPx;
-        pointData2[vLetter + 'LabelVal'] = val;
-        pointData2[vLetter + 'Label'] = (t.labels ? t.labels[attr] + ' ' : '') + Axes.hoverLabelText(vAxis, val);
-
-        if(attr === 'mean' && ('sd' in di) && trace.boxmean === 'sd') {
-            pointData2[vLetter + 'err'] = di.sd;
-        }
+        
+        // ION to support custom tooltips on boxes and candlesticks
+        if (trace.textbox && trace.textbox[pointData.index] && trace.textbox[pointData.index][i]) {
+            pointData2['text'] = trace.textbox[pointData.index][i];
+        } //else {
+            pointData2[vLetter + 'LabelVal'] = val;
+            pointData2[vLetter + 'Label'] = (t.labels ? t.labels[attr] + ' ' : '') + Axes.hoverLabelText(vAxis, val);
+        //}                  
+            
         // only keep name on the first item (median)
         pointData.name = '';
 
