@@ -210,7 +210,7 @@ exports.calcTransform = function calcTransform(gd, trace, opts) {
             appendX(i);
             appendY(open[i], high[i], low[i], close[i]);
             appendText(i, open[i], high[i], low[i], close[i]);
-        }
+        }        
     }
 
     trace.x = x;

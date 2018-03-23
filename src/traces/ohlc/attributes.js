@@ -115,7 +115,7 @@ module.exports = {
     decreasing: directionAttrs(DECREASING_COLOR),
 
     text: {
-        valType: 'string',
+        valType: 'info_array',
         role: 'info',
         dflt: '',
         arrayOk: true,
@@ -130,7 +130,7 @@ module.exports = {
     },
 
     textbox: {
-        valType: 'string',
+        valType: 'info_array',
         role: 'info',
         dflt: '',
         arrayOk: true,

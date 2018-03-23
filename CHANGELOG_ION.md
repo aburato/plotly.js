@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion6] -- 2018-03-23
+
+### [CORESDK-3299] Charts: tooltip customization for boxes in boxplots and candles in candlestick. Fix due to double series for positive vs negative candles.
+
+
 ## [1.33.1-ion5] -- 2018-03-19
 
 ### [CORESDK-3299] Charts: tooltip customization for boxes in boxplots and candles in candlestick
