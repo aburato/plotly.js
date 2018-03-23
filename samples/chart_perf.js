@@ -15,11 +15,11 @@ var trace1 = {
 
   low: [115.75, 115.809998, 116.470001],
 
-  open: [115.849998, 115.919998, 116.779999],
+  open: [115.849998, 130, 116.779999],
   text: ['ciao1', 'ciao2', 'ciao3', 'ciao3', 'ciao3', 'ciao3', 'ciao3'],
   textbox: [['goofy0', 'goofy1', 'goofy2', 'goofy3', 'goofy4'], ['goofy5', 'goofy6', 'goofy7']],
 
-  hoverinfo: 'text',
+  hoverinfo: 'y+text',
 
   boxpoints: 'all',
   type: 'candlestick',

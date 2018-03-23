@@ -32816,7 +32816,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion5';
+exports.version = '1.33.1-ion6';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -65135,7 +65135,7 @@ exports.transform = function transform(dataIn, state) {
             dataOut.push(traceIn);
             continue;
         }
-
+        
         dataOut.push(
             makeTrace(traceIn, state, 'increasing'),
             makeTrace(traceIn, state, 'decreasing')
@@ -65157,6 +65157,7 @@ function makeTrace(traceIn, state, direction) {
         opacity: traceIn.opacity,
         xaxis: traceIn.xaxis,
         yaxis: traceIn.yaxis,
+        textbox: traceIn.textbox,
 
         transforms: helpers.makeTransform(traceIn, state, direction)
     };
@@ -65177,7 +65178,7 @@ function makeTrace(traceIn, state, direction) {
 
             whiskerwidth: traceIn.whiskerwidth,
             text: traceIn.text,
-
+            textbox: traceIn.textbox,
             name: directionOpts.name,
             showlegend: directionOpts.showlegend,
             line: directionOpts.line,
@@ -65195,11 +65196,13 @@ exports.calcTransform = function calcTransform(gd, trace, opts) {
     var open = trace.open,
         high = trace.high,
         low = trace.low,
-        close = trace.close;
+        close = trace.close,
+        textboxIn = trace.textbox;
 
     var len = open.length,
         x = [],
-        y = [];
+        y = [],
+        textbox = [];
 
     var appendX = trace._fullInput.x ?
         function(i) {
@@ -65218,11 +65221,13 @@ exports.calcTransform = function calcTransform(gd, trace, opts) {
         if(filterFn(open[i], close[i]) && isNumeric(high[i]) && isNumeric(low[i])) {
             appendX(i);
             appendY(open[i], high[i], low[i], close[i]);
+            textbox.push(textboxIn[i]);
         }
     }
 
     trace.x = x;
     trace.y = y;
+    trace.textbox = textbox;
 };
 
 },{"../../lib":168,"../ohlc/helpers":312,"fast-isnumeric":17}],299:[function(require,module,exports){
@@ -65967,7 +65972,7 @@ module.exports = {
     decreasing: directionAttrs(DECREASING_COLOR),
 
     text: {
-        valType: 'string',
+        valType: 'info_array',
         
         dflt: '',
         arrayOk: true,
@@ -65976,7 +65981,7 @@ module.exports = {
     },
 
     textbox: {
-        valType: 'string',
+        valType: 'info_array',
         
         dflt: '',
         arrayOk: true,
@@ -66514,7 +66519,7 @@ exports.calcTransform = function calcTransform(gd, trace, opts) {
             appendX(i);
             appendY(open[i], high[i], low[i], close[i]);
             appendText(i, open[i], high[i], low[i], close[i]);
-        }
+        }        
     }
 
     trace.x = x;
