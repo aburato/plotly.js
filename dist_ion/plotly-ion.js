@@ -32816,7 +32816,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion6';
+exports.version = '1.33.1-ion7';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -70902,8 +70902,9 @@ module.exports = function hoverPoints(pointData, xval, yval) {
     var project = geo.project;
 
     function distFn(d) {
-        var lonlat = d.lonlat;
+        var lonlat = d && d.lonlat;
 
+        if (!lonlat) return Infinity;  // ARCBUGS-4454 : d.lonlat can be not defined.
         if(lonlat[0] === BADNUM) return Infinity;
         if(isLonLatOverEdges(lonlat)) return Infinity;
 
