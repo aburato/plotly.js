@@ -65221,7 +65221,9 @@ exports.calcTransform = function calcTransform(gd, trace, opts) {
         if(filterFn(open[i], close[i]) && isNumeric(high[i]) && isNumeric(low[i])) {
             appendX(i);
             appendY(open[i], high[i], low[i], close[i]);
-            textbox.push(textboxIn[i]);
+            if (textboxIn && textboxIn.length>0) {
+                textbox.push(textboxIn[i]);
+            }            
         }
     }
 
