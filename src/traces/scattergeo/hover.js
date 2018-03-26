@@ -28,8 +28,9 @@ module.exports = function hoverPoints(pointData, xval, yval) {
     var project = geo.project;
 
     function distFn(d) {
-        var lonlat = d.lonlat;
+        var lonlat = d && d.lonlat;
 
+        if (!lonlat) return Infinity;  // ARCBUGS-4454 : d.lonlat can be not defined.
         if(lonlat[0] === BADNUM) return Infinity;
         if(isLonLatOverEdges(lonlat)) return Infinity;
 

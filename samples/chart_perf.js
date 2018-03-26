@@ -1,7 +1,7 @@
 var trace1 = {
-  //y: [2, 3, 4, 6,7, 8, 9, 10, 11, 12, 13],
-  y: [-40, 50, 60],
-  x: ['2017-01-04', '2017-01-05', '2017-01-06'],
+  y: [2, 3, 4, 6,7, 8, 9, 10, 11, 12, 13],
+  //y: [-40, 50, 60],
+  //x: ['2017-01-04', '2017-01-05', '2017-01-06'],
   // y: [-40, 50, 60],
   close: [116.019997, 116.610001, 117.910004],
 
@@ -19,10 +19,10 @@ var trace1 = {
   text: ['ciao1', 'ciao2', 'ciao3', 'ciao3', 'ciao3', 'ciao3', 'ciao3'],
   textbox: [['goofy0', 'goofy1', 'goofy2', 'goofy3', 'goofy4'], ['goofy5', 'goofy6', 'goofy7']],
 
-  hoverinfo: 'y+text',
+  hoverinfo: 'text',
 
-  boxpoints: 'all',
-  type: 'candlestick',
+  boxpoints: 'None',
+  type: 'box',
   name: 'MZ',
   opacity: 0.5
 };
