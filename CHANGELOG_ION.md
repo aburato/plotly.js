@@ -1,5 +1,9 @@
 # plotly.js ION changelog
 
+## [1.28.3-ion53] -- 2018-03-27
+
+### [ARCBUGS-4454] GUI throws unhandled exception intermittently when a user changes scatter chart to world chart. Due to bad params passed to map chart
+
 ## [1.28.3-ion51] -- 2018-02-07
 
 ### [ATPWM-929] iPhone - Unhandled Exception - Undefined is not an object (evaluating 't._fullLayout.annotations')
