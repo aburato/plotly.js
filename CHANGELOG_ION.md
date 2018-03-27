@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion8] -- 2018-03-27
+
+### Boxplot charts if boxpoints=false do not show custom tooltips.
+
+
 ## [1.33.1-ion7] -- 2018-03-26
 
 ### [ARCBUGS-4454] GUI throws unhandled exception intermittently when a user changes scatter chart to world chart. Due to bad params passed to map chart.

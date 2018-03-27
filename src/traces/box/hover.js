@@ -142,7 +142,7 @@ function hoverOnBoxes(pointData, xval, yval, hovermode) {
     if(trace.boxmean || (trace.meanline || {}).visible) {
         attrs.push('mean');
     }
-    if(trace.boxpoints || trace.points) {
+    if(trace.boxpoints) {
         attrs.push('lf', 'uf');
     }    
         

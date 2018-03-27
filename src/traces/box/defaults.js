@@ -66,32 +66,30 @@ function handlePointsDefaults(traceIn, traceOut, coerce, opts) {
         (outlierColorDflt || lineoutliercolor) ? 'suspectedoutliers' : undefined
     );
 
-    if(points) {
-        coerce('jitter', points === 'all' ? 0.3 : 0);
-        coerce('pointpos', points === 'all' ? -1.5 : 0);
 
-        coerce('marker.symbol');
-        coerce('marker.opacity');
-        coerce('marker.size');
-        coerce('marker.color', traceOut.line.color);
-        coerce('marker.line.color');
-        coerce('marker.line.width');
+    coerce('jitter', points === 'all' ? 0.3 : 0);
+    coerce('pointpos', points === 'all' ? -1.5 : 0);
 
-        if(points === 'suspectedoutliers') {
-            coerce('marker.line.outliercolor', traceOut.marker.color);
-            coerce('marker.line.outlierwidth');
-        }
+    coerce('marker.symbol');
+    coerce('marker.opacity');
+    coerce('marker.size');
+    coerce('marker.color', traceOut.line.color);
+    coerce('marker.line.color');
+    coerce('marker.line.width');
 
-        coerce('selected.marker.color');
-        coerce('unselected.marker.color');
-        coerce('selected.marker.size');
-        coerce('unselected.marker.size');
-
-        coerce('text');
-        coerce('textbox');
-    } else {
-        delete traceOut.marker;
+    if(points === 'suspectedoutliers') {
+        coerce('marker.line.outliercolor', traceOut.marker.color);
+        coerce('marker.line.outlierwidth');
     }
+
+    coerce('selected.marker.color');
+    coerce('unselected.marker.color');
+    coerce('selected.marker.size');
+    coerce('unselected.marker.size');
+
+    coerce('text');
+    coerce('textbox');
+
 
     coerce('hoveron');
 
