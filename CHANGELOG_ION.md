@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion9] -- 2018-04-23
+
+### [TPORTAL-5565] Donut/Pie Charts issue - legend still overlaps the graph
+
+
 ## [1.33.1-ion8] -- 2018-03-27
 
 ### Boxplot charts if boxpoints=false do not show custom tooltips.
