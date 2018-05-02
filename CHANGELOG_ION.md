@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion10] -- 2018-05-02
+
+### [TPORTAL-5565] Fixed case of legend wrongly hidden.
+
+
 ## [1.33.1-ion9] -- 2018-04-23
 
 ### [TPORTAL-5565] Donut/Pie Charts issue - legend still overlaps the graph
