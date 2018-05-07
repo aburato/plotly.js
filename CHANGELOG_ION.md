@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion11] -- 2018-05-07
+
+### [TPORTAL-5717] Maxium call stack exceeded for horizontal bar chart, with screen large monitor 1920x1080.
+
+
 ## [1.33.1-ion10] -- 2018-05-02
 
 ### [TPORTAL-5565] Fixed case of legend wrongly hidden.
