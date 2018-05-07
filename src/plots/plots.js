@@ -497,9 +497,9 @@ plots.supplyDefaults = function(gd, opts) {
 
 plots.supplyDefaultsUpdateCalc = function(oldCalcdata, newFullData) {
     for(var i = 0; i < newFullData.length; i++) {
-        var newTrace = newFullData[i];
+            var newTrace = newFullData[i];
         var cd0 = oldCalcdata[i][0];
-        if(cd0 && cd0.trace) {
+            if(cd0 && cd0.trace) {
             var oldTrace = cd0.trace;
             if(oldTrace._hasCalcTransform) {
                 var arrayAttrs = oldTrace._arrayAttrs;
@@ -716,7 +716,7 @@ plots._hasPlotType = function(category) {
         // N.B. this is modules[i] along with 'categories' as a hash object
         var _module = Registry.modules[name];
         if(_module && _module.categories[category]) return true;
-    }
+        }
 
     return false;
 };
@@ -1185,10 +1185,10 @@ plots.supplyTraceDefaults = function(traceIn, traceOut, colorIndex, layout, trac
         }
 
         coerceUnlessPruned('hoverlabel', '', function() {
-            Registry.getComponentMethod(
-                'fx',
-                'supplyDefaults'
-            )(traceIn, traceOut, defaultColor, layout);
+        Registry.getComponentMethod(
+            'fx',
+            'supplyDefaults'
+        )(traceIn, traceOut, defaultColor, layout);
         });
 
         // TODO add per-base-plot-module trace defaults step
@@ -1416,7 +1416,7 @@ plots.plotAutoSize = function plotAutoSize(gd, layout, fullLayout) {
             var factor = 1 - 2 * frameMargins;
             newWidth = Math.round(factor * newWidth);
             newHeight = Math.round(factor * newHeight);
-        }
+    }
     }
 
     var minWidth = plots.layoutAttributes.width.min,
@@ -1688,9 +1688,9 @@ plots.autoMargin = function(gd, id, o) {
             var pad = o.pad;
             if(pad === undefined) {
                 var margin = fullLayout.margin;
-                // if no explicit pad is given, use 12px unless there's a
+                // if no explicit pad is given, use 18px unless there's a
                 // specified margin that's smaller than that
-                pad = Math.min(12, margin.l, margin.r, margin.t, margin.b);
+                pad = Math.min(18, margin.l, margin.r, margin.t, margin.b);
             }
 
             // if the item is too big, just give it enough automargin to
@@ -1813,7 +1813,7 @@ plots.doAutoMargin = function(gd) {
             fullLayout._redrawFromAutoMarginCount++;
         } else {
             fullLayout._redrawFromAutoMarginCount = 1;
-        }
+    }
         return Registry.call('plot', gd);
     }
 };
@@ -2412,7 +2412,7 @@ plots.transition = function(gd, data, layout, traces, frameOpts, transitionOpts)
         var module = contFull._module;
 
         if(!module) continue;
-    }
+            }
 
     var seq = [plots.previousPromises, interruptPreviousTransitions, prepareTransitions, plots.rehover, executeTransitions];
 
@@ -2604,9 +2604,9 @@ function doCrossTraceCalc(gd) {
                 Lib.pushUnique(hash[spType], fn);
             } else {
                 hash[spType] = [fn];
-            }
         }
     }
+}
 
     for(k in hash) {
         var methods = hash[k];
