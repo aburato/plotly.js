@@ -32817,7 +32817,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion11';
+exports.version = '1.33.1-ion12';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -39310,8 +39310,9 @@ exports.clearAxisTypes = function(gd, traces, layoutUpdate) {
         for(var j = 0; j < 3; j++) {
             var ax = getFromTrace(gd, trace, axLetters[j]);
 
-            // do not clear log type - that's never an auto result so must have been intentional
-            if(ax && ax.type !== 'log') {
+            // do not clear log or category type - that's never an auto result so must have been intentional
+            // Category type added to fix ARCBUGS-4562: restyle otherwise nullifies axisType
+            if(ax && (ax.type !== 'log' && ax.type !== 'category')) {
                 var axAttr = ax._name;
                 var sceneName = ax._id.substr(1);
                 if(sceneName.substr(0, 5) === 'scene') {

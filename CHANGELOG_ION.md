@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion12] -- 2018-06-06
+
+### [ARCBUGS-4562] Now plotly.restyle() does not clear axisType. It was clearing axisType even when set via API.
+
+
 ## [1.33.1-ion11] -- 2018-05-07
 
 ### [TPORTAL-5717] Maxium call stack exceeded for horizontal bar chart, with screen large monitor 1920x1080.

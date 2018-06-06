@@ -1,4 +1,5 @@
 var trace1 = {
+  x: ['2017', '2018', '2019'],
   y: [2, 3, 4, 6,7, 8, 9, 10, 11, 12, 13, 50],
   // y: [-40, 50, 60],
   // x: ['2017-01-04', '2017-01-05', '2017-01-06'],
@@ -22,7 +23,7 @@ var trace1 = {
   hoverinfo: 'text',
 
   boxpoints: false,
-  type: 'box',
+  type: 'bar',
   name: 'MZ',
   opacity: 0.5
 };
@@ -41,6 +42,9 @@ var data = [trace1];
 
 var layout = {
   title: 'Double Y Axis Example',
+  xaxis: {
+	  type: 'category'
+	  },
   yaxis: {title: 'yaxis title'},
   yaxis2: {
     title: 'yaxis2 title',
@@ -54,3 +58,5 @@ var layout = {
 var plotDiv = document.getElementById('myDiv');
 
 Plotly.newPlot(plotDiv, data, layout);
+
+Plotly.restyle(plotDiv, {marker: {color: 'red'}});
