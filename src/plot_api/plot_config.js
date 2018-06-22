@@ -95,7 +95,7 @@ module.exports = {
      * enable direct range entry at the pan/zoom drag points
      * (drag handles must be enabled above)
      */
-    showAxisRangeEntryBoxes: true,
+    showAxisRangeEntryBoxes: false,
 
     // link to open this plot in plotly
     showLink: false,
