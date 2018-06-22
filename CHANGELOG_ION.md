@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion13] -- 2018-06-21
+
+### [ATPWM-1192] Date axis: clicking near start or end of axis, renders a date time wrongly editable.
+
+
 ## [1.33.1-ion12] -- 2018-06-06
 
 ### [ARCBUGS-4562] Now plotly.restyle() does not clear axisType. It was clearing axisType even when set via API.
