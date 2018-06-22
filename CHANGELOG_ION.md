@@ -1,6 +1,6 @@
 # plotly.js ION changelog
 
-## [1.33.1-ion13] -- 2018-06-21
+## [1.33.1-ion14] -- 2018-06-22
 
 ### [ATPWM-1192] Date axis: clicking near start or end of axis, renders a date time wrongly editable.
 

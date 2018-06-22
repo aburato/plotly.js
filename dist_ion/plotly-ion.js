@@ -32817,7 +32817,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion13';
+exports.version = '1.33.1-ion14';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -42572,7 +42572,7 @@ module.exports = {
      * enable direct range entry at the pan/zoom drag points
      * (drag handles must be enabled above)
      */
-    showAxisRangeEntryBoxes: true,
+    showAxisRangeEntryBoxes: false,
 
     // link to open this plot in plotly
     showLink: false,
@@ -48591,24 +48591,24 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
                 }
                 else if(ew === 'e') hAlign = 'right';
 
-                // if(gd._context.showAxisRangeEntryBoxes) {
-                //     d3.select(dragger)
-                //         .call(svgTextUtils.makeEditable, {
-                //             gd: gd,
-                //             immediate: true,
-                //             background: fullLayout.paper_bgcolor,
-                //             text: String(initialText),
-                //             fill: ax.tickfont ? ax.tickfont.color : '#444',
-                //             horizontalAlign: hAlign,
-                //             verticalAlign: vAlign
-                //         })
-                //         .on('edit', function(text) {
-                //             var v = ax.d2r(text);
-                //             if(v !== undefined) {
-                //                 Plotly.relayout(gd, attrStr, v);
-                //             }
-                //         });
-                // }
+                if(gd._context.showAxisRangeEntryBoxes) {
+                    d3.select(dragger)
+                        .call(svgTextUtils.makeEditable, {
+                            gd: gd,
+                            immediate: true,
+                            background: fullLayout.paper_bgcolor,
+                            text: String(initialText),
+                            fill: ax.tickfont ? ax.tickfont.color : '#444',
+                            horizontalAlign: hAlign,
+                            verticalAlign: vAlign
+                        })
+                        .on('edit', function(text) {
+                            var v = ax.d2r(text);
+                            if(v !== undefined) {
+                                Plotly.relayout(gd, attrStr, v);
+                            }
+                        });
+                }
             }
         }
     };
