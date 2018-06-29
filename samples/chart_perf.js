@@ -2,7 +2,7 @@ var trace1 = {
   //x: ['2017', '2018', '2019'],
   y: [2, 3, 4, 6,7, 8, 9, 10, 11, 12, 13, 50],
   // y: [-40, 50, 60],
-  x: ['2017-01-04T09:15:23.456', '2017-01-05T09:15:23.456', '2017-01-06T09:15:23.456'],  
+  x: ['2017-01-04T09:15:23.456', '2017-01-05T09:15:23.456', '2017-01-06T09:15:23.456'],
   // y: [-40, 50, 60],
   close: [116.019997, 116.610001, 117.910004],
 
@@ -50,19 +50,27 @@ var trace2 = {
 
 var data = [trace1];
 
+function formattazione(stringa) {
+  return stringa + "zuzzu";
+}
+
 var layout = {
   title: 'Double Y Axis Example',
   xaxis: {
     type: 'date',
-    tickformat: '%H:%M:%S'
+    //tickformat: '%H:%M',
+    formatCallback: formattazione
 	  },
-  yaxis: {title: 'yaxis title'},
+  yaxis: {
+    title: 'yaxis title',
+    formatCallback: formattazione
+  },
   yaxis2: {
     title: 'yaxis2 title',
     titlefont: {color: 'rgb(148, 103, 189)'},
     tickfont: {color: 'rgb(148, 103, 189)'},
     overlaying: 'y',
-    side: 'right'
+    side: 'right'    
   }
 };
 

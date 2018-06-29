@@ -1873,6 +1873,30 @@ axes.doTicks = function(gd, axid, skipTitle) {
         sides, transfn, tickpathfn, subplots,
         i;
 
+    if (gd.layout.xaxis.formatCallback && axLetter === "x") {        
+        for(i = 0; i < vals.length; i++) {
+            vals[i].text = gd.layout.xaxis.formatCallback(vals[i].text, vals[i].x);
+        }        
+    }
+
+    if (gd.layout.yaxis.formatCallback && axLetter === "y") {        
+        for(i = 0; i < vals.length; i++) {
+            vals[i].text = gd.layout.yaxis.formatCallback(vals[i].text, vals[i].x);
+        }        
+    }
+
+    if (gd.layout.xaxis2 && gd.layout.xaxis2.formatCallback && axLetter === "x2") {        
+        for(i = 0; i < vals.length; i++) {
+            vals[i].text = gd.layout.xaxis2.formatCallback(vals[i].text, vals[i].x);
+        }        
+    }
+
+    if (gd.layout.yaxis2 && gd.layout.yaxis2.formatCallback && axLetter === "y2") {        
+        for(i = 0; i < vals.length; i++) {
+            vals[i].text = gd.layout.yaxis2.formatCallback(vals[i].text, vals[i].x);
+        }        
+    }
+
     if(ax._counterangle && ax.ticks === 'outside') {
         var caRad = ax._counterangle * Math.PI / 180;
         labelStandoff = ax.ticklen * Math.cos(caRad) + 1;
@@ -2042,6 +2066,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
                         .call(svgTextUtils.positionText, labelx(d), labely(d))
                         .call(Drawing.font, d.font, d.fontSize, d.fontColor)
                         .text(d.text)
+                        //.text("foffo")
                         .call(svgTextUtils.convertToTspans, gd);
                     newPromise = gd._promises[newPromise];
                     if(newPromise) {
