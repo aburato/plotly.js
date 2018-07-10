@@ -748,7 +748,7 @@ function autoShiftMonthBins(binStart, data, dtick, dataMin, calendar) {
 // if ticks are set to automatic, determine the right values (tick0,dtick)
 // in any case, set tickround to # of digits to round tick labels to,
 // or codes to this effect for log and date scales
-axes.calcTicks = function calcTicks(ax) {
+axes.calcTicks = function calcTicks(ax, gd) {
     var rng = Lib.simpleMap(ax.range, ax.r2l);
 
     // calculate max number of (auto) ticks to display based on plot size
@@ -840,9 +840,9 @@ axes.calcTicks = function calcTicks(ax) {
     ax._inCalcTicks = true;
 
     var ticksOut = new Array(vals.length);
-    for(var i = 0; i < vals.length; i++) ticksOut[i] = axes.tickText(ax, vals[i]);
+    for(var i = 0; i < vals.length; i++) ticksOut[i] = axes.tickText(ax, vals[i], null, gd);
 
-    ax._inCalcTicks = false;
+    ax._inCalcTicks = false; 
 
     return ticksOut;
 };
@@ -1185,7 +1185,7 @@ axes.tickFirst = function(ax) {
 // ax is the axis layout, x is the tick value
 // hover is a (truthy) flag for whether to show numbers with a bit
 // more precision for hovertext
-axes.tickText = function(ax, x, hover) {
+axes.tickText = function(ax, x, hover, gd) {
     var out = tickTextObj(ax, x),
         hideexp,
         arrayMode = ax.tickmode === 'array',
@@ -1235,6 +1235,17 @@ axes.tickText = function(ax, x, hover) {
     if(ax.tickprefix && !isHidden(ax.showtickprefix)) out.text = ax.tickprefix + out.text;
     if(ax.ticksuffix && !isHidden(ax.showticksuffix)) out.text += ax.ticksuffix;
 
+    // ION custom 
+    if (ax._id === "x" && gd && gd.layout.xaxis.formatCallback) {    
+            out.text = gd.layout.xaxis.formatCallback(out.text, out.x);            
+    } else if (ax._id === "y" && gd && gd.layout.yaxis.formatCallback) {    
+            out.text = gd.layout.yaxis.formatCallback(out.text, out.x);        
+    } else if (ax._id === "x2" && gd && gd.layout.xaxis2 && gd.layout.xaxis2.formatCallback) {        
+            out.text = gd.layout.xaxis2.formatCallback(out.text, out.x);                
+    } else if (ax._id === "y2" && gd && gd.layout.yaxis2 && gd.layout.yaxis2.formatCallback) {        
+            out.text = gd.layout.yaxis2.formatCallback(out.text, out.x);                
+    }
+
     return out;
 };
 
@@ -1250,13 +1261,13 @@ axes.tickText = function(ax, x, hover) {
  *     `val` and `val2` as a range (ie '<val> - <val2>') if `val2` is provided and
  *     it's different from `val`.
  */
-axes.hoverLabelText = function(ax, val, val2) {
-    if(val2 !== BADNUM && val2 !== val) {
-        return axes.hoverLabelText(ax, val) + ' - ' + axes.hoverLabelText(ax, val2);
+axes.hoverLabelText = function(ax, val, val2, gd) {
+    if(val2 && val2 !== BADNUM && val2 !== val) {
+        return axes.hoverLabelText(ax, val, null, gd) + ' - ' + axes.hoverLabelText(ax, val2, null, gd);
     }
 
     var logOffScale = (ax.type === 'log' && val <= 0);
-    var tx = axes.tickText(ax, ax.c2l(logOffScale ? -val : val), 'hover').text;
+    var tx = axes.tickText(ax, ax.c2l(logOffScale ? -val : val), 'hover', gd).text;
 
     if(logOffScale) {
         return val === 0 ? '0' : MINUS_SIGN + tx;
@@ -1859,7 +1870,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
 
     var axLetter = axid.charAt(0),
         counterLetter = axes.counterLetter(axid),
-        vals = axes.calcTicks(ax),
+        vals = axes.calcTicks(ax, gd),
         datafn = function(d) { return [d.text, d.x, ax.mirror, d.font, d.fontSize, d.fontColor].join('_'); },
         tcls = axid + 'tick',
         gcls = axid + 'grid',
@@ -1873,30 +1884,7 @@ axes.doTicks = function(gd, axid, skipTitle) {
         sides, transfn, tickpathfn, subplots,
         i;
 
-    if (gd.layout.xaxis.formatCallback && axLetter === "x") {        
-        for(i = 0; i < vals.length; i++) {
-            vals[i].text = gd.layout.xaxis.formatCallback(vals[i].text, vals[i].x);
-        }        
-    }
-
-    if (gd.layout.yaxis.formatCallback && axLetter === "y") {        
-        for(i = 0; i < vals.length; i++) {
-            vals[i].text = gd.layout.yaxis.formatCallback(vals[i].text, vals[i].x);
-        }        
-    }
-
-    if (gd.layout.xaxis2 && gd.layout.xaxis2.formatCallback && axLetter === "x2") {        
-        for(i = 0; i < vals.length; i++) {
-            vals[i].text = gd.layout.xaxis2.formatCallback(vals[i].text, vals[i].x);
-        }        
-    }
-
-    if (gd.layout.yaxis2 && gd.layout.yaxis2.formatCallback && axLetter === "y2") {        
-        for(i = 0; i < vals.length; i++) {
-            vals[i].text = gd.layout.yaxis2.formatCallback(vals[i].text, vals[i].x);
-        }        
-    }
-
+    
     if(ax._counterangle && ax.ticks === 'outside') {
         var caRad = ax._counterangle * Math.PI / 180;
         labelStandoff = ax.ticklen * Math.cos(caRad) + 1;

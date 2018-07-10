@@ -405,7 +405,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
                     for(var newPointNum = 0; newPointNum < newPoints.length; newPointNum++) {
                         newPoint = newPoints[newPointNum];
                         if(isNumeric(newPoint.x0) && isNumeric(newPoint.y0)) {
-                            hoverData.push(cleanPoint(newPoint, hovermode));
+                            hoverData.push(cleanPoint(newPoint, hovermode, gd));
                         }
                     }
                 }
@@ -1146,7 +1146,7 @@ function alignHoverText(hoverLabels, rotateLabels) {
     });
 }
 
-function cleanPoint(d, hovermode) {
+function cleanPoint(d, hovermode, gd) {
     var index = d.index;
     var trace = d.trace || {};
     var cd0 = d.cd[0];
@@ -1184,11 +1184,11 @@ function cleanPoint(d, hovermode) {
 
     // and convert the x and y label values into formatted text
     if(d.xLabelVal !== undefined) {
-        d.xLabel = ('xLabel' in d) ? d.xLabel : Axes.hoverLabelText(d.xa, d.xLabelVal);
+        d.xLabel = ('xLabel' in d) ? d.xLabel : Axes.hoverLabelText(d.xa, d.xLabelVal, null, gd);
         d.xVal = d.xa.c2d(d.xLabelVal);
     }
     if(d.yLabelVal !== undefined) {
-        d.yLabel = ('yLabel' in d) ? d.yLabel : Axes.hoverLabelText(d.ya, d.yLabelVal);
+        d.yLabel = ('yLabel' in d) ? d.yLabel : Axes.hoverLabelText(d.ya, d.yLabelVal, null, gd);
         d.yVal = d.ya.c2d(d.yLabelVal);
     }
 

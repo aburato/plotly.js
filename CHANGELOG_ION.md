@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion16] -- 2018-07-10
+
+### [CORESDK-3481] Support for axes custom formatting (Fixes)
+
+
 ## [1.33.1-ion15] -- 2018-06-29
 
 ### [CORESDK-3481] Support for axes custom formatting
