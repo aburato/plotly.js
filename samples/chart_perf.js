@@ -22,7 +22,7 @@ var trace1 = {
 
   locations: ['FRA', 'DEU', 'RUS', 'ESP'],
 
-  hoverinfo: 'x+y+text',
+  //hoverinfo: 'y',
 
   boxpoints: false,
   //type: 'scattergeo',
@@ -62,8 +62,8 @@ var layout = {
     formatCallback: formattazione
 	  },
   yaxis: {
-    title: 'yaxis title',
-    formatCallback: formattazione
+    title: 'yaxis title'
+    //formatCallback: formattazione
   },
   yaxis2: {
     title: 'yaxis2 title',
