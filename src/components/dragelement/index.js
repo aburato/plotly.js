@@ -10,7 +10,6 @@
 'use strict';
 
 var mouseOffset = require('mouse-event-offset');
-var hasHover = require('has-hover');
 
 var Plotly = require('../../plotly');
 var Lib = require('../../lib');
@@ -184,16 +183,10 @@ dragElement.init = function init(options) {
 
         if(options.prepFn) options.prepFn(e, startX, startY);
 
-        if(hasHover && !rightClick) {
-            dragCover = coverSlip();
-            dragCover.style.cursor = window.getComputedStyle(element).cursor;
-        }
-        else if(!hasHover) {
-            // document acts as a dragcover for mobile, bc we can't create dragcover dynamically
-            dragCover = document;
-            cursor = window.getComputedStyle(document.documentElement).cursor;
-            document.documentElement.style.cursor = window.getComputedStyle(element).cursor;
-        }
+        
+        // ION: getting rid of the dragCover mechanism as no more needed with latest plotly public commits, and also problematic on Android Chrome
+        cursor = window.getComputedStyle(document.documentElement).cursor;
+        document.documentElement.style.cursor = window.getComputedStyle(element).cursor;
 
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onDone);
@@ -246,12 +239,9 @@ dragElement.init = function init(options) {
         document.removeEventListener('touchmove', onMove);
         document.removeEventListener('touchend', onDone);
         e.target && e.target.removeEventListener('touchend', onDone);
- 
-        if(hasHover) {
-            Lib.removeElement(dragCover);
-        }
-        else if(cursor) {
-            dragCover.documentElement.style.cursor = cursor;
+         
+        if(cursor) {
+            document.documentElement.style.cursor = cursor;
             cursor = null;
         }
 
@@ -317,26 +307,6 @@ dragElement.init = function init(options) {
         return;
     }
 };
-
-function coverSlip() {
-    var cover = document.createElement('div');
-
-    cover.className = 'dragcover';
-    var cStyle = cover.style;
-    cStyle.position = 'fixed';
-    cStyle.left = 0;
-    cStyle.right = 0;
-    cStyle.top = 0;
-    cStyle.bottom = 0;
-    cStyle.zIndex = 999999999;
-    cStyle.background = 'none';
-
-    document.body.appendChild(cover);
-
-    return cover;
-}
-
-dragElement.coverSlip = coverSlip;
 
 function finishDrag(gd) {
     gd._dragging = false;
