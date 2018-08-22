@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion17] -- 2018-8-22
+
+### [ATPWM-1308] Android Chrome now correctly scrolls the outer container when scrolling hover a chart.
+
+
 ## [1.33.1-ion16] -- 2018-07-10
 
 ### [CORESDK-3481] Support for axes custom formatting (Fixes)
