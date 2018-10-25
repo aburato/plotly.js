@@ -30,7 +30,7 @@ module.exports = {
         top: 0
     },
     // multiple of fontSize to get the vertical offset between lines
-    LINE_SPACING: 1.3,
+    LINE_SPACING: 1.2,
 
     // multiple of fontSize to shift from the baseline to the midline
     // (to use when we don't calculate this shift from Drawing.bBox)

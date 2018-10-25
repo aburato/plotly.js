@@ -412,7 +412,7 @@ function drawTexts(g, gd) {
     function textLayout(s) {
         svgTextUtils.convertToTspans(s, gd, function() {
             computeTextDimensions(g, gd);
-        });
+        }, true);
     }
 
     if(gd._context.edits.legendText && !isPie) {
