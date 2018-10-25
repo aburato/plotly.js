@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion18] -- 2018-10-25
+
+### [ARCBUGS-4446] Legend tooltips wrongly show <BR>
+
+
 ## [1.33.1-ion17] -- 2018-8-22
 
 ### [ATPWM-1308] Android Chrome now correctly scrolls the outer container when scrolling hover a chart.
