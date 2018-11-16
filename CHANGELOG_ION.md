@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion19] -- 2018-11-16
+
+### [CORESDK-3299] Custom tooltip on boxplot and candlestick now add custom tooltip in append, rather than substituting
+
+
 ## [1.33.1-ion18] -- 2018-10-25
 
 ### [ARCBUGS-4446] Legend tooltips wrongly show <BR>
