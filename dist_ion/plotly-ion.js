@@ -32787,7 +32787,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion18';
+exports.version = '1.33.1-ion19';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -64224,10 +64224,10 @@ function hoverOnBoxes(pointData, xval, yval, hovermode) {
         // ION to support custom tooltips on boxes and candlesticks
         if (trace.textbox && trace.textbox[pointData.index] && trace.textbox[pointData.index][i]) {
             pointData2['text'] = trace.textbox[pointData.index][i];
-        } else {
+        } //else {
             pointData2[vLetter + 'LabelVal'] = val;
             pointData2[vLetter + 'Label'] = (t.labels ? t.labels[attr] + ' ' : '') + Axes.hoverLabelText(vAxis, val);
-        }                  
+        //}                  
             
         // only keep name on the first item (median)
         pointData.name = '';
