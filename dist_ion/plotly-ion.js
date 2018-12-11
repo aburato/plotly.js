@@ -25297,7 +25297,7 @@ function drawTexts(g, gd) {
     // ion
     // text.enter().append('text').classed('legendtext', true);
     var thisG = text.enter();
-    thisG.append("title").text(name.replace(/<br>/g, "")); // Remove BR from legend tooltip
+    thisG.append("title").text(name && name.replace(/<br>/g, "")); // Remove BR from legend tooltip
     thisG.append('text').classed('legendtext', true);
 
     text.attr('text-anchor', 'start')
@@ -32787,7 +32787,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion19';
+exports.version = '1.33.1-ion20';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
