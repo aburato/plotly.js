@@ -151,7 +151,12 @@ module.exports = function draw(gd) {
         return;
     }
 
-    if(opts._height > lyMax) {        // If the legend doesn't fit in the plot area,
+    if (opts.orientation === "v" && opts._width > 150) {
+        opts.width = 150;
+    }
+
+    if(opts._height > lyMax) {
+        // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
         expandHorizontalMargin(gd);
     } else {
@@ -435,7 +440,7 @@ function drawTexts(g, gd, maxLength) {
     // ion
     // text.enter().append('text').classed('legendtext', true);
     var thisG = text.enter();
-    thisG.append("title").text(name && name.replace(/<br>/g, "")); // Remove BR from legend tooltip
+    thisG.append("title").text(name);
     thisG.append('text').classed('legendtext', true);
 
     text.attr('text-anchor', 'start')
@@ -450,7 +455,7 @@ function drawTexts(g, gd, maxLength) {
     function textLayout(s) {
         svgTextUtils.convertToTspans(s, gd, function() {
             computeTextDimensions(g, gd);
-        });
+        }, true);
     }
 
     if(isEditable) {

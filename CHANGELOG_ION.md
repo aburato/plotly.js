@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion21] -- 2019-01-24
+
+### Mouse selection included <br> because it was present in legend label. Now the label is properly formatted, and drawing is delegated to SVG.
+
+
 ## [1.33.1-ion20] -- 2018-10-25
 
 ### [ARCBUGS-4446] Legend tooltips wrongly show <BR>. Added a check to avoid undefined.
