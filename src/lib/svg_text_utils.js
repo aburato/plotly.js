@@ -26,7 +26,7 @@ function getSize(_selection, _dimension) {
 
 var FIND_TEX = /([^$]*)([$]+[^$]*[$]+)([^$]*)/;
 
-exports.convertToTspans = function(_context, gd, _callback) {
+exports.convertToTspans = function(_context, gd, _callback, IONFormat) {
     var str = _context.text();
 
     // Until we get tex integrated more fully (so it can be used along with non-tex)
@@ -51,7 +51,7 @@ exports.convertToTspans = function(_context, gd, _callback) {
             'data-math': 'N'
         });
 
-    function showText() {
+    function showText(gd, IONFormat) {
         if(!parent.empty()) {
             svgClass = _context.attr('class') + '-math';
             parent.select('svg.' + svgClass).remove();
@@ -59,7 +59,7 @@ exports.convertToTspans = function(_context, gd, _callback) {
         _context.text('')
             .style('white-space', 'pre');
 
-        var hasLink = buildSVGText(_context.node(), str);
+        var hasLink = buildSVGText(_context.node(), str, gd, IONFormat);
 
         if(hasLink) {
             // at least in Chrome, pointer-events does not seem
@@ -147,7 +147,7 @@ exports.convertToTspans = function(_context, gd, _callback) {
             });
         }));
     }
-    else showText();
+    else showText(gd, IONFormat);
 
     return _context;
 };
@@ -301,7 +301,7 @@ function convertEntities(_str) {
  * @returns {bool}: does the result contain any links? We need to handle the text element
  *   somewhat differently if it does, so just keep track of this when it happens.
  */
-function buildSVGText(containerNode, str) {
+function buildSVGText(containerNode, str, gd, IONFormat) {
     str = convertEntities(str)
         /*
          * Normalize behavior between IE and others wrt newlines and whitespace:pre
@@ -424,16 +424,30 @@ function buildSVGText(containerNode, str) {
         nodeStack = [{node: containerNode}];
     }
 
-    var parts = str.split(SPLIT_TAGS);
+    var strION = str;
+
+    // In case ION new line logic applies to the legend labels
+    // In case BR is already used for hovertooltip custom formatting
+    if (IONFormat && str.indexOf("<br>")<0 && str.length > 17) {        
+        strION = str.substr(0, 17) + "<br>" + str.substr(17);
+        if (strION.length > 34) {
+            strION = strION.substr(0, 34) + "...";
+        }
+    }
+    var parts =  strION.split(SPLIT_TAGS);
+
     for(var i = 0; i < parts.length; i++) {
         var parti = parts[i];
         var match = parti.match(ONE_TAG);
         var tagType = match && match[2].toLowerCase();
         var tagStyle = TAG_STYLES[tagType];
 
-        if(tagType === 'br') {
+        if(tagType === 'br') {            
             newLine();
-        }
+            if (IONFormat) {
+                newLine();
+            }
+        }        
         else if(tagStyle === undefined) {
             addTextNode(currentNode, parti);
         }

@@ -152,6 +152,10 @@ module.exports = function draw(gd) {
         return;
     }
 
+    if (opts.orientation === "v" && opts.width > 150) {
+        opts.width = 150;
+    }
+
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
@@ -395,7 +399,7 @@ function drawTexts(g, gd) {
     // ion
     // text.enter().append('text').classed('legendtext', true);
     var thisG = text.enter();
-    thisG.append("title").text(name && name.replace(/<br>/g, "")); // Remove BR from legend tooltip
+    thisG.append("title").text(name);
     thisG.append('text').classed('legendtext', true);
 
     text.attr('text-anchor', 'start')
@@ -408,7 +412,7 @@ function drawTexts(g, gd) {
     function textLayout(s) {
         svgTextUtils.convertToTspans(s, gd, function() {
             computeTextDimensions(g, gd);
-        });
+        }, true);
     }
 
     if(gd._context.edits.legendText && !isPie) {
