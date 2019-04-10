@@ -45,7 +45,9 @@ unhover.raw = function unhoverRaw(gd, evt) {
     fullLayout._hoverlayer.selectAll('g').remove();
     fullLayout._hoverlayer.selectAll('line').remove();
     fullLayout._hoverlayer.selectAll('circle').remove();
-    gd._hoverdata = undefined;
+    
+    // Zanda: commented out as _hoverdata was nullified and clicking on chart resulted in a null selection
+    //gd._hoverdata = undefined;
 
     if(evt.target && oldhoverdata) {
         gd.emit('plotly_unhover', {
