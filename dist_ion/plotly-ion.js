@@ -19795,7 +19795,9 @@ unhover.raw = function unhoverRaw(gd, evt) {
     fullLayout._hoverlayer.selectAll('g').remove();
     fullLayout._hoverlayer.selectAll('line').remove();
     fullLayout._hoverlayer.selectAll('circle').remove();
-    gd._hoverdata = undefined;
+    
+    // Zanda: commented out as _hoverdata was nullified and clicking on chart resulted in a null selection
+    //gd._hoverdata = undefined;
 
     if(evt.target && oldhoverdata) {
         gd.emit('plotly_unhover', {
@@ -22101,20 +22103,23 @@ function paste(traceAttr, cd, cdAttr, fn) {
 var Registry = require('../../registry');
 var hover = require('./hover').hover;
 
-module.exports = function click(gd, evt, subplot) {
-    var annotationsDone = Registry.getComponentMethod('annotations', 'onClick')(gd, gd._hoverdata);
+module.exports = function click(gd, evt, subplot) {          
+    var annotationsDone = Registry.getComponentMethod('annotations', 'onClick')(gd, gd._hoverdata);    
 
     // fallback to fail-safe in case the plot type's hover method doesn't pass the subplot.
     // Ternary, for example, didn't, but it was caught because tested.
-    if(subplot !== undefined) {
+    if(subplot !== undefined) {        
         // The true flag at the end causes it to re-run the hover computation to figure out *which*
         // point is being clicked. Without this, clicking is somewhat unreliable.
         hover(gd, evt, subplot, true);
     }
 
-    function emitClick() { gd.emit('plotly_click', {points: gd._hoverdata, event: evt, button: evt.button}); }
-
+    function emitClick() {                 
+        gd.emit('plotly_click', {points: gd._hoverdata, event: evt, button: evt.button}); 
+    }
+        
     if(gd._hoverdata && evt && evt.target) {
+        
         if(annotationsDone && annotationsDone.then) {
             annotationsDone.then(emitClick);
         }
@@ -22122,7 +22127,7 @@ module.exports = function click(gd, evt, subplot) {
 
         // why do we get a double event without this???
         if(evt.stopImmediatePropagation) evt.stopImmediatePropagation();
-    }
+    } 
 };
 
 },{"../../registry":261,"./hover":89}],86:[function(require,module,exports){
@@ -22138,7 +22143,7 @@ module.exports = function click(gd, evt, subplot) {
 
 module.exports = {
     // max pixels away from mouse to allow a point to highlight
-    MAXDIST: 20,
+    MAXDIST: 2,
 
     // hover labels for multiple horizontal bars get tilted by this angle
     YANGLE: 60,
@@ -22146,7 +22151,7 @@ module.exports = {
     // size and display constants for hover text
 
     // pixel size of hover arrows
-    HOVERARROWSIZE: 6,
+    HOVERARROWSIZE: 5,
     // pixels padding around text
     HOVERTEXTPAD: 3,
     // hover font
@@ -32791,7 +32796,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion21';
+exports.version = '1.33.1-ion22';
 
 // inject promise polyfill
 require('es6-promise').polyfill();

@@ -9,13 +9,16 @@
 'use strict';
 
 module.exports = {
+    // max pixels away from mouse to allow a point to highlight
+    MAXDIST: 2,
+
     // hover labels for multiple horizontal bars get tilted by this angle
     YANGLE: 60,
 
     // size and display constants for hover text
 
     // pixel size of hover arrows
-    HOVERARROWSIZE: 6,
+    HOVERARROWSIZE: 5,
     // pixels padding around text
     HOVERTEXTPAD: 3,
     // hover font

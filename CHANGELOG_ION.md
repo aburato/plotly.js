@@ -1,5 +1,11 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion22] -- 2019-04-10
+
+### Bar selection was at times missed, and this improves the problem, which in some environments at rare times seems still present.
+### Reduced the active click area selection that caused wrong selections in case of a scatter line overlapping with a bar.
+
+
 ## [1.33.1-ion21] -- 2019-01-24
 
 ### Mouse selection included <br> because it was present in legend label. Now the label is properly formatted, and drawing is delegated to SVG.

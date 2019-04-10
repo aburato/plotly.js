@@ -37,6 +37,7 @@ var trace1 = {
     sizemode: 'area'
   },
   name: 'MZ',
+  yaxis: 'y2',
   opacity: 0.5
 };
 
@@ -45,7 +46,7 @@ var trace2 = {
   //x: ['2017-01-04', '2017-01-05', '2017-01-06'],
   y: [21, 5, 6],
   name: 'yaxis2 data',
-  //yaxis: 'y2',
+  yaxis: 'y2',
   //type: 'bar',
   type: 'box',
   opacity: 0.3
