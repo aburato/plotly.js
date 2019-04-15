@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion23] -- 2019-04-15
+
+### In a chart that highlights selection, hiding series through legend labels was not supported.
+
+
 ## [1.33.1-ion22] -- 2019-04-10
 
 ### Bar selection was at times missed, and this improves the problem, which in some environments at rare times seems still present.
