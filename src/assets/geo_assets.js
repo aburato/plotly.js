@@ -12,4 +12,4 @@ var saneTopojson = require('sane-topojson');
 
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion22';exports.topojson = saneTopojson;
+exports.version = '1.33.1-ion23';exports.topojson = saneTopojson;
