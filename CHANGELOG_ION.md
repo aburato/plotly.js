@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion24] -- 2019-07-17
+
+### Chart with legend when browser zoomed at 90% raises maximum call stack exceeded exception
+
+
 ## [1.33.1-ion23] -- 2019-04-15
 
 ### In a chart that highlights selection, hiding series through legend labels was not supported.
