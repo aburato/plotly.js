@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion25] -- 2019-11-06
+
+### Legend labels now have new line placed at blank space if nearby
+
+
 ## [1.33.1-ion24] -- 2019-07-17
 
 ### Chart with legend when browser zoomed at 90% raises maximum call stack exceeded exception

@@ -428,12 +428,19 @@ function buildSVGText(containerNode, str, gd, IONFormat) {
 
     // In case ION new line logic applies to the legend labels
     // In case BR is already used for hovertooltip custom formatting
-    if (IONFormat && str.indexOf("<br>")<0 && str.length > 17) {        
-        strION = str.substr(0, 17) + "<br>" + str.substr(17);
+    if (IONFormat && str.indexOf("<br>")<0 && str.length > 17) {
+        var upToPos = 17;
+        for (let i = 17; i > upToPos - 7; i--) {
+            if (str.charAt(i) === " ") {
+                upToPos = i;
+                break;
+            }
+        }
+        strION = strION.substr(0, upToPos) + "<br>" + strION.substr(upToPos+1);        
         if (strION.length > 34) {
             strION = strION.substr(0, 34) + "...";
         }
-    }
+    } 
     var parts =  strION.split(SPLIT_TAGS);
 
     for(var i = 0; i < parts.length; i++) {
