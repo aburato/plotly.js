@@ -32799,7 +32799,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion25';
+exports.version = '1.33.1-ion26';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -67170,7 +67170,7 @@ exports.formatPieValue = function formatPieValue(v, separators) {
 };
 
 exports.getFirstFilled = function getFirstFilled(array, indices) {
-    if(!Array.isArray(array)) return;
+    if(!Array.isArray(array) || !indices) return;
     for(var i = 0; i < indices.length; i++) {
         var v = array[indices[i]];
         if(v || v === 0) return v;
