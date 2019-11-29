@@ -27,7 +27,7 @@ exports.formatPieValue = function formatPieValue(v, separators) {
 };
 
 exports.getFirstFilled = function getFirstFilled(array, indices) {
-    if(!Array.isArray(array)) return;
+    if(!Array.isArray(array) || !indices) return;
     for(var i = 0; i < indices.length; i++) {
         var v = array[indices[i]];
         if(v || v === 0) return v;

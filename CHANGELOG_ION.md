@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion26] -- 2019-11-29
+
+### Minor check for undefined.
+
+
 ## [1.33.1-ion25] -- 2019-11-06
 
 ### Legend labels now have new line placed at blank space if nearby
