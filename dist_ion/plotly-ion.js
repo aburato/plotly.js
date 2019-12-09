@@ -32799,7 +32799,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion26';
+exports.version = '1.33.1-ion27';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -38099,13 +38099,19 @@ function buildSVGText(containerNode, str, gd, IONFormat) {
     // In case BR is already used for hovertooltip custom formatting
     if (IONFormat && str.indexOf("<br>")<0 && str.length > 17) {
         var upToPos = 17;
-        for (let i = 17; i > upToPos - 7; i--) {
+        var spaceFound = false;
+        for (let i = 17; i > upToPos - 10; i--) {
             if (str.charAt(i) === " ") {
                 upToPos = i;
+                spaceFound = true;
                 break;
             }
         }
-        strION = strION.substr(0, upToPos) + "<br>" + strION.substr(upToPos+1);        
+        if (spaceFound) {
+            strION = strION.substr(0, upToPos) + "<br>" + strION.substr(upToPos + 1);        
+        } else  {
+            strION = strION.substr(0, upToPos) + "<br>" + strION.substr(upToPos);
+        }
         if (strION.length > 34) {
             strION = strION.substr(0, 34) + "...";
         }
