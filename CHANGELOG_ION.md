@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion27] -- 2019-11-29
+
+### Legend labels word wrapping further refined.
+
+
 ## [1.33.1-ion26] -- 2019-11-29
 
 ### Minor check for undefined.
