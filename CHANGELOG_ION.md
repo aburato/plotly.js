@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion28] -- 2019-12-13
+
+### Added dragStart param to store the zoom
+
+
 ## [1.33.1-ion27] -- 2019-11-29
 
 ### Legend labels word wrapping further refined.

@@ -19623,7 +19623,7 @@ dragElement.init = function init(options) {
         // In the case the e.target will be removed from the DOM, the touchend onDone will be called on touch release
         e.target && e.target.addEventListener('touchend', onDone);
 
-        gd.emit('plotly_dragstart');
+        gd.emit('plotly_dragstart', e);
 
         if (!shouldBubbleEvents()) {
             return Lib.pauseEvent(e);
@@ -32799,7 +32799,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion27';
+exports.version = '1.33.1-ion28';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -50803,7 +50803,17 @@ module.exports = {
         dflt: 'trace',
         
         editType: 'calc',
-        
+        description: [
+            'Specifies the ordering logic for the case of categorical variables.',
+            'By default, plotly uses *trace*, which specifies the order that is present in the data supplied.',
+            'Set `categoryorder` to *category ascending* or *category descending* if order should be determined by',
+            'the alphanumerical order of the category names.',
+            /* 'Set `categoryorder` to *value ascending* or *value descending* if order should be determined by the',
+            'numerical order of the values.',*/ // // value ascending / descending to be implemented later
+            'Set `categoryorder` to *array* to derive the ordering from the attribute `categoryarray`. If a category',
+            'is not found in the `categoryarray` array, the sorting behavior for that attribute will be identical to',
+            'the *trace* mode. The unspecified categories will follow the categories in `categoryarray`.'
+        ].join(' ')
     },
     categoryarray: {
         valType: 'data_array',
