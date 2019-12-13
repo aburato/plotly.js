@@ -204,7 +204,7 @@ dragElement.init = function init(options) {
         // In the case the e.target will be removed from the DOM, the touchend onDone will be called on touch release
         e.target && e.target.addEventListener('touchend', onDone);
 
-        gd.emit('plotly_dragstart');
+        gd.emit('plotly_dragstart', e);
 
         if (!shouldBubbleEvents()) {
             return Lib.pauseEvent(e);
