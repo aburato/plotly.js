@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion29] -- 2020-02-17
+
+### Avoid to bubble useless promise failure
+
+
 ## [1.33.1-ion28] -- 2019-12-13
 
 ### Added dragStart param to store the zoom

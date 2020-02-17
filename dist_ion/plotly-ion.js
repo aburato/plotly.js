@@ -27564,7 +27564,19 @@ module.exports = {
         values: ['backward', 'todate'],
         dflt: 'backward',
         editType: 'plot',
-        
+        description: [
+            'Sets the range update mode.',
+            'If *backward*, the range update shifts the start of range',
+            'back *count* times *step* milliseconds.',
+            'If *todate*, the range update shifts the start of range',
+            'back to the first timestamp from *count* times',
+            '*step* milliseconds back.',
+            'For example, with `step` set to *year* and `count` set to *1*',
+            'the range update shifts the start of the range back to',
+            'January 01 of the current year.',
+            'Month and year *todate* are currently available only',
+            'for the built-in (Gregorian) calendar.'
+        ].join(' ')
     },
     count: {
         valType: 'number',
@@ -29815,7 +29827,12 @@ module.exports = overrideAll({
         min: 0,
         dflt: 1,
         
-        
+        description: [
+            'Sets the length of the slider',
+            'This measure excludes the padding of both ends.',
+            'That is, the slider\'s length is this length minus the',
+            'padding on both ends.'
+        ].join(' ')
     },
     x: {
         valType: 'number',
@@ -32799,7 +32816,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion28';
+exports.version = '1.33.1-ion29';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -39689,7 +39706,9 @@ Plotly.plot = function(gd, data, layout, config) {
         // signal to drag handler that after everything else is done
         // we need to replot, because something has changed
         gd._replotPending = true;
-        return Promise.reject();
+        //return Promise.reject();
+        // Rejecting the promise just bubbles a useless exception to the SDK
+        return Promise.resolve();
     } else {
         // we're going ahead with a replot now
         gd._replotPending = false;
@@ -50803,17 +50822,7 @@ module.exports = {
         dflt: 'trace',
         
         editType: 'calc',
-        description: [
-            'Specifies the ordering logic for the case of categorical variables.',
-            'By default, plotly uses *trace*, which specifies the order that is present in the data supplied.',
-            'Set `categoryorder` to *category ascending* or *category descending* if order should be determined by',
-            'the alphanumerical order of the category names.',
-            /* 'Set `categoryorder` to *value ascending* or *value descending* if order should be determined by the',
-            'numerical order of the values.',*/ // // value ascending / descending to be implemented later
-            'Set `categoryorder` to *array* to derive the ordering from the attribute `categoryarray`. If a category',
-            'is not found in the `categoryarray` array, the sorting behavior for that attribute will be identical to',
-            'the *trace* mode. The unspecified categories will follow the categories in `categoryarray`.'
-        ].join(' ')
+        
     },
     categoryarray: {
         valType: 'data_array',
@@ -56060,7 +56069,12 @@ module.exports = {
         
         dflt: false,
         editType: 'plot',
-        
+        description: [
+            'Determines whether or not a text link citing the data source is',
+            'placed at the bottom-right cored of the figure.',
+            'Has only an effect only on graphs that have been generated via',
+            'forked graphs from the plotly service (at https://plot.ly or on-premise).'
+        ].join(' ')
     },
     showlegend: {
         // handled in legend.supplyLayoutDefaults
