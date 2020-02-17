@@ -143,7 +143,9 @@ exports.plot = function(gd, data, layout, config) {
         // signal to drag handler that after everything else is done
         // we need to replot, because something has changed
         gd._replotPending = true;
-        return Promise.reject();
+        //return Promise.reject();
+        // Rejecting the promise just bubbles a useless exception to the SDK
+        return Promise.resolve();
     } else {
         // we're going ahead with a replot now
         gd._replotPending = false;
