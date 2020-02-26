@@ -1,5 +1,5 @@
 var trace1 = {
-  //x: [2, 3, 4],
+  x: [2, 3, 4],
   y: [-20, 6, 7, 8, 9, 10, 11, 12, 13, 50],
   // y: [-40, 50, 60],
   // x: ['2017-01-04', '2017-01-05', '2017-01-06'],
@@ -28,8 +28,8 @@ var trace1 = {
   boxpoints: 'all',
   //type: 'scattergeo',
   //type: 'date',
-  //type: 'bar',
-  type: 'box',
+  type: 'bar',
+  //type: 'box',
   marker: {
     size: [1, 20, 30, 40],
     sizemin: 1,
@@ -42,13 +42,13 @@ var trace1 = {
 };
 
 var trace2 = {
-  //x: [2, 3, 4],
+  x: [2, 3, 4],
   //x: ['2017-01-04', '2017-01-05', '2017-01-06'],
   y: [21, 5, 6],
   name: 'yaxis2 data',
   yaxis: 'y2',
-  //type: 'bar',
-  type: 'box',
+  type: 'bar',
+  //type: 'box',
   opacity: 0.3
   //orientation: 'h'
 };

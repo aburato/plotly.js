@@ -116,6 +116,7 @@ function drawOne(gd, index) {
 		// ION commented out if(gd._context.edits.shapePosition) setupDragElement(gd, path, options, index, shapeLayer);
     }
 }
+
 function setClipPath(shapePath, gd, shapeOptions) {
         // note that for layer="below" the clipAxes can be different from the
         // subplot we're drawing this in. This could cause problems if the shape
@@ -129,7 +130,6 @@ function setClipPath(shapePath, gd, shapeOptions) {
 
 		// ion: disable drag
         // if(gd._context.edits.shapePosition) setupDragElement(gd, path, options, index);    
-    }
 }
 
 function setupDragElement(gd, shapePath, shapeOptions, index, shapeLayer) {

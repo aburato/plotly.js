@@ -531,7 +531,7 @@ axes.prepTicks = function(ax) {
 // if ticks are set to automatic, determine the right values (tick0,dtick)
 // in any case, set tickround to # of digits to round tick labels to,
 // or codes to this effect for log and date scales
-axes.calcTicks = function calcTicks(ax) {
+axes.calcTicks = function calcTicks(ax, gd) {
     axes.prepTicks(ax);
     var rng = Lib.simpleMap(ax.range, ax.r2l);
 
@@ -1634,7 +1634,7 @@ axes.doTicksSingle = function(gd, arg, skipTitle) {
     var axid = ax._id;
     var axLetter = axid.charAt(0);
     var counterLetter = axes.counterLetter(axid);
-    var vals = ax._vals = axes.calcTicks(ax);
+    var vals = ax._vals = axes.calcTicks(ax, gd);
     var datafn = function(d) { return [d.text, d.x, ax.mirror, d.font, d.fontSize, d.fontColor].join('_'); };
     var tcls = axid + 'tick';
     var gcls = axid + 'grid';
@@ -2201,7 +2201,9 @@ axes.doTicksSingle = function(gd, arg, skipTitle) {
         var done = Lib.syncOrAsync([
             allLabelsReady,
             fixLabelOverlaps,
-			doAutoMargins,			adjustAutoMarginForLabels        ]);
+            doAutoMargins
+            //adjustAutoMarginForLabels        
+        ]);
         if(done && done.then) gd._promises.push(done);
         return done;
     }

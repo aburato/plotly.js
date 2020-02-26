@@ -14,7 +14,7 @@
 
 
 // package version injected by `npm run preprocess`
-exports.version = '1.42.5-ion48';
+exports.version = '1.42.5-ion1';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
