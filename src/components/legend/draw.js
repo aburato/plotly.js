@@ -91,7 +91,7 @@ module.exports = function draw(gd) {
     scrollBar.enter().append('rect')
         .attr({
             'class': 'scrollbar',
-            'rx': 20,
+            'rx': 2,
             'ry': 2,
             'width': 0,
             'height': 0
@@ -302,8 +302,8 @@ module.exports = function draw(gd) {
         });
 
         // to be safe, remove previous listeners
-        scrollBar.on('.drag', null);
-        scrollBox.on('.drag', null);
+        scrollBar.on('drag', null);
+        scrollBox.on('drag', null);
 
         var drag = d3.behavior.drag().on('drag', function() {
             scrollBarY = Lib.constrain(
