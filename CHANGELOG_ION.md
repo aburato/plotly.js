@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion30] -- 2020-02-27
+
+### Avoid to wrongly scroll long list of lenged labels when label clicked.
+
+
 ## [1.33.1-ion29] -- 2020-02-17
 
 ### Avoid to bubble useless promise failure
