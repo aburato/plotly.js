@@ -427,11 +427,16 @@ function buildSVGText(containerNode, str, gd, IONFormat) {
     var strION = str;
 
     // In case ION new line logic applies to the legend labels
+    var numCharsInLabel = 17;
+    if (gd._fullLayout._hasPie && gd._fullLayout.legend.orientation === 'v' && gd._fullLayout._size.r > 150 && gd._fullLayout._size.r < gd._fullLayout.width * 0.4) {
+        numCharsInLabel = 17 + Math.floor((gd._fullLayout._size.r - 155)/3.9);
+    }
+
     // In case BR is already used for hovertooltip custom formatting
-    if (IONFormat && str.indexOf("<br>")<0 && str.length > 17) {
-        var upToPos = 17;
+    if (IONFormat && str.indexOf("<br>")<0 && str.length > numCharsInLabel) {
+        var upToPos = numCharsInLabel;
         var spaceFound = false;
-        for (let i = 17; i > upToPos - 10; i--) {
+        for (let i = numCharsInLabel; i > upToPos - 10; i--) {
             if (str.charAt(i) === " ") {
                 upToPos = i;
                 spaceFound = true;
@@ -443,8 +448,8 @@ function buildSVGText(containerNode, str, gd, IONFormat) {
         } else  {
             strION = strION.substr(0, upToPos) + "<br>" + strION.substr(upToPos);
         }
-        if (strION.length > 34) {
-            strION = strION.substr(0, 34) + "...";
+        if (strION.length > numCharsInLabel * 2) {
+            strION = strION.substr(0, (numCharsInLabel * 2) - 3 ) + "...";
         }
     } 
     var parts =  strION.split(SPLIT_TAGS);

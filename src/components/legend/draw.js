@@ -151,15 +151,24 @@ module.exports = function draw(gd) {
 
         return;
     }
-
-    if (opts.orientation === "v" && opts.width > 150) {
-        opts.width = 150;
+ 
+    if (opts.orientation === "v") {
+        if (opts.width < fullLayout._size.r && fullLayout._hasPie) {
+            if (fullLayout._size.r < fullLayout.width * 0.4) {
+                opts.width = fullLayout._size.r;
+            }
+        } 
+        else if (opts.width > 146) {
+            opts.width = 150;
+        }
     }
 
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
         expandHorizontalMargin(gd);
+    } else if (opts.width > fullLayout.width * 0.3) {
+        // do nothing
     } else {
         expandMargin(gd);
     }
