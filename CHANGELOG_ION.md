@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion32] -- 2020-03-02
+
+### Fixed regression for recent fix on legend.
+
+
 ## [1.33.1-ion31] -- 2020-03-02
 
 ### Expand vertical legend width in pie charts if space available

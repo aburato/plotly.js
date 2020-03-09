@@ -428,7 +428,7 @@ function buildSVGText(containerNode, str, gd, IONFormat) {
 
     // In case ION new line logic applies to the legend labels
     var numCharsInLabel = 17;
-    if (gd._fullLayout._hasPie && gd._fullLayout.legend.orientation === 'v' && gd._fullLayout._size.r > 150 && gd._fullLayout._size.r < gd._fullLayout.width * 0.4) {
+    if (gd._fullLayout._hasPie && gd._fullLayout.legend && gd._fullLayout.legend.orientation === 'v' && gd._fullLayout._size.r > 150 && gd._fullLayout._size.r < gd._fullLayout.width * 0.4) {
         numCharsInLabel = 17 + Math.floor((gd._fullLayout._size.r - 155)/3.9);
     }
 
