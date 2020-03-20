@@ -1309,7 +1309,9 @@ Plotly.restyle = function restyle(gd, astr, val, _traces) {
         // signal to drag handler that after everything else is done
         // we need to replot, because something has changed
         gd._replotPending = true;
-        return Promise.reject();
+        //return Promise.reject();
+        // Rejecting the promise just bubbles a useless exception to the SDK
+        return Promise.resolve();
     }
     
     helpers.clearPromiseQueue(gd);
@@ -1704,7 +1706,9 @@ Plotly.relayout = function relayout(gd, astr, val) {
         // signal to drag handler that after everything else is done
         // we need to replot, because something has changed
         gd._replotPending = true;
-        return Promise.reject();
+        //return Promise.reject();
+        // Rejecting the promise just bubbles a useless exception to the SDK
+        return Promise.resolve();
     }
 
     helpers.clearPromiseQueue(gd);
