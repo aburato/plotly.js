@@ -27593,7 +27593,7 @@ module.exports = {
         valType: 'string',
         
         editType: 'plot',
-        description: 'Sets the text label to appear on the button.'
+        
     },
     editType: 'plot'
 };
@@ -32814,7 +32814,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion33';
+exports.version = '1.33.1-ion34';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -67186,9 +67186,9 @@ module.exports = function eventData(pt, trace) {
 var Lib = require('../../lib');
 
 exports.formatPiePercent = function formatPiePercent(v, separators) {
-    var vRounded = (v * 100).toPrecision(3);
-    if(vRounded.lastIndexOf('.') !== -1) {
-        vRounded = vRounded.replace(/[.]?0+$/, '');
+    var vRounded = (v * 100).toFixed(2);
+    if(vRounded.lastIndexOf('.00') !== -1) {
+        vRounded = vRounded.replace('.00', '');
     }
     return Lib.numSeparate(vRounded, separators) + '%';
 };

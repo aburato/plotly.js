@@ -11,9 +11,9 @@
 var Lib = require('../../lib');
 
 exports.formatPiePercent = function formatPiePercent(v, separators) {
-    var vRounded = (v * 100).toPrecision(3);
-    if(vRounded.lastIndexOf('.') !== -1) {
-        vRounded = vRounded.replace(/[.]?0+$/, '');
+    var vRounded = (v * 100).toFixed(2);
+    if(vRounded.lastIndexOf('.00') !== -1) {
+        vRounded = vRounded.replace('.00', '');
     }
     return Lib.numSeparate(vRounded, separators) + '%';
 };

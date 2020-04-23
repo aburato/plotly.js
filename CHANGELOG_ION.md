@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion34] -- 2020-04-23
+
+### Pie slices in % now have 2 decimal digits (.00 trimmed)
+
+
 ## [1.33.1-ion33] -- 2020-03-20
 
 ### Fixed exception in time chart Web Component sample.
