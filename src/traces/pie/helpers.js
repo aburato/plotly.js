@@ -19,7 +19,10 @@ function format(vRounded) {
 }
 
 exports.formatPiePercent = function formatPiePercent(v, separators) {
-    var vRounded = format((v * 100).toPrecision(3));
+    var vRounded = (v * 100).toFixed(2);
+    if(vRounded.lastIndexOf('.00') !== -1) {
+        vRounded = vRounded.replace('.00', '');
+    }
     return Lib.numSeparate(vRounded, separators) + '%';
 };
 
