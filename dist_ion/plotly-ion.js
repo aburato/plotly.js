@@ -25080,7 +25080,7 @@ module.exports = function draw(gd) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
         expandHorizontalMargin(gd);
-    } else if (opts.width > fullLayout.width * 0.3) {
+    } else if (opts.width > fullLayout.width * 0.3 && fullLayout._hasPie) {
         // do nothing
     } else {
         expandMargin(gd);
@@ -32814,7 +32814,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion34';
+exports.version = '1.33.1-ion35';
 
 // inject promise polyfill
 require('es6-promise').polyfill();

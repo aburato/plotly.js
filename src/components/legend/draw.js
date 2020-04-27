@@ -167,7 +167,7 @@ module.exports = function draw(gd) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
         expandHorizontalMargin(gd);
-    } else if (opts.width > fullLayout.width * 0.3) {
+    } else if (opts.width > fullLayout.width * 0.3 && fullLayout._hasPie) {
         // do nothing
     } else {
         expandMargin(gd);

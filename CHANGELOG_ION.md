@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion35] -- 2020-04-27
+
+### Regression in ion31. Chart wrongly autosized at startup
+
+
 ## [1.33.1-ion34] -- 2020-04-23
 
 ### Pie slices in % now have 2 decimal digits (.00 trimmed)
