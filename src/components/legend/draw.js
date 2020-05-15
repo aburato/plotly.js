@@ -141,9 +141,17 @@ module.exports = function draw(gd) {
 
     computeLegendDimensions(gd, groups, traces);
 
+    if (opts.orientation === "v" && opts.width > 150) {
+        opts.width = 150;
+    }
+    if (opts.orientation === "v" && fullLayout._hasPie && gd.data.length === 1) {
+        opts.width = Math.max(fullLayout.width * 0.37, 70);
+    }
+
     // ion: HIDE the legend if it's too big and would
     // result in covering the chart
-    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45) ||
+    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45 && !fullLayout._hasPie) ||
+    (opts.orientation === "v" && opts.width > fullLayout.width * 0.5 && fullLayout._hasPie) ||
        (opts.orientation === "h" && opts.height > fullLayout.height * 0.4) ||
        ( (opts.xanchor !== 'left' && opts.xanchor !== 'right') && opts.orientation === "v" && opts.height > fullLayout.height * 0.4) ) {
         fullLayout._infolayer.selectAll('.legend').remove();
@@ -151,24 +159,13 @@ module.exports = function draw(gd) {
 
         return;
     }
- 
-    if (opts.orientation === "v") {
-        if (opts.width < fullLayout._size.r && fullLayout._hasPie) {
-            if (fullLayout._size.r < fullLayout.width * 0.4) {
-                opts.width = fullLayout._size.r;
-            }
-        } 
-        else if (opts.width > 146) {
-            opts.width = 150;
-        }
-    }
+
+    
 
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
         expandHorizontalMargin(gd);
-    } else if (opts.width > fullLayout.width * 0.3 && fullLayout._hasPie) {
-        // do nothing
     } else {
         expandMargin(gd);
     }

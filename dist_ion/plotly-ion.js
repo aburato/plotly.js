@@ -25054,9 +25054,17 @@ module.exports = function draw(gd) {
 
     computeLegendDimensions(gd, groups, traces);
 
+    if (opts.orientation === "v" && opts.width > 150) {
+        opts.width = 150;
+    }
+    if (opts.orientation === "v" && fullLayout._hasPie && gd.data.length === 1) {
+        opts.width = Math.max(fullLayout.width * 0.37, 70);
+    }
+
     // ion: HIDE the legend if it's too big and would
     // result in covering the chart
-    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45) ||
+    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45 && !fullLayout._hasPie) ||
+    (opts.orientation === "v" && opts.width > fullLayout.width * 0.5 && fullLayout._hasPie) ||
        (opts.orientation === "h" && opts.height > fullLayout.height * 0.4) ||
        ( (opts.xanchor !== 'left' && opts.xanchor !== 'right') && opts.orientation === "v" && opts.height > fullLayout.height * 0.4) ) {
         fullLayout._infolayer.selectAll('.legend').remove();
@@ -25064,24 +25072,13 @@ module.exports = function draw(gd) {
 
         return;
     }
- 
-    if (opts.orientation === "v") {
-        if (opts.width < fullLayout._size.r && fullLayout._hasPie) {
-            if (fullLayout._size.r < fullLayout.width * 0.4) {
-                opts.width = fullLayout._size.r;
-            }
-        } 
-        else if (opts.width > 146) {
-            opts.width = 150;
-        }
-    }
+
+    
 
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
         expandHorizontalMargin(gd);
-    } else if (opts.width > fullLayout.width * 0.3 && fullLayout._hasPie) {
-        // do nothing
     } else {
         expandMargin(gd);
     }
@@ -38112,15 +38109,15 @@ function buildSVGText(containerNode, str, gd, IONFormat) {
 
     // In case ION new line logic applies to the legend labels
     var numCharsInLabel = 17;
-    if (gd._fullLayout._hasPie && gd._fullLayout.legend && gd._fullLayout.legend.orientation === 'v' && gd._fullLayout._size.r > 150 && gd._fullLayout._size.r < gd._fullLayout.width * 0.4) {
-        numCharsInLabel = 17 + Math.floor((gd._fullLayout._size.r - 155)/3.9);
+    if (gd._fullLayout._hasPie && gd._fullLayout.legend && gd._fullLayout.legend.orientation === 'v' && gd._fullLayout.width > 220 && gd.data.length === 1) {
+        numCharsInLabel = 5 + Math.ceil((gd._fullLayout.width - 220)/25);
     }
 
     // In case BR is already used for hovertooltip custom formatting
     if (IONFormat && str.indexOf("<br>")<0 && str.length > numCharsInLabel) {
         var upToPos = numCharsInLabel;
         var spaceFound = false;
-        for (let i = numCharsInLabel; i > upToPos - 10; i--) {
+        for (let i = numCharsInLabel; i > upToPos - 11 && i > 0; i--) {
             if (str.charAt(i) === " ") {
                 upToPos = i;
                 spaceFound = true;
@@ -38133,7 +38130,7 @@ function buildSVGText(containerNode, str, gd, IONFormat) {
             strION = strION.substr(0, upToPos) + "<br>" + strION.substr(upToPos);
         }
         if (strION.length > numCharsInLabel * 2) {
-            strION = strION.substr(0, (numCharsInLabel * 2) - 3 ) + "...";
+            strION = strION.substr(0, (numCharsInLabel * 2) + 4 - 3 ) + "...";
         }
     } 
     var parts =  strION.split(SPLIT_TAGS);
@@ -67886,7 +67883,12 @@ function scalePies(cdpie, plotSize) {
 
         cd0.r = Math.min(pieBoxWidth, pieBoxHeight) / (2 + 2 * maxPull);
 
-        cd0.cx = plotSize.l + plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
+        if (cdpie.length === 1) {
+            cd0.cx = plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
+        } else {
+            cd0.cx = plotSize.l + plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
+        }
+        
         cd0.cy = plotSize.t + plotSize.h * (2 - trace.domain.y[1] - trace.domain.y[0]) / 2;
 
         if(trace.scalegroup && scaleGroups.indexOf(trace.scalegroup) === -1) {
