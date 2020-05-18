@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion36] -- 2020-05-18
+
+### Vertical legend in pie chart sizing caused call stack exception.
+
+
 ## [1.33.1-ion35] -- 2020-04-27
 
 ### Regression in ion31. Chart wrongly autosized at startup
