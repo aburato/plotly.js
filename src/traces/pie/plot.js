@@ -592,12 +592,7 @@ function scalePies(cdpie, plotSize) {
 
         cd0.r = Math.min(pieBoxWidth, pieBoxHeight) / (2 + 2 * maxPull);
 
-        if (cdpie.length === 1) {
-            cd0.cx = plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
-        } else {
-            cd0.cx = plotSize.l + plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
-        }
-        
+        cd0.cx = plotSize.l + plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
         cd0.cy = plotSize.t + plotSize.h * (2 - trace.domain.y[1] - trace.domain.y[0]) / 2;
 
         if(trace.scalegroup && scaleGroups.indexOf(trace.scalegroup) === -1) {

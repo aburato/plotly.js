@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion37] -- 2020-05-18
+
+### Reverted file committed wrongly.
+
+
 ## [1.33.1-ion36] -- 2020-05-18
 
 ### Vertical legend in pie chart sizing caused call stack exception.

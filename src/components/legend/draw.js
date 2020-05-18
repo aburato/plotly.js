@@ -152,7 +152,7 @@ module.exports = function draw(gd) {
     // result in covering the chart
     if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45 && !fullLayout._hasPie) ||
     (opts.orientation === "v" && opts.width > fullLayout.width * 0.5 && fullLayout._hasPie) ||
-       (opts.orientation === "h" && opts.height > fullLayout.height * 0.4) ||
+       (opts.orientation === "h" && opts.height > fullLayout.height * 0.38) ||
        ( (opts.xanchor !== 'left' && opts.xanchor !== 'right') && opts.orientation === "v" && opts.height > fullLayout.height * 0.4) ) {
         fullLayout._infolayer.selectAll('.legend').remove();
         fullLayout._topdefs.select('#' + clipId).remove();

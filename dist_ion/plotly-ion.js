@@ -25065,7 +25065,7 @@ module.exports = function draw(gd) {
     // result in covering the chart
     if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45 && !fullLayout._hasPie) ||
     (opts.orientation === "v" && opts.width > fullLayout.width * 0.5 && fullLayout._hasPie) ||
-       (opts.orientation === "h" && opts.height > fullLayout.height * 0.4) ||
+       (opts.orientation === "h" && opts.height > fullLayout.height * 0.38) ||
        ( (opts.xanchor !== 'left' && opts.xanchor !== 'right') && opts.orientation === "v" && opts.height > fullLayout.height * 0.4) ) {
         fullLayout._infolayer.selectAll('.legend').remove();
         fullLayout._topdefs.select('#' + clipId).remove();
@@ -32811,7 +32811,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion36';
+exports.version = '1.33.1-ion37';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -33104,7 +33104,7 @@ exports.valObjectMeta = {
     },
     colorlist: {
         
-        
+        requiredOpts: [],
         
         coerceFunction: function(v, propOut, dflt) {
             function isColor(color) {
@@ -54825,7 +54825,7 @@ module.exports = overrideAll({
     showcountries: {
         valType: 'boolean',
         
-        
+        description: 'Sets whether or not country boundaries are drawn.'
     },
     countrycolor: {
         valType: 'color',
@@ -57691,7 +57691,7 @@ plots.autoMargin = function(gd, id, o) {
             // if the item is too big, just give it enough automargin to
             // make sure you can still grab it and bring it back
             if(o.l + o.r > fullLayout.width * 0.45) o.l = o.r = 0;
-            if(o.b + o.t > fullLayout.height * 0.4) o.b = o.t = 0;
+            if(o.b + o.t > fullLayout.height * 0.38) o.b = o.t = 0;
 
             fullLayout._pushmargin[id] = {
                 l: {val: o.x, size: o.l + pad},
@@ -67884,12 +67884,7 @@ function scalePies(cdpie, plotSize) {
 
         cd0.r = Math.min(pieBoxWidth, pieBoxHeight) / (2 + 2 * maxPull);
 
-        if (cdpie.length === 1) {
-            cd0.cx = plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
-        } else {
-            cd0.cx = plotSize.l + plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
-        }
-        
+        cd0.cx = plotSize.l + plotSize.w * (trace.domain.x[1] + trace.domain.x[0]) / 2;
         cd0.cy = plotSize.t + plotSize.h * (2 - trace.domain.y[1] - trace.domain.y[0]) / 2;
 
         if(trace.scalegroup && scaleGroups.indexOf(trace.scalegroup) === -1) {
