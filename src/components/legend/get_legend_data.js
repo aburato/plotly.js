@@ -47,7 +47,7 @@ module.exports = function getLegendData(calcdata, opts) {
             lgroup = trace.legendgroup;
 
         if(!helpers.legendGetsTrace(trace) || !trace.showlegend) continue;
-
+        
         if(Registry.traceIs(trace, 'pie')) {
             if(!slicesShown[lgroup]) slicesShown[lgroup] = {};
 
@@ -99,5 +99,19 @@ module.exports = function getLegendData(calcdata, opts) {
 
     // needed in repositionLegend
     opts._lgroupsLength = lgroupsLength;
+
+    if (opts.traceorder === "natural") {
+        legendData[0].sort(function(a, b) {
+            if (a[0] && a[0].label) {
+                return a[0].label.localeCompare(b[0].label, undefined, {numeric: true});
+            } else { 
+                if (a[0] && a[0].trace && a[0].trace.name) {
+                    return a[0].trace.name.localeCompare(b[0].trace.name, undefined, {numeric: true});
+                }
+            }
+        });
+    }
+
+
     return legendData;
 };
