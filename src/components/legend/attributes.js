@@ -48,7 +48,7 @@ module.exports = {
     },
     traceorder: {
         valType: 'flaglist',
-        flags: ['reversed', 'grouped'],
+        flags: ['reversed', 'grouped', 'alphabetical'],
         extras: ['normal'],
         role: 'style',
         editType: 'legend',

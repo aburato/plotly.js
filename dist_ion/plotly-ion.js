@@ -24748,7 +24748,7 @@ module.exports = {
     },
     traceorder: {
         valType: 'flaglist',
-        flags: ['reversed', 'grouped'],
+        flags: ['reversed', 'grouped', 'alphabetical'],
         extras: ['normal'],
         
         editType: 'legend',
@@ -25680,12 +25680,10 @@ function expandHorizontalMargin(gd) {
 * LICENSE file in the root directory of this source tree.
 */
 
-
 'use strict';
 
 var Registry = require('../../registry');
 var helpers = require('./helpers');
-
 
 module.exports = function getLegendData(calcdata, opts) {
     var lgroupToTraces = {},
@@ -25721,7 +25719,7 @@ module.exports = function getLegendData(calcdata, opts) {
             lgroup = trace.legendgroup;
 
         if(!helpers.legendGetsTrace(trace) || !trace.showlegend) continue;
-
+        
         if(Registry.traceIs(trace, 'pie')) {
             if(!slicesShown[lgroup]) slicesShown[lgroup] = {};
 
@@ -25773,6 +25771,20 @@ module.exports = function getLegendData(calcdata, opts) {
 
     // needed in repositionLegend
     opts._lgroupsLength = lgroupsLength;
+
+    if (opts.traceorder === "alphabetical") {
+        legendData[0].sort((a, b) => {
+            if (a[0] && a[0].label) {
+                return a[0].label.localeCompare(b[0].label);
+            } else { 
+                if (a[0] && a[0].trace && a[0].trace.name) {
+                    return a[0].trace.name.localeCompare(b[0].trace.name);
+                }
+            }
+        });
+    }
+
+
     return legendData;
 };
 
@@ -32811,7 +32823,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion37';
+exports.version = '1.33.1-ion38';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -33104,7 +33116,7 @@ exports.valObjectMeta = {
     },
     colorlist: {
         
-        requiredOpts: [],
+        
         
         coerceFunction: function(v, propOut, dflt) {
             function isColor(color) {
@@ -54825,7 +54837,7 @@ module.exports = overrideAll({
     showcountries: {
         valType: 'boolean',
         
-        description: 'Sets whether or not country boundaries are drawn.'
+        
     },
     countrycolor: {
         valType: 'color',

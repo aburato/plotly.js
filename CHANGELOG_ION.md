@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion38] -- 2020-06-03
+
+### Support to sort series in legend alphabetically.
+
+
 ## [1.33.1-ion37] -- 2020-05-18
 
 ### Reverted file committed wrongly.
