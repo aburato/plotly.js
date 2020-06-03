@@ -103,5 +103,18 @@ module.exports = function getLegendData(calcdata, opts) {
     // maximum name/label length - needed in legend/draw.js
     opts._maxNameLength = maxNameLength;
 
+    if (helpers.isSorted(opts)) {
+        var order = helpers.isReversed(opts) ? -1 : 1;
+        legendData[0].sort(function(a, b) {
+            if (a[0] && a[0].label) {
+                return order * a[0].label.localeCompare(b[0].label, undefined, {numeric: true});
+            } else { 
+                if (a[0] && a[0].trace && a[0].trace.name) {
+                    return order * a[0].trace.name.localeCompare(b[0].trace.name, undefined, {numeric: true});
+                }
+            }
+        });
+    }
+
     return legendData;
 };
