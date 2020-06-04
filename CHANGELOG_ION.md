@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion39] -- 2020-06-04
+
+### Support to sort series in legend naturally. (alphabetical reverted)
+
+
 ## [1.33.1-ion38] -- 2020-06-03
 
 ### Support to sort series in legend alphabetically.

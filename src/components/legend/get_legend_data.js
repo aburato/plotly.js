@@ -98,13 +98,13 @@ module.exports = function getLegendData(calcdata, opts) {
     // needed in repositionLegend
     opts._lgroupsLength = lgroupsLength;
 
-    if (opts.traceorder === "alphabetical") {
+    if (opts.traceorder === "natural") {
         legendData[0].sort((a, b) => {
             if (a[0] && a[0].label) {
-                return a[0].label.localeCompare(b[0].label);
+                return a[0].label.localeCompare(b[0].label, undefined, {numeric: true});
             } else { 
                 if (a[0] && a[0].trace && a[0].trace.name) {
-                    return a[0].trace.name.localeCompare(b[0].trace.name);
+                    return a[0].trace.name.localeCompare(b[0].trace.name, undefined, {numeric: true});
                 }
             }
         });

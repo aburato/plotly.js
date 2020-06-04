@@ -24748,7 +24748,7 @@ module.exports = {
     },
     traceorder: {
         valType: 'flaglist',
-        flags: ['reversed', 'grouped', 'alphabetical'],
+        flags: ['reversed', 'grouped', 'natural', 'normal'],
         extras: ['normal'],
         
         editType: 'legend',
@@ -25772,13 +25772,13 @@ module.exports = function getLegendData(calcdata, opts) {
     // needed in repositionLegend
     opts._lgroupsLength = lgroupsLength;
 
-    if (opts.traceorder === "alphabetical") {
+    if (opts.traceorder === "natural") {
         legendData[0].sort((a, b) => {
             if (a[0] && a[0].label) {
-                return a[0].label.localeCompare(b[0].label);
+                return a[0].label.localeCompare(b[0].label, undefined, {numeric: true});
             } else { 
                 if (a[0] && a[0].trace && a[0].trace.name) {
-                    return a[0].trace.name.localeCompare(b[0].trace.name);
+                    return a[0].trace.name.localeCompare(b[0].trace.name, undefined, {numeric: true});
                 }
             }
         });
@@ -32823,7 +32823,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion38';
+exports.version = '1.33.1-ion39';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -54825,7 +54825,7 @@ module.exports = overrideAll({
         valType: 'color',
         
         dflt: constants.waterColor,
-        
+        description: 'Sets color of the rivers.'
     },
     riverwidth: {
         valType: 'number',
