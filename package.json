@@ -1,6 +1,6 @@
 {
   "name": "plotly.js",
-  "version": "1.33.1-ion39",
+  "version": "1.33.1-ion40",
   "description": "The open source javascript graphing library that powers plotly",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -54,7 +54,7 @@
       "glslify"
     ]
   },
-  "dependencies": {
+  "devDependencies": {
     "3d-view": "^2.0.0",
     "@plotly/d3-sankey": "^0.5.0",
     "alpha-shape": "^1.0.0",
@@ -110,9 +110,7 @@
     "tinycolor2": "^1.3.0",
     "topojson-client": "^2.1.0",
     "webgl-context": "^2.2.0",
-    "world-calendars": "^1.0.3"
-  },
-  "devDependencies": {
+    "world-calendars": "^1.0.3",
     "brfs": "^1.4.3",
     "browserify": "^14.1.0",
     "browserify-transform-tools": "^1.7.0",

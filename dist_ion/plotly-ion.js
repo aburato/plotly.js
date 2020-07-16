@@ -32823,7 +32823,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion39';
+exports.version = '1.33.1-ion40';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -54825,7 +54825,7 @@ module.exports = overrideAll({
         valType: 'color',
         
         dflt: constants.waterColor,
-        description: 'Sets color of the rivers.'
+        
     },
     riverwidth: {
         valType: 'number',
