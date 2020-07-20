@@ -32823,7 +32823,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion40';
+exports.version = '1.33.1-ion41';
 
 // inject promise polyfill
 require('es6-promise').polyfill();
@@ -57698,12 +57698,12 @@ plots.autoMargin = function(gd, id, o) {
     if(fullLayout.margin.autoexpand !== false) {
         if(!o) delete fullLayout._pushmargin[id];
         else {
-            var pad = o.pad === undefined ? 25 : o.pad;
+            var pad = o.pad === undefined ? 26 : o.pad;
 
             // if the item is too big, just give it enough automargin to
             // make sure you can still grab it and bring it back
             if(o.l + o.r > fullLayout.width * 0.45) o.l = o.r = 0;
-            if(o.b + o.t > fullLayout.height * 0.38) o.b = o.t = 0;
+            if(o.b + o.t > fullLayout.height * 0.4) o.b = o.t = 0;
 
             fullLayout._pushmargin[id] = {
                 l: {val: o.x, size: o.l + pad},
