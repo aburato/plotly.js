@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion42] -- 2020-08-04
+
+### Removed lambda for IE11 support
+
+
 ## [1.33.1-ion39] -- 2020-06-04
 
 ### Support to sort series in legend naturally. (alphabetical reverted)

@@ -25773,7 +25773,7 @@ module.exports = function getLegendData(calcdata, opts) {
     opts._lgroupsLength = lgroupsLength;
 
     if (opts.traceorder === "natural") {
-        legendData[0].sort((a, b) => {
+        legendData[0].sort(function(a, b) {
             if (a[0] && a[0].label) {
                 return a[0].label.localeCompare(b[0].label, undefined, {numeric: true});
             } else { 
@@ -32823,7 +32823,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion41';
+exports.version = '1.33.1-ion42';
 
 // inject promise polyfill
 require('es6-promise').polyfill();

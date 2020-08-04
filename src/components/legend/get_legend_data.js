@@ -99,7 +99,7 @@ module.exports = function getLegendData(calcdata, opts) {
     opts._lgroupsLength = lgroupsLength;
 
     if (opts.traceorder === "natural") {
-        legendData[0].sort((a, b) => {
+        legendData[0].sort(function(a, b) {
             if (a[0] && a[0].label) {
                 return a[0].label.localeCompare(b[0].label, undefined, {numeric: true});
             } else { 
