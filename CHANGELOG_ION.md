@@ -1,5 +1,10 @@
 # plotly.js ION changelog
 
+## [1.33.1-ion43] -- 2020-09-11
+
+### Legend scroll marker is not draggable
+
+
 ## [1.33.1-ion42] -- 2020-08-04
 
 ### Removed lambda for IE11 support

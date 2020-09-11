@@ -25225,7 +25225,7 @@ module.exports = function draw(gd) {
                 constants.scrollBarMargin + scrollBarYMax);
             scrollBoxY = - (scrollBarY - constants.scrollBarMargin) /
                 scrollBarYMax * scrollBoxYMax;
-            //scrollHandler(scrollBarY, scrollBoxY);
+            scrollHandler(scrollBarY, scrollBoxY);
         });
 
         scrollBar.call(drag);
@@ -32823,7 +32823,7 @@ exports.svgAttrs = {
 var Plotly = require('./plotly');
 
 // package version injected by `npm run preprocess`
-exports.version = '1.33.1-ion42';
+exports.version = '1.33.1-ion43';
 
 // inject promise polyfill
 require('es6-promise').polyfill();

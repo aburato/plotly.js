@@ -312,7 +312,7 @@ module.exports = function draw(gd) {
                 constants.scrollBarMargin + scrollBarYMax);
             scrollBoxY = - (scrollBarY - constants.scrollBarMargin) /
                 scrollBarYMax * scrollBoxYMax;
-            //scrollHandler(scrollBarY, scrollBoxY);
+            scrollHandler(scrollBarY, scrollBoxY);
         });
 
         scrollBar.call(drag);
