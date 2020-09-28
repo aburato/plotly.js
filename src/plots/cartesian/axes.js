@@ -1820,6 +1820,25 @@ axes.doTicks = function(gd, axid, skipTitle) {
         }
     }
 
+    // ion: avoid losing lots of time for titles which will NOT be drawn
+    var titleTxt = ax.title && ax.title.trim();
+    if (typeof skipTitle === 'undefined' && (titleTxt === '' || titleTxt.match(/Click to enter .+ title/))) {
+        
+        if (ax === fullLayout) {
+            isEditable = gd._context.edits.titleText;
+        } else if (ax === fullLayout.xaxis) {
+            isEditable = gd._context.edits.axisTitleText;
+        } else if (ax === fullLayout.yaxis) {
+            isEditable = gd._context.edits.axisTitleText;
+        } else if (ax === fullLayout.yaxis2) {
+            isEditable = gd._context.edits.axisTitleText;
+        } else if (ax === fullLayout.xaxis2) {
+            isEditable = gd._context.edits.axisTitleText;
+        }
+
+        skipTitle = !isEditable;
+    }
+
     // make sure we only have allowed options for exponents
     // (others can make confusing errors)
     if(!ax.tickformat) {
