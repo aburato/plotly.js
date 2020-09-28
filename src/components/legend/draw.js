@@ -374,7 +374,9 @@ function drawTexts(g, gd) {
     var text = g.selectAll('text.legendtext')
         .data([0]);
 
-    text.enter().append('text').classed('legendtext', true);
+    var thisG = text.enter();
+    thisG.append("title").text(name);
+    thisG.append('text').classed('legendtext', true);
 
     text.attr('text-anchor', 'start')
         .classed('user-select-none', true)
