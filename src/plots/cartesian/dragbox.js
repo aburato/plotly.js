@@ -333,13 +333,38 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             return removeZoombox(gd);
         }
 
+        /*
         // TODO: edit linked axes in zoomAxRanges and in dragTail
         if(zoomMode === 'xy' || zoomMode === 'x') zoomAxRanges(xa, box.l / pw, box.r / pw, updates, xaLinked);
         if(zoomMode === 'xy' || zoomMode === 'y') zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph, updates, yaLinked);
+        */
 
+        // ion: zoom events
+        var axesZoomInfo = [];
+        if(zoomMode === 'xy' || zoomMode === 'x') {
+            var xZoomInfo = zoomAxRanges(xa, box.l / pw, box.r / pw, updates, xaLinked);
+            axesZoomInfo = axesZoomInfo.concat(xZoomInfo);
+        }
+        if(zoomMode === 'xy' || zoomMode === 'y') {
+            var yZoomInfo = zoomAxRanges(ya, (ph - box.b) / ph, (ph - box.t) / ph, updates, yaLinked);
+            axesZoomInfo = axesZoomInfo.concat(yZoomInfo);
+        }
         removeZoombox(gd);
-        dragTail();
-        showDoubleClickNotifier(gd);
+
+		// Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior.
+        var args = { zoomMode: zoomMode, box: box, axes: axesZoomInfo, pre: true, userHandled: false };
+        //No reason to show the zoom notifier etc. if no actual zoom occured
+        if(axesZoomInfo.length > 0)
+        {
+            gd.emit('plotly_zoom', args);
+
+            if (!args.userHandled) {
+                dragTail();
+        		showDoubleClickNotifier(gd);
+                args.pre = false;
+                gd.emit('plotly_zoom', args);
+            }
+        }
     }
 
     // scroll zoom, on all draggers except corners
@@ -844,11 +869,16 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
     var i,
         axi,
         axRangeLinear0,
-        axRangeLinearSpan;
+        axRangeLinearSpan,
+        oldRange;
+
+    var zoomInfo = [];
 
     for(i = 0; i < axList.length; i++) {
         axi = axList[i];
         if(axi.fixedrange) continue;
+
+        oldRange = axi.range.slice(0);
 
         axRangeLinear0 = axi._rl[0];
         axRangeLinearSpan = axi._rl[1] - axRangeLinear0;
@@ -858,6 +888,13 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
         ];
         updates[axi._name + '.range[0]'] = axi.range[0];
         updates[axi._name + '.range[1]'] = axi.range[1];
+
+        zoomInfo.push({
+            oldRange: oldRange,
+            newRange: axi.range.slice(0),
+            name: axi._name,
+            fractionalRange: [r0Fraction, r1Fraction]
+        });
     }
 
     // zoom linked axes about their centers
@@ -866,6 +903,8 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
 
         zoomAxRanges(linkedAxes, linkedR0Fraction, 1 - linkedR0Fraction, updates);
     }
+
+    return zoomInfo;
 }
 
 function dragAxList(axList, pix) {
