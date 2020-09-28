@@ -588,7 +588,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
         hoverdistance: fullLayout.hoverdistance
     };
 
-    var hoverLabels = createHoverText(hoverData, labelOpts, gd);
+    var hoverLabels = createHoverText(hoverData, labelOpts, gd, evt, gd.layout.hoverFollowsMouse);
 
     hoverAvoidOverlaps(hoverData, rotateLabels ? 'xa' : 'ya', fullLayout);
 
@@ -621,7 +621,7 @@ function _hover(gd, evt, subplot, noHoverEvent) {
     });
 }
 
-function createHoverText(hoverData, opts, gd) {
+function createHoverText(hoverData, opts, gd, evt, hoverFollowsMouse) {
     var hovermode = opts.hovermode;
     var rotateLabels = opts.rotateLabels;
     var bgColor = opts.bgColor;
@@ -882,6 +882,12 @@ function createHoverText(hoverData, opts, gd) {
         d.txwidth = tbb.width;
         d.tx2width = tx2width;
         d.offset = 0;
+
+        // ion: position hover group
+        if (hoverFollowsMouse && hovermode === 'closest' && evt && evt.offsetX && evt.offsetY) {
+            htx = evt.offsetX;
+            hty = evt.offsetY;
+        }
 
         if(rotateLabels) {
             d.pos = htx;
@@ -1401,6 +1407,7 @@ function createSpikelines(closestPoints, opts) {
 
 function hoverChanged(gd, evt, oldhoverdata) {
     // don't emit any events if nothing changed
+    if(!evt.target) return false;
     if(!oldhoverdata || oldhoverdata.length !== gd._hoverdata.length) return true;
 
     for(var i = oldhoverdata.length - 1; i >= 0; i--) {
