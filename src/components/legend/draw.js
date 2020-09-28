@@ -141,6 +141,27 @@ module.exports = function draw(gd) {
 
     computeLegendDimensions(gd, groups, traces);
 
+    if (opts.orientation === "v" && opts.width > 150) {
+        opts.width = 150;
+    }
+    if (opts.orientation === "v" && fullLayout._hasPie && gd.data.length === 1) {
+        opts.width = Math.max(fullLayout.width * 0.37, 70);
+    }
+
+    // ion: HIDE the legend if it's too big and would
+    // result in covering the chart
+    if((opts.orientation === "v" && opts.width > fullLayout.width * 0.45 && !fullLayout._hasPie) ||
+    (opts.orientation === "v" && opts.width > fullLayout.width * 0.5 && fullLayout._hasPie) ||
+       (opts.orientation === "h" && opts.height > fullLayout.height * 0.38) ||
+       ( (opts.xanchor !== 'left' && opts.xanchor !== 'right') && opts.orientation === "v" && opts.height > fullLayout.height * 0.4) ) {
+        fullLayout._infolayer.selectAll('.legend').remove();
+        fullLayout._topdefs.select('#' + clipId).remove();
+
+        return;
+    }
+
+    
+
     if(opts.height > lyMax) {
         // If the legend doesn't fit in the plot area,
         // do not expand the vertical margins.
@@ -174,15 +195,20 @@ module.exports = function draw(gd) {
     var legendWidth = opts.width,
         legendWidthMax = gs.w;
 
+    // ion: temp fix
+    /*
     if(legendWidth > legendWidthMax) {
         lx = gs.l;
         legendWidth = legendWidthMax;
     }
     else {
+    */
         if(lx + legendWidth > lxMax) lx = lxMax - legendWidth;
         if(lx < lxMin) lx = lxMin;
         legendWidth = Math.min(lxMax - lx, opts.width);
+    /*
     }
+    */
 
     // Make sure the legend top and bottom are visible
     // (legends with a scroll bar are not allowed to stretch beyond the extended
