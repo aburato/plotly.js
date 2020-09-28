@@ -49,6 +49,9 @@ function getLocationId(locationmode, location) {
 }
 
 function countryNameToISO3(countryName) {
+    // ion: prevent crash with null or undef country names
+    countryName = countryName || "";
+
     for(var i = 0; i < countryIds.length; i++) {
         var iso3 = countryIds[i],
             regex = new RegExp(countryRegex[iso3]);
