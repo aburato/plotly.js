@@ -412,6 +412,8 @@ function drawTexts(g, gd, opts) {
         .call(Drawing.font, opts.font)
         .text(isEditable ? ensureLength(name, maxNameLength) : name);
 
+    Lib.ensureSingle(g, 'title').text(name.replace("<br>", "\n"));
+
     svgTextUtils.positionText(textEl, constants.textGap, 0);
 
     if(isEditable) {
