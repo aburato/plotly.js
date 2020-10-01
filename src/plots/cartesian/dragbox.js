@@ -441,8 +441,15 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     function zoomDone() {
         computeZoomUpdates();
         removeZoombox(gd);
-        dragTail();
-        showDoubleClickNotifier(gd);
+        
+        // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior
+        // It is even possible to cancel the operation
+        var args = { updates: updates, isReset: false, cancel: false };
+        gd.emit('plotly_zoom', args);
+        if(!args.cancel) {
+            dragTail();
+            showDoubleClickNotifier(gd);
+        }
     }
 
     // scroll zoom, on all draggers except corners
@@ -772,6 +779,10 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             }
         }
 
+        // Allows listeners to handle the zoom evt manually
+        var args = { isReset: true };
+        gd.emit('plotly_zoom', args);
+
         gd.emit('plotly_doubleclick', null);
         Registry.call('_guiRelayout', gd, attrs);
     }
@@ -1009,6 +1020,12 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
             updates[axi._name + '.range[0]'] = axi.l2r(axRangeLinear0 + axRangeLinearSpan * r0Fraction);
             updates[axi._name + '.range[1]'] = axi.l2r(axRangeLinear0 + axRangeLinearSpan * r1Fraction);
         }
+
+        // Put additional data for user's event as well
+        updates[axi._name + '.prevRange[0]'] = axi.range[0];
+        updates[axi._name + '.prevRange[1]'] = axi.range[1];
+        updates[axi._name + '.r0Fraction'] = r0Fraction;
+        updates[axi._name + '.r1Fraction'] = r1Fraction;
     }
 
     // zoom linked axes about their centers
