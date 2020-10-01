@@ -27,6 +27,21 @@ module.exports = function hoverPoints(pointData, xval, yval, hovermode) {
     var pt = [xpx, ypx];
     var hoveron = trace.hoveron || '';
     var minRad = (trace.mode.indexOf('markers') !== -1) ? 3 : 0.5;
+    
+    // ion
+    if(pointData.trace._input.rect){
+        var found = false;
+        var rect = pointData.trace._input.rect;
+        for(var i=0;i<rect.length;i++){
+            if(xval > rect[i].x0 && xval < rect[i].x1 && yval > rect[i].y0 && yval < rect[i].y1){
+                pointData.index = i;
+                pointData.text = pointData.trace.text[i];
+                found = true;
+            }
+        }
+        
+        if(!found) return;
+    }
 
     // look for points to hover on first, then take fills only if we
     // didn't find a point
