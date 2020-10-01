@@ -12,6 +12,8 @@
 var d3 = require('d3');
 var isNumeric = require('fast-isnumeric');
 
+// ion: we need Plots
+var Plots = require('../../plots/plots');
 var Registry = require('../../registry');
 var Lib = require('../../lib');
 var svgTextUtils = require('../../lib/svg_text_utils');
@@ -2105,6 +2107,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
                         right: x + bb.width / 2 + 2,
                         width: bb.width + 2
                     });
+                    // ion: store last label width
+                    ax._lastLabelWidth = bb.width;
                 });
                 for(i = 0; i < lbbArray.length - 1; i++) {
                     if(Lib.bBoxIntersect(lbbArray[i], lbbArray[i + 1])) {
@@ -2131,6 +2135,82 @@ axes.doTicks = function(gd, axid, skipTitle) {
             // a full redraw of the title (mostly relevant for MathJax)
             drawAxTitle();
             return axid + ' done';
+        }
+
+        function adjustAutoMarginForLabels() {
+            var axBB = ax._boundingBox;
+
+            // Handle extra space on this axis
+            var shiftDimension;
+            var marginDimension;
+            var shiftAmount;
+            
+            // Handle extra space on perpendicular axis 
+            // (tipycally needed when you use slanted labels which are otherwise cut off)
+            var perpMarginDimension;
+            var perpShiftAmount;
+
+            var x = 0, y = 0;
+
+            if (ax._id.charAt(0) === "x") {
+                shiftDimension = "height";
+                perpMarginDimension = "r";
+                if (ax._id.charAt(1) === "2") {
+                    y = 1;
+                    marginDimension = "t";
+                } else {
+                    marginDimension = "b";
+                }
+            } else if (ax._id.charAt(0) === "y") {
+                shiftDimension = "width";
+                if (ax._id.charAt(1) === "2") {
+                    x = 1;
+                    marginDimension = "r";
+                } else {
+                    marginDimension = "l";
+                }
+            }
+
+            if (shiftDimension && marginDimension) {
+                shiftAmount = axBB[shiftDimension];
+                if (ax._titleElement) {
+                    var titleBB = ax._titleElement.node().getBoundingClientRect();
+                    shiftAmount += (titleBB[shiftDimension] + 2);
+                }
+
+                var maxAmount = gd._fullLayout[shiftDimension] * 0.5;
+                shiftAmount = Math.min(shiftAmount, maxAmount);
+                
+                var shiftMargins = {
+                    x: x,
+                    y: y,
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 0
+                };
+                shiftMargins[marginDimension] = shiftAmount;
+
+                if (perpMarginDimension === "r") {
+                    if (ax._lastangle === 0) {
+                        perpShiftAmount = ax._lastLabelWidth / 2;
+                    }
+                    if (perpShiftAmount > 0) {
+                        var perpShiftMargins = {
+                            x: 1.01,
+                            y: 0,
+                            l: 0,
+                            r: perpShiftAmount,
+                            b: 0,
+                            t: 0
+                        };
+
+                        Plots.autoMargin(gd, "xaxis_on_r", perpShiftMargins);
+                    };
+                }
+                
+                Plots.autoMargin(gd, ax._name, shiftMargins);
+            }
         }
 
         function calcBoundingBox() {
@@ -2223,7 +2303,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
         var done = Lib.syncOrAsync([
             allLabelsReady,
             fixLabelOverlaps,
-            calcBoundingBox
+            calcBoundingBox,
+            adjustAutoMarginForLabels
         ]);
         if(done && done.then) gd._promises.push(done);
         return done;
