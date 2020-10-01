@@ -398,6 +398,18 @@ function findCounterAxisLineWidth(ax, side, counterAx, axList) {
 exports.drawMainTitle = function(gd) {
     var fullLayout = gd._fullLayout;
 
+    // ion: main title-specific edit settings
+    var isEditable = gd._context.edits.titleText;
+    var txt = fullLayout.title;
+    var titleWillShow = true;
+    if(txt === '' || txt.match(/Click to enter .+ title/)) {
+        titleWillShow = isEditable;
+    }
+
+    if (!titleWillShow) {
+        return;
+    }
+
     Titles.draw(gd, 'gtitle', {
         propContainer: fullLayout,
         propName: 'title',
@@ -408,6 +420,20 @@ exports.drawMainTitle = function(gd) {
             'text-anchor': 'middle'
         }
     });
+
+    // ion: editable title auto spacing
+    if (fullLayout._titleElement) {
+        var titleBB = fullLayout._titleElement.node().getBoundingClientRect();        
+        var shiftMargins = {
+            x: 0,
+            y: 1,
+            l: 0,
+            r: 0,
+            b: 0,
+            t: titleBB.height + 2
+        };
+        Plots.autoMargin(gd, "chart_title", shiftMargins);
+    }
 };
 
 // First, see if we need to do arraysToCalcdata

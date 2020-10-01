@@ -250,6 +250,6 @@ Titles.draw = function(gd, titleClass, options) {
             });
     }
     el.classed('js-placeholder', isplaceholder);
-
-    return group;
-};
+	// ion: storing the title element inside its containing axis object
+    cont._titleElement = el;
+ 	return group;};
