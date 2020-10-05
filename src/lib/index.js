@@ -1171,7 +1171,7 @@ lib.fillText = function(calcPt, trace, contOut) {
 
 // accept all truthy values and 0 (which gets cast to '0' in the hover labels)
 lib.isValidTextValue = function(v) {
-    return v || v === 0;
+    return (v || v === 0) && typeof v !== "object";
 };
 
 /**
