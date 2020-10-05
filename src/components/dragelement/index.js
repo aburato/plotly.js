@@ -165,6 +165,9 @@ dragElement.init = function init(options) {
             document.addEventListener('mousemove', onMove);
             document.addEventListener('touchmove', onMove, {passive: false});
         }
+        
+        // Raise event about drag start (e.g. to suspend auto-ranging during a zoom/pan operation)
+        gd.emit('plotly_dragstart', e);
 
         return;
     }
@@ -213,6 +216,9 @@ dragElement.init = function init(options) {
             dragCover.documentElement.style.cursor = cursor;
             cursor = null;
         }
+
+        // Raise event about drag end (e.g. to resume auto-ranging during a zoom/pan operation)
+        gd.emit('plotly_dragend', e);
 
         if(!gd._dragging) {
             gd._dragged = false;
