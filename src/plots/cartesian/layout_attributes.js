@@ -701,7 +701,7 @@ module.exports = {
         ].join(' ')
     },
     tickformat: {
-        valType: 'string',
+        valType: 'any',
         dflt: '',
         role: 'style',
         editType: 'ticks',

@@ -706,7 +706,7 @@ axes.calcTicks = function calcTicks(ax, opts) {
 
     var definedDelta;
     var tickformat = axes.getTickFormat(ax);
-    if(isPeriod && tickformat) {
+    if(isPeriod && typeof tickformat === "string") {
         if(
             !(/%[fLQsSMX]/.test(tickformat))
             // %f: microseconds as a decimal number [000000, 999999]
@@ -1262,6 +1262,11 @@ axes.tickText = function(ax, x, hover, noSuffixPrefix) {
     else if(isAngular(ax)) formatAngle(ax, out, hover, extraPrecision, hideexp);
     else formatLinear(ax, out, hover, extraPrecision, hideexp);
 
+    var tickformat = axes.getTickFormat(ax);
+    if (typeof tickformat === "function") {
+        out.text = tickformat(out.text, out.x);
+    }
+
     // add prefix and suffix
     if(!noSuffixPrefix) {
         if(ax.tickprefix && !isHidden(ax.showtickprefix)) out.text = ax.tickprefix + out.text;
@@ -1599,7 +1604,9 @@ function numFormat(v, ax, fmtoverride, hover) {
         if(ax.hoverformat) tickformat = ax.hoverformat;
     }
 
-    if(tickformat) return ax._numFormat(tickformat)(v).replace(/-/g, MINUS_SIGN);
+    if(tickformat && typeof tickformat === "string") {
+        return ax._numFormat(tickformat)(v).replace(/-/g, MINUS_SIGN);
+    }
 
     // 'epsilon' - rounding increment
     var e = Math.pow(10, -tickRound) / 2;
