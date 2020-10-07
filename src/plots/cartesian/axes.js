@@ -1808,7 +1808,8 @@ axes.doTicks = function(gd, axid, skipTitle) {
             return Lib.syncOrAsync(axes.list(gd, '', true).map(function(ax) {
                 return function() {
                     if(!ax._id) return;
-                    var axDone = axes.doTicks(gd, ax._id);
+                    // ion: pass skipTitle as an optimization
+                    var axDone = axes.doTicks(gd, ax._id, skipTitle);
                     if(axid === 'redraw') {
                         ax._r = ax.range.slice();
                         ax._rl = Lib.simpleMap(ax._r, ax.r2l);
@@ -1941,6 +1942,9 @@ axes.doTicks = function(gd, axid, skipTitle) {
     }
 
     function drawLabels(container, position) {
+        // ion: restore pointer events otherwise title tooltips won't work
+        container.style('pointer-events', 'all');      
+
         // tick labels - for now just the main labels.
         // TODO: mirror labels, esp for subplots
         var tickLabels = container.selectAll('g.' + tcls).data(vals, datafn);
