@@ -2112,21 +2112,27 @@ axes.doTicks = function(gd, axid, skipTitle) {
                 });
                 for(i = 0; i < lbbArray.length - 1; i++) {
                     if(Lib.bBoxIntersect(lbbArray[i], lbbArray[i + 1])) {
-                        // any overlap at all - set 30 degrees
-                        autoangle = 30;
+                        // any overlap at all - set 90 degrees (ion brute fix for endless loop)
+                        autoangle = 90;
                         break;
                     }
                 }
                 if(autoangle) {
-                    var tickspacing = Math.abs(
-                            (vals[vals.length - 1].x - vals[0].x) * ax._m
-                        ) / (vals.length - 1);
-                    if(tickspacing < maxFontSize * 2.5) {
-                        autoangle = 90;
-                    }
+                    // ion: brute fix
+                    // var tickspacing = Math.abs(
+                    //         (vals[vals.length - 1].x - vals[0].x) * ax._m
+                    //     ) / (vals.length - 1);
+                    // if(tickspacing < maxFontSize * 2.5) {
+                    //     autoangle = 90;
+                    // }
                     positionLabels(tickLabels, autoangle);
                 }
                 ax._lastangle = autoangle;
+            }
+
+            if (ax._lastangle) {
+                // last angle set to 0 means labels do not collide, so no need for ellipsis.
+                performLabelEllipsis();
             }
 
             // update the axis title
@@ -2135,6 +2141,40 @@ axes.doTicks = function(gd, axid, skipTitle) {
             // a full redraw of the title (mostly relevant for MathJax)
             drawAxTitle();
             return axid + ' done';
+        }
+
+        function performLabelEllipsis() {
+            var maxLengthtPct = 0.3; // the max percent of the total chart w/h after which labels get the ellipsis.
+            var maxLengthCap = 220; // we still won't give labels more than this amount of space.
+            var maxLength = (axLetter === "x" ? gd._fullLayout["height"] : gd._fullLayout["width"]) * maxLengthtPct;
+            maxLength = Math.min(maxLength, maxLengthCap);
+
+            // cache?
+            ax.ellipsisCache = ax.ellipsisCache || {};
+
+            // ellipsis
+            tickLabels.each(function(d) {
+                var thisG = d3.select(this);
+                var bb = ax.ellipsisCache[d.text];
+                if (typeof bb === 'undefined') {
+                    bb = Drawing.bBox(thisG.node());
+                    ax.ellipsisCache[d.text] = bb;
+                }
+                var labelLength = (axLetter === "x" ? bb["height"] : bb["width"]);
+
+                // aburato: if the label is too long perform a middle ellipsis
+                if (labelLength > maxLength + 1) {
+                    var drawnText = d.text;
+                    var maxCharLength = Math.round(maxLength / (labelLength / drawnText.length));                    
+                    var firstLen = Math.floor(maxCharLength / 2);
+                    var lastLen = maxCharLength - firstLen - 1;
+                    drawnText = drawnText.substr(0, firstLen) + '…' + drawnText.substr(-lastLen);
+                    var thisText = thisG.select('text');                    
+                    thisText.text(drawnText);
+                    // aburato: use a title element for a free tooltip.
+                    thisG.insert("title", "text").text(d.text);
+                }
+            });
         }
 
         function adjustAutoMarginForLabels() {
