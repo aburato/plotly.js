@@ -537,6 +537,29 @@ describe('legend helpers:', function() {
             expect(isReversed({ traceorder: 'reversed' })).toBe(true);
         });
     });
+
+    describe('splitLines', function() {
+        var splitLines = helpers.splitLines;
+
+        it('should not truncate small strings', function() {
+            expect(splitLines('', { linelen: 10 })).toBe('');
+            expect(splitLines('x', { linelen: 10 })).toBe('x');
+        });
+
+        it('should not truncate multi-lines labels', function() {
+            expect(splitLines('long line always split<br>in two', { linelen: 5 })).toBe('long line always split<br>in two');
+        });
+
+        it('should split near words', function() {
+            expect(splitLines('long line to split', { linelen: 10 })).toBe('long line<br>to split');
+            expect(splitLines('long line to split in 3 lines', { linelen: 10 })).toBe('long line<br>to split<br>in 3 lines');
+        });
+
+        it('should use ellipsis', function() {
+            expect(splitLines('long line to split', { linelen: 10, maxlines: 1 })).toBe('long li...');
+            expect(splitLines('long line to split in 3 lines', { linelen: 11, maxlines: 2 })).toBe('long line<br>to split...');
+        });
+    })
 });
 
 describe('legend anchor utils:', function() {

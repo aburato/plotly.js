@@ -408,9 +408,14 @@ function drawTexts(g, gd, opts) {
 
     var textEl = Lib.ensureSingle(g, 'text', 'legendtext');
 
+    var legendLabel = name;
+    if (opts.linesplit && opts.linesplit.linelen) {
+        legendLabel = helpers.splitLines(legendLabel, opts.linesplit);
+    }
+
     textEl.attr('text-anchor', 'start')
         .call(Drawing.font, opts.font)
-        .text(isEditable ? ensureLength(name, maxNameLength) : name);
+        .text(isEditable ? ensureLength(name, maxNameLength) : legendLabel);
 
     Lib.ensureSingle(g, 'title').text(name.replace("<br>", "\n"));
 

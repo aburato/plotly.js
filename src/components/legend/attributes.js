@@ -93,6 +93,17 @@ module.exports = {
         ].join(' ')
     },
 
+    linesplit: {
+        valType: 'any',
+        role: 'style',
+        editType: 'legend',
+        description: [
+            'Rules to auto-split long legend labels. `linelen` is the max line character count.',
+            '`maxlines`, if specified, is the maximum number of lines. If the label is truncated,',
+            'ellipsis will be added.' 
+        ].join(' ')
+    },
+
     itemclick: {
         valType: 'enumerated',
         values: ['toggle', 'toggleothers', false],

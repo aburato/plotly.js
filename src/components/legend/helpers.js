@@ -24,3 +24,33 @@ exports.isReversed = function isReversed(legendLayout) {
 exports.isSorted = function isSorted(legendLayout) {
     return (legendLayout.traceorder || '').indexOf('sorted') !== -1;
 };
+
+// Split labels in multi-lines
+exports.splitLines = function splitLines(text, opts) {
+    if (text.indexOf("<br>") < 0) {
+        var lines = [];
+        
+        while (text.length > opts.linelen && (!opts.maxlines || lines.length + 1 < opts.maxlines)) {
+            var i = text.lastIndexOf(' ', opts.linelen);
+            var spaceFound = i > opts.linelen - 11 && i > 0;
+            if (spaceFound) {
+                lines.push(text.substr(0, i));
+                text = text.substr(i + 1);        
+            } else  {
+                // Truncate word
+                lines.push(text.substr(0, opts.linelen));
+                text = text.substr(opts.linelen);
+            }
+        }
+
+        if (text.length > 0) {
+            if (text.length > opts.linelen) {
+                lines.push(text.substr(0, opts.linelen - 3) + "...");
+            } else {
+                lines.push(text);
+            }
+        }
+        return lines.join("<br>");
+    }
+    return text;
+}
