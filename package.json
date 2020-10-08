@@ -55,7 +55,7 @@
       "./tasks/compress_attributes.js"
     ]
   },
-  "dependencies": {
+  "devDependencies": {
     "@plotly/d3-sankey": "0.7.2",
     "@plotly/d3-sankey-circular": "0.33.1",
     "@plotly/point-cluster": "^3.1.9",
@@ -121,9 +121,7 @@
     "to-px": "1.0.1",
     "topojson-client": "^3.1.0",
     "webgl-context": "^2.2.0",
-    "world-calendars": "^1.0.3"
-  },
-  "devDependencies": {
+    "world-calendars": "^1.0.3",
     "brfs": "^2.0.2",
     "browserify": "^16.5.2",
     "browserify-transform-tools": "^1.7.0",
