@@ -1742,7 +1742,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -3591,7 +3591,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -6570,7 +6570,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -7829,7 +7829,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -9360,7 +9360,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -10668,7 +10668,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -12000,7 +12000,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -13769,7 +13769,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -16605,7 +16605,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -19904,7 +19904,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -21272,7 +21272,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -23490,7 +23490,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "calc",
@@ -24072,7 +24072,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "calc",
@@ -25670,7 +25670,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "calc",
@@ -27356,7 +27356,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "calc",
@@ -28662,7 +28662,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "calc",
@@ -29801,7 +29801,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -31023,7 +31023,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -32138,7 +32138,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -33804,7 +33804,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "calc",
@@ -35213,7 +35213,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -36340,7 +36340,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "calc",
@@ -38410,7 +38410,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -40568,7 +40568,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "calc",
@@ -41158,7 +41158,7 @@
                                 "role": "data"
                             },
                             "tickformat": {
-                                "valType": "string",
+                                "valType": "any",
                                 "dflt": "",
                                 "role": "style",
                                 "editType": "plot",
@@ -41659,7 +41659,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -42614,7 +42614,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -43626,7 +43626,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "calc",
@@ -44841,7 +44841,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -45785,7 +45785,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -47659,7 +47659,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "plot",
@@ -51419,7 +51419,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -52706,7 +52706,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
@@ -55508,7 +55508,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -56785,7 +56785,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "calc",
@@ -58710,7 +58710,7 @@
                             "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                         },
                         "tickformat": {
-                            "valType": "string",
+                            "valType": "any",
                             "dflt": "",
                             "role": "style",
                             "editType": "colorbars",
@@ -61514,7 +61514,7 @@
                     "description": "If \"true\", even 4-digit integers are separated"
                 },
                 "tickformat": {
-                    "valType": "string",
+                    "valType": "any",
                     "dflt": "",
                     "role": "style",
                     "editType": "ticks",
@@ -62710,7 +62710,7 @@
                     "description": "If \"true\", even 4-digit integers are separated"
                 },
                 "tickformat": {
-                    "valType": "string",
+                    "valType": "any",
                     "dflt": "",
                     "role": "style",
                     "editType": "ticks",
@@ -63389,7 +63389,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "plot",
@@ -63816,7 +63816,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "plot",
@@ -64243,7 +64243,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "plot",
@@ -65063,7 +65063,7 @@
                         "description": "If \"true\", even 4-digit integers are separated"
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "plot",
@@ -65682,7 +65682,7 @@
                         "description": "If \"true\", even 4-digit integers are separated"
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "plot",
@@ -66301,7 +66301,7 @@
                         "description": "If \"true\", even 4-digit integers are separated"
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "plot",
@@ -68346,7 +68346,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "plot",
@@ -68817,7 +68817,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "plot",
@@ -69206,7 +69206,8 @@
                     "valType": "flaglist",
                     "flags": [
                         "reversed",
-                        "grouped"
+                        "grouped",
+                        "sorted"
                     ],
                     "extras": [
                         "normal"
@@ -69233,6 +69234,12 @@
                     "role": "style",
                     "editType": "legend",
                     "description": "Determines if the legend items symbols scale with their corresponding *trace* attributes or remain *constant* independent of the symbol size on the graph."
+                },
+                "linesplit": {
+                    "valType": "any",
+                    "role": "style",
+                    "editType": "legend",
+                    "description": "Rules to auto-split long legend labels. `linelen` is the max line character count. `maxlines`, if specified, is the maximum number of lines. If the label is truncated, ellipsis will be added."
                 },
                 "itemclick": {
                     "valType": "enumerated",
@@ -71259,7 +71266,7 @@
                         "description": "Sets the angle of the tick labels with respect to the horizontal. For example, a `tickangle` of -90 draws the tick labels vertically."
                     },
                     "tickformat": {
-                        "valType": "string",
+                        "valType": "any",
                         "dflt": "",
                         "role": "style",
                         "editType": "colorbars",
