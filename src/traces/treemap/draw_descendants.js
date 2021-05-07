@@ -56,10 +56,10 @@ module.exports = function drawDescendants(gd, cd, entry, slices, opts) {
         flipY: trace.tiling.flip.indexOf('y') > -1,
         pad: {
             inner: trace.tiling.pad,
-            top: trace.marker.pad.t,
+            top:  !hasBottom ? ((node) => (node.depth === 0 && !helpers.getPtLabel(node))? trace.marker.pad.r: trace.marker.pad.t) : trace.marker.pad.t, // do not add large padding when label not present for root level
             left: trace.marker.pad.l,
             right: trace.marker.pad.r,
-            bottom: trace.marker.pad.b,
+            bottom: hasBottom ? ((node) => (node.depth === 0 && !helpers.getPtLabel(node))? trace.marker.pad.r: trace.marker.pad.b) : trace.marker.pad.b // do not add large padding when label not present for root level
         }
     });
 
