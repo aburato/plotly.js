@@ -95349,7 +95349,7 @@ module.exports = function style(gd) {
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion1';
+exports.version = '1.56.0-ion2';
 
 },{}]},{},[11])(11)
 });

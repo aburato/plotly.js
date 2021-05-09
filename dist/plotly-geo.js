@@ -82467,7 +82467,7 @@ function styleTrace(gd, calcTrace) {
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion1';
+exports.version = '1.56.0-ion2';
 
 },{}]},{},[4])(4)
 });
