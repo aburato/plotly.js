@@ -1,5 +1,5 @@
 /**
-* Copyright 2012-2020, Plotly, Inc.
+* Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 *
 * This source code is licensed under the MIT license found in the
@@ -9,4 +9,4 @@
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion2';
+exports.version = '1.56.0-ion3';

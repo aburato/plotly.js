@@ -1,3 +1,9 @@
+/**
+* plotly.js (mapbox) v1.56.0-ion3
+* Copyright 2012-2021, Plotly, Inc.
+* All rights reserved.
+* Licensed under the MIT license
+*/
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Plotly = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(_dereq_,module,exports){
 'use strict';
 
@@ -6256,7 +6262,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
   d3.round = function(x, n) {
     return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
   };
-  var d3_formatPrefixes = [ "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y" ].map(d3_formatPrefix);
+  var d3_formatPrefixes = [ "y", "z", "a", "f", "p", "n", "��", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y" ].map(d3_formatPrefix);
   d3.formatPrefix = function(value, precision) {
     var i = 0;
     if (value = +value) {
@@ -82650,7 +82656,7 @@ module.exports = function selectPoints(searchInfo, selectionTester) {
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion2';
+exports.version = '1.56.0-ion3';
 
 },{}]},{},[5])(5)
 });

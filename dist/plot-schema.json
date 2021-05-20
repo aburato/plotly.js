@@ -20901,6 +20901,13 @@
                         "description": "Sets the color of each sector of this trace. If not specified, the default trace color set is used to pick the sector colors.",
                         "role": "data"
                     },
+                    "hoverframecolor": {
+                        "valType": "color",
+                        "role": "style",
+                        "dflt": null,
+                        "editType": "style",
+                        "description": "Sets the color of the line enclosing each sector on mouse hover."
+                    },
                     "depthfade": {
                         "valType": "enumerated",
                         "values": [
