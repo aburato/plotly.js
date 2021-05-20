@@ -1,5 +1,5 @@
 /**
-* Copyright 2012-2020, Plotly, Inc.
+* Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 *
 * This source code is licensed under the MIT license found in the
@@ -73,6 +73,7 @@ module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout
     var bottomText = traceOut.textposition.indexOf('bottom') !== -1;
 
     var lineWidth = coerce('marker.line.width');
+    var hoverFrameColor = coerce('marker.hoverframecolor');
     if(lineWidth) coerce('marker.line.color', layout.paper_bgcolor);
 
     var colors = coerce('marker.colors');
@@ -101,7 +102,7 @@ module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout
         marker: {
             line: {
                 width: 2,
-                color: Color.contrast(layout.paper_bgcolor)
+                color: hoverFrameColor || Color.contrast(layout.paper_bgcolor)
             }
         }
     };

@@ -1,5 +1,5 @@
 /**
-* Copyright 2012-2020, Plotly, Inc.
+* Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 *
 * This source code is licensed under the MIT license found in the
@@ -138,6 +138,16 @@ module.exports = {
         },
 
         colors: sunburstAttrs.marker.colors,
+        
+        hoverframecolor: {
+            valType: 'color',
+            role: 'style',
+            dflt: null,
+            editType: 'style',
+            description: [
+                'Sets the color of the line enclosing each sector on mouse hover.'
+            ].join(' ')
+        },
 
         depthfade: {
             valType: 'enumerated',
