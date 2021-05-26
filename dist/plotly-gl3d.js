@@ -1,6 +1,6 @@
 /**
 * plotly.js (gl3d) v1.56.0
-* Copyright 2012-2020, Plotly, Inc.
+* Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
 */
@@ -162,7 +162,7 @@ module.exports = _dereq_('../src/traces/mesh3d');
 
 module.exports = _dereq_('../src/traces/scatter3d');
 
-},{"../src/traces/scatter3d":662}],8:[function(_dereq_,module,exports){
+},{"../src/traces/scatter3d":633}],8:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -54495,6 +54495,335 @@ function findZeroCrossings(array, level) {
 * LICENSE file in the root directory of this source tree.
 */
 
+
+'use strict';
+
+var annAttrs = _dereq_('../annotations/attributes');
+var overrideAll = _dereq_('../../plot_api/edit_types').overrideAll;
+var templatedArray = _dereq_('../../plot_api/plot_template').templatedArray;
+
+module.exports = overrideAll(templatedArray('annotation', {
+    visible: annAttrs.visible,
+    x: {
+        valType: 'any',
+        
+        
+    },
+    y: {
+        valType: 'any',
+        
+        
+    },
+    z: {
+        valType: 'any',
+        
+        
+    },
+    ax: {
+        valType: 'number',
+        
+        
+    },
+    ay: {
+        valType: 'number',
+        
+        
+    },
+
+    xanchor: annAttrs.xanchor,
+    xshift: annAttrs.xshift,
+    yanchor: annAttrs.yanchor,
+    yshift: annAttrs.yshift,
+
+    text: annAttrs.text,
+    textangle: annAttrs.textangle,
+    font: annAttrs.font,
+    width: annAttrs.width,
+    height: annAttrs.height,
+    opacity: annAttrs.opacity,
+    align: annAttrs.align,
+    valign: annAttrs.valign,
+    bgcolor: annAttrs.bgcolor,
+    bordercolor: annAttrs.bordercolor,
+    borderpad: annAttrs.borderpad,
+    borderwidth: annAttrs.borderwidth,
+    showarrow: annAttrs.showarrow,
+    arrowcolor: annAttrs.arrowcolor,
+    arrowhead: annAttrs.arrowhead,
+    startarrowhead: annAttrs.startarrowhead,
+    arrowside: annAttrs.arrowside,
+    arrowsize: annAttrs.arrowsize,
+    startarrowsize: annAttrs.startarrowsize,
+    arrowwidth: annAttrs.arrowwidth,
+    standoff: annAttrs.standoff,
+    startstandoff: annAttrs.startstandoff,
+    hovertext: annAttrs.hovertext,
+    hoverlabel: annAttrs.hoverlabel,
+    captureevents: annAttrs.captureevents,
+
+    // maybes later?
+    // clicktoshow: annAttrs.clicktoshow,
+    // xclick: annAttrs.xclick,
+    // yclick: annAttrs.yclick,
+
+    // not needed!
+    // axref: 'pixel'
+    // ayref: 'pixel'
+    // xref: 'x'
+    // yref: 'y
+    // zref: 'z'
+}), 'calc', 'from-root');
+
+},{"../../plot_api/edit_types":528,"../../plot_api/plot_template":535,"../annotations/attributes":360}],355:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var Lib = _dereq_('../../lib');
+var Axes = _dereq_('../../plots/cartesian/axes');
+
+module.exports = function convert(scene) {
+    var fullSceneLayout = scene.fullSceneLayout;
+    var anns = fullSceneLayout.annotations;
+
+    for(var i = 0; i < anns.length; i++) {
+        mockAnnAxes(anns[i], scene);
+    }
+
+    scene.fullLayout._infolayer
+        .selectAll('.annotation-' + scene.id)
+        .remove();
+};
+
+function mockAnnAxes(ann, scene) {
+    var fullSceneLayout = scene.fullSceneLayout;
+    var domain = fullSceneLayout.domain;
+    var size = scene.fullLayout._size;
+
+    var base = {
+        // this gets fill in on render
+        pdata: null,
+
+        // to get setConvert to not execute cleanly
+        type: 'linear',
+
+        // don't try to update them on `editable: true`
+        autorange: false,
+
+        // set infinite range so that annotation draw routine
+        // does not try to remove 'outside-range' annotations,
+        // this case is handled in the render loop
+        range: [-Infinity, Infinity]
+    };
+
+    ann._xa = {};
+    Lib.extendFlat(ann._xa, base);
+    Axes.setConvert(ann._xa);
+    ann._xa._offset = size.l + domain.x[0] * size.w;
+    ann._xa.l2p = function() {
+        return 0.5 * (1 + ann._pdata[0] / ann._pdata[3]) * size.w * (domain.x[1] - domain.x[0]);
+    };
+
+    ann._ya = {};
+    Lib.extendFlat(ann._ya, base);
+    Axes.setConvert(ann._ya);
+    ann._ya._offset = size.t + (1 - domain.y[1]) * size.h;
+    ann._ya.l2p = function() {
+        return 0.5 * (1 - ann._pdata[1] / ann._pdata[3]) * size.h * (domain.y[1] - domain.y[0]);
+    };
+}
+
+},{"../../lib":499,"../../plots/cartesian/axes":546}],356:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var Lib = _dereq_('../../lib');
+var Axes = _dereq_('../../plots/cartesian/axes');
+var handleArrayContainerDefaults = _dereq_('../../plots/array_container_defaults');
+var handleAnnotationCommonDefaults = _dereq_('../annotations/common_defaults');
+var attributes = _dereq_('./attributes');
+
+module.exports = function handleDefaults(sceneLayoutIn, sceneLayoutOut, opts) {
+    handleArrayContainerDefaults(sceneLayoutIn, sceneLayoutOut, {
+        name: 'annotations',
+        handleItemDefaults: handleAnnotationDefaults,
+        fullLayout: opts.fullLayout
+    });
+};
+
+function handleAnnotationDefaults(annIn, annOut, sceneLayout, opts) {
+    function coerce(attr, dflt) {
+        return Lib.coerce(annIn, annOut, attributes, attr, dflt);
+    }
+
+    function coercePosition(axLetter) {
+        var axName = axLetter + 'axis';
+
+        // mock in such way that getFromId grabs correct 3D axis
+        var gdMock = { _fullLayout: {} };
+        gdMock._fullLayout[axName] = sceneLayout[axName];
+
+        return Axes.coercePosition(annOut, gdMock, coerce, axLetter, axLetter, 0.5);
+    }
+
+
+    var visible = coerce('visible');
+    if(!visible) return;
+
+    handleAnnotationCommonDefaults(annIn, annOut, opts.fullLayout, coerce);
+
+    coercePosition('x');
+    coercePosition('y');
+    coercePosition('z');
+
+    // if you have one coordinate you should all three
+    Lib.noneOrAll(annIn, annOut, ['x', 'y', 'z']);
+
+    // hard-set here for completeness
+    annOut.xref = 'x';
+    annOut.yref = 'y';
+    annOut.zref = 'z';
+
+    coerce('xanchor');
+    coerce('yanchor');
+    coerce('xshift');
+    coerce('yshift');
+
+    if(annOut.showarrow) {
+        annOut.axref = 'pixel';
+        annOut.ayref = 'pixel';
+
+        // TODO maybe default values should be bigger than the 2D case?
+        coerce('ax', -10);
+        coerce('ay', -30);
+
+        // if you have one part of arrow length you should have both
+        Lib.noneOrAll(annIn, annOut, ['ax', 'ay']);
+    }
+}
+
+},{"../../lib":499,"../../plots/array_container_defaults":541,"../../plots/cartesian/axes":546,"../annotations/common_defaults":363,"./attributes":354}],357:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var drawRaw = _dereq_('../annotations/draw').drawRaw;
+var project = _dereq_('../../plots/gl3d/project');
+var axLetters = ['x', 'y', 'z'];
+
+module.exports = function draw(scene) {
+    var fullSceneLayout = scene.fullSceneLayout;
+    var dataScale = scene.dataScale;
+    var anns = fullSceneLayout.annotations;
+
+    for(var i = 0; i < anns.length; i++) {
+        var ann = anns[i];
+        var annotationIsOffscreen = false;
+
+        for(var j = 0; j < 3; j++) {
+            var axLetter = axLetters[j];
+            var pos = ann[axLetter];
+            var ax = fullSceneLayout[axLetter + 'axis'];
+            var posFraction = ax.r2fraction(pos);
+
+            if(posFraction < 0 || posFraction > 1) {
+                annotationIsOffscreen = true;
+                break;
+            }
+        }
+
+        if(annotationIsOffscreen) {
+            scene.fullLayout._infolayer
+                .select('.annotation-' + scene.id + '[data-index="' + i + '"]')
+                .remove();
+        } else {
+            ann._pdata = project(scene.glplot.cameraParams, [
+                fullSceneLayout.xaxis.r2l(ann.x) * dataScale[0],
+                fullSceneLayout.yaxis.r2l(ann.y) * dataScale[1],
+                fullSceneLayout.zaxis.r2l(ann.z) * dataScale[2]
+            ]);
+
+            drawRaw(scene.graphDiv, ann, i, scene.id, ann._xa, ann._ya);
+        }
+    }
+};
+
+},{"../../plots/gl3d/project":586,"../annotations/draw":366}],358:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var Registry = _dereq_('../../registry');
+var Lib = _dereq_('../../lib');
+
+module.exports = {
+    moduleType: 'component',
+    name: 'annotations3d',
+
+    schema: {
+        subplots: {
+            scene: {annotations: _dereq_('./attributes')}
+        }
+    },
+
+    layoutAttributes: _dereq_('./attributes'),
+    handleDefaults: _dereq_('./defaults'),
+    includeBasePlot: includeGL3D,
+
+    convert: _dereq_('./convert'),
+    draw: _dereq_('./draw')
+};
+
+function includeGL3D(layoutIn, layoutOut) {
+    var GL3D = Registry.subplotsRegistry.gl3d;
+    if(!GL3D) return;
+
+    var attrRegex = GL3D.attrRegex;
+
+    var keys = Object.keys(layoutIn);
+    for(var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        if(attrRegex.test(k) && (layoutIn[k].annotations || []).length) {
+            Lib.pushUnique(layoutOut._basePlotModules, GL3D);
+            Lib.pushUnique(layoutOut._subplots.gl3d, k);
+        }
+    }
+}
+
+},{"../../lib":499,"../../registry":600,"./attributes":354,"./convert":355,"./defaults":356,"./draw":357}],359:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
 'use strict';
 
 /**
@@ -54557,7 +54886,7 @@ module.exports = [
     }
 ];
 
-},{}],355:[function(_dereq_,module,exports){
+},{}],360:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -54912,7 +55241,7 @@ module.exports = templatedArray('annotation', {
     }
 });
 
-},{"../../plot_api/plot_template":535,"../../plots/cartesian/constants":552,"../../plots/font_attributes":574,"./arrow_paths":354}],356:[function(_dereq_,module,exports){
+},{"../../plot_api/plot_template":535,"../../plots/cartesian/constants":552,"../../plots/font_attributes":574,"./arrow_paths":359}],361:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -55001,7 +55330,7 @@ function calcAxisExpansion(ann, ax) {
     ann._extremes[axId] = extremes;
 }
 
-},{"../../lib":499,"../../plots/cartesian/axes":546,"./draw":361}],357:[function(_dereq_,module,exports){
+},{"../../lib":499,"../../plots/cartesian/axes":546,"./draw":366}],362:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -55139,7 +55468,7 @@ function clickData2r(d, ax) {
     return ax.type === 'log' ? ax.l2r(d) : ax.d2r(d);
 }
 
-},{"../../lib":499,"../../plot_api/plot_template":535,"../../registry":600}],358:[function(_dereq_,module,exports){
+},{"../../lib":499,"../../plot_api/plot_template":535,"../../registry":600}],363:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -55218,7 +55547,7 @@ module.exports = function handleAnnotationCommonDefaults(annIn, annOut, fullLayo
     coerce('captureevents', !!hoverText);
 };
 
-},{"../../lib":499,"../color":370}],359:[function(_dereq_,module,exports){
+},{"../../lib":499,"../color":370}],364:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -55281,7 +55610,7 @@ module.exports = function convertCoords(gd, ax, newType, doExtra) {
     }
 };
 
-},{"../../lib/to_log_range":524,"fast-isnumeric":89}],360:[function(_dereq_,module,exports){
+},{"../../lib/to_log_range":524,"fast-isnumeric":89}],365:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -55388,7 +55717,7 @@ function handleAnnotationDefaults(annIn, annOut, fullLayout) {
     }
 }
 
-},{"../../lib":499,"../../plots/array_container_defaults":541,"../../plots/cartesian/axes":546,"./attributes":355,"./common_defaults":358}],361:[function(_dereq_,module,exports){
+},{"../../lib":499,"../../plots/array_container_defaults":541,"../../plots/cartesian/axes":546,"./attributes":360,"./common_defaults":363}],366:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -56088,7 +56417,7 @@ function drawRaw(gd, options, index, subplotId, xa, ya) {
     } else annText.call(textLayout);
 }
 
-},{"../../lib":499,"../../lib/setcursor":518,"../../lib/svg_text_utils":522,"../../plot_api/plot_template":535,"../../plots/cartesian/axes":546,"../../plots/plots":591,"../../registry":600,"../color":370,"../dragelement":389,"../drawing":392,"../fx":410,"./draw_arrow_head":362,"d3":81}],362:[function(_dereq_,module,exports){
+},{"../../lib":499,"../../lib/setcursor":518,"../../lib/svg_text_utils":522,"../../plot_api/plot_template":535,"../../plots/cartesian/axes":546,"../../plots/plots":591,"../../registry":600,"../color":370,"../dragelement":389,"../drawing":392,"../fx":410,"./draw_arrow_head":367,"d3":81}],367:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -56239,7 +56568,7 @@ module.exports = function drawArrowHead(el3, ends, options) {
     if(doEnd) drawhead(headStyle, end, endRot, scale);
 };
 
-},{"../color":370,"./arrow_paths":354,"d3":81}],363:[function(_dereq_,module,exports){
+},{"../color":370,"./arrow_paths":359,"d3":81}],368:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -56273,336 +56602,7 @@ module.exports = {
     convertCoords: _dereq_('./convert_coords')
 };
 
-},{"../../plots/cartesian/include_components":558,"./attributes":355,"./calc_autorange":356,"./click":357,"./convert_coords":359,"./defaults":360,"./draw":361}],364:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-
-'use strict';
-
-var annAttrs = _dereq_('../annotations/attributes');
-var overrideAll = _dereq_('../../plot_api/edit_types').overrideAll;
-var templatedArray = _dereq_('../../plot_api/plot_template').templatedArray;
-
-module.exports = overrideAll(templatedArray('annotation', {
-    visible: annAttrs.visible,
-    x: {
-        valType: 'any',
-        
-        
-    },
-    y: {
-        valType: 'any',
-        
-        
-    },
-    z: {
-        valType: 'any',
-        
-        
-    },
-    ax: {
-        valType: 'number',
-        
-        
-    },
-    ay: {
-        valType: 'number',
-        
-        
-    },
-
-    xanchor: annAttrs.xanchor,
-    xshift: annAttrs.xshift,
-    yanchor: annAttrs.yanchor,
-    yshift: annAttrs.yshift,
-
-    text: annAttrs.text,
-    textangle: annAttrs.textangle,
-    font: annAttrs.font,
-    width: annAttrs.width,
-    height: annAttrs.height,
-    opacity: annAttrs.opacity,
-    align: annAttrs.align,
-    valign: annAttrs.valign,
-    bgcolor: annAttrs.bgcolor,
-    bordercolor: annAttrs.bordercolor,
-    borderpad: annAttrs.borderpad,
-    borderwidth: annAttrs.borderwidth,
-    showarrow: annAttrs.showarrow,
-    arrowcolor: annAttrs.arrowcolor,
-    arrowhead: annAttrs.arrowhead,
-    startarrowhead: annAttrs.startarrowhead,
-    arrowside: annAttrs.arrowside,
-    arrowsize: annAttrs.arrowsize,
-    startarrowsize: annAttrs.startarrowsize,
-    arrowwidth: annAttrs.arrowwidth,
-    standoff: annAttrs.standoff,
-    startstandoff: annAttrs.startstandoff,
-    hovertext: annAttrs.hovertext,
-    hoverlabel: annAttrs.hoverlabel,
-    captureevents: annAttrs.captureevents,
-
-    // maybes later?
-    // clicktoshow: annAttrs.clicktoshow,
-    // xclick: annAttrs.xclick,
-    // yclick: annAttrs.yclick,
-
-    // not needed!
-    // axref: 'pixel'
-    // ayref: 'pixel'
-    // xref: 'x'
-    // yref: 'y
-    // zref: 'z'
-}), 'calc', 'from-root');
-
-},{"../../plot_api/edit_types":528,"../../plot_api/plot_template":535,"../annotations/attributes":355}],365:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var Lib = _dereq_('../../lib');
-var Axes = _dereq_('../../plots/cartesian/axes');
-
-module.exports = function convert(scene) {
-    var fullSceneLayout = scene.fullSceneLayout;
-    var anns = fullSceneLayout.annotations;
-
-    for(var i = 0; i < anns.length; i++) {
-        mockAnnAxes(anns[i], scene);
-    }
-
-    scene.fullLayout._infolayer
-        .selectAll('.annotation-' + scene.id)
-        .remove();
-};
-
-function mockAnnAxes(ann, scene) {
-    var fullSceneLayout = scene.fullSceneLayout;
-    var domain = fullSceneLayout.domain;
-    var size = scene.fullLayout._size;
-
-    var base = {
-        // this gets fill in on render
-        pdata: null,
-
-        // to get setConvert to not execute cleanly
-        type: 'linear',
-
-        // don't try to update them on `editable: true`
-        autorange: false,
-
-        // set infinite range so that annotation draw routine
-        // does not try to remove 'outside-range' annotations,
-        // this case is handled in the render loop
-        range: [-Infinity, Infinity]
-    };
-
-    ann._xa = {};
-    Lib.extendFlat(ann._xa, base);
-    Axes.setConvert(ann._xa);
-    ann._xa._offset = size.l + domain.x[0] * size.w;
-    ann._xa.l2p = function() {
-        return 0.5 * (1 + ann._pdata[0] / ann._pdata[3]) * size.w * (domain.x[1] - domain.x[0]);
-    };
-
-    ann._ya = {};
-    Lib.extendFlat(ann._ya, base);
-    Axes.setConvert(ann._ya);
-    ann._ya._offset = size.t + (1 - domain.y[1]) * size.h;
-    ann._ya.l2p = function() {
-        return 0.5 * (1 - ann._pdata[1] / ann._pdata[3]) * size.h * (domain.y[1] - domain.y[0]);
-    };
-}
-
-},{"../../lib":499,"../../plots/cartesian/axes":546}],366:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var Lib = _dereq_('../../lib');
-var Axes = _dereq_('../../plots/cartesian/axes');
-var handleArrayContainerDefaults = _dereq_('../../plots/array_container_defaults');
-var handleAnnotationCommonDefaults = _dereq_('../annotations/common_defaults');
-var attributes = _dereq_('./attributes');
-
-module.exports = function handleDefaults(sceneLayoutIn, sceneLayoutOut, opts) {
-    handleArrayContainerDefaults(sceneLayoutIn, sceneLayoutOut, {
-        name: 'annotations',
-        handleItemDefaults: handleAnnotationDefaults,
-        fullLayout: opts.fullLayout
-    });
-};
-
-function handleAnnotationDefaults(annIn, annOut, sceneLayout, opts) {
-    function coerce(attr, dflt) {
-        return Lib.coerce(annIn, annOut, attributes, attr, dflt);
-    }
-
-    function coercePosition(axLetter) {
-        var axName = axLetter + 'axis';
-
-        // mock in such way that getFromId grabs correct 3D axis
-        var gdMock = { _fullLayout: {} };
-        gdMock._fullLayout[axName] = sceneLayout[axName];
-
-        return Axes.coercePosition(annOut, gdMock, coerce, axLetter, axLetter, 0.5);
-    }
-
-
-    var visible = coerce('visible');
-    if(!visible) return;
-
-    handleAnnotationCommonDefaults(annIn, annOut, opts.fullLayout, coerce);
-
-    coercePosition('x');
-    coercePosition('y');
-    coercePosition('z');
-
-    // if you have one coordinate you should all three
-    Lib.noneOrAll(annIn, annOut, ['x', 'y', 'z']);
-
-    // hard-set here for completeness
-    annOut.xref = 'x';
-    annOut.yref = 'y';
-    annOut.zref = 'z';
-
-    coerce('xanchor');
-    coerce('yanchor');
-    coerce('xshift');
-    coerce('yshift');
-
-    if(annOut.showarrow) {
-        annOut.axref = 'pixel';
-        annOut.ayref = 'pixel';
-
-        // TODO maybe default values should be bigger than the 2D case?
-        coerce('ax', -10);
-        coerce('ay', -30);
-
-        // if you have one part of arrow length you should have both
-        Lib.noneOrAll(annIn, annOut, ['ax', 'ay']);
-    }
-}
-
-},{"../../lib":499,"../../plots/array_container_defaults":541,"../../plots/cartesian/axes":546,"../annotations/common_defaults":358,"./attributes":364}],367:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var drawRaw = _dereq_('../annotations/draw').drawRaw;
-var project = _dereq_('../../plots/gl3d/project');
-var axLetters = ['x', 'y', 'z'];
-
-module.exports = function draw(scene) {
-    var fullSceneLayout = scene.fullSceneLayout;
-    var dataScale = scene.dataScale;
-    var anns = fullSceneLayout.annotations;
-
-    for(var i = 0; i < anns.length; i++) {
-        var ann = anns[i];
-        var annotationIsOffscreen = false;
-
-        for(var j = 0; j < 3; j++) {
-            var axLetter = axLetters[j];
-            var pos = ann[axLetter];
-            var ax = fullSceneLayout[axLetter + 'axis'];
-            var posFraction = ax.r2fraction(pos);
-
-            if(posFraction < 0 || posFraction > 1) {
-                annotationIsOffscreen = true;
-                break;
-            }
-        }
-
-        if(annotationIsOffscreen) {
-            scene.fullLayout._infolayer
-                .select('.annotation-' + scene.id + '[data-index="' + i + '"]')
-                .remove();
-        } else {
-            ann._pdata = project(scene.glplot.cameraParams, [
-                fullSceneLayout.xaxis.r2l(ann.x) * dataScale[0],
-                fullSceneLayout.yaxis.r2l(ann.y) * dataScale[1],
-                fullSceneLayout.zaxis.r2l(ann.z) * dataScale[2]
-            ]);
-
-            drawRaw(scene.graphDiv, ann, i, scene.id, ann._xa, ann._ya);
-        }
-    }
-};
-
-},{"../../plots/gl3d/project":586,"../annotations/draw":361}],368:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var Registry = _dereq_('../../registry');
-var Lib = _dereq_('../../lib');
-
-module.exports = {
-    moduleType: 'component',
-    name: 'annotations3d',
-
-    schema: {
-        subplots: {
-            scene: {annotations: _dereq_('./attributes')}
-        }
-    },
-
-    layoutAttributes: _dereq_('./attributes'),
-    handleDefaults: _dereq_('./defaults'),
-    includeBasePlot: includeGL3D,
-
-    convert: _dereq_('./convert'),
-    draw: _dereq_('./draw')
-};
-
-function includeGL3D(layoutIn, layoutOut) {
-    var GL3D = Registry.subplotsRegistry.gl3d;
-    if(!GL3D) return;
-
-    var attrRegex = GL3D.attrRegex;
-
-    var keys = Object.keys(layoutIn);
-    for(var i = 0; i < keys.length; i++) {
-        var k = keys[i];
-        if(attrRegex.test(k) && (layoutIn[k].annotations || []).length) {
-            Lib.pushUnique(layoutOut._basePlotModules, GL3D);
-            Lib.pushUnique(layoutOut._subplots.gl3d, k);
-        }
-    }
-}
-
-},{"../../lib":499,"../../registry":600,"./attributes":364,"./convert":365,"./defaults":366,"./draw":367}],369:[function(_dereq_,module,exports){
+},{"../../plots/cartesian/include_components":558,"./attributes":360,"./calc_autorange":361,"./click":362,"./convert_coords":364,"./defaults":365,"./draw":366}],369:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -59244,6 +59244,9 @@ dragElement.init = function init(options) {
             document.addEventListener('mousemove', onMove);
             document.addEventListener('touchmove', onMove, {passive: false});
         }
+        
+        // Raise event about drag start (e.g. to suspend auto-ranging during a zoom/pan operation)
+        gd.emit('plotly_dragstart', e);
 
         return;
     }
@@ -59292,6 +59295,9 @@ dragElement.init = function init(options) {
             dragCover.documentElement.style.cursor = cursor;
             cursor = null;
         }
+
+        // Raise event about drag end (e.g. to resume auto-ranging during a zoom/pan operation)
+        gd.emit('plotly_dragend', e);
 
         if(!gd._dragging) {
             gd._dragged = false;
@@ -60644,7 +60650,7 @@ drawing.setTextPointsScale = function(selection, xScale, yScale) {
     });
 };
 
-},{"../../components/fx/helpers":406,"../../constants/alignment":472,"../../constants/interactions":476,"../../constants/xmlns_namespaces":478,"../../lib":499,"../../lib/svg_text_utils":522,"../../registry":600,"../../traces/scatter/make_bubble_size_func":646,"../../traces/scatter/subtypes":654,"../color":370,"../colorscale":382,"./symbol_defs":393,"d3":81,"fast-isnumeric":89,"tinycolor2":336}],393:[function(_dereq_,module,exports){
+},{"../../components/fx/helpers":406,"../../constants/alignment":472,"../../constants/interactions":476,"../../constants/xmlns_namespaces":478,"../../lib":499,"../../lib/svg_text_utils":522,"../../registry":600,"../../traces/scatter/make_bubble_size_func":652,"../../traces/scatter/subtypes":660,"../color":370,"../colorscale":382,"./symbol_defs":393,"d3":81,"fast-isnumeric":89,"tinycolor2":336}],393:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -61826,7 +61832,7 @@ function errorCoords(d, xa, ya) {
     return out;
 }
 
-},{"../../traces/scatter/subtypes":654,"../drawing":392,"d3":81,"fast-isnumeric":89}],400:[function(_dereq_,module,exports){
+},{"../../traces/scatter/subtypes":660,"../drawing":392,"d3":81,"fast-isnumeric":89}],400:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -65497,7 +65503,7 @@ module.exports = {
     },
     traceorder: {
         valType: 'flaglist',
-        flags: ['reversed', 'grouped'],
+        flags: ['reversed', 'grouped', 'sorted'],
         extras: ['normal'],
         
         editType: 'legend',
@@ -65515,6 +65521,13 @@ module.exports = {
         valType: 'enumerated',
         values: ['trace', 'constant'],
         dflt: 'trace',
+        
+        editType: 'legend',
+        
+    },
+
+    linesplit: {
+        valType: 'any',
         
         editType: 'legend',
         
@@ -65749,6 +65762,7 @@ module.exports = function legendDefaults(layoutIn, layoutOut, fullData) {
     if(helpers.isGrouped(layoutOut.legend)) coerce('tracegroupgap');
 
     coerce('itemsizing');
+    coerce('linesplit');
 
     coerce('itemclick');
     coerce('itemdoubleclick');
@@ -66178,9 +66192,16 @@ function drawTexts(g, gd, opts) {
 
     var textEl = Lib.ensureSingle(g, 'text', 'legendtext');
 
+    var legendLabel = name;
+    if (opts.linesplit && opts.linesplit.linelen) {
+        legendLabel = helpers.splitLines(legendLabel, opts.linesplit);
+    }
+
     textEl.attr('text-anchor', 'start')
         .call(Drawing.font, opts.font)
-        .text(isEditable ? ensureLength(name, maxNameLength) : name);
+        .text(isEditable ? ensureLength(name, maxNameLength) : legendLabel);
+
+    Lib.ensureSingle(g, 'title').text(name.replace("<br>", "\n"));
 
     svgTextUtils.positionText(textEl, constants.textGap, 0);
 
@@ -66665,6 +66686,19 @@ module.exports = function getLegendData(calcdata, opts) {
     // maximum name/label length - needed in legend/draw.js
     opts._maxNameLength = maxNameLength;
 
+    if (helpers.isSorted(opts)) {
+        var order = helpers.isReversed(opts) ? -1 : 1;
+        legendData[0].sort(function(a, b) {
+            if (a[0] && a[0].label) {
+                return order * a[0].label.localeCompare(b[0].label, undefined, {numeric: true});
+            } else { 
+                if (a[0] && a[0].trace && a[0].trace.name) {
+                    return order * a[0].trace.name.localeCompare(b[0].trace.name, undefined, {numeric: true});
+                }
+            }
+        });
+    }
+
     return legendData;
 };
 
@@ -66722,13 +66756,13 @@ module.exports = function handleClick(g, gd, numClicks) {
     var carrIdx = [];
 
     function insertUpdate(traceIndex, key, value) {
-        var attrIndex = attrIndices.indexOf(traceIndex);
         var valueArray = attrUpdate[key];
         if(!valueArray) {
             valueArray = attrUpdate[key] = [];
         }
-
-        if(attrIndices.indexOf(traceIndex) === -1) {
+        
+        var attrIndex = attrIndices.indexOf(traceIndex);
+        if(attrIndex < 0) {
             attrIndices.push(traceIndex);
             attrIndex = attrIndices.length - 1;
         }
@@ -66903,6 +66937,9 @@ module.exports = function handleClick(g, gd, numClicks) {
             }
         }
 
+        // Allows listeners to detect when plot visibility is toggled
+        gd.emit('plotly_legend_toggleVisible', { attrUpdate: attrUpdate, attrIndices: attrIndices });
+
         Registry.call('_guiRestyle', gd, attrUpdate, attrIndices);
     }
 };
@@ -66930,6 +66967,40 @@ exports.isVertical = function isVertical(legendLayout) {
 exports.isReversed = function isReversed(legendLayout) {
     return (legendLayout.traceorder || '').indexOf('reversed') !== -1;
 };
+
+exports.isSorted = function isSorted(legendLayout) {
+    return (legendLayout.traceorder || '').indexOf('sorted') !== -1;
+};
+
+// Split labels in multi-lines
+exports.splitLines = function splitLines(text, opts) {
+    if (text.indexOf("<br>") < 0) {
+        var lines = [];
+        
+        while (text.length > opts.linelen && (!opts.maxlines || lines.length + 1 < opts.maxlines)) {
+            var i = text.lastIndexOf(' ', opts.linelen);
+            var spaceFound = i > opts.linelen - 11 && i > 0;
+            if (spaceFound) {
+                lines.push(text.substr(0, i));
+                text = text.substr(i + 1);        
+            } else  {
+                // Truncate word
+                lines.push(text.substr(0, opts.linelen));
+                text = text.substr(opts.linelen);
+            }
+        }
+
+        if (text.length > 0) {
+            if (text.length > opts.linelen) {
+                lines.push(text.substr(0, opts.linelen - 3) + "...");
+            } else {
+                lines.push(text);
+            }
+        }
+        return lines.join("<br>");
+    }
+    return text;
+}
 
 },{}],427:[function(_dereq_,module,exports){
 /**
@@ -67582,7 +67653,7 @@ function getGradientDirection(reversescale, isRadial) {
     return str + (reversescale ? '' : 'reversed');
 }
 
-},{"../../lib":499,"../../registry":600,"../../traces/pie/helpers":626,"../../traces/pie/style_one":627,"../../traces/scatter/subtypes":654,"../color":370,"../colorscale/helpers":381,"../drawing":392,"d3":81}],429:[function(_dereq_,module,exports){
+},{"../../lib":499,"../../registry":600,"../../traces/pie/helpers":626,"../../traces/pie/style_one":627,"../../traces/scatter/subtypes":660,"../color":370,"../colorscale/helpers":381,"../drawing":392,"d3":81}],429:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -68628,7 +68699,7 @@ function fillCustomButton(customButtons) {
     return customButtons;
 }
 
-},{"../../plots/cartesian/axis_ids":549,"../../registry":600,"../../traces/scatter/subtypes":654,"../fx/helpers":406,"./buttons":429,"./modebar":432}],432:[function(_dereq_,module,exports){
+},{"../../plots/cartesian/axis_ids":549,"../../registry":600,"../../traces/scatter/subtypes":660,"../fx/helpers":406,"./buttons":429,"./modebar":432}],432:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -70765,7 +70836,7 @@ module.exports = templatedArray('shape', {
     editType: 'arraydraw'
 });
 
-},{"../../lib/extend":492,"../../plot_api/plot_template":535,"../../traces/scatter/attributes":629,"../annotations/attributes":355,"../drawing/attributes":391}],448:[function(_dereq_,module,exports){
+},{"../../lib/extend":492,"../../plot_api/plot_template":535,"../../traces/scatter/attributes":635,"../annotations/attributes":360,"../drawing/attributes":391}],448:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -76212,7 +76283,7 @@ exports.Queue = _dereq_('./lib/queue');
 // export d3 used in the bundle
 exports.d3 = _dereq_('d3');
 
-},{"../build/plotcss":1,"./components/annotations":363,"./components/annotations3d":368,"./components/colorbar":376,"./components/colorscale":382,"./components/errorbars":398,"./components/fx":410,"./components/grid":414,"./components/images":419,"./components/legend":427,"./components/rangeselector":438,"./components/rangeslider":445,"./components/shapes":459,"./components/sliders":464,"./components/updatemenus":470,"./fonts/mathjax_config":480,"./fonts/ploticon":481,"./lib/queue":513,"./locale-en":526,"./locale-en-us":525,"./plot_api":530,"./plot_api/plot_schema":534,"./plots/plots":591,"./registry":600,"./snapshot":605,"./traces/scatter":641,"./version":677,"d3":81,"es6-promise":87}],480:[function(_dereq_,module,exports){
+},{"../build/plotcss":1,"./components/annotations":368,"./components/annotations3d":358,"./components/colorbar":376,"./components/colorscale":382,"./components/errorbars":398,"./components/fx":410,"./components/grid":414,"./components/images":419,"./components/legend":427,"./components/rangeselector":438,"./components/rangeslider":445,"./components/shapes":459,"./components/sliders":464,"./components/updatemenus":470,"./fonts/mathjax_config":480,"./fonts/ploticon":481,"./lib/queue":513,"./locale-en":526,"./locale-en-us":525,"./plot_api":530,"./plot_api/plot_schema":534,"./plots/plots":591,"./registry":600,"./snapshot":605,"./traces/scatter":647,"./version":677,"d3":81,"es6-promise":87}],480:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -80100,7 +80171,7 @@ lib.fillText = function(calcPt, trace, contOut) {
 
 // accept all truthy values and 0 (which gets cast to '0' in the hover labels)
 lib.isValidTextValue = function(v) {
-    return v || v === 0;
+    return (v || v === 0) && typeof v !== "object";
 };
 
 /**
@@ -93186,7 +93257,7 @@ axes.calcTicks = function calcTicks(ax, opts) {
 
     var definedDelta;
     var tickformat = axes.getTickFormat(ax);
-    if(isPeriod && tickformat) {
+    if(isPeriod && typeof tickformat === "string") {
         if(
             !(/%[fLQsSMX]/.test(tickformat))
             // %f: microseconds as a decimal number [000000, 999999]
@@ -93742,6 +93813,11 @@ axes.tickText = function(ax, x, hover, noSuffixPrefix) {
     else if(isAngular(ax)) formatAngle(ax, out, hover, extraPrecision, hideexp);
     else formatLinear(ax, out, hover, extraPrecision, hideexp);
 
+    var tickformat = axes.getTickFormat(ax);
+    if (typeof tickformat === "function") {
+        out.text = tickformat(out.text, out.x);
+    }
+
     // add prefix and suffix
     if(!noSuffixPrefix) {
         if(ax.tickprefix && !isHidden(ax.showtickprefix)) out.text = ax.tickprefix + out.text;
@@ -94079,7 +94155,9 @@ function numFormat(v, ax, fmtoverride, hover) {
         if(ax.hoverformat) tickformat = ax.hoverformat;
     }
 
-    if(tickformat) return ax._numFormat(tickformat)(v).replace(/-/g, MINUS_SIGN);
+    if(tickformat && typeof tickformat === "string") {
+        return ax._numFormat(tickformat)(v).replace(/-/g, MINUS_SIGN);
+    }
 
     // 'epsilon' - rounding increment
     var e = Math.pow(10, -tickRound) / 2;
@@ -97490,8 +97568,15 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     function zoomDone() {
         computeZoomUpdates();
         removeZoombox(gd);
-        dragTail();
-        showDoubleClickNotifier(gd);
+        
+        // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior
+        // It is even possible to cancel the operation
+        var args = { updates: updates, isReset: false, cancel: false };
+        gd.emit('plotly_zoom', args);
+        if(!args.cancel) {
+            dragTail();
+            showDoubleClickNotifier(gd);
+        }
     }
 
     // scroll zoom, on all draggers except corners
@@ -97821,6 +97906,10 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             }
         }
 
+        // Allows listeners to handle the zoom evt manually
+        var args = { isReset: true };
+        gd.emit('plotly_zoom', args);
+
         gd.emit('plotly_doubleclick', null);
         Registry.call('_guiRelayout', gd, attrs);
     }
@@ -98058,6 +98147,12 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
             updates[axi._name + '.range[0]'] = axi.l2r(axRangeLinear0 + axRangeLinearSpan * r0Fraction);
             updates[axi._name + '.range[1]'] = axi.l2r(axRangeLinear0 + axRangeLinearSpan * r1Fraction);
         }
+
+        // Put additional data for user's event as well
+        updates[axi._name + '.prevRange[0]'] = axi.range[0];
+        updates[axi._name + '.prevRange[1]'] = axi.range[1];
+        updates[axi._name + '.r0Fraction'] = r0Fraction;
+        updates[axi._name + '.r1Fraction'] = r1Fraction;
     }
 
     // zoom linked axes about their centers
@@ -99722,7 +99817,7 @@ module.exports = {
         
     },
     tickformat: {
-        valType: 'string',
+        valType: 'any',
         dflt: '',
         
         editType: 'ticks',
@@ -108311,7 +108406,7 @@ plots.autoMargin = function(gd, id, o) {
                 var margin = fullLayout.margin;
                 // if no explicit pad is given, use 12px unless there's a
                 // specified margin that's smaller than that
-                pad = Math.min(12, margin.l, margin.r, margin.t, margin.b);
+                pad = Math.min(0, margin.l, margin.r, margin.t, margin.b);
             }
 
             // if the item is too big, just give it enough automargin to
@@ -108409,6 +108504,10 @@ plots.doAutoMargin = function(gd) {
                     var ft = pushMargin[k2].t.val;
                     var pt = pushMargin[k2].t.size;
 
+                    if (k2 === "legend" && pt >30) {
+                        pt = 30;
+                    }
+
                     if(ft > fb) {
                         var newB = (pb * ft + (pt - height) * fb) / (ft - fb);
                         var newT = (pt * (1 - fb) + (pb - height) * (1 - ft)) / (ft - fb);
@@ -108425,7 +108524,7 @@ plots.doAutoMargin = function(gd) {
     gs.l = Math.round(ml);
     gs.r = Math.round(mr);
     gs.t = Math.round(mt);
-    gs.b = Math.round(mb);
+    gs.b = Math.round(mb) + 5;
     gs.p = Math.round(margin.pad);
     gs.w = Math.round(width) - gs.l - gs.r;
     gs.h = Math.round(height) - gs.t - gs.b;
@@ -108443,7 +108542,7 @@ plots.doAutoMargin = function(gd) {
         // but let's keep things on the safe side until we fix our
         // auto-margin pipeline problems:
         // https://github.com/plotly/plotly.js/issues/2704
-        var maxNumberOfRedraws = 3 * (1 + Object.keys(pushMarginIds).length);
+        var maxNumberOfRedraws = 1 * (1 + Object.keys(pushMarginIds).length);
 
         if(fullLayout._redrawFromAutoMarginCount < maxNumberOfRedraws) {
             return Registry.call('plot', gd);
@@ -109796,7 +109895,7 @@ module.exports = {
     }
 };
 
-},{"../../../lib/extend":492,"../../../traces/scatter/attributes":629}],593:[function(_dereq_,module,exports){
+},{"../../../lib/extend":492,"../../../traces/scatter/attributes":635}],593:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -115666,7 +115765,10 @@ function format(vRounded) {
 }
 
 exports.formatPiePercent = function formatPiePercent(v, separators) {
-    var vRounded = format((v * 100).toPrecision(3));
+    var vRounded = (v * 100).toFixed(2);
+    if(vRounded.lastIndexOf('.00') !== -1) {
+        vRounded = vRounded.replace('.00', '');
+    }
     return Lib.numSeparate(vRounded, separators) + '%';
 };
 
@@ -115721,6 +115823,949 @@ module.exports = function styleOne(s, pt, trace) {
 * LICENSE file in the root directory of this source tree.
 */
 
+'use strict';
+
+var scatterAttrs = _dereq_('../scatter/attributes');
+var colorAttributes = _dereq_('../../components/colorscale/attributes');
+var hovertemplateAttrs = _dereq_('../../plots/template_attributes').hovertemplateAttrs;
+var texttemplateAttrs = _dereq_('../../plots/template_attributes').texttemplateAttrs;
+var baseAttrs = _dereq_('../../plots/attributes');
+var DASHES = _dereq_('../../constants/gl3d_dashes');
+
+var MARKER_SYMBOLS = _dereq_('../../constants/gl3d_markers');
+var extendFlat = _dereq_('../../lib/extend').extendFlat;
+var overrideAll = _dereq_('../../plot_api/edit_types').overrideAll;
+
+var scatterLineAttrs = scatterAttrs.line;
+var scatterMarkerAttrs = scatterAttrs.marker;
+var scatterMarkerLineAttrs = scatterMarkerAttrs.line;
+
+var lineAttrs = extendFlat({
+    width: scatterLineAttrs.width,
+    dash: {
+        valType: 'enumerated',
+        values: Object.keys(DASHES),
+        dflt: 'solid',
+        
+        
+    }
+}, colorAttributes('line'));
+
+function makeProjectionAttr(axLetter) {
+    return {
+        show: {
+            valType: 'boolean',
+            
+            dflt: false,
+            
+        },
+        opacity: {
+            valType: 'number',
+            
+            min: 0,
+            max: 1,
+            dflt: 1,
+            
+        },
+        scale: {
+            valType: 'number',
+            
+            min: 0,
+            max: 10,
+            dflt: 2 / 3,
+            
+        }
+    };
+}
+
+var attrs = module.exports = overrideAll({
+    x: scatterAttrs.x,
+    y: scatterAttrs.y,
+    z: {
+        valType: 'data_array',
+        
+    },
+
+    text: extendFlat({}, scatterAttrs.text, {
+        
+    }),
+    texttemplate: texttemplateAttrs({}, {
+
+    }),
+    hovertext: extendFlat({}, scatterAttrs.hovertext, {
+        
+    }),
+    hovertemplate: hovertemplateAttrs(),
+
+    mode: extendFlat({}, scatterAttrs.mode,  // shouldn't this be on-par with 2D?
+        {dflt: 'lines+markers'}),
+    surfaceaxis: {
+        valType: 'enumerated',
+        
+        values: [-1, 0, 1, 2],
+        dflt: -1,
+        
+    },
+    surfacecolor: {
+        valType: 'color',
+        
+        
+    },
+    projection: {
+        x: makeProjectionAttr('x'),
+        y: makeProjectionAttr('y'),
+        z: makeProjectionAttr('z')
+    },
+
+    connectgaps: scatterAttrs.connectgaps,
+    line: lineAttrs,
+
+    marker: extendFlat({  // Parity with scatter.js?
+        symbol: {
+            valType: 'enumerated',
+            values: Object.keys(MARKER_SYMBOLS),
+            
+            dflt: 'circle',
+            arrayOk: true,
+            
+        },
+        size: extendFlat({}, scatterMarkerAttrs.size, {dflt: 8}),
+        sizeref: scatterMarkerAttrs.sizeref,
+        sizemin: scatterMarkerAttrs.sizemin,
+        sizemode: scatterMarkerAttrs.sizemode,
+        opacity: extendFlat({}, scatterMarkerAttrs.opacity, {
+            arrayOk: false,
+            
+        }),
+        colorbar: scatterMarkerAttrs.colorbar,
+
+        line: extendFlat({
+            width: extendFlat({}, scatterMarkerLineAttrs.width, {arrayOk: false})
+        },
+            colorAttributes('marker.line')
+        )
+    },
+        colorAttributes('marker')
+    ),
+
+    textposition: extendFlat({}, scatterAttrs.textposition, {dflt: 'top center'}),
+    textfont: {
+        color: scatterAttrs.textfont.color,
+        size: scatterAttrs.textfont.size,
+        family: extendFlat({}, scatterAttrs.textfont.family, {arrayOk: false})
+    },
+
+    hoverinfo: extendFlat({}, baseAttrs.hoverinfo)
+}, 'calc', 'nested');
+
+attrs.x.editType = attrs.y.editType = attrs.z.editType = 'calc+clearAxisTypes';
+
+},{"../../components/colorscale/attributes":377,"../../constants/gl3d_dashes":474,"../../constants/gl3d_markers":475,"../../lib/extend":492,"../../plot_api/edit_types":528,"../../plots/attributes":542,"../../plots/template_attributes":599,"../scatter/attributes":635}],629:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var arraysToCalcdata = _dereq_('../scatter/arrays_to_calcdata');
+var calcColorscale = _dereq_('../scatter/colorscale_calc');
+
+/**
+ * This is a kludge to put the array attributes into
+ * calcdata the way Scatter.plot does, so that legends and
+ * popovers know what to do with them.
+ */
+module.exports = function calc(gd, trace) {
+    var cd = [{x: false, y: false, trace: trace, t: {}}];
+
+    arraysToCalcdata(cd, trace);
+    calcColorscale(gd, trace);
+
+    return cd;
+};
+
+},{"../scatter/arrays_to_calcdata":634,"../scatter/colorscale_calc":638}],630:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var Registry = _dereq_('../../registry');
+
+function calculateAxisErrors(data, params, scaleFactor, axis) {
+    if(!params || !params.visible) return null;
+
+    var computeError = Registry.getComponentMethod('errorbars', 'makeComputeError')(params);
+    var result = new Array(data.length);
+
+    for(var i = 0; i < data.length; i++) {
+        var errors = computeError(+data[i], i);
+
+        if(axis.type === 'log') {
+            var point = axis.c2l(data[i]);
+            var min = data[i] - errors[0];
+            var max = data[i] + errors[1];
+
+            result[i] = [
+                (axis.c2l(min, true) - point) * scaleFactor,
+                (axis.c2l(max, true) - point) * scaleFactor
+            ];
+
+            // Keep track of the lower error bound which isn't negative!
+            if(min > 0) {
+                var lower = axis.c2l(min);
+                if(!axis._lowerLogErrorBound) axis._lowerLogErrorBound = lower;
+                axis._lowerErrorBound = Math.min(axis._lowerLogErrorBound, lower);
+            }
+        } else {
+            result[i] = [
+                -errors[0] * scaleFactor,
+                errors[1] * scaleFactor
+            ];
+        }
+    }
+
+    return result;
+}
+
+function dataLength(array) {
+    for(var i = 0; i < array.length; i++) {
+        if(array[i]) return array[i].length;
+    }
+    return 0;
+}
+
+function calculateErrors(data, scaleFactor, sceneLayout) {
+    var errors = [
+        calculateAxisErrors(data.x, data.error_x, scaleFactor[0], sceneLayout.xaxis),
+        calculateAxisErrors(data.y, data.error_y, scaleFactor[1], sceneLayout.yaxis),
+        calculateAxisErrors(data.z, data.error_z, scaleFactor[2], sceneLayout.zaxis)
+    ];
+
+    var n = dataLength(errors);
+    if(n === 0) return null;
+
+    var errorBounds = new Array(n);
+
+    for(var i = 0; i < n; i++) {
+        var bound = [[0, 0, 0], [0, 0, 0]];
+
+        for(var j = 0; j < 3; j++) {
+            if(errors[j]) {
+                for(var k = 0; k < 2; k++) {
+                    bound[k][j] = errors[j][i][k];
+                }
+            }
+        }
+
+        errorBounds[i] = bound;
+    }
+
+    return errorBounds;
+}
+
+module.exports = calculateErrors;
+
+},{"../../registry":600}],631:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+
+'use strict';
+
+var createLinePlot = _dereq_('gl-line3d');
+var createScatterPlot = _dereq_('gl-scatter3d');
+var createErrorBars = _dereq_('gl-error3d');
+var createMesh = _dereq_('gl-mesh3d');
+var triangulate = _dereq_('delaunay-triangulate');
+
+var Lib = _dereq_('../../lib');
+var str2RgbaArray = _dereq_('../../lib/str2rgbarray');
+var formatColor = _dereq_('../../lib/gl_format_color').formatColor;
+var makeBubbleSizeFn = _dereq_('../scatter/make_bubble_size_func');
+var DASH_PATTERNS = _dereq_('../../constants/gl3d_dashes');
+var MARKER_SYMBOLS = _dereq_('../../constants/gl3d_markers');
+
+var Axes = _dereq_('../../plots/cartesian/axes');
+var appendArrayPointValue = _dereq_('../../components/fx/helpers').appendArrayPointValue;
+
+var calculateError = _dereq_('./calc_errors');
+
+function LineWithMarkers(scene, uid) {
+    this.scene = scene;
+    this.uid = uid;
+    this.linePlot = null;
+    this.scatterPlot = null;
+    this.errorBars = null;
+    this.textMarkers = null;
+    this.delaunayMesh = null;
+    this.color = null;
+    this.mode = '';
+    this.dataPoints = [];
+    this.axesBounds = [
+        [-Infinity, -Infinity, -Infinity],
+        [Infinity, Infinity, Infinity]
+    ];
+    this.textLabels = null;
+    this.data = null;
+}
+
+var proto = LineWithMarkers.prototype;
+
+proto.handlePick = function(selection) {
+    if(selection.object &&
+        (selection.object === this.linePlot ||
+         selection.object === this.delaunayMesh ||
+         selection.object === this.textMarkers ||
+         selection.object === this.scatterPlot)
+    ) {
+        var ind = selection.index = selection.data.index;
+
+        if(selection.object.highlight) {
+            selection.object.highlight(null);
+        }
+        if(this.scatterPlot) {
+            selection.object = this.scatterPlot;
+            this.scatterPlot.highlight(selection.data);
+        }
+
+        selection.textLabel = '';
+        if(this.textLabels) {
+            if(Array.isArray(this.textLabels)) {
+                if(this.textLabels[ind] || this.textLabels[ind] === 0) {
+                    selection.textLabel = this.textLabels[ind];
+                }
+            } else {
+                selection.textLabel = this.textLabels;
+            }
+        }
+
+        selection.traceCoordinate = [
+            this.data.x[ind],
+            this.data.y[ind],
+            this.data.z[ind]
+        ];
+
+        return true;
+    }
+};
+
+function constructDelaunay(points, color, axis) {
+    var u = (axis + 1) % 3;
+    var v = (axis + 2) % 3;
+    var filteredPoints = [];
+    var filteredIds = [];
+    var i;
+
+    for(i = 0; i < points.length; ++i) {
+        var p = points[i];
+        if(isNaN(p[u]) || !isFinite(p[u]) ||
+           isNaN(p[v]) || !isFinite(p[v])) {
+            continue;
+        }
+        filteredPoints.push([p[u], p[v]]);
+        filteredIds.push(i);
+    }
+    var cells = triangulate(filteredPoints);
+    for(i = 0; i < cells.length; ++i) {
+        var c = cells[i];
+        for(var j = 0; j < c.length; ++j) {
+            c[j] = filteredIds[c[j]];
+        }
+    }
+    return {
+        positions: points,
+        cells: cells,
+        meshColor: color
+    };
+}
+
+function calculateErrorParams(errors) {
+    var capSize = [0.0, 0.0, 0.0];
+    var color = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    var lineWidth = [1.0, 1.0, 1.0];
+
+    for(var i = 0; i < 3; i++) {
+        var e = errors[i];
+
+        if(e && e.copy_zstyle !== false && errors[2].visible !== false) e = errors[2];
+        if(!e || !e.visible) continue;
+
+        capSize[i] = e.width / 2;  // ballpark rescaling
+        color[i] = str2RgbaArray(e.color);
+        lineWidth[i] = e.thickness;
+    }
+
+    return {capSize: capSize, color: color, lineWidth: lineWidth};
+}
+
+function parseAlignmentX(a) {
+    if(a === null || a === undefined) return 0;
+
+    return (a.indexOf('left') > -1) ? -1 :
+           (a.indexOf('right') > -1) ? 1 : 0;
+}
+
+function parseAlignmentY(a) {
+    if(a === null || a === undefined) return 0;
+
+    return (a.indexOf('top') > -1) ? -1 :
+           (a.indexOf('bottom') > -1) ? 1 : 0;
+}
+
+function calculateTextOffset(tp) {
+    // Read out text properties
+
+    var defaultAlignmentX = 0;
+    var defaultAlignmentY = 0;
+
+    var textOffset = [
+        defaultAlignmentX,
+        defaultAlignmentY
+    ];
+
+    if(Array.isArray(tp)) {
+        for(var i = 0; i < tp.length; i++) {
+            textOffset[i] = [
+                defaultAlignmentX,
+                defaultAlignmentY
+            ];
+            if(tp[i]) {
+                textOffset[i][0] = parseAlignmentX(tp[i]);
+                textOffset[i][1] = parseAlignmentY(tp[i]);
+            }
+        }
+    } else {
+        textOffset[0] = parseAlignmentX(tp);
+        textOffset[1] = parseAlignmentY(tp);
+    }
+
+    return textOffset;
+}
+
+
+function calculateSize(sizeIn, sizeFn) {
+    // rough parity with Plotly 2D markers
+    return sizeFn(sizeIn * 4);
+}
+
+function calculateSymbol(symbolIn) {
+    return MARKER_SYMBOLS[symbolIn];
+}
+
+function formatParam(paramIn, len, calculate, dflt, extraFn) {
+    var paramOut = null;
+
+    if(Lib.isArrayOrTypedArray(paramIn)) {
+        paramOut = [];
+
+        for(var i = 0; i < len; i++) {
+            if(paramIn[i] === undefined) paramOut[i] = dflt;
+            else paramOut[i] = calculate(paramIn[i], extraFn);
+        }
+    } else paramOut = calculate(paramIn, Lib.identity);
+
+    return paramOut;
+}
+
+
+function convertPlotlyOptions(scene, data) {
+    var points = [];
+    var sceneLayout = scene.fullSceneLayout;
+    var scaleFactor = scene.dataScale;
+    var xaxis = sceneLayout.xaxis;
+    var yaxis = sceneLayout.yaxis;
+    var zaxis = sceneLayout.zaxis;
+    var marker = data.marker;
+    var line = data.line;
+    var x = data.x || [];
+    var y = data.y || [];
+    var z = data.z || [];
+    var len = x.length;
+    var xcalendar = data.xcalendar;
+    var ycalendar = data.ycalendar;
+    var zcalendar = data.zcalendar;
+    var xc, yc, zc;
+    var params, i;
+    var text;
+
+    // Convert points
+    for(i = 0; i < len; i++) {
+        // sanitize numbers and apply transforms based on axes.type
+        xc = xaxis.d2l(x[i], 0, xcalendar) * scaleFactor[0];
+        yc = yaxis.d2l(y[i], 0, ycalendar) * scaleFactor[1];
+        zc = zaxis.d2l(z[i], 0, zcalendar) * scaleFactor[2];
+
+        points[i] = [xc, yc, zc];
+    }
+
+    // convert text
+    if(Array.isArray(data.text)) text = data.text;
+    else if(data.text !== undefined) {
+        text = new Array(len);
+        for(i = 0; i < len; i++) text[i] = data.text;
+    }
+
+    function formatter(axName, val) {
+        var ax = sceneLayout[axName];
+        return Axes.tickText(ax, ax.d2l(val), true).text;
+    }
+
+    // check texttemplate
+    var texttemplate = data.texttemplate;
+    if(texttemplate) {
+        var fullLayout = scene.fullLayout;
+        var d3locale = fullLayout._d3locale;
+        var isArray = Array.isArray(texttemplate);
+        var N = isArray ? Math.min(texttemplate.length, len) : len;
+        var txt = isArray ?
+            function(i) { return texttemplate[i]; } :
+            function() { return texttemplate; };
+
+        text = new Array(N);
+
+        for(i = 0; i < N; i++) {
+            var d = {x: x[i], y: y[i], z: z[i]};
+            var labels = {
+                xLabel: formatter('xaxis', x[i]),
+                yLabel: formatter('yaxis', y[i]),
+                zLabel: formatter('zaxis', z[i])
+            };
+            var pointValues = {};
+            appendArrayPointValue(pointValues, data, i);
+            var meta = data._meta || {};
+            text[i] = Lib.texttemplateString(txt(i), labels, d3locale, pointValues, d, meta);
+        }
+    }
+
+    // Build object parameters
+    params = {
+        position: points,
+        mode: data.mode,
+        text: text
+    };
+
+    if('line' in data) {
+        params.lineColor = formatColor(line, 1, len);
+        params.lineWidth = line.width;
+        params.lineDashes = line.dash;
+    }
+
+    if('marker' in data) {
+        var sizeFn = makeBubbleSizeFn(data);
+
+        params.scatterColor = formatColor(marker, 1, len);
+        params.scatterSize = formatParam(marker.size, len, calculateSize, 20, sizeFn);
+        params.scatterMarker = formatParam(marker.symbol, len, calculateSymbol, '●');
+        params.scatterLineWidth = marker.line.width;  // arrayOk === false
+        params.scatterLineColor = formatColor(marker.line, 1, len);
+        params.scatterAngle = 0;
+    }
+
+    if('textposition' in data) {
+        params.textOffset = calculateTextOffset(data.textposition);
+        params.textColor = formatColor(data.textfont, 1, len);
+        params.textSize = formatParam(data.textfont.size, len, Lib.identity, 12);
+        params.textFont = data.textfont.family;  // arrayOk === false
+        params.textAngle = 0;
+    }
+
+    var dims = ['x', 'y', 'z'];
+    params.project = [false, false, false];
+    params.projectScale = [1, 1, 1];
+    params.projectOpacity = [1, 1, 1];
+    for(i = 0; i < 3; ++i) {
+        var projection = data.projection[dims[i]];
+        if((params.project[i] = projection.show)) {
+            params.projectOpacity[i] = projection.opacity;
+            params.projectScale[i] = projection.scale;
+        }
+    }
+
+    params.errorBounds = calculateError(data, scaleFactor, sceneLayout);
+
+    var errorParams = calculateErrorParams([data.error_x, data.error_y, data.error_z]);
+    params.errorColor = errorParams.color;
+    params.errorLineWidth = errorParams.lineWidth;
+    params.errorCapSize = errorParams.capSize;
+
+    params.delaunayAxis = data.surfaceaxis;
+    params.delaunayColor = str2RgbaArray(data.surfacecolor);
+
+    return params;
+}
+
+function _arrayToColor(color) {
+    if(Lib.isArrayOrTypedArray(color)) {
+        var c = color[0];
+
+        if(Lib.isArrayOrTypedArray(c)) color = c;
+
+        return 'rgb(' + color.slice(0, 3).map(function(x) {
+            return Math.round(x * 255);
+        }) + ')';
+    }
+
+    return null;
+}
+
+function arrayToColor(colors) {
+    if(!Lib.isArrayOrTypedArray(colors)) {
+        return null;
+    }
+
+    if((colors.length === 4) && (typeof colors[0] === 'number')) {
+        return _arrayToColor(colors);
+    }
+
+    return colors.map(_arrayToColor);
+}
+
+proto.update = function(data) {
+    var gl = this.scene.glplot.gl;
+    var lineOptions;
+    var scatterOptions;
+    var errorOptions;
+    var textOptions;
+    var dashPattern = DASH_PATTERNS.solid;
+
+    // Save data
+    this.data = data;
+
+    // Run data conversion
+    var options = convertPlotlyOptions(this.scene, data);
+
+    if('mode' in options) {
+        this.mode = options.mode;
+    }
+    if('lineDashes' in options) {
+        if(options.lineDashes in DASH_PATTERNS) {
+            dashPattern = DASH_PATTERNS[options.lineDashes];
+        }
+    }
+
+    this.color = arrayToColor(options.scatterColor) ||
+                 arrayToColor(options.lineColor);
+
+    // Save data points
+    this.dataPoints = options.position;
+
+    lineOptions = {
+        gl: this.scene.glplot.gl,
+        position: options.position,
+        color: options.lineColor,
+        lineWidth: options.lineWidth || 1,
+        dashes: dashPattern[0],
+        dashScale: dashPattern[1],
+        opacity: data.opacity,
+        connectGaps: data.connectgaps
+    };
+
+    if(this.mode.indexOf('lines') !== -1) {
+        if(this.linePlot) this.linePlot.update(lineOptions);
+        else {
+            this.linePlot = createLinePlot(lineOptions);
+            this.linePlot._trace = this;
+            this.scene.glplot.add(this.linePlot);
+        }
+    } else if(this.linePlot) {
+        this.scene.glplot.remove(this.linePlot);
+        this.linePlot.dispose();
+        this.linePlot = null;
+    }
+
+    // N.B. marker.opacity must be a scalar for performance
+    var scatterOpacity = data.opacity;
+    if(data.marker && data.marker.opacity) scatterOpacity *= data.marker.opacity;
+
+    scatterOptions = {
+        gl: this.scene.glplot.gl,
+        position: options.position,
+        color: options.scatterColor,
+        size: options.scatterSize,
+        glyph: options.scatterMarker,
+        opacity: scatterOpacity,
+        orthographic: true,
+        lineWidth: options.scatterLineWidth,
+        lineColor: options.scatterLineColor,
+        project: options.project,
+        projectScale: options.projectScale,
+        projectOpacity: options.projectOpacity
+    };
+
+    if(this.mode.indexOf('markers') !== -1) {
+        if(this.scatterPlot) this.scatterPlot.update(scatterOptions);
+        else {
+            this.scatterPlot = createScatterPlot(scatterOptions);
+            this.scatterPlot._trace = this;
+            this.scatterPlot.highlightScale = 1;
+            this.scene.glplot.add(this.scatterPlot);
+        }
+    } else if(this.scatterPlot) {
+        this.scene.glplot.remove(this.scatterPlot);
+        this.scatterPlot.dispose();
+        this.scatterPlot = null;
+    }
+
+    textOptions = {
+        gl: this.scene.glplot.gl,
+        position: options.position,
+        glyph: options.text,
+        color: options.textColor,
+        size: options.textSize,
+        angle: options.textAngle,
+        alignment: options.textOffset,
+        font: options.textFont,
+        orthographic: true,
+        lineWidth: 0,
+        project: false,
+        opacity: data.opacity
+    };
+
+    this.textLabels = data.hovertext || data.text;
+
+    if(this.mode.indexOf('text') !== -1) {
+        if(this.textMarkers) this.textMarkers.update(textOptions);
+        else {
+            this.textMarkers = createScatterPlot(textOptions);
+            this.textMarkers._trace = this;
+            this.textMarkers.highlightScale = 1;
+            this.scene.glplot.add(this.textMarkers);
+        }
+    } else if(this.textMarkers) {
+        this.scene.glplot.remove(this.textMarkers);
+        this.textMarkers.dispose();
+        this.textMarkers = null;
+    }
+
+    errorOptions = {
+        gl: this.scene.glplot.gl,
+        position: options.position,
+        color: options.errorColor,
+        error: options.errorBounds,
+        lineWidth: options.errorLineWidth,
+        capSize: options.errorCapSize,
+        opacity: data.opacity
+    };
+    if(this.errorBars) {
+        if(options.errorBounds) {
+            this.errorBars.update(errorOptions);
+        } else {
+            this.scene.glplot.remove(this.errorBars);
+            this.errorBars.dispose();
+            this.errorBars = null;
+        }
+    } else if(options.errorBounds) {
+        this.errorBars = createErrorBars(errorOptions);
+        this.errorBars._trace = this;
+        this.scene.glplot.add(this.errorBars);
+    }
+
+    if(options.delaunayAxis >= 0) {
+        var delaunayOptions = constructDelaunay(
+            options.position,
+            options.delaunayColor,
+            options.delaunayAxis
+        );
+        delaunayOptions.opacity = data.opacity;
+
+        if(this.delaunayMesh) {
+            this.delaunayMesh.update(delaunayOptions);
+        } else {
+            delaunayOptions.gl = gl;
+            this.delaunayMesh = createMesh(delaunayOptions);
+            this.delaunayMesh._trace = this;
+            this.scene.glplot.add(this.delaunayMesh);
+        }
+    } else if(this.delaunayMesh) {
+        this.scene.glplot.remove(this.delaunayMesh);
+        this.delaunayMesh.dispose();
+        this.delaunayMesh = null;
+    }
+};
+
+proto.dispose = function() {
+    if(this.linePlot) {
+        this.scene.glplot.remove(this.linePlot);
+        this.linePlot.dispose();
+    }
+    if(this.scatterPlot) {
+        this.scene.glplot.remove(this.scatterPlot);
+        this.scatterPlot.dispose();
+    }
+    if(this.errorBars) {
+        this.scene.glplot.remove(this.errorBars);
+        this.errorBars.dispose();
+    }
+    if(this.textMarkers) {
+        this.scene.glplot.remove(this.textMarkers);
+        this.textMarkers.dispose();
+    }
+    if(this.delaunayMesh) {
+        this.scene.glplot.remove(this.delaunayMesh);
+        this.delaunayMesh.dispose();
+    }
+};
+
+function createLineWithMarkers(scene, data) {
+    var plot = new LineWithMarkers(scene, data.uid);
+    plot.update(data);
+    return plot;
+}
+
+module.exports = createLineWithMarkers;
+
+},{"../../components/fx/helpers":406,"../../constants/gl3d_dashes":474,"../../constants/gl3d_markers":475,"../../lib":499,"../../lib/gl_format_color":496,"../../lib/str2rgbarray":521,"../../plots/cartesian/axes":546,"../scatter/make_bubble_size_func":652,"./calc_errors":630,"delaunay-triangulate":82,"gl-error3d":109,"gl-line3d":114,"gl-mesh3d":135,"gl-scatter3d":143}],632:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+
+'use strict';
+
+var Registry = _dereq_('../../registry');
+var Lib = _dereq_('../../lib');
+
+var subTypes = _dereq_('../scatter/subtypes');
+var handleMarkerDefaults = _dereq_('../scatter/marker_defaults');
+var handleLineDefaults = _dereq_('../scatter/line_defaults');
+var handleTextDefaults = _dereq_('../scatter/text_defaults');
+
+var attributes = _dereq_('./attributes');
+
+module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout) {
+    function coerce(attr, dflt) {
+        return Lib.coerce(traceIn, traceOut, attributes, attr, dflt);
+    }
+
+    var len = handleXYZDefaults(traceIn, traceOut, coerce, layout);
+    if(!len) {
+        traceOut.visible = false;
+        return;
+    }
+
+    coerce('text');
+    coerce('hovertext');
+    coerce('hovertemplate');
+    coerce('mode');
+
+    if(subTypes.hasLines(traceOut)) {
+        coerce('connectgaps');
+        handleLineDefaults(traceIn, traceOut, defaultColor, layout, coerce);
+    }
+
+    if(subTypes.hasMarkers(traceOut)) {
+        handleMarkerDefaults(traceIn, traceOut, defaultColor, layout, coerce, {noSelect: true});
+    }
+
+    if(subTypes.hasText(traceOut)) {
+        coerce('texttemplate');
+        handleTextDefaults(traceIn, traceOut, layout, coerce, {noSelect: true});
+    }
+
+    var lineColor = (traceOut.line || {}).color;
+    var markerColor = (traceOut.marker || {}).color;
+    if(coerce('surfaceaxis') >= 0) coerce('surfacecolor', lineColor || markerColor);
+
+    var dims = ['x', 'y', 'z'];
+    for(var i = 0; i < 3; ++i) {
+        var projection = 'projection.' + dims[i];
+        if(coerce(projection + '.show')) {
+            coerce(projection + '.opacity');
+            coerce(projection + '.scale');
+        }
+    }
+
+    var errorBarsSupplyDefaults = Registry.getComponentMethod('errorbars', 'supplyDefaults');
+    errorBarsSupplyDefaults(traceIn, traceOut, lineColor || markerColor || defaultColor, {axis: 'z'});
+    errorBarsSupplyDefaults(traceIn, traceOut, lineColor || markerColor || defaultColor, {axis: 'y', inherit: 'z'});
+    errorBarsSupplyDefaults(traceIn, traceOut, lineColor || markerColor || defaultColor, {axis: 'x', inherit: 'z'});
+};
+
+function handleXYZDefaults(traceIn, traceOut, coerce, layout) {
+    var len = 0;
+    var x = coerce('x');
+    var y = coerce('y');
+    var z = coerce('z');
+
+    var handleCalendarDefaults = Registry.getComponentMethod('calendars', 'handleTraceDefaults');
+    handleCalendarDefaults(traceIn, traceOut, ['x', 'y', 'z'], layout);
+
+    if(x && y && z) {
+        // TODO: what happens if one is missing?
+        len = Math.min(x.length, y.length, z.length);
+        traceOut._length = traceOut._xlength = traceOut._ylength = traceOut._zlength = len;
+    }
+
+    return len;
+}
+
+},{"../../lib":499,"../../registry":600,"../scatter/line_defaults":648,"../scatter/marker_defaults":654,"../scatter/subtypes":660,"../scatter/text_defaults":661,"./attributes":628}],633:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+module.exports = {
+    plot: _dereq_('./convert'),
+    attributes: _dereq_('./attributes'),
+    markerSymbols: _dereq_('../../constants/gl3d_markers'),
+    supplyDefaults: _dereq_('./defaults'),
+    colorbar: [
+        {
+            container: 'marker',
+            min: 'cmin',
+            max: 'cmax'
+        }, {
+            container: 'line',
+            min: 'cmin',
+            max: 'cmax'
+        }
+    ],
+    calc: _dereq_('./calc'),
+
+    moduleType: 'trace',
+    name: 'scatter3d',
+    basePlotModule: _dereq_('../../plots/gl3d'),
+    categories: ['gl3d', 'symbols', 'showLegend', 'scatter-like'],
+    meta: {
+        
+        
+    }
+};
+
+},{"../../constants/gl3d_markers":475,"../../plots/gl3d":577,"./attributes":628,"./calc":629,"./convert":631,"./defaults":632}],634:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
 
 'use strict';
 
@@ -115764,7 +116809,7 @@ module.exports = function arraysToCalcdata(cd, trace) {
     }
 };
 
-},{"../../lib":499}],629:[function(_dereq_,module,exports){
+},{"../../lib":499}],635:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116218,7 +117263,7 @@ module.exports = {
     }
 };
 
-},{"../../components/colorscale/attributes":377,"../../components/drawing":392,"../../components/drawing/attributes":391,"../../lib/extend":492,"../../plots/font_attributes":574,"../../plots/template_attributes":599,"./constants":633}],630:[function(_dereq_,module,exports){
+},{"../../components/colorscale/attributes":377,"../../components/drawing":392,"../../components/drawing/attributes":391,"../../lib/extend":492,"../../plots/font_attributes":574,"../../plots/template_attributes":599,"./constants":639}],636:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116517,7 +117562,7 @@ module.exports = {
     getStackOpts: getStackOpts
 };
 
-},{"../../constants/numerical":477,"../../lib":499,"../../plots/cartesian/align_period":543,"../../plots/cartesian/axes":546,"./arrays_to_calcdata":628,"./calc_selection":631,"./colorscale_calc":632,"./subtypes":654,"fast-isnumeric":89}],631:[function(_dereq_,module,exports){
+},{"../../constants/numerical":477,"../../lib":499,"../../plots/cartesian/align_period":543,"../../plots/cartesian/axes":546,"./arrays_to_calcdata":634,"./calc_selection":637,"./colorscale_calc":638,"./subtypes":660,"fast-isnumeric":89}],637:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116536,7 +117581,7 @@ module.exports = function calcSelection(cd, trace) {
     }
 };
 
-},{"../../lib":499}],632:[function(_dereq_,module,exports){
+},{"../../lib":499}],638:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116579,7 +117624,7 @@ module.exports = function calcMarkerColorscale(gd, trace) {
     }
 };
 
-},{"../../components/colorscale/calc":378,"../../components/colorscale/helpers":381,"./subtypes":654}],633:[function(_dereq_,module,exports){
+},{"../../components/colorscale/calc":378,"../../components/colorscale/helpers":381,"./subtypes":660}],639:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116608,7 +117653,7 @@ module.exports = {
     eventDataKeys: []
 };
 
-},{}],634:[function(_dereq_,module,exports){
+},{}],640:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116789,7 +117834,7 @@ function getInterp(calcTrace, index, position, posAttr) {
     return pt0.s + (pt1.s - pt0.s) * (position - pt0[posAttr]) / (pt1[posAttr] - pt0[posAttr]);
 }
 
-},{"./calc":630}],635:[function(_dereq_,module,exports){
+},{"./calc":636}],641:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116828,7 +117873,7 @@ module.exports = function crossTraceDefaults(fullData) {
     }
 };
 
-},{}],636:[function(_dereq_,module,exports){
+},{}],642:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116921,7 +117966,7 @@ module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout
     Lib.coerceSelectionMarkerOpacity(traceOut, coerce);
 };
 
-},{"../../lib":499,"../../registry":600,"./attributes":629,"./constants":633,"./fillcolor_defaults":637,"./line_defaults":642,"./line_shape_defaults":644,"./marker_defaults":648,"./period_defaults":649,"./stack_defaults":652,"./subtypes":654,"./text_defaults":655,"./xy_defaults":656}],637:[function(_dereq_,module,exports){
+},{"../../lib":499,"../../registry":600,"./attributes":635,"./constants":639,"./fillcolor_defaults":643,"./line_defaults":648,"./line_shape_defaults":650,"./marker_defaults":654,"./period_defaults":655,"./stack_defaults":658,"./subtypes":660,"./text_defaults":661,"./xy_defaults":662}],643:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116958,7 +118003,7 @@ module.exports = function fillColorDefaults(traceIn, traceOut, defaultColor, coe
     ));
 };
 
-},{"../../components/color":370,"../../lib":499}],638:[function(_dereq_,module,exports){
+},{"../../components/color":370,"../../lib":499}],644:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -116984,7 +118029,7 @@ module.exports = function formatLabels(cdi, trace, fullLayout) {
     return labels;
 };
 
-},{"../../plots/cartesian/axes":546}],639:[function(_dereq_,module,exports){
+},{"../../plots/cartesian/axes":546}],645:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117033,7 +118078,7 @@ module.exports = function getTraceColor(trace, di) {
     }
 };
 
-},{"../../components/color":370,"./subtypes":654}],640:[function(_dereq_,module,exports){
+},{"../../components/color":370,"./subtypes":660}],646:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117228,7 +118273,7 @@ module.exports = function hoverPoints(pointData, xval, yval, hovermode) {
     }
 };
 
-},{"../../components/color":370,"../../components/fx":410,"../../lib":499,"../../registry":600,"./get_trace_color":639}],641:[function(_dereq_,module,exports){
+},{"../../components/color":370,"../../components/fx":410,"../../lib":499,"../../registry":600,"./get_trace_color":645}],647:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117274,7 +118319,7 @@ module.exports = {
     }
 };
 
-},{"../../plots/cartesian":559,"./arrays_to_calcdata":628,"./attributes":629,"./calc":630,"./cross_trace_calc":634,"./cross_trace_defaults":635,"./defaults":636,"./format_labels":638,"./hover":640,"./marker_colorbar":647,"./plot":650,"./select":651,"./style":653,"./subtypes":654}],642:[function(_dereq_,module,exports){
+},{"../../plots/cartesian":559,"./arrays_to_calcdata":634,"./attributes":635,"./calc":636,"./cross_trace_calc":640,"./cross_trace_defaults":641,"./defaults":642,"./format_labels":644,"./hover":646,"./marker_colorbar":653,"./plot":656,"./select":657,"./style":659,"./subtypes":660}],648:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117305,7 +118350,7 @@ module.exports = function lineDefaults(traceIn, traceOut, defaultColor, layout, 
     if(!(opts || {}).noDash) coerce('line.dash');
 };
 
-},{"../../components/colorscale/defaults":380,"../../components/colorscale/helpers":381,"../../lib":499}],643:[function(_dereq_,module,exports){
+},{"../../components/colorscale/defaults":380,"../../components/colorscale/helpers":381,"../../lib":499}],649:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117766,7 +118811,7 @@ module.exports = function linePoints(d, opts) {
     return segments;
 };
 
-},{"../../constants/numerical":477,"../../lib":499,"./constants":633}],644:[function(_dereq_,module,exports){
+},{"../../constants/numerical":477,"../../lib":499,"./constants":639}],650:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117785,7 +118830,7 @@ module.exports = function handleLineShapeDefaults(traceIn, traceOut, coerce) {
     if(shape === 'spline') coerce('line.smoothing');
 };
 
-},{}],645:[function(_dereq_,module,exports){
+},{}],651:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117875,7 +118920,7 @@ module.exports = function linkTraces(gd, plotinfo, cdscatter) {
     return cdscatterSorted;
 };
 
-},{}],646:[function(_dereq_,module,exports){
+},{}],652:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117917,7 +118962,7 @@ module.exports = function makeBubbleSizeFn(trace) {
     };
 };
 
-},{"fast-isnumeric":89}],647:[function(_dereq_,module,exports){
+},{"fast-isnumeric":89}],653:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -117935,7 +118980,7 @@ module.exports = {
     max: 'cmax'
 };
 
-},{}],648:[function(_dereq_,module,exports){
+},{}],654:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118016,7 +119061,7 @@ module.exports = function markerDefaults(traceIn, traceOut, defaultColor, layout
     }
 };
 
-},{"../../components/color":370,"../../components/colorscale/defaults":380,"../../components/colorscale/helpers":381,"./subtypes":654}],649:[function(_dereq_,module,exports){
+},{"../../components/color":370,"../../components/colorscale/defaults":380,"../../components/colorscale/helpers":381,"./subtypes":660}],655:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118063,7 +119108,7 @@ module.exports = function handlePeriodDefaults(traceIn, traceOut, layout, coerce
     }
 };
 
-},{"../../constants/numerical":477,"../../lib":499}],650:[function(_dereq_,module,exports){
+},{"../../constants/numerical":477,"../../lib":499}],656:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118624,7 +119669,7 @@ function selectMarkers(gd, idx, plotinfo, cdscatter, cdscatterAll) {
     });
 }
 
-},{"../../components/drawing":392,"../../lib":499,"../../lib/polygon":511,"../../registry":600,"./line_points":643,"./link_traces":645,"./subtypes":654,"d3":81}],651:[function(_dereq_,module,exports){
+},{"../../components/drawing":392,"../../lib":499,"../../lib/polygon":511,"../../registry":600,"./line_points":649,"./link_traces":651,"./subtypes":660,"d3":81}],657:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118678,7 +119723,7 @@ module.exports = function selectPoints(searchInfo, selectionTester) {
     return selection;
 };
 
-},{"./subtypes":654}],652:[function(_dereq_,module,exports){
+},{"./subtypes":660}],658:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118783,7 +119828,7 @@ module.exports = function handleStackDefaults(traceIn, traceOut, layout, coerce)
     }
 };
 
-},{}],653:[function(_dereq_,module,exports){
+},{}],659:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118854,7 +119899,7 @@ module.exports = {
     styleOnSelect: styleOnSelect
 };
 
-},{"../../components/drawing":392,"../../registry":600,"d3":81}],654:[function(_dereq_,module,exports){
+},{"../../components/drawing":392,"../../registry":600,"d3":81}],660:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118893,7 +119938,7 @@ module.exports = {
     }
 };
 
-},{"../../lib":499}],655:[function(_dereq_,module,exports){
+},{"../../lib":499}],661:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118923,7 +119968,7 @@ module.exports = function(traceIn, traceOut, layout, coerce, opts) {
     }
 };
 
-},{"../../lib":499}],656:[function(_dereq_,module,exports){
+},{"../../lib":499}],662:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -118967,950 +120012,7 @@ module.exports = function handleXYDefaults(traceIn, traceOut, layout, coerce) {
     return len;
 };
 
-},{"../../lib":499,"../../registry":600}],657:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var scatterAttrs = _dereq_('../scatter/attributes');
-var colorAttributes = _dereq_('../../components/colorscale/attributes');
-var hovertemplateAttrs = _dereq_('../../plots/template_attributes').hovertemplateAttrs;
-var texttemplateAttrs = _dereq_('../../plots/template_attributes').texttemplateAttrs;
-var baseAttrs = _dereq_('../../plots/attributes');
-var DASHES = _dereq_('../../constants/gl3d_dashes');
-
-var MARKER_SYMBOLS = _dereq_('../../constants/gl3d_markers');
-var extendFlat = _dereq_('../../lib/extend').extendFlat;
-var overrideAll = _dereq_('../../plot_api/edit_types').overrideAll;
-
-var scatterLineAttrs = scatterAttrs.line;
-var scatterMarkerAttrs = scatterAttrs.marker;
-var scatterMarkerLineAttrs = scatterMarkerAttrs.line;
-
-var lineAttrs = extendFlat({
-    width: scatterLineAttrs.width,
-    dash: {
-        valType: 'enumerated',
-        values: Object.keys(DASHES),
-        dflt: 'solid',
-        
-        
-    }
-}, colorAttributes('line'));
-
-function makeProjectionAttr(axLetter) {
-    return {
-        show: {
-            valType: 'boolean',
-            
-            dflt: false,
-            
-        },
-        opacity: {
-            valType: 'number',
-            
-            min: 0,
-            max: 1,
-            dflt: 1,
-            
-        },
-        scale: {
-            valType: 'number',
-            
-            min: 0,
-            max: 10,
-            dflt: 2 / 3,
-            
-        }
-    };
-}
-
-var attrs = module.exports = overrideAll({
-    x: scatterAttrs.x,
-    y: scatterAttrs.y,
-    z: {
-        valType: 'data_array',
-        
-    },
-
-    text: extendFlat({}, scatterAttrs.text, {
-        
-    }),
-    texttemplate: texttemplateAttrs({}, {
-
-    }),
-    hovertext: extendFlat({}, scatterAttrs.hovertext, {
-        
-    }),
-    hovertemplate: hovertemplateAttrs(),
-
-    mode: extendFlat({}, scatterAttrs.mode,  // shouldn't this be on-par with 2D?
-        {dflt: 'lines+markers'}),
-    surfaceaxis: {
-        valType: 'enumerated',
-        
-        values: [-1, 0, 1, 2],
-        dflt: -1,
-        
-    },
-    surfacecolor: {
-        valType: 'color',
-        
-        
-    },
-    projection: {
-        x: makeProjectionAttr('x'),
-        y: makeProjectionAttr('y'),
-        z: makeProjectionAttr('z')
-    },
-
-    connectgaps: scatterAttrs.connectgaps,
-    line: lineAttrs,
-
-    marker: extendFlat({  // Parity with scatter.js?
-        symbol: {
-            valType: 'enumerated',
-            values: Object.keys(MARKER_SYMBOLS),
-            
-            dflt: 'circle',
-            arrayOk: true,
-            
-        },
-        size: extendFlat({}, scatterMarkerAttrs.size, {dflt: 8}),
-        sizeref: scatterMarkerAttrs.sizeref,
-        sizemin: scatterMarkerAttrs.sizemin,
-        sizemode: scatterMarkerAttrs.sizemode,
-        opacity: extendFlat({}, scatterMarkerAttrs.opacity, {
-            arrayOk: false,
-            
-        }),
-        colorbar: scatterMarkerAttrs.colorbar,
-
-        line: extendFlat({
-            width: extendFlat({}, scatterMarkerLineAttrs.width, {arrayOk: false})
-        },
-            colorAttributes('marker.line')
-        )
-    },
-        colorAttributes('marker')
-    ),
-
-    textposition: extendFlat({}, scatterAttrs.textposition, {dflt: 'top center'}),
-    textfont: {
-        color: scatterAttrs.textfont.color,
-        size: scatterAttrs.textfont.size,
-        family: extendFlat({}, scatterAttrs.textfont.family, {arrayOk: false})
-    },
-
-    hoverinfo: extendFlat({}, baseAttrs.hoverinfo)
-}, 'calc', 'nested');
-
-attrs.x.editType = attrs.y.editType = attrs.z.editType = 'calc+clearAxisTypes';
-
-},{"../../components/colorscale/attributes":377,"../../constants/gl3d_dashes":474,"../../constants/gl3d_markers":475,"../../lib/extend":492,"../../plot_api/edit_types":528,"../../plots/attributes":542,"../../plots/template_attributes":599,"../scatter/attributes":629}],658:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var arraysToCalcdata = _dereq_('../scatter/arrays_to_calcdata');
-var calcColorscale = _dereq_('../scatter/colorscale_calc');
-
-/**
- * This is a kludge to put the array attributes into
- * calcdata the way Scatter.plot does, so that legends and
- * popovers know what to do with them.
- */
-module.exports = function calc(gd, trace) {
-    var cd = [{x: false, y: false, trace: trace, t: {}}];
-
-    arraysToCalcdata(cd, trace);
-    calcColorscale(gd, trace);
-
-    return cd;
-};
-
-},{"../scatter/arrays_to_calcdata":628,"../scatter/colorscale_calc":632}],659:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var Registry = _dereq_('../../registry');
-
-function calculateAxisErrors(data, params, scaleFactor, axis) {
-    if(!params || !params.visible) return null;
-
-    var computeError = Registry.getComponentMethod('errorbars', 'makeComputeError')(params);
-    var result = new Array(data.length);
-
-    for(var i = 0; i < data.length; i++) {
-        var errors = computeError(+data[i], i);
-
-        if(axis.type === 'log') {
-            var point = axis.c2l(data[i]);
-            var min = data[i] - errors[0];
-            var max = data[i] + errors[1];
-
-            result[i] = [
-                (axis.c2l(min, true) - point) * scaleFactor,
-                (axis.c2l(max, true) - point) * scaleFactor
-            ];
-
-            // Keep track of the lower error bound which isn't negative!
-            if(min > 0) {
-                var lower = axis.c2l(min);
-                if(!axis._lowerLogErrorBound) axis._lowerLogErrorBound = lower;
-                axis._lowerErrorBound = Math.min(axis._lowerLogErrorBound, lower);
-            }
-        } else {
-            result[i] = [
-                -errors[0] * scaleFactor,
-                errors[1] * scaleFactor
-            ];
-        }
-    }
-
-    return result;
-}
-
-function dataLength(array) {
-    for(var i = 0; i < array.length; i++) {
-        if(array[i]) return array[i].length;
-    }
-    return 0;
-}
-
-function calculateErrors(data, scaleFactor, sceneLayout) {
-    var errors = [
-        calculateAxisErrors(data.x, data.error_x, scaleFactor[0], sceneLayout.xaxis),
-        calculateAxisErrors(data.y, data.error_y, scaleFactor[1], sceneLayout.yaxis),
-        calculateAxisErrors(data.z, data.error_z, scaleFactor[2], sceneLayout.zaxis)
-    ];
-
-    var n = dataLength(errors);
-    if(n === 0) return null;
-
-    var errorBounds = new Array(n);
-
-    for(var i = 0; i < n; i++) {
-        var bound = [[0, 0, 0], [0, 0, 0]];
-
-        for(var j = 0; j < 3; j++) {
-            if(errors[j]) {
-                for(var k = 0; k < 2; k++) {
-                    bound[k][j] = errors[j][i][k];
-                }
-            }
-        }
-
-        errorBounds[i] = bound;
-    }
-
-    return errorBounds;
-}
-
-module.exports = calculateErrors;
-
-},{"../../registry":600}],660:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-
-'use strict';
-
-var createLinePlot = _dereq_('gl-line3d');
-var createScatterPlot = _dereq_('gl-scatter3d');
-var createErrorBars = _dereq_('gl-error3d');
-var createMesh = _dereq_('gl-mesh3d');
-var triangulate = _dereq_('delaunay-triangulate');
-
-var Lib = _dereq_('../../lib');
-var str2RgbaArray = _dereq_('../../lib/str2rgbarray');
-var formatColor = _dereq_('../../lib/gl_format_color').formatColor;
-var makeBubbleSizeFn = _dereq_('../scatter/make_bubble_size_func');
-var DASH_PATTERNS = _dereq_('../../constants/gl3d_dashes');
-var MARKER_SYMBOLS = _dereq_('../../constants/gl3d_markers');
-
-var Axes = _dereq_('../../plots/cartesian/axes');
-var appendArrayPointValue = _dereq_('../../components/fx/helpers').appendArrayPointValue;
-
-var calculateError = _dereq_('./calc_errors');
-
-function LineWithMarkers(scene, uid) {
-    this.scene = scene;
-    this.uid = uid;
-    this.linePlot = null;
-    this.scatterPlot = null;
-    this.errorBars = null;
-    this.textMarkers = null;
-    this.delaunayMesh = null;
-    this.color = null;
-    this.mode = '';
-    this.dataPoints = [];
-    this.axesBounds = [
-        [-Infinity, -Infinity, -Infinity],
-        [Infinity, Infinity, Infinity]
-    ];
-    this.textLabels = null;
-    this.data = null;
-}
-
-var proto = LineWithMarkers.prototype;
-
-proto.handlePick = function(selection) {
-    if(selection.object &&
-        (selection.object === this.linePlot ||
-         selection.object === this.delaunayMesh ||
-         selection.object === this.textMarkers ||
-         selection.object === this.scatterPlot)
-    ) {
-        var ind = selection.index = selection.data.index;
-
-        if(selection.object.highlight) {
-            selection.object.highlight(null);
-        }
-        if(this.scatterPlot) {
-            selection.object = this.scatterPlot;
-            this.scatterPlot.highlight(selection.data);
-        }
-
-        selection.textLabel = '';
-        if(this.textLabels) {
-            if(Array.isArray(this.textLabels)) {
-                if(this.textLabels[ind] || this.textLabels[ind] === 0) {
-                    selection.textLabel = this.textLabels[ind];
-                }
-            } else {
-                selection.textLabel = this.textLabels;
-            }
-        }
-
-        selection.traceCoordinate = [
-            this.data.x[ind],
-            this.data.y[ind],
-            this.data.z[ind]
-        ];
-
-        return true;
-    }
-};
-
-function constructDelaunay(points, color, axis) {
-    var u = (axis + 1) % 3;
-    var v = (axis + 2) % 3;
-    var filteredPoints = [];
-    var filteredIds = [];
-    var i;
-
-    for(i = 0; i < points.length; ++i) {
-        var p = points[i];
-        if(isNaN(p[u]) || !isFinite(p[u]) ||
-           isNaN(p[v]) || !isFinite(p[v])) {
-            continue;
-        }
-        filteredPoints.push([p[u], p[v]]);
-        filteredIds.push(i);
-    }
-    var cells = triangulate(filteredPoints);
-    for(i = 0; i < cells.length; ++i) {
-        var c = cells[i];
-        for(var j = 0; j < c.length; ++j) {
-            c[j] = filteredIds[c[j]];
-        }
-    }
-    return {
-        positions: points,
-        cells: cells,
-        meshColor: color
-    };
-}
-
-function calculateErrorParams(errors) {
-    var capSize = [0.0, 0.0, 0.0];
-    var color = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
-    var lineWidth = [1.0, 1.0, 1.0];
-
-    for(var i = 0; i < 3; i++) {
-        var e = errors[i];
-
-        if(e && e.copy_zstyle !== false && errors[2].visible !== false) e = errors[2];
-        if(!e || !e.visible) continue;
-
-        capSize[i] = e.width / 2;  // ballpark rescaling
-        color[i] = str2RgbaArray(e.color);
-        lineWidth[i] = e.thickness;
-    }
-
-    return {capSize: capSize, color: color, lineWidth: lineWidth};
-}
-
-function parseAlignmentX(a) {
-    if(a === null || a === undefined) return 0;
-
-    return (a.indexOf('left') > -1) ? -1 :
-           (a.indexOf('right') > -1) ? 1 : 0;
-}
-
-function parseAlignmentY(a) {
-    if(a === null || a === undefined) return 0;
-
-    return (a.indexOf('top') > -1) ? -1 :
-           (a.indexOf('bottom') > -1) ? 1 : 0;
-}
-
-function calculateTextOffset(tp) {
-    // Read out text properties
-
-    var defaultAlignmentX = 0;
-    var defaultAlignmentY = 0;
-
-    var textOffset = [
-        defaultAlignmentX,
-        defaultAlignmentY
-    ];
-
-    if(Array.isArray(tp)) {
-        for(var i = 0; i < tp.length; i++) {
-            textOffset[i] = [
-                defaultAlignmentX,
-                defaultAlignmentY
-            ];
-            if(tp[i]) {
-                textOffset[i][0] = parseAlignmentX(tp[i]);
-                textOffset[i][1] = parseAlignmentY(tp[i]);
-            }
-        }
-    } else {
-        textOffset[0] = parseAlignmentX(tp);
-        textOffset[1] = parseAlignmentY(tp);
-    }
-
-    return textOffset;
-}
-
-
-function calculateSize(sizeIn, sizeFn) {
-    // rough parity with Plotly 2D markers
-    return sizeFn(sizeIn * 4);
-}
-
-function calculateSymbol(symbolIn) {
-    return MARKER_SYMBOLS[symbolIn];
-}
-
-function formatParam(paramIn, len, calculate, dflt, extraFn) {
-    var paramOut = null;
-
-    if(Lib.isArrayOrTypedArray(paramIn)) {
-        paramOut = [];
-
-        for(var i = 0; i < len; i++) {
-            if(paramIn[i] === undefined) paramOut[i] = dflt;
-            else paramOut[i] = calculate(paramIn[i], extraFn);
-        }
-    } else paramOut = calculate(paramIn, Lib.identity);
-
-    return paramOut;
-}
-
-
-function convertPlotlyOptions(scene, data) {
-    var points = [];
-    var sceneLayout = scene.fullSceneLayout;
-    var scaleFactor = scene.dataScale;
-    var xaxis = sceneLayout.xaxis;
-    var yaxis = sceneLayout.yaxis;
-    var zaxis = sceneLayout.zaxis;
-    var marker = data.marker;
-    var line = data.line;
-    var x = data.x || [];
-    var y = data.y || [];
-    var z = data.z || [];
-    var len = x.length;
-    var xcalendar = data.xcalendar;
-    var ycalendar = data.ycalendar;
-    var zcalendar = data.zcalendar;
-    var xc, yc, zc;
-    var params, i;
-    var text;
-
-    // Convert points
-    for(i = 0; i < len; i++) {
-        // sanitize numbers and apply transforms based on axes.type
-        xc = xaxis.d2l(x[i], 0, xcalendar) * scaleFactor[0];
-        yc = yaxis.d2l(y[i], 0, ycalendar) * scaleFactor[1];
-        zc = zaxis.d2l(z[i], 0, zcalendar) * scaleFactor[2];
-
-        points[i] = [xc, yc, zc];
-    }
-
-    // convert text
-    if(Array.isArray(data.text)) text = data.text;
-    else if(data.text !== undefined) {
-        text = new Array(len);
-        for(i = 0; i < len; i++) text[i] = data.text;
-    }
-
-    function formatter(axName, val) {
-        var ax = sceneLayout[axName];
-        return Axes.tickText(ax, ax.d2l(val), true).text;
-    }
-
-    // check texttemplate
-    var texttemplate = data.texttemplate;
-    if(texttemplate) {
-        var fullLayout = scene.fullLayout;
-        var d3locale = fullLayout._d3locale;
-        var isArray = Array.isArray(texttemplate);
-        var N = isArray ? Math.min(texttemplate.length, len) : len;
-        var txt = isArray ?
-            function(i) { return texttemplate[i]; } :
-            function() { return texttemplate; };
-
-        text = new Array(N);
-
-        for(i = 0; i < N; i++) {
-            var d = {x: x[i], y: y[i], z: z[i]};
-            var labels = {
-                xLabel: formatter('xaxis', x[i]),
-                yLabel: formatter('yaxis', y[i]),
-                zLabel: formatter('zaxis', z[i])
-            };
-            var pointValues = {};
-            appendArrayPointValue(pointValues, data, i);
-            var meta = data._meta || {};
-            text[i] = Lib.texttemplateString(txt(i), labels, d3locale, pointValues, d, meta);
-        }
-    }
-
-    // Build object parameters
-    params = {
-        position: points,
-        mode: data.mode,
-        text: text
-    };
-
-    if('line' in data) {
-        params.lineColor = formatColor(line, 1, len);
-        params.lineWidth = line.width;
-        params.lineDashes = line.dash;
-    }
-
-    if('marker' in data) {
-        var sizeFn = makeBubbleSizeFn(data);
-
-        params.scatterColor = formatColor(marker, 1, len);
-        params.scatterSize = formatParam(marker.size, len, calculateSize, 20, sizeFn);
-        params.scatterMarker = formatParam(marker.symbol, len, calculateSymbol, '●');
-        params.scatterLineWidth = marker.line.width;  // arrayOk === false
-        params.scatterLineColor = formatColor(marker.line, 1, len);
-        params.scatterAngle = 0;
-    }
-
-    if('textposition' in data) {
-        params.textOffset = calculateTextOffset(data.textposition);
-        params.textColor = formatColor(data.textfont, 1, len);
-        params.textSize = formatParam(data.textfont.size, len, Lib.identity, 12);
-        params.textFont = data.textfont.family;  // arrayOk === false
-        params.textAngle = 0;
-    }
-
-    var dims = ['x', 'y', 'z'];
-    params.project = [false, false, false];
-    params.projectScale = [1, 1, 1];
-    params.projectOpacity = [1, 1, 1];
-    for(i = 0; i < 3; ++i) {
-        var projection = data.projection[dims[i]];
-        if((params.project[i] = projection.show)) {
-            params.projectOpacity[i] = projection.opacity;
-            params.projectScale[i] = projection.scale;
-        }
-    }
-
-    params.errorBounds = calculateError(data, scaleFactor, sceneLayout);
-
-    var errorParams = calculateErrorParams([data.error_x, data.error_y, data.error_z]);
-    params.errorColor = errorParams.color;
-    params.errorLineWidth = errorParams.lineWidth;
-    params.errorCapSize = errorParams.capSize;
-
-    params.delaunayAxis = data.surfaceaxis;
-    params.delaunayColor = str2RgbaArray(data.surfacecolor);
-
-    return params;
-}
-
-function _arrayToColor(color) {
-    if(Lib.isArrayOrTypedArray(color)) {
-        var c = color[0];
-
-        if(Lib.isArrayOrTypedArray(c)) color = c;
-
-        return 'rgb(' + color.slice(0, 3).map(function(x) {
-            return Math.round(x * 255);
-        }) + ')';
-    }
-
-    return null;
-}
-
-function arrayToColor(colors) {
-    if(!Lib.isArrayOrTypedArray(colors)) {
-        return null;
-    }
-
-    if((colors.length === 4) && (typeof colors[0] === 'number')) {
-        return _arrayToColor(colors);
-    }
-
-    return colors.map(_arrayToColor);
-}
-
-proto.update = function(data) {
-    var gl = this.scene.glplot.gl;
-    var lineOptions;
-    var scatterOptions;
-    var errorOptions;
-    var textOptions;
-    var dashPattern = DASH_PATTERNS.solid;
-
-    // Save data
-    this.data = data;
-
-    // Run data conversion
-    var options = convertPlotlyOptions(this.scene, data);
-
-    if('mode' in options) {
-        this.mode = options.mode;
-    }
-    if('lineDashes' in options) {
-        if(options.lineDashes in DASH_PATTERNS) {
-            dashPattern = DASH_PATTERNS[options.lineDashes];
-        }
-    }
-
-    this.color = arrayToColor(options.scatterColor) ||
-                 arrayToColor(options.lineColor);
-
-    // Save data points
-    this.dataPoints = options.position;
-
-    lineOptions = {
-        gl: this.scene.glplot.gl,
-        position: options.position,
-        color: options.lineColor,
-        lineWidth: options.lineWidth || 1,
-        dashes: dashPattern[0],
-        dashScale: dashPattern[1],
-        opacity: data.opacity,
-        connectGaps: data.connectgaps
-    };
-
-    if(this.mode.indexOf('lines') !== -1) {
-        if(this.linePlot) this.linePlot.update(lineOptions);
-        else {
-            this.linePlot = createLinePlot(lineOptions);
-            this.linePlot._trace = this;
-            this.scene.glplot.add(this.linePlot);
-        }
-    } else if(this.linePlot) {
-        this.scene.glplot.remove(this.linePlot);
-        this.linePlot.dispose();
-        this.linePlot = null;
-    }
-
-    // N.B. marker.opacity must be a scalar for performance
-    var scatterOpacity = data.opacity;
-    if(data.marker && data.marker.opacity) scatterOpacity *= data.marker.opacity;
-
-    scatterOptions = {
-        gl: this.scene.glplot.gl,
-        position: options.position,
-        color: options.scatterColor,
-        size: options.scatterSize,
-        glyph: options.scatterMarker,
-        opacity: scatterOpacity,
-        orthographic: true,
-        lineWidth: options.scatterLineWidth,
-        lineColor: options.scatterLineColor,
-        project: options.project,
-        projectScale: options.projectScale,
-        projectOpacity: options.projectOpacity
-    };
-
-    if(this.mode.indexOf('markers') !== -1) {
-        if(this.scatterPlot) this.scatterPlot.update(scatterOptions);
-        else {
-            this.scatterPlot = createScatterPlot(scatterOptions);
-            this.scatterPlot._trace = this;
-            this.scatterPlot.highlightScale = 1;
-            this.scene.glplot.add(this.scatterPlot);
-        }
-    } else if(this.scatterPlot) {
-        this.scene.glplot.remove(this.scatterPlot);
-        this.scatterPlot.dispose();
-        this.scatterPlot = null;
-    }
-
-    textOptions = {
-        gl: this.scene.glplot.gl,
-        position: options.position,
-        glyph: options.text,
-        color: options.textColor,
-        size: options.textSize,
-        angle: options.textAngle,
-        alignment: options.textOffset,
-        font: options.textFont,
-        orthographic: true,
-        lineWidth: 0,
-        project: false,
-        opacity: data.opacity
-    };
-
-    this.textLabels = data.hovertext || data.text;
-
-    if(this.mode.indexOf('text') !== -1) {
-        if(this.textMarkers) this.textMarkers.update(textOptions);
-        else {
-            this.textMarkers = createScatterPlot(textOptions);
-            this.textMarkers._trace = this;
-            this.textMarkers.highlightScale = 1;
-            this.scene.glplot.add(this.textMarkers);
-        }
-    } else if(this.textMarkers) {
-        this.scene.glplot.remove(this.textMarkers);
-        this.textMarkers.dispose();
-        this.textMarkers = null;
-    }
-
-    errorOptions = {
-        gl: this.scene.glplot.gl,
-        position: options.position,
-        color: options.errorColor,
-        error: options.errorBounds,
-        lineWidth: options.errorLineWidth,
-        capSize: options.errorCapSize,
-        opacity: data.opacity
-    };
-    if(this.errorBars) {
-        if(options.errorBounds) {
-            this.errorBars.update(errorOptions);
-        } else {
-            this.scene.glplot.remove(this.errorBars);
-            this.errorBars.dispose();
-            this.errorBars = null;
-        }
-    } else if(options.errorBounds) {
-        this.errorBars = createErrorBars(errorOptions);
-        this.errorBars._trace = this;
-        this.scene.glplot.add(this.errorBars);
-    }
-
-    if(options.delaunayAxis >= 0) {
-        var delaunayOptions = constructDelaunay(
-            options.position,
-            options.delaunayColor,
-            options.delaunayAxis
-        );
-        delaunayOptions.opacity = data.opacity;
-
-        if(this.delaunayMesh) {
-            this.delaunayMesh.update(delaunayOptions);
-        } else {
-            delaunayOptions.gl = gl;
-            this.delaunayMesh = createMesh(delaunayOptions);
-            this.delaunayMesh._trace = this;
-            this.scene.glplot.add(this.delaunayMesh);
-        }
-    } else if(this.delaunayMesh) {
-        this.scene.glplot.remove(this.delaunayMesh);
-        this.delaunayMesh.dispose();
-        this.delaunayMesh = null;
-    }
-};
-
-proto.dispose = function() {
-    if(this.linePlot) {
-        this.scene.glplot.remove(this.linePlot);
-        this.linePlot.dispose();
-    }
-    if(this.scatterPlot) {
-        this.scene.glplot.remove(this.scatterPlot);
-        this.scatterPlot.dispose();
-    }
-    if(this.errorBars) {
-        this.scene.glplot.remove(this.errorBars);
-        this.errorBars.dispose();
-    }
-    if(this.textMarkers) {
-        this.scene.glplot.remove(this.textMarkers);
-        this.textMarkers.dispose();
-    }
-    if(this.delaunayMesh) {
-        this.scene.glplot.remove(this.delaunayMesh);
-        this.delaunayMesh.dispose();
-    }
-};
-
-function createLineWithMarkers(scene, data) {
-    var plot = new LineWithMarkers(scene, data.uid);
-    plot.update(data);
-    return plot;
-}
-
-module.exports = createLineWithMarkers;
-
-},{"../../components/fx/helpers":406,"../../constants/gl3d_dashes":474,"../../constants/gl3d_markers":475,"../../lib":499,"../../lib/gl_format_color":496,"../../lib/str2rgbarray":521,"../../plots/cartesian/axes":546,"../scatter/make_bubble_size_func":646,"./calc_errors":659,"delaunay-triangulate":82,"gl-error3d":109,"gl-line3d":114,"gl-mesh3d":135,"gl-scatter3d":143}],661:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-
-'use strict';
-
-var Registry = _dereq_('../../registry');
-var Lib = _dereq_('../../lib');
-
-var subTypes = _dereq_('../scatter/subtypes');
-var handleMarkerDefaults = _dereq_('../scatter/marker_defaults');
-var handleLineDefaults = _dereq_('../scatter/line_defaults');
-var handleTextDefaults = _dereq_('../scatter/text_defaults');
-
-var attributes = _dereq_('./attributes');
-
-module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout) {
-    function coerce(attr, dflt) {
-        return Lib.coerce(traceIn, traceOut, attributes, attr, dflt);
-    }
-
-    var len = handleXYZDefaults(traceIn, traceOut, coerce, layout);
-    if(!len) {
-        traceOut.visible = false;
-        return;
-    }
-
-    coerce('text');
-    coerce('hovertext');
-    coerce('hovertemplate');
-    coerce('mode');
-
-    if(subTypes.hasLines(traceOut)) {
-        coerce('connectgaps');
-        handleLineDefaults(traceIn, traceOut, defaultColor, layout, coerce);
-    }
-
-    if(subTypes.hasMarkers(traceOut)) {
-        handleMarkerDefaults(traceIn, traceOut, defaultColor, layout, coerce, {noSelect: true});
-    }
-
-    if(subTypes.hasText(traceOut)) {
-        coerce('texttemplate');
-        handleTextDefaults(traceIn, traceOut, layout, coerce, {noSelect: true});
-    }
-
-    var lineColor = (traceOut.line || {}).color;
-    var markerColor = (traceOut.marker || {}).color;
-    if(coerce('surfaceaxis') >= 0) coerce('surfacecolor', lineColor || markerColor);
-
-    var dims = ['x', 'y', 'z'];
-    for(var i = 0; i < 3; ++i) {
-        var projection = 'projection.' + dims[i];
-        if(coerce(projection + '.show')) {
-            coerce(projection + '.opacity');
-            coerce(projection + '.scale');
-        }
-    }
-
-    var errorBarsSupplyDefaults = Registry.getComponentMethod('errorbars', 'supplyDefaults');
-    errorBarsSupplyDefaults(traceIn, traceOut, lineColor || markerColor || defaultColor, {axis: 'z'});
-    errorBarsSupplyDefaults(traceIn, traceOut, lineColor || markerColor || defaultColor, {axis: 'y', inherit: 'z'});
-    errorBarsSupplyDefaults(traceIn, traceOut, lineColor || markerColor || defaultColor, {axis: 'x', inherit: 'z'});
-};
-
-function handleXYZDefaults(traceIn, traceOut, coerce, layout) {
-    var len = 0;
-    var x = coerce('x');
-    var y = coerce('y');
-    var z = coerce('z');
-
-    var handleCalendarDefaults = Registry.getComponentMethod('calendars', 'handleTraceDefaults');
-    handleCalendarDefaults(traceIn, traceOut, ['x', 'y', 'z'], layout);
-
-    if(x && y && z) {
-        // TODO: what happens if one is missing?
-        len = Math.min(x.length, y.length, z.length);
-        traceOut._length = traceOut._xlength = traceOut._ylength = traceOut._zlength = len;
-    }
-
-    return len;
-}
-
-},{"../../lib":499,"../../registry":600,"../scatter/line_defaults":642,"../scatter/marker_defaults":648,"../scatter/subtypes":654,"../scatter/text_defaults":655,"./attributes":657}],662:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-module.exports = {
-    plot: _dereq_('./convert'),
-    attributes: _dereq_('./attributes'),
-    markerSymbols: _dereq_('../../constants/gl3d_markers'),
-    supplyDefaults: _dereq_('./defaults'),
-    colorbar: [
-        {
-            container: 'marker',
-            min: 'cmin',
-            max: 'cmax'
-        }, {
-            container: 'line',
-            min: 'cmin',
-            max: 'cmax'
-        }
-    ],
-    calc: _dereq_('./calc'),
-
-    moduleType: 'trace',
-    name: 'scatter3d',
-    basePlotModule: _dereq_('../../plots/gl3d'),
-    categories: ['gl3d', 'symbols', 'showLegend', 'scatter-like'],
-    meta: {
-        
-        
-    }
-};
-
-},{"../../constants/gl3d_markers":475,"../../plots/gl3d":577,"./attributes":657,"./calc":658,"./convert":660,"./defaults":661}],663:[function(_dereq_,module,exports){
+},{"../../lib":499,"../../registry":600}],663:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.

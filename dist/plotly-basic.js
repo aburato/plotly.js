@@ -1,6 +1,6 @@
 /**
 * plotly.js (basic) v1.56.0
-* Copyright 2012-2020, Plotly, Inc.
+* Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
 */
@@ -15724,6 +15724,335 @@ else {
 * LICENSE file in the root directory of this source tree.
 */
 
+
+'use strict';
+
+var annAttrs = _dereq_('../annotations/attributes');
+var overrideAll = _dereq_('../../plot_api/edit_types').overrideAll;
+var templatedArray = _dereq_('../../plot_api/plot_template').templatedArray;
+
+module.exports = overrideAll(templatedArray('annotation', {
+    visible: annAttrs.visible,
+    x: {
+        valType: 'any',
+        
+        
+    },
+    y: {
+        valType: 'any',
+        
+        
+    },
+    z: {
+        valType: 'any',
+        
+        
+    },
+    ax: {
+        valType: 'number',
+        
+        
+    },
+    ay: {
+        valType: 'number',
+        
+        
+    },
+
+    xanchor: annAttrs.xanchor,
+    xshift: annAttrs.xshift,
+    yanchor: annAttrs.yanchor,
+    yshift: annAttrs.yshift,
+
+    text: annAttrs.text,
+    textangle: annAttrs.textangle,
+    font: annAttrs.font,
+    width: annAttrs.width,
+    height: annAttrs.height,
+    opacity: annAttrs.opacity,
+    align: annAttrs.align,
+    valign: annAttrs.valign,
+    bgcolor: annAttrs.bgcolor,
+    bordercolor: annAttrs.bordercolor,
+    borderpad: annAttrs.borderpad,
+    borderwidth: annAttrs.borderwidth,
+    showarrow: annAttrs.showarrow,
+    arrowcolor: annAttrs.arrowcolor,
+    arrowhead: annAttrs.arrowhead,
+    startarrowhead: annAttrs.startarrowhead,
+    arrowside: annAttrs.arrowside,
+    arrowsize: annAttrs.arrowsize,
+    startarrowsize: annAttrs.startarrowsize,
+    arrowwidth: annAttrs.arrowwidth,
+    standoff: annAttrs.standoff,
+    startstandoff: annAttrs.startstandoff,
+    hovertext: annAttrs.hovertext,
+    hoverlabel: annAttrs.hoverlabel,
+    captureevents: annAttrs.captureevents,
+
+    // maybes later?
+    // clicktoshow: annAttrs.clicktoshow,
+    // xclick: annAttrs.xclick,
+    // yclick: annAttrs.yclick,
+
+    // not needed!
+    // axref: 'pixel'
+    // ayref: 'pixel'
+    // xref: 'x'
+    // yref: 'y
+    // zref: 'z'
+}), 'calc', 'from-root');
+
+},{"../../plot_api/edit_types":198,"../../plot_api/plot_template":205,"../annotations/attributes":35}],30:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var Lib = _dereq_('../../lib');
+var Axes = _dereq_('../../plots/cartesian/axes');
+
+module.exports = function convert(scene) {
+    var fullSceneLayout = scene.fullSceneLayout;
+    var anns = fullSceneLayout.annotations;
+
+    for(var i = 0; i < anns.length; i++) {
+        mockAnnAxes(anns[i], scene);
+    }
+
+    scene.fullLayout._infolayer
+        .selectAll('.annotation-' + scene.id)
+        .remove();
+};
+
+function mockAnnAxes(ann, scene) {
+    var fullSceneLayout = scene.fullSceneLayout;
+    var domain = fullSceneLayout.domain;
+    var size = scene.fullLayout._size;
+
+    var base = {
+        // this gets fill in on render
+        pdata: null,
+
+        // to get setConvert to not execute cleanly
+        type: 'linear',
+
+        // don't try to update them on `editable: true`
+        autorange: false,
+
+        // set infinite range so that annotation draw routine
+        // does not try to remove 'outside-range' annotations,
+        // this case is handled in the render loop
+        range: [-Infinity, Infinity]
+    };
+
+    ann._xa = {};
+    Lib.extendFlat(ann._xa, base);
+    Axes.setConvert(ann._xa);
+    ann._xa._offset = size.l + domain.x[0] * size.w;
+    ann._xa.l2p = function() {
+        return 0.5 * (1 + ann._pdata[0] / ann._pdata[3]) * size.w * (domain.x[1] - domain.x[0]);
+    };
+
+    ann._ya = {};
+    Lib.extendFlat(ann._ya, base);
+    Axes.setConvert(ann._ya);
+    ann._ya._offset = size.t + (1 - domain.y[1]) * size.h;
+    ann._ya.l2p = function() {
+        return 0.5 * (1 - ann._pdata[1] / ann._pdata[3]) * size.h * (domain.y[1] - domain.y[0]);
+    };
+}
+
+},{"../../lib":171,"../../plots/cartesian/axes":216}],31:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var Lib = _dereq_('../../lib');
+var Axes = _dereq_('../../plots/cartesian/axes');
+var handleArrayContainerDefaults = _dereq_('../../plots/array_container_defaults');
+var handleAnnotationCommonDefaults = _dereq_('../annotations/common_defaults');
+var attributes = _dereq_('./attributes');
+
+module.exports = function handleDefaults(sceneLayoutIn, sceneLayoutOut, opts) {
+    handleArrayContainerDefaults(sceneLayoutIn, sceneLayoutOut, {
+        name: 'annotations',
+        handleItemDefaults: handleAnnotationDefaults,
+        fullLayout: opts.fullLayout
+    });
+};
+
+function handleAnnotationDefaults(annIn, annOut, sceneLayout, opts) {
+    function coerce(attr, dflt) {
+        return Lib.coerce(annIn, annOut, attributes, attr, dflt);
+    }
+
+    function coercePosition(axLetter) {
+        var axName = axLetter + 'axis';
+
+        // mock in such way that getFromId grabs correct 3D axis
+        var gdMock = { _fullLayout: {} };
+        gdMock._fullLayout[axName] = sceneLayout[axName];
+
+        return Axes.coercePosition(annOut, gdMock, coerce, axLetter, axLetter, 0.5);
+    }
+
+
+    var visible = coerce('visible');
+    if(!visible) return;
+
+    handleAnnotationCommonDefaults(annIn, annOut, opts.fullLayout, coerce);
+
+    coercePosition('x');
+    coercePosition('y');
+    coercePosition('z');
+
+    // if you have one coordinate you should all three
+    Lib.noneOrAll(annIn, annOut, ['x', 'y', 'z']);
+
+    // hard-set here for completeness
+    annOut.xref = 'x';
+    annOut.yref = 'y';
+    annOut.zref = 'z';
+
+    coerce('xanchor');
+    coerce('yanchor');
+    coerce('xshift');
+    coerce('yshift');
+
+    if(annOut.showarrow) {
+        annOut.axref = 'pixel';
+        annOut.ayref = 'pixel';
+
+        // TODO maybe default values should be bigger than the 2D case?
+        coerce('ax', -10);
+        coerce('ay', -30);
+
+        // if you have one part of arrow length you should have both
+        Lib.noneOrAll(annIn, annOut, ['ax', 'ay']);
+    }
+}
+
+},{"../../lib":171,"../../plots/array_container_defaults":211,"../../plots/cartesian/axes":216,"../annotations/common_defaults":38,"./attributes":29}],32:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var drawRaw = _dereq_('../annotations/draw').drawRaw;
+var project = _dereq_('../../plots/gl3d/project');
+var axLetters = ['x', 'y', 'z'];
+
+module.exports = function draw(scene) {
+    var fullSceneLayout = scene.fullSceneLayout;
+    var dataScale = scene.dataScale;
+    var anns = fullSceneLayout.annotations;
+
+    for(var i = 0; i < anns.length; i++) {
+        var ann = anns[i];
+        var annotationIsOffscreen = false;
+
+        for(var j = 0; j < 3; j++) {
+            var axLetter = axLetters[j];
+            var pos = ann[axLetter];
+            var ax = fullSceneLayout[axLetter + 'axis'];
+            var posFraction = ax.r2fraction(pos);
+
+            if(posFraction < 0 || posFraction > 1) {
+                annotationIsOffscreen = true;
+                break;
+            }
+        }
+
+        if(annotationIsOffscreen) {
+            scene.fullLayout._infolayer
+                .select('.annotation-' + scene.id + '[data-index="' + i + '"]')
+                .remove();
+        } else {
+            ann._pdata = project(scene.glplot.cameraParams, [
+                fullSceneLayout.xaxis.r2l(ann.x) * dataScale[0],
+                fullSceneLayout.yaxis.r2l(ann.y) * dataScale[1],
+                fullSceneLayout.zaxis.r2l(ann.z) * dataScale[2]
+            ]);
+
+            drawRaw(scene.graphDiv, ann, i, scene.id, ann._xa, ann._ya);
+        }
+    }
+};
+
+},{"../../plots/gl3d/project":247,"../annotations/draw":41}],33:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+'use strict';
+
+var Registry = _dereq_('../../registry');
+var Lib = _dereq_('../../lib');
+
+module.exports = {
+    moduleType: 'component',
+    name: 'annotations3d',
+
+    schema: {
+        subplots: {
+            scene: {annotations: _dereq_('./attributes')}
+        }
+    },
+
+    layoutAttributes: _dereq_('./attributes'),
+    handleDefaults: _dereq_('./defaults'),
+    includeBasePlot: includeGL3D,
+
+    convert: _dereq_('./convert'),
+    draw: _dereq_('./draw')
+};
+
+function includeGL3D(layoutIn, layoutOut) {
+    var GL3D = Registry.subplotsRegistry.gl3d;
+    if(!GL3D) return;
+
+    var attrRegex = GL3D.attrRegex;
+
+    var keys = Object.keys(layoutIn);
+    for(var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        if(attrRegex.test(k) && (layoutIn[k].annotations || []).length) {
+            Lib.pushUnique(layoutOut._basePlotModules, GL3D);
+            Lib.pushUnique(layoutOut._subplots.gl3d, k);
+        }
+    }
+}
+
+},{"../../lib":171,"../../registry":258,"./attributes":29,"./convert":30,"./defaults":31,"./draw":32}],34:[function(_dereq_,module,exports){
+/**
+* Copyright 2012-2020, Plotly, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
 'use strict';
 
 /**
@@ -15786,7 +16115,7 @@ module.exports = [
     }
 ];
 
-},{}],30:[function(_dereq_,module,exports){
+},{}],35:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -16141,7 +16470,7 @@ module.exports = templatedArray('annotation', {
     }
 });
 
-},{"../../plot_api/plot_template":205,"../../plots/cartesian/constants":222,"../../plots/font_attributes":244,"./arrow_paths":29}],31:[function(_dereq_,module,exports){
+},{"../../plot_api/plot_template":205,"../../plots/cartesian/constants":222,"../../plots/font_attributes":244,"./arrow_paths":34}],36:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -16230,7 +16559,7 @@ function calcAxisExpansion(ann, ax) {
     ann._extremes[axId] = extremes;
 }
 
-},{"../../lib":171,"../../plots/cartesian/axes":216,"./draw":36}],32:[function(_dereq_,module,exports){
+},{"../../lib":171,"../../plots/cartesian/axes":216,"./draw":41}],37:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -16368,7 +16697,7 @@ function clickData2r(d, ax) {
     return ax.type === 'log' ? ax.l2r(d) : ax.d2r(d);
 }
 
-},{"../../lib":171,"../../plot_api/plot_template":205,"../../registry":258}],33:[function(_dereq_,module,exports){
+},{"../../lib":171,"../../plot_api/plot_template":205,"../../registry":258}],38:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -16447,7 +16776,7 @@ module.exports = function handleAnnotationCommonDefaults(annIn, annOut, fullLayo
     coerce('captureevents', !!hoverText);
 };
 
-},{"../../lib":171,"../color":45}],34:[function(_dereq_,module,exports){
+},{"../../lib":171,"../color":45}],39:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -16510,7 +16839,7 @@ module.exports = function convertCoords(gd, ax, newType, doExtra) {
     }
 };
 
-},{"../../lib/to_log_range":194,"fast-isnumeric":11}],35:[function(_dereq_,module,exports){
+},{"../../lib/to_log_range":194,"fast-isnumeric":11}],40:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -16617,7 +16946,7 @@ function handleAnnotationDefaults(annIn, annOut, fullLayout) {
     }
 }
 
-},{"../../lib":171,"../../plots/array_container_defaults":211,"../../plots/cartesian/axes":216,"./attributes":30,"./common_defaults":33}],36:[function(_dereq_,module,exports){
+},{"../../lib":171,"../../plots/array_container_defaults":211,"../../plots/cartesian/axes":216,"./attributes":35,"./common_defaults":38}],41:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -17317,7 +17646,7 @@ function drawRaw(gd, options, index, subplotId, xa, ya) {
     } else annText.call(textLayout);
 }
 
-},{"../../lib":171,"../../lib/setcursor":190,"../../lib/svg_text_utils":192,"../../plot_api/plot_template":205,"../../plots/cartesian/axes":216,"../../plots/plots":250,"../../registry":258,"../color":45,"../dragelement":64,"../drawing":67,"../fx":85,"./draw_arrow_head":37,"d3":9}],37:[function(_dereq_,module,exports){
+},{"../../lib":171,"../../lib/setcursor":190,"../../lib/svg_text_utils":192,"../../plot_api/plot_template":205,"../../plots/cartesian/axes":216,"../../plots/plots":250,"../../registry":258,"../color":45,"../dragelement":64,"../drawing":67,"../fx":85,"./draw_arrow_head":42,"d3":9}],42:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -17468,7 +17797,7 @@ module.exports = function drawArrowHead(el3, ends, options) {
     if(doEnd) drawhead(headStyle, end, endRot, scale);
 };
 
-},{"../color":45,"./arrow_paths":29,"d3":9}],38:[function(_dereq_,module,exports){
+},{"../color":45,"./arrow_paths":34,"d3":9}],43:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -17502,336 +17831,7 @@ module.exports = {
     convertCoords: _dereq_('./convert_coords')
 };
 
-},{"../../plots/cartesian/include_components":228,"./attributes":30,"./calc_autorange":31,"./click":32,"./convert_coords":34,"./defaults":35,"./draw":36}],39:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-
-'use strict';
-
-var annAttrs = _dereq_('../annotations/attributes');
-var overrideAll = _dereq_('../../plot_api/edit_types').overrideAll;
-var templatedArray = _dereq_('../../plot_api/plot_template').templatedArray;
-
-module.exports = overrideAll(templatedArray('annotation', {
-    visible: annAttrs.visible,
-    x: {
-        valType: 'any',
-        
-        
-    },
-    y: {
-        valType: 'any',
-        
-        
-    },
-    z: {
-        valType: 'any',
-        
-        
-    },
-    ax: {
-        valType: 'number',
-        
-        
-    },
-    ay: {
-        valType: 'number',
-        
-        
-    },
-
-    xanchor: annAttrs.xanchor,
-    xshift: annAttrs.xshift,
-    yanchor: annAttrs.yanchor,
-    yshift: annAttrs.yshift,
-
-    text: annAttrs.text,
-    textangle: annAttrs.textangle,
-    font: annAttrs.font,
-    width: annAttrs.width,
-    height: annAttrs.height,
-    opacity: annAttrs.opacity,
-    align: annAttrs.align,
-    valign: annAttrs.valign,
-    bgcolor: annAttrs.bgcolor,
-    bordercolor: annAttrs.bordercolor,
-    borderpad: annAttrs.borderpad,
-    borderwidth: annAttrs.borderwidth,
-    showarrow: annAttrs.showarrow,
-    arrowcolor: annAttrs.arrowcolor,
-    arrowhead: annAttrs.arrowhead,
-    startarrowhead: annAttrs.startarrowhead,
-    arrowside: annAttrs.arrowside,
-    arrowsize: annAttrs.arrowsize,
-    startarrowsize: annAttrs.startarrowsize,
-    arrowwidth: annAttrs.arrowwidth,
-    standoff: annAttrs.standoff,
-    startstandoff: annAttrs.startstandoff,
-    hovertext: annAttrs.hovertext,
-    hoverlabel: annAttrs.hoverlabel,
-    captureevents: annAttrs.captureevents,
-
-    // maybes later?
-    // clicktoshow: annAttrs.clicktoshow,
-    // xclick: annAttrs.xclick,
-    // yclick: annAttrs.yclick,
-
-    // not needed!
-    // axref: 'pixel'
-    // ayref: 'pixel'
-    // xref: 'x'
-    // yref: 'y
-    // zref: 'z'
-}), 'calc', 'from-root');
-
-},{"../../plot_api/edit_types":198,"../../plot_api/plot_template":205,"../annotations/attributes":30}],40:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var Lib = _dereq_('../../lib');
-var Axes = _dereq_('../../plots/cartesian/axes');
-
-module.exports = function convert(scene) {
-    var fullSceneLayout = scene.fullSceneLayout;
-    var anns = fullSceneLayout.annotations;
-
-    for(var i = 0; i < anns.length; i++) {
-        mockAnnAxes(anns[i], scene);
-    }
-
-    scene.fullLayout._infolayer
-        .selectAll('.annotation-' + scene.id)
-        .remove();
-};
-
-function mockAnnAxes(ann, scene) {
-    var fullSceneLayout = scene.fullSceneLayout;
-    var domain = fullSceneLayout.domain;
-    var size = scene.fullLayout._size;
-
-    var base = {
-        // this gets fill in on render
-        pdata: null,
-
-        // to get setConvert to not execute cleanly
-        type: 'linear',
-
-        // don't try to update them on `editable: true`
-        autorange: false,
-
-        // set infinite range so that annotation draw routine
-        // does not try to remove 'outside-range' annotations,
-        // this case is handled in the render loop
-        range: [-Infinity, Infinity]
-    };
-
-    ann._xa = {};
-    Lib.extendFlat(ann._xa, base);
-    Axes.setConvert(ann._xa);
-    ann._xa._offset = size.l + domain.x[0] * size.w;
-    ann._xa.l2p = function() {
-        return 0.5 * (1 + ann._pdata[0] / ann._pdata[3]) * size.w * (domain.x[1] - domain.x[0]);
-    };
-
-    ann._ya = {};
-    Lib.extendFlat(ann._ya, base);
-    Axes.setConvert(ann._ya);
-    ann._ya._offset = size.t + (1 - domain.y[1]) * size.h;
-    ann._ya.l2p = function() {
-        return 0.5 * (1 - ann._pdata[1] / ann._pdata[3]) * size.h * (domain.y[1] - domain.y[0]);
-    };
-}
-
-},{"../../lib":171,"../../plots/cartesian/axes":216}],41:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var Lib = _dereq_('../../lib');
-var Axes = _dereq_('../../plots/cartesian/axes');
-var handleArrayContainerDefaults = _dereq_('../../plots/array_container_defaults');
-var handleAnnotationCommonDefaults = _dereq_('../annotations/common_defaults');
-var attributes = _dereq_('./attributes');
-
-module.exports = function handleDefaults(sceneLayoutIn, sceneLayoutOut, opts) {
-    handleArrayContainerDefaults(sceneLayoutIn, sceneLayoutOut, {
-        name: 'annotations',
-        handleItemDefaults: handleAnnotationDefaults,
-        fullLayout: opts.fullLayout
-    });
-};
-
-function handleAnnotationDefaults(annIn, annOut, sceneLayout, opts) {
-    function coerce(attr, dflt) {
-        return Lib.coerce(annIn, annOut, attributes, attr, dflt);
-    }
-
-    function coercePosition(axLetter) {
-        var axName = axLetter + 'axis';
-
-        // mock in such way that getFromId grabs correct 3D axis
-        var gdMock = { _fullLayout: {} };
-        gdMock._fullLayout[axName] = sceneLayout[axName];
-
-        return Axes.coercePosition(annOut, gdMock, coerce, axLetter, axLetter, 0.5);
-    }
-
-
-    var visible = coerce('visible');
-    if(!visible) return;
-
-    handleAnnotationCommonDefaults(annIn, annOut, opts.fullLayout, coerce);
-
-    coercePosition('x');
-    coercePosition('y');
-    coercePosition('z');
-
-    // if you have one coordinate you should all three
-    Lib.noneOrAll(annIn, annOut, ['x', 'y', 'z']);
-
-    // hard-set here for completeness
-    annOut.xref = 'x';
-    annOut.yref = 'y';
-    annOut.zref = 'z';
-
-    coerce('xanchor');
-    coerce('yanchor');
-    coerce('xshift');
-    coerce('yshift');
-
-    if(annOut.showarrow) {
-        annOut.axref = 'pixel';
-        annOut.ayref = 'pixel';
-
-        // TODO maybe default values should be bigger than the 2D case?
-        coerce('ax', -10);
-        coerce('ay', -30);
-
-        // if you have one part of arrow length you should have both
-        Lib.noneOrAll(annIn, annOut, ['ax', 'ay']);
-    }
-}
-
-},{"../../lib":171,"../../plots/array_container_defaults":211,"../../plots/cartesian/axes":216,"../annotations/common_defaults":33,"./attributes":39}],42:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var drawRaw = _dereq_('../annotations/draw').drawRaw;
-var project = _dereq_('../../plots/gl3d/project');
-var axLetters = ['x', 'y', 'z'];
-
-module.exports = function draw(scene) {
-    var fullSceneLayout = scene.fullSceneLayout;
-    var dataScale = scene.dataScale;
-    var anns = fullSceneLayout.annotations;
-
-    for(var i = 0; i < anns.length; i++) {
-        var ann = anns[i];
-        var annotationIsOffscreen = false;
-
-        for(var j = 0; j < 3; j++) {
-            var axLetter = axLetters[j];
-            var pos = ann[axLetter];
-            var ax = fullSceneLayout[axLetter + 'axis'];
-            var posFraction = ax.r2fraction(pos);
-
-            if(posFraction < 0 || posFraction > 1) {
-                annotationIsOffscreen = true;
-                break;
-            }
-        }
-
-        if(annotationIsOffscreen) {
-            scene.fullLayout._infolayer
-                .select('.annotation-' + scene.id + '[data-index="' + i + '"]')
-                .remove();
-        } else {
-            ann._pdata = project(scene.glplot.cameraParams, [
-                fullSceneLayout.xaxis.r2l(ann.x) * dataScale[0],
-                fullSceneLayout.yaxis.r2l(ann.y) * dataScale[1],
-                fullSceneLayout.zaxis.r2l(ann.z) * dataScale[2]
-            ]);
-
-            drawRaw(scene.graphDiv, ann, i, scene.id, ann._xa, ann._ya);
-        }
-    }
-};
-
-},{"../../plots/gl3d/project":247,"../annotations/draw":36}],43:[function(_dereq_,module,exports){
-/**
-* Copyright 2012-2020, Plotly, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-
-'use strict';
-
-var Registry = _dereq_('../../registry');
-var Lib = _dereq_('../../lib');
-
-module.exports = {
-    moduleType: 'component',
-    name: 'annotations3d',
-
-    schema: {
-        subplots: {
-            scene: {annotations: _dereq_('./attributes')}
-        }
-    },
-
-    layoutAttributes: _dereq_('./attributes'),
-    handleDefaults: _dereq_('./defaults'),
-    includeBasePlot: includeGL3D,
-
-    convert: _dereq_('./convert'),
-    draw: _dereq_('./draw')
-};
-
-function includeGL3D(layoutIn, layoutOut) {
-    var GL3D = Registry.subplotsRegistry.gl3d;
-    if(!GL3D) return;
-
-    var attrRegex = GL3D.attrRegex;
-
-    var keys = Object.keys(layoutIn);
-    for(var i = 0; i < keys.length; i++) {
-        var k = keys[i];
-        if(attrRegex.test(k) && (layoutIn[k].annotations || []).length) {
-            Lib.pushUnique(layoutOut._basePlotModules, GL3D);
-            Lib.pushUnique(layoutOut._subplots.gl3d, k);
-        }
-    }
-}
-
-},{"../../lib":171,"../../registry":258,"./attributes":39,"./convert":40,"./defaults":41,"./draw":42}],44:[function(_dereq_,module,exports){
+},{"../../plots/cartesian/include_components":228,"./attributes":35,"./calc_autorange":36,"./click":37,"./convert_coords":39,"./defaults":40,"./draw":41}],44:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -20473,6 +20473,9 @@ dragElement.init = function init(options) {
             document.addEventListener('mousemove', onMove);
             document.addEventListener('touchmove', onMove, {passive: false});
         }
+        
+        // Raise event about drag start (e.g. to suspend auto-ranging during a zoom/pan operation)
+        gd.emit('plotly_dragstart', e);
 
         return;
     }
@@ -20521,6 +20524,9 @@ dragElement.init = function init(options) {
             dragCover.documentElement.style.cursor = cursor;
             cursor = null;
         }
+
+        // Raise event about drag end (e.g. to resume auto-ranging during a zoom/pan operation)
+        gd.emit('plotly_dragend', e);
 
         if(!gd._dragging) {
             gd._dragged = false;
@@ -26726,7 +26732,7 @@ module.exports = {
     },
     traceorder: {
         valType: 'flaglist',
-        flags: ['reversed', 'grouped'],
+        flags: ['reversed', 'grouped', 'sorted'],
         extras: ['normal'],
         
         editType: 'legend',
@@ -26744,6 +26750,13 @@ module.exports = {
         valType: 'enumerated',
         values: ['trace', 'constant'],
         dflt: 'trace',
+        
+        editType: 'legend',
+        
+    },
+
+    linesplit: {
+        valType: 'any',
         
         editType: 'legend',
         
@@ -26978,6 +26991,7 @@ module.exports = function legendDefaults(layoutIn, layoutOut, fullData) {
     if(helpers.isGrouped(layoutOut.legend)) coerce('tracegroupgap');
 
     coerce('itemsizing');
+    coerce('linesplit');
 
     coerce('itemclick');
     coerce('itemdoubleclick');
@@ -27407,9 +27421,16 @@ function drawTexts(g, gd, opts) {
 
     var textEl = Lib.ensureSingle(g, 'text', 'legendtext');
 
+    var legendLabel = name;
+    if (opts.linesplit && opts.linesplit.linelen) {
+        legendLabel = helpers.splitLines(legendLabel, opts.linesplit);
+    }
+
     textEl.attr('text-anchor', 'start')
         .call(Drawing.font, opts.font)
-        .text(isEditable ? ensureLength(name, maxNameLength) : name);
+        .text(isEditable ? ensureLength(name, maxNameLength) : legendLabel);
+
+    Lib.ensureSingle(g, 'title').text(name.replace("<br>", "\n"));
 
     svgTextUtils.positionText(textEl, constants.textGap, 0);
 
@@ -27894,6 +27915,19 @@ module.exports = function getLegendData(calcdata, opts) {
     // maximum name/label length - needed in legend/draw.js
     opts._maxNameLength = maxNameLength;
 
+    if (helpers.isSorted(opts)) {
+        var order = helpers.isReversed(opts) ? -1 : 1;
+        legendData[0].sort(function(a, b) {
+            if (a[0] && a[0].label) {
+                return order * a[0].label.localeCompare(b[0].label, undefined, {numeric: true});
+            } else { 
+                if (a[0] && a[0].trace && a[0].trace.name) {
+                    return order * a[0].trace.name.localeCompare(b[0].trace.name, undefined, {numeric: true});
+                }
+            }
+        });
+    }
+
     return legendData;
 };
 
@@ -27951,13 +27985,13 @@ module.exports = function handleClick(g, gd, numClicks) {
     var carrIdx = [];
 
     function insertUpdate(traceIndex, key, value) {
-        var attrIndex = attrIndices.indexOf(traceIndex);
         var valueArray = attrUpdate[key];
         if(!valueArray) {
             valueArray = attrUpdate[key] = [];
         }
-
-        if(attrIndices.indexOf(traceIndex) === -1) {
+        
+        var attrIndex = attrIndices.indexOf(traceIndex);
+        if(attrIndex < 0) {
             attrIndices.push(traceIndex);
             attrIndex = attrIndices.length - 1;
         }
@@ -28132,6 +28166,9 @@ module.exports = function handleClick(g, gd, numClicks) {
             }
         }
 
+        // Allows listeners to detect when plot visibility is toggled
+        gd.emit('plotly_legend_toggleVisible', { attrUpdate: attrUpdate, attrIndices: attrIndices });
+
         Registry.call('_guiRestyle', gd, attrUpdate, attrIndices);
     }
 };
@@ -28159,6 +28196,40 @@ exports.isVertical = function isVertical(legendLayout) {
 exports.isReversed = function isReversed(legendLayout) {
     return (legendLayout.traceorder || '').indexOf('reversed') !== -1;
 };
+
+exports.isSorted = function isSorted(legendLayout) {
+    return (legendLayout.traceorder || '').indexOf('sorted') !== -1;
+};
+
+// Split labels in multi-lines
+exports.splitLines = function splitLines(text, opts) {
+    if (text.indexOf("<br>") < 0) {
+        var lines = [];
+        
+        while (text.length > opts.linelen && (!opts.maxlines || lines.length + 1 < opts.maxlines)) {
+            var i = text.lastIndexOf(' ', opts.linelen);
+            var spaceFound = i > opts.linelen - 11 && i > 0;
+            if (spaceFound) {
+                lines.push(text.substr(0, i));
+                text = text.substr(i + 1);        
+            } else  {
+                // Truncate word
+                lines.push(text.substr(0, opts.linelen));
+                text = text.substr(opts.linelen);
+            }
+        }
+
+        if (text.length > 0) {
+            if (text.length > opts.linelen) {
+                lines.push(text.substr(0, opts.linelen - 3) + "...");
+            } else {
+                lines.push(text);
+            }
+        }
+        return lines.join("<br>");
+    }
+    return text;
+}
 
 },{}],102:[function(_dereq_,module,exports){
 /**
@@ -31994,7 +32065,7 @@ module.exports = templatedArray('shape', {
     editType: 'arraydraw'
 });
 
-},{"../../lib/extend":165,"../../plot_api/plot_template":205,"../../traces/scatter/attributes":298,"../annotations/attributes":30,"../drawing/attributes":66}],123:[function(_dereq_,module,exports){
+},{"../../lib/extend":165,"../../plot_api/plot_template":205,"../../traces/scatter/attributes":298,"../annotations/attributes":35,"../drawing/attributes":66}],123:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -37397,7 +37468,7 @@ exports.Queue = _dereq_('./lib/queue');
 // export d3 used in the bundle
 exports.d3 = _dereq_('d3');
 
-},{"../build/plotcss":1,"./components/annotations":38,"./components/annotations3d":43,"./components/colorbar":51,"./components/colorscale":57,"./components/errorbars":73,"./components/fx":85,"./components/grid":89,"./components/images":94,"./components/legend":102,"./components/rangeselector":113,"./components/rangeslider":120,"./components/shapes":134,"./components/sliders":139,"./components/updatemenus":145,"./fonts/mathjax_config":153,"./fonts/ploticon":154,"./lib/queue":185,"./locale-en":196,"./locale-en-us":195,"./plot_api":200,"./plot_api/plot_schema":204,"./plots/plots":250,"./registry":258,"./snapshot":263,"./traces/scatter":310,"./version":326,"d3":9,"es6-promise":10}],153:[function(_dereq_,module,exports){
+},{"../build/plotcss":1,"./components/annotations":43,"./components/annotations3d":33,"./components/colorbar":51,"./components/colorscale":57,"./components/errorbars":73,"./components/fx":85,"./components/grid":89,"./components/images":94,"./components/legend":102,"./components/rangeselector":113,"./components/rangeslider":120,"./components/shapes":134,"./components/sliders":139,"./components/updatemenus":145,"./fonts/mathjax_config":153,"./fonts/ploticon":154,"./lib/queue":185,"./locale-en":196,"./locale-en-us":195,"./plot_api":200,"./plot_api/plot_schema":204,"./plots/plots":250,"./registry":258,"./snapshot":263,"./traces/scatter":310,"./version":326,"d3":9,"es6-promise":10}],153:[function(_dereq_,module,exports){
 /**
 * Copyright 2012-2020, Plotly, Inc.
 * All rights reserved.
@@ -41184,7 +41255,7 @@ lib.fillText = function(calcPt, trace, contOut) {
 
 // accept all truthy values and 0 (which gets cast to '0' in the hover labels)
 lib.isValidTextValue = function(v) {
-    return v || v === 0;
+    return (v || v === 0) && typeof v !== "object";
 };
 
 /**
@@ -54185,7 +54256,7 @@ axes.calcTicks = function calcTicks(ax, opts) {
 
     var definedDelta;
     var tickformat = axes.getTickFormat(ax);
-    if(isPeriod && tickformat) {
+    if(isPeriod && typeof tickformat === "string") {
         if(
             !(/%[fLQsSMX]/.test(tickformat))
             // %f: microseconds as a decimal number [000000, 999999]
@@ -54741,6 +54812,11 @@ axes.tickText = function(ax, x, hover, noSuffixPrefix) {
     else if(isAngular(ax)) formatAngle(ax, out, hover, extraPrecision, hideexp);
     else formatLinear(ax, out, hover, extraPrecision, hideexp);
 
+    var tickformat = axes.getTickFormat(ax);
+    if (typeof tickformat === "function") {
+        out.text = tickformat(out.text, out.x);
+    }
+
     // add prefix and suffix
     if(!noSuffixPrefix) {
         if(ax.tickprefix && !isHidden(ax.showtickprefix)) out.text = ax.tickprefix + out.text;
@@ -55078,7 +55154,9 @@ function numFormat(v, ax, fmtoverride, hover) {
         if(ax.hoverformat) tickformat = ax.hoverformat;
     }
 
-    if(tickformat) return ax._numFormat(tickformat)(v).replace(/-/g, MINUS_SIGN);
+    if(tickformat && typeof tickformat === "string") {
+        return ax._numFormat(tickformat)(v).replace(/-/g, MINUS_SIGN);
+    }
 
     // 'epsilon' - rounding increment
     var e = Math.pow(10, -tickRound) / 2;
@@ -58489,8 +58567,15 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
     function zoomDone() {
         computeZoomUpdates();
         removeZoombox(gd);
-        dragTail();
-        showDoubleClickNotifier(gd);
+        
+        // Allows listeners to handle the zoom evt manually, thus overriding the built-in behavior
+        // It is even possible to cancel the operation
+        var args = { updates: updates, isReset: false, cancel: false };
+        gd.emit('plotly_zoom', args);
+        if(!args.cancel) {
+            dragTail();
+            showDoubleClickNotifier(gd);
+        }
     }
 
     // scroll zoom, on all draggers except corners
@@ -58820,6 +58905,10 @@ function makeDragBox(gd, plotinfo, x, y, w, h, ns, ew) {
             }
         }
 
+        // Allows listeners to handle the zoom evt manually
+        var args = { isReset: true };
+        gd.emit('plotly_zoom', args);
+
         gd.emit('plotly_doubleclick', null);
         Registry.call('_guiRelayout', gd, attrs);
     }
@@ -59057,6 +59146,12 @@ function zoomAxRanges(axList, r0Fraction, r1Fraction, updates, linkedAxes) {
             updates[axi._name + '.range[0]'] = axi.l2r(axRangeLinear0 + axRangeLinearSpan * r0Fraction);
             updates[axi._name + '.range[1]'] = axi.l2r(axRangeLinear0 + axRangeLinearSpan * r1Fraction);
         }
+
+        // Put additional data for user's event as well
+        updates[axi._name + '.prevRange[0]'] = axi.range[0];
+        updates[axi._name + '.prevRange[1]'] = axi.range[1];
+        updates[axi._name + '.r0Fraction'] = r0Fraction;
+        updates[axi._name + '.r1Fraction'] = r1Fraction;
     }
 
     // zoom linked axes about their centers
@@ -60721,7 +60816,7 @@ module.exports = {
         
     },
     tickformat: {
-        valType: 'string',
+        valType: 'any',
         dflt: '',
         
         editType: 'ticks',
@@ -67167,7 +67262,7 @@ plots.autoMargin = function(gd, id, o) {
                 var margin = fullLayout.margin;
                 // if no explicit pad is given, use 12px unless there's a
                 // specified margin that's smaller than that
-                pad = Math.min(12, margin.l, margin.r, margin.t, margin.b);
+                pad = Math.min(0, margin.l, margin.r, margin.t, margin.b);
             }
 
             // if the item is too big, just give it enough automargin to
@@ -67265,6 +67360,10 @@ plots.doAutoMargin = function(gd) {
                     var ft = pushMargin[k2].t.val;
                     var pt = pushMargin[k2].t.size;
 
+                    if (k2 === "legend" && pt >30) {
+                        pt = 30;
+                    }
+
                     if(ft > fb) {
                         var newB = (pb * ft + (pt - height) * fb) / (ft - fb);
                         var newT = (pt * (1 - fb) + (pb - height) * (1 - ft)) / (ft - fb);
@@ -67281,7 +67380,7 @@ plots.doAutoMargin = function(gd) {
     gs.l = Math.round(ml);
     gs.r = Math.round(mr);
     gs.t = Math.round(mt);
-    gs.b = Math.round(mb);
+    gs.b = Math.round(mb) + 5;
     gs.p = Math.round(margin.pad);
     gs.w = Math.round(width) - gs.l - gs.r;
     gs.h = Math.round(height) - gs.t - gs.b;
@@ -67299,7 +67398,7 @@ plots.doAutoMargin = function(gd) {
         // but let's keep things on the safe side until we fix our
         // auto-margin pipeline problems:
         // https://github.com/plotly/plotly.js/issues/2704
-        var maxNumberOfRedraws = 3 * (1 + Object.keys(pushMarginIds).length);
+        var maxNumberOfRedraws = 1 * (1 + Object.keys(pushMarginIds).length);
 
         if(fullLayout._redrawFromAutoMarginCount < maxNumberOfRedraws) {
             return Registry.call('plot', gd);
@@ -75446,7 +75545,10 @@ function format(vRounded) {
 }
 
 exports.formatPiePercent = function formatPiePercent(v, separators) {
-    var vRounded = format((v * 100).toPrecision(3));
+    var vRounded = (v * 100).toFixed(2);
+    if(vRounded.lastIndexOf('.00') !== -1) {
+        vRounded = vRounded.replace('.00', '');
+    }
     return Lib.numSeparate(vRounded, separators) + '%';
 };
 
