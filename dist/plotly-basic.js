@@ -1,5 +1,5 @@
 /**
-* plotly.js (basic) v1.56.0-ion3
+* plotly.js (basic) v1.56.0-ion4
 * Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -80163,7 +80163,7 @@ module.exports = function handleXYDefaults(traceIn, traceOut, layout, coerce) {
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion3';
+exports.version = '1.56.0-ion4';
 
 },{}]},{},[4])(4)
 });
