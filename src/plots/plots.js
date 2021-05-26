@@ -2011,7 +2011,7 @@ plots.doAutoMargin = function(gd) {
     }
 
     gs.l = Math.round(ml);
-    gs.r = Math.round(mr);
+    gs.r = Math.round(mr)+4;
     gs.t = Math.round(mt);
     gs.b = Math.round(mb) + 5;
     gs.p = Math.round(margin.pad);
