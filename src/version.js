@@ -9,4 +9,4 @@
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion4';
+exports.version = '1.56.0-ion5';

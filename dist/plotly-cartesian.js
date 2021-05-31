@@ -1,5 +1,5 @@
 /**
-* plotly.js (cartesian) v1.56.0-ion4
+* plotly.js (cartesian) v1.56.0-ion5
 * Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -8123,7 +8123,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
     }), k = 150, x = 480, y = 250, λ = 0, φ = 0, δλ = 0, δφ = 0, δγ = 0, δx, δy, preclip = d3_geo_clipAntimeridian, postclip = d3_identity, clipAngle = null, clipExtent = null, stream;
     function projection(point) {
       point = projectRotate(point[0] * d3_radians, point[1] * d3_radians);
-      return [ point[0] * k + δx, δy - point[1] * k ];
+      return [ point[0] * k + ��x, δy - point[1] * k ];
     }
     function invert(point) {
       point = projectRotate.invert((point[0] - δx) / k, (δy - point[1]) / k);
@@ -95355,7 +95355,7 @@ module.exports = function style(gd) {
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion4';
+exports.version = '1.56.0-ion5';
 
 },{}]},{},[11])(11)
 });

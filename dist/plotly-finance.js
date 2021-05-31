@@ -1,5 +1,5 @@
 /**
-* plotly.js (finance) v1.56.0-ion4
+* plotly.js (finance) v1.56.0-ion5
 * Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -87754,7 +87754,7 @@ module.exports = {
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion4';
+exports.version = '1.56.0-ion5';
 
 },{}]},{},[8])(8)
 });

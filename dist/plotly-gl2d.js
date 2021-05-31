@@ -1,5 +1,5 @@
 /**
-* plotly.js (gl2d) v1.56.0-ion4
+* plotly.js (gl2d) v1.56.0-ion5
 * Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -119973,7 +119973,7 @@ module.exports = function select(searchInfo, selectionTester) {
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion4';
+exports.version = '1.56.0-ion5';
 
 },{}]},{},[5])(5)
 });

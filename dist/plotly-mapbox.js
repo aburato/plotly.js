@@ -1,5 +1,5 @@
 /**
-* plotly.js (mapbox) v1.56.0-ion4
+* plotly.js (mapbox) v1.56.0-ion5
 * Copyright 2012-2021, Plotly, Inc.
 * All rights reserved.
 * Licensed under the MIT license
@@ -7584,7 +7584,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
         if (j === m) j = 0;
         point = ring[j];
         var λ = point[0], φ = point[1] / 2 + π / 4, sinφ = Math.sin(φ), cosφ = Math.cos(φ), dλ = λ - λ0, sdλ = dλ >= 0 ? 1 : -1, adλ = sdλ * dλ, antimeridian = adλ > π, k = sinφ0 * sinφ;
-        d3_geo_areaRingSum.add(Math.atan2(k * sdλ * Math.sin(adλ), cosφ0 * cos�� + k * Math.cos(adλ)));
+        d3_geo_areaRingSum.add(Math.atan2(k * sdλ * Math.sin(adλ), cosφ0 * cosφ + k * Math.cos(adλ)));
         polarAngle += antimeridian ? dλ + sdλ * τ : dλ;
         if (antimeridian ^ λ0 >= meridian ^ λ >= meridian) {
           var arc = d3_geo_cartesianCross(d3_geo_cartesian(point0), d3_geo_cartesian(point));
@@ -82656,7 +82656,7 @@ module.exports = function selectPoints(searchInfo, selectionTester) {
 'use strict';
 
 // package version injected by `npm run preprocess`
-exports.version = '1.56.0-ion4';
+exports.version = '1.56.0-ion5';
 
 },{}]},{},[5])(5)
 });
