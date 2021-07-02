@@ -52,10 +52,12 @@ module.exports = function getLegendData(calcdata, opts) {
 
             for(j = 0; j < cd.length; j++) {
                 var labelj = cd[j].label;
+                var labeltooltipj = cd[j].labelTooltip;
 
                 if(!slicesShown[lgroup][labelj]) {
                     addOneItem(lgroup, {
                         label: labelj,
+                        labelTooltip: labeltooltipj,
                         color: cd[j].color,
                         i: cd[j].i,
                         trace: trace,

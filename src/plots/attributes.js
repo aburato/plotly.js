@@ -53,6 +53,15 @@ module.exports = {
             'when toggling legend items.'
         ].join(' ')
     },
+    legendtooltip: {
+        valType: 'string',
+        role: 'info',
+        dflt: '',
+        editType: 'style',
+        description: [
+            'Sets the legend tooltip to be displayed on hover'
+        ].join(' ')
+    },
     opacity: {
         valType: 'number',
         role: 'style',

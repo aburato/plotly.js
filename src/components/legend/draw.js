@@ -397,13 +397,16 @@ function drawTexts(g, gd, opts) {
     var maxNameLength = opts._maxNameLength;
 
     var name;
+    var legendTooltip;
     if(!opts.entries) {
         name = isPieLike ? legendItem.label : trace.name;
+        legendTooltip = (isPieLike ? legendItem.labelTooltip : trace.legendtooltip) || name;
         if(trace._meta) {
             name = Lib.templateString(name, trace._meta);
         }
     } else {
         name = legendItem.text;
+        legendTooltip = legendItem.labelTooltip || name;
     }
 
     var textEl = Lib.ensureSingle(g, 'text', 'legendtext');
@@ -417,7 +420,8 @@ function drawTexts(g, gd, opts) {
         .call(Drawing.font, opts.font)
         .text(isEditable ? ensureLength(name, maxNameLength) : legendLabel);
 
-    Lib.ensureSingle(g, 'title').text(name.replace("<br>", "\n"));
+    
+    Lib.ensureSingle(g, 'title').text(legendTooltip.replace("<br>", "\n"));
 
     svgTextUtils.positionText(textEl, constants.textGap, 0);
 

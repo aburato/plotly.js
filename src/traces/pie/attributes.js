@@ -36,6 +36,14 @@ module.exports = {
             'non-empty entry among all occurrences of the label.'
         ].join(' ')
     },
+    labeltooltips: {
+        valType: 'data_array',
+        editType: 'calc',
+        description: [
+            'Sets the legend tooltips.',
+            
+        ].join(' ')
+    },
     // equivalent of x0 and dx, if label is missing
     label0: {
         valType: 'number',

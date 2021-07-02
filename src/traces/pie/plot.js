@@ -1127,6 +1127,7 @@ function formatSliceLabel(gd, pt, cd0) {
         return {
             label: pt.label,
             value: pt.v,
+            labeltooltip: pt.labeltooltip,
             valueLabel: helpers.formatPieValue(pt.v, fullLayout.separators),
             percent: pt.v / cd0.vTotal,
             percentLabel: helpers.formatPiePercent(pt.v / cd0.vTotal, fullLayout.separators),

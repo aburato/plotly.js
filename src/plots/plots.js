@@ -1332,6 +1332,7 @@ plots.supplyTraceDefaults = function(traceIn, traceOut, colorIndex, layout, trac
             );
 
             coerce('legendgroup');
+            coerce('legendtooltip');
 
             traceOut._dfltShowLegend = true;
         } else {

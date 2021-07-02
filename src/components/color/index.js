@@ -74,9 +74,14 @@ color.contrast = function(cstr, lightAmount, darkAmount) {
 
     if(tc.getAlpha() !== 1) tc = tinycolor(color.combine(cstr, background));
 
-    var newColor = tc.isDark() ?
-        (lightAmount ? tc.lighten(lightAmount) : background) :
-        (darkAmount ? tc.darken(darkAmount) : defaultLine);
+    //isDark logic updated to match with Less contrast function as tinycolor rely on brightness instead of luminance
+
+    var isDark = (tc.getLuminance() < 0.43);
+
+    // changing color to match ION specific contrast color black and white
+    var newColor = isDark ?
+        (lightAmount ? tc.lighten(lightAmount) : "#fff") :
+        (darkAmount ? tc.darken(darkAmount) : "#000");
 
     return newColor.toString();
 };

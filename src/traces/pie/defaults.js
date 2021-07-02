@@ -62,6 +62,7 @@ function supplyDefaults(traceIn, traceOut, defaultColor, layout) {
         coerce('label0');
         coerce('dlabel');
     }
+    coerce('labeltooltips');
 
     if(!len) {
         traceOut.visible = false;
